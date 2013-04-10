@@ -484,6 +484,8 @@ def configure(globals_dict,settings_module_name=None):
     p = Path(HGWORK,'welfare','userdocs','.build','fr','objects.inv')
     if p.exists():
         intersphinx_mapping[n] = ('http://welfare-user.lino-framework.org',p)
+    #~ else:
+        #~ raise Exception("%s does not exist" % p)
     #~ intersphinx_mapping.update(django = (
         #~ 'http://docs.djangoproject.com/en/dev/', 
         #~ 'http://docs.djangoproject.com/en/dev/_objects/'))

@@ -12,6 +12,7 @@ from setuptools import find_packages
 import six
         
 class SubProcessTestCase(unittest.TestCase):
+    "Deserves a docstring"
     project_root = NotImplementedError
     default_environ = dict()
     inheritable_envvars = ('VIRTUAL_ENV','PYTHONPATH','PATH')
@@ -34,7 +35,23 @@ class SubProcessTestCase(unittest.TestCase):
             if v is not None:
                 env[k] = v
         kw.update(env=env)
-        subprocess.check_output(args,**kw)
+        #~ subprocess.check_output(args,**kw)
+        #~ from StringIO import StringIO
+        #~ buffer = StringIO()
+        kw.update(stdout=subprocess.PIPE)
+        kw.update(stderr=subprocess.STDOUT)
+        p = subprocess.Popen(args,**kw)
+        p.wait()
+        rv = p.returncode
+        #~ kw.update(stderr=buffer)
+        #~ rv = subprocess.call(args,**kw)
+        if rv != 0:
+            cmd = ' '.join(args)
+            #~ self.fail("%s returned %d:-----\n%s\n-----" % (cmd,rv,buffer.getvalue()))
+            (out, err) = p.communicate()
+            msg = "%s returned %d:-----\n%s\n-----" % (cmd,rv,out)
+            print msg
+            self.fail(msg)
         
     def run_simple_doctests(self,n,**kw): # env.simple_doctests
         #~ cmd = "python -m doctest %s" % filename    
