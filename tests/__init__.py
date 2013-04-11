@@ -7,12 +7,16 @@ execfile(ROOTDIR.child('atelier','setup_info.py'),globals())
 
 from atelier.test import SubProcessTestCase
 
-class AtelierTestCase(SubProcessTestCase):
+class BaseTestCase(SubProcessTestCase):
     project_root = ROOTDIR
     
-class BasicTests(AtelierTestCase):
+class BasicTests(BaseTestCase):
     def test_01(self): 
         self.assertEqual(1+1,2)
 
     def test_utils(self): self.run_simple_doctests('atelier/utils.py')
     def test_rstgen(self): self.run_simple_doctests('atelier/rstgen.py')
+
+class PackagesTests(BaseTestCase):
+    def test_packages(self): self.run_packages_test(SETUP_INFO['packages'])
+

@@ -34,5 +34,6 @@ Let me know if you like it.
 
 SETUP_INFO.update(packages = [str(n) for n in """
 atelier
+atelier.sphinxconf
 """.splitlines() if n])
   

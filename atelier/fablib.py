@@ -367,7 +367,9 @@ def sphinx_build_html(docs_dir,language=None):
     
 @task(alias='userdocs')
 def build_userdocs(): 
+    if env.languages is None: return
     userdocs_dir = env.ROOTDIR.child('userdocs')
+    if not userdocs_dir.exists(): return
     for loc in env.languages:
         sphinx_build_html(userdocs_dir,loc)
     dest = userdocs_dir.child('.build','index.html')

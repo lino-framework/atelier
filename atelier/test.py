@@ -5,6 +5,8 @@
 
 """
 import os
+import sys
+import doctest
 import unittest
 import subprocess
 from setuptools import find_packages
@@ -29,6 +31,10 @@ class SubProcessTestCase(unittest.TestCase):
         self.assertEqual(found_packages,declared_packages)
         
     def run_subprocess(self,args,**kw): 
+        """
+        Additional keywords can be 
+        `cwd` : the working directory
+        """
         env = dict(self.default_environ)
         for k in self.inheritable_envvars:
             v = os.environ.get(k,None)
@@ -93,3 +99,21 @@ class SubProcessTestCase(unittest.TestCase):
         self.run_subprocess(args,**kw)
     
         #~ cmd = "django-admin.py test --settings=%s --verbosity=0 --failfast --traceback" % prj
+
+    def run_docs_doctests(self,filename):
+        """
+        Run a simple doctest for specified file
+        """
+        filename = 'docs/' + filename
+        #~ p = self.project_root.child(*filename.split('/')).parent
+        #~ os.environ['DJANGO_SETTINGS_MODULE']='settings'
+        #~ oldcwd = os.getcwd()
+        #~ self.project_root.child('docs').chdir()
+        #~ p.chdir()
+        #~ sys.path.insert(0,'.')
+        #~ print p
+        sys.path.insert(0,'docs')
+        import conf
+        doctest.testfile(filename, module_relative=False,encoding='utf-8')
+        del sys.path[0]
+        #~ os.chdir(oldcwd)
