@@ -1,0 +1,16 @@
+#!python
+import os
+import sys
+import subprocess
+
+# TODO: make these configurable:
+PROJECTS = 'atelier site north lino welfare'.split()
+PROJECTS_HOME = '/home/luc/hgwork'
+
+for prj in PROJECTS:
+    p = os.path.join(PROJECTS_HOME,prj)
+    os.chdir(p)
+    args = ["fab"]
+    args += sys.argv[1:]
+    subprocess.call(args,cwd=p)
+    

@@ -345,9 +345,9 @@ def build_api(*cmdline_args):
     local(cmd)
     
 
-def sphinx_build_html(docs_dir,language=None):
+def sphinx_build_html(docs_dir,cmdline_args=[],language=None):
     args = ['sphinx-build','-b','html']
-    #~ args += cmdline_args
+    args += cmdline_args
     #~ args += ['-a'] # all files, not only outdated
     #~ args += ['-P'] # no postmortem
     #~ args += ['-Q'] # no output
@@ -363,41 +363,36 @@ def sphinx_build_html(docs_dir,language=None):
     args += [docs_dir,build_dir]
     cmd = ' '.join(args)
     local(cmd)
+    src = docs_dir.child('dl').absolute()
+    if src.isdir():
+        target = build_dir.child('dl')
+        target.mkdir()
+        cmd = 'cp -ur %s %s' % (src,target.parent) 
+        local(cmd)
     
     
 @task(alias='userdocs')
-def build_userdocs(): 
+def build_userdocs(*cmdline_args): 
     if env.languages is None: return
     userdocs_dir = env.ROOTDIR.child('userdocs')
     if not userdocs_dir.exists(): return
-    for loc in env.languages:
-        sphinx_build_html(userdocs_dir,loc)
+    for lng in env.languages:
+        sphinx_build_html(userdocs_dir,cmdline_args,lng)
     dest = userdocs_dir.child('.build','index.html')
     userdocs_dir.child('index.html').copy(dest)
   
     
 @task(alias='docs')
-def build_docs(): #~ def build_html(*cmdline_args):
-    """
-    write_readme + build sphinx html docs.
-    """
-    if env.main_package:
-        write_readme()
-        #~ write_release_notes()
-    sphinx_build_html(env.DOCSDIR)
-
-    src = env.DOCSDIR.child('dl').absolute()
-    if src.isdir():
-        #~ job = Synchronizer()
-        #~ job.toolkit.configure(batch=True)
-        target = env.DOCSDIR.child('.build','dl')
-        target.mkdir()
-        #~ job.addProject(src,target.absolute(),recurse=True)
-        #~ job.run(safely=False)
-        
-        cmd = 'cp -ur %s %s' % (src,target.parent) 
-        local(cmd)
-    return 
+def build_docs(*cmdline_args): 
+    """write_readme + build sphinx html docs."""
+    write_readme()
+    sphinx_build_html(env.DOCSDIR,cmdline_args)
+    
+@task(alias='alldocs')
+def build_all_docs(): 
+    """write_readme + build ALL sphinx html docs."""
+    write_readme()
+    sphinx_build_html(env.DOCSDIR,['-a'])
     
     
     
@@ -711,6 +706,7 @@ def write_readme():
     """
     Generate README.txt file from setup_info (if necessary).
     """
+    if not env.main_package: return
     readme = env.ROOTDIR.child('README.txt')
     txt = """\
 ==========================
@@ -735,8 +731,8 @@ Read more on %(url)s
     #~ local(cmd)
     #~ pipy_register()
     
-@task(alias='t2')
-def run_django_admin_tests():
+#~ @task(alias='t2')
+def unused_run_django_admin_tests():
     """
     Run `django-admin test` for each `env.django_admin_tests`.
     """
@@ -744,8 +740,8 @@ def run_django_admin_tests():
         cmd = "django-admin.py test --settings=%s --verbosity=0 --failfast --traceback" % prj
         local(cmd)
   
-@task(alias='t3')
-def run_django_doctests():
+#~ @task(alias='t3')
+def unused_run_django_doctests():
     """
     Run `django-admin test` in the `docs` dir for each `env.django_doctests`
     """
@@ -761,8 +757,8 @@ def run_django_doctests():
         #~ cmd = "python runtest.py %s" % prj
         local(cmd)
 
-@task(alias='t1')
-def run_simple_doctests():
+#~ @task(alias='t1')
+def unused_run_simple_doctests():
     """
     Run a simple doctest for files specified in `env.simple_doctests`.
     """
@@ -773,8 +769,8 @@ def run_simple_doctests():
         local(cmd)
         #~ doctest.testfile(filename, module_relative=False,encoding='utf-8')
 
-@task(alias='t4')
-def run_docs_doctests():
+#~ @task(alias='t4')
+def unused_run_docs_doctests():
     """
     Run a simple doctest for files specified in `env.docs_doctests`.
     """
@@ -790,22 +786,22 @@ def run_docs_doctests():
         doctest.testfile(filename, module_relative=False,encoding='utf-8')
     del sys.path[0]
 
-@task(alias='t5')
-def run_django_databases_tests():    
+#~ @task(alias='t5')
+def unused_run_django_databases_tests():    
     """
     Run "manage.py test" for each `env.django_databases`.
     """
     run_in_django_databases('test',"--noinput",'--failfast')
 
-@task(alias='t6')
-def run_setup_tests():    
+#~ @task(alias='t6')
+def unused_run_setup_tests():    
     """
     Run hardcoded tests related to packaging.
     """
     unittest.main(argv=['fab','SetupTest'],module=__name__,exit=False)
 
-@task(alias='t7')
-def run_bash_tests():
+#~ @task(alias='t7')
+def unused_run_bash_tests():
     """
     Run the commands in `env.bash_tests`.
     """
@@ -817,13 +813,14 @@ def run_tests():
     """
     Run all tests
     """
-    run_django_admin_tests() # t2
-    run_django_doctests() # t3
-    run_simple_doctests() # t4
-    run_django_databases_tests() # t5
-    run_setup_tests() # t6
-    run_bash_tests() # t7
-    print "run_tests() done"
+    local('python setup.py -q test')
+    #~ run_django_admin_tests() # t2
+    #~ run_django_doctests() # t3
+    #~ run_simple_doctests() # t4
+    #~ run_django_databases_tests() # t5
+    #~ run_setup_tests() # t6
+    #~ run_bash_tests() # t7
+    #~ print "run_tests() done"
     
 
 #~ @task(alias='listpkg')
