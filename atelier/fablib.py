@@ -7,17 +7,15 @@ To be used by creating a `fabfile.py` with the following two line::
 
   from atelier.fablib import *
   setup_from_project("foobar")
-  env.django_databases.append(...)
   env.django_admin_tests.append(...)
   env.simple_doctests.append(...)
   env.tolerate_sphinx_warnings = True
+  env.demo_databases.append('foobar.demo.settings')
   
 Where "foobar" is the name of your main package.
   
 This fablib uses the following `env` keys:
 
-- `django_databases` : a list of directories where a manage.py exists
-  and for which initdb_demo should be executed.
 - `tolerate_sphinx_warnings` : whether `sphinx-build html` should tolerate warnings.
 
 - (consult the source code)
@@ -104,11 +102,13 @@ def setup_from_project(main_package=None):
     env.django_doctests = []
     env.django_admin_tests = []
     env.bash_tests = []
-    env.django_databases = []
+    #~ env.django_databases = []
     env.simple_doctests = []
     env.docs_doctests = []
     env.main_package = main_package
     env.tolerate_sphinx_warnings = False
+    env.demo_databases = []
+    
 
     env.languages = None
     
@@ -117,7 +117,7 @@ def setup_from_project(main_package=None):
     env.DOCSDIR = Path(env.ROOTDIR,'docs')
     #~ env.BUILDDIR = Path(env.DOCSDIR,'.build')
 
-    if not env.DOCSDIR.exists():
+    if not Path(env.ROOTDIR,'setup.py').exists():
         raise Exception("You must call 'fab' from a project's root directory.")
         
     if env.main_package:
@@ -162,16 +162,28 @@ def rmtree_after_confirm(p):
 
 def get_locale_dir():
     if not env.main_package:
-        abort("No main_package")
+        return None # abort("No main_package")
     p = env.ROOTDIR.child(env.main_package,"locale")
     if not p.isdir():
-        abort("Directory %s does not exist." % p)
+        return None # abort("Directory %s does not exist." % p)
     return p
 
-@task(alias='em')
+@task(alias='bm')
+def build_messages():
+    "Extract messages, initialize (if necessary) and update catalogs"
+    extract_messages()
+    init_catalog_code()
+    update_catalog_code()
+    
+    extract_messages_userdocs()
+    setup_babel_userdocs('init_catalog')
+    setup_babel_userdocs('update_catalog')
+    
+#~ @task(alias='em')
 def extract_messages():
     """Extract messages from source files to .pot file"""
     locale_dir = get_locale_dir()
+    if locale_dir is None: return 
     args = ["python", "setup.py"]
     args += [ "extract_messages"]
     args += [ "-o", locale_dir.child("django.pot")]
@@ -179,7 +191,7 @@ def extract_messages():
     #~ must_confirm(cmd)
     local(cmd)
     
-@task(alias='emu')
+#~ @task(alias='emu')
 def extract_messages_userdocs(): 
     """
     Run the Sphinx gettext builder on userdocs.
@@ -187,7 +199,7 @@ def extract_messages_userdocs():
     args = ['sphinx-build','-b','gettext']
     userdocs = env.ROOTDIR.child('userdocs')
     if not userdocs.isdir():
-        abort("Directory %s does not exist." % userdocs)
+        return # abort("Directory %s does not exist." % userdocs)
     #~ args += cmdline_args
     #~ args += ['-a'] # all files, not only outdated
     #~ args += ['-P'] # no postmortem
@@ -202,6 +214,12 @@ def extract_messages_userdocs():
     
     
 
+@task(alias='rename')
+def rename_data_url_friendly():
+    data_dir = env.ROOTDIR.child('docs','data')
+    #~ print list(data_dir.listdir(names_only=True))
+    print list(data_dir.walk())
+    
 def setup_babel_userdocs(babelcmd):
     """Create userdocs .po files if necessary."""
     userdocs = env.ROOTDIR.child('userdocs')
@@ -232,23 +250,24 @@ def setup_babel_userdocs(babelcmd):
                 #~ must_confirm(cmd)
                 local(cmd)
 
-@task(alias='imu')
-def init_catalog_userdocs():
-    setup_babel_userdocs('init_catalog')
+#~ @task(alias='imu')
+#~ def init_catalog_userdocs():
+    #~ setup_babel_userdocs('init_catalog')
 
-@task(alias='umu')
-def update_catalog_userdocs():
-    setup_babel_userdocs('update_catalog')
+#~ @task(alias='umu')
+#~ def update_catalog_userdocs():
+    #~ setup_babel_userdocs('update_catalog')
 
 @task(alias='cmu')
 def compile_catalog_userdocs():
     setup_babel_userdocs('compile_catalog')
 
 
-@task(alias='im')
+#~ @task(alias='im')
 def init_catalog_code():
     """Create code .po files if necessary."""
     locale_dir = get_locale_dir()
+    if locale_dir is None: return 
     for loc in env.languages:
         f = locale_dir.child(loc,'LC_MESSAGES','django.po')
         if f.exists():
@@ -267,10 +286,11 @@ def init_catalog_code():
 
 
 
-@task(alias='um')
-def update_catalog():
+#~ @task(alias='um')
+def update_catalog_code():
     """Update .po files from .pot file."""
     locale_dir = get_locale_dir()
+    if locale_dir is None: return 
     for loc in env.languages:
         args = ["python", "setup.py"]
         args += [ "update_catalog"]
@@ -286,6 +306,7 @@ def update_catalog():
 def compile_catalog():
     """Compile .po files to .mo files."""
     locale_dir = get_locale_dir()
+    if locale_dir is None: return 
     for loc in env.languages:
         args = ["python", "setup.py"]
         args += [ "compile_catalog"]
@@ -352,6 +373,7 @@ def sphinx_build_html(docs_dir,cmdline_args=[],language=None):
     #~ args += ['-P'] # no postmortem
     #~ args += ['-Q'] # no output
     build_dir = docs_dir.child('.build')
+    build_root = docs_dir.child('.build')
     if language:
         args += ['-D', 'language=' + language] 
         args += ['-A', 'language=' + language] # needed in select_lang.html template
@@ -363,36 +385,42 @@ def sphinx_build_html(docs_dir,cmdline_args=[],language=None):
     args += [docs_dir,build_dir]
     cmd = ' '.join(args)
     local(cmd)
-    src = docs_dir.child('dl').absolute()
-    if src.isdir():
-        target = build_dir.child('dl')
-        target.mkdir()
-        cmd = 'cp -ur %s %s' % (src,target.parent) 
-        local(cmd)
+    
+def sync_docs_data(docs_dir):
+    build_dir = docs_dir.child('.build')
+    for data in ('dl','data'):
+        src = docs_dir.child(data).absolute()
+        if src.isdir():
+            target = build_dir.child('dl')
+            target.mkdir()
+            cmd = 'cp -ur %s %s' % (src,target.parent) 
+            local(cmd)
     
     
 @task(alias='userdocs')
 def build_userdocs(*cmdline_args): 
     if env.languages is None: return
-    userdocs_dir = env.ROOTDIR.child('userdocs')
-    if not userdocs_dir.exists(): return
+    docs_dir = env.ROOTDIR.child('userdocs')
+    if not docs_dir.exists(): return
     for lng in env.languages:
-        sphinx_build_html(userdocs_dir,cmdline_args,lng)
-    dest = userdocs_dir.child('.build','index.html')
-    userdocs_dir.child('index.html').copy(dest)
-  
+        sphinx_build_html(docs_dir,cmdline_args,lng)
+    dest = docs_dir.child('.build','index.html')
+    docs_dir.child('index.html').copy(dest)
+    sync_docs_data(docs_dir)
     
 @task(alias='docs')
 def build_docs(*cmdline_args): 
     """write_readme + build sphinx html docs."""
     write_readme()
     sphinx_build_html(env.DOCSDIR,cmdline_args)
+    sync_docs_data(env.DOCSDIR)
     
 @task(alias='alldocs')
 def build_all_docs(): 
     """write_readme + build ALL sphinx html docs."""
     write_readme()
     sphinx_build_html(env.DOCSDIR,['-a'])
+    sync_docs_data(env.DOCSDIR)
     
     
     
@@ -471,25 +499,48 @@ def publish_docs(build_dir,dest_url):
         #~ cwd.chdir()
     #~ return subprocess.call(args)
 
-def run_in_django_databases(admin_cmd,*more):
-    for db in env.django_databases:
-        p = env.ROOTDIR.child(*db.split('/'))
-        with lcd(p):
-            # cmd = 'python manage.py initdb --noinput'
-            #~ args = ["django-admin"] 
-            args = ["python manage.py"] 
-            args += [admin_cmd]
-            args += more
-            #~ args += ["--noinput"]
-            #~ args += ["--settings=settings"]
-            args += [" --pythonpath=%s" % p.absolute()]
-            cmd = " ".join(args)
-            local(cmd)
+#~ def run_in_demo_database(admin_cmd,*more):
+	#~ if not env.demo_database: return
+	#~ args = ["django-admin.py"] 
+	#~ args += [admin_cmd]
+	#~ args += more
+	#~ args += ["--settings=" + env.demo_database]
+	#~ cmd = " ".join(args)
+	#~ local(cmd)
+            
+def run_in_demo_databases(admin_cmd,*more):
+    for db in env.demo_databases:
+		args = ["django-admin.py"] 
+		args += [admin_cmd]
+		args += more
+		#~ args += ["--noinput"]
+		args += ["--settings=" + db]
+		#~ args += [" --pythonpath=%s" % p.absolute()]
+		cmd = " ".join(args)
+		local(cmd)
+		
+		
+        #~ p = env.ROOTDIR.child(*db.split('/'))
+        #~ with lcd(p):
+            #~ args = ["python manage.py"] 
+            #~ args += [admin_cmd]
+            #~ args += more
+            #~ args += [" --pythonpath=%s" % p.absolute()]
+            #~ cmd = " ".join(args)
+            #~ local(cmd)
   
+@task()
+def clean_cache():
+    for db in env.demo_databases:
+		m = __import__(db)
+		p = Path(m.SITE.project_dir).child('media','cache')
+		rmtree_after_confirm(p)
+    
+	
 @task(alias="initdb")
 def initdb_demo():
     """
-    Run initdb_demo on each Django database of this project (env.django_databases)
+    Run initdb_demo on each demo database of this project (env.demo_databases)
     """
     #~ for db in env.django_databases:
         #~ args = ["django-admin"] 
@@ -510,11 +561,14 @@ def initdb_demo():
         #~ local(cmd)
     #~ cwd.chdir()
     
-    run_in_django_databases('initdb_demo',"--noinput")
+    run_in_demo_databases('initdb_demo',"--noinput")
+    #~ run_in_demo_database('initdb_demo',"--noinput")
+    
+   
 
 #~ @task()
 #~ def runserver():
-    #~ run_in_django_databases('runserver')
+    #~ run_in_demo_databases('runserver')
     
         
 @task()
@@ -791,7 +845,7 @@ def unused_run_django_databases_tests():
     """
     Run "manage.py test" for each `env.django_databases`.
     """
-    run_in_django_databases('test',"--noinput",'--failfast')
+    run_in_demo_databases('test',"--noinput",'--failfast')
 
 #~ @task(alias='t6')
 def unused_run_setup_tests():    

@@ -18,7 +18,7 @@ class SubProcessTestCase(unittest.TestCase):
     project_root = NotImplementedError
     default_environ = dict()
     inheritable_envvars = ('VIRTUAL_ENV','PYTHONPATH','PATH')
-    maxDiff = None
+    #~ maxDiff = None
     
     def run_packages_test(self,declared_packages):
         """
@@ -55,7 +55,7 @@ class SubProcessTestCase(unittest.TestCase):
             cmd = ' '.join(args)
             #~ self.fail("%s returned %d:-----\n%s\n-----" % (cmd,rv,buffer.getvalue()))
             (out, err) = p.communicate()
-            msg = "%s returned %d:-----\n%s\n-----" % (cmd,rv,out)
+            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (cmd,env,rv,out)
             print msg
             self.fail(msg)
         
@@ -88,7 +88,8 @@ class SubProcessTestCase(unittest.TestCase):
         kw.update(cwd=p)
         self.run_subprocess(args,**kw)
         
-    def run_django_admin_tests(self,settings_module,**kw): # django_admin_tests
+    #~ def run_django_admin_tests(self,settings_module,**kw): # django_admin_tests
+    def run_django_admin_test(self,settings_module,**kw): # django_admin_tests
         args = ["django-admin.py"] 
         args += ["test"]
         args += ["--settings=%s" % settings_module]

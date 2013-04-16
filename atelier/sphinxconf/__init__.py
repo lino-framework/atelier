@@ -242,6 +242,7 @@ class Py2rstDirective(InsertInputDirective):
     Run a Python code block and interpret the output as if it 
     were rst source.
     """
+    titles_allowed = True
     has_content = True
     debug = False
     #~ def get_rst(self):
