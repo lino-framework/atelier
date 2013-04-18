@@ -3,10 +3,13 @@
 The fabric tasks I use to manage my projects.
 Use at your own risk.
 
-To be used by creating a `fabfile.py` with the following two line::
+To be used by creating a `fabfile.py` with at least the following 
+two lines::
 
   from atelier.fablib import *
   setup_from_project("foobar")
+  
+  
   env.django_admin_tests.append(...)
   env.simple_doctests.append(...)
   env.tolerate_sphinx_warnings = True
@@ -168,9 +171,10 @@ def get_locale_dir():
         return None # abort("Directory %s does not exist." % p)
     return p
 
-@task(alias='bm')
-def build_messages():
-    "Extract messages, initialize (if necessary) and update catalogs"
+   
+@task(alias='mm')
+def make_messages():
+    "Extract messages, then initialize and update all catalogs"
     extract_messages()
     init_catalog_code()
     update_catalog_code()
@@ -366,8 +370,8 @@ def build_api(*cmdline_args):
     local(cmd)
     
 
-def sphinx_build_html(docs_dir,cmdline_args=[],language=None):
-    args = ['sphinx-build','-b','html']
+def sphinx_build_html(builder,docs_dir,cmdline_args=[],language=None):
+    args = ['sphinx-build','-b',builder]
     args += cmdline_args
     #~ args += ['-a'] # all files, not only outdated
     #~ args += ['-P'] # no postmortem
@@ -378,10 +382,11 @@ def sphinx_build_html(docs_dir,cmdline_args=[],language=None):
         args += ['-D', 'language=' + language] 
         args += ['-A', 'language=' + language] # needed in select_lang.html template
         build_dir = build_dir.child(language)
-    if not env.tolerate_sphinx_warnings:
+    if env.tolerate_sphinx_warnings:
+        args += ['-w',docs_dir.child('warnings_%s.txt' % builder)]
+    else:
         args += ['-W'] # consider warnings as errors
     #~ args += ['-w'+Path(env.ROOTDIR,'sphinx_doctest_warnings.txt')]
-    args += ['-w',docs_dir.child('warnings.txt')]
     args += [docs_dir,build_dir]
     cmd = ' '.join(args)
     local(cmd)
@@ -403,24 +408,38 @@ def build_userdocs(*cmdline_args):
     docs_dir = env.ROOTDIR.child('userdocs')
     if not docs_dir.exists(): return
     for lng in env.languages:
-        sphinx_build_html(docs_dir,cmdline_args,lng)
+        sphinx_build_html('html',docs_dir,cmdline_args,lng)
     dest = docs_dir.child('.build','index.html')
     docs_dir.child('index.html').copy(dest)
     sync_docs_data(docs_dir)
+    
+@task(alias='linkcheck')
+def sphinx_build_linkcheck(*cmdline_args): 
+    """sphinxbuild -b linkcheck docs."""
+    docs_dir = env.ROOTDIR.child('docs')
+    if docs_dir.exists(): 
+        sphinx_build_html('linkcheck',docs_dir,cmdline_args)
+    docs_dir = env.ROOTDIR.child('userdocs')
+    if docs_dir.exists(): 
+        lng = env.languages[0] # 
+        sphinx_build_html('linkcheck',docs_dir,cmdline_args,lng)
     
 @task(alias='docs')
 def build_docs(*cmdline_args): 
     """write_readme + build sphinx html docs."""
     write_readme()
-    sphinx_build_html(env.DOCSDIR,cmdline_args)
+    sphinx_build_html('html',env.DOCSDIR,cmdline_args)
     sync_docs_data(env.DOCSDIR)
     
 @task(alias='alldocs')
 def build_all_docs(): 
     """write_readme + build ALL sphinx html docs."""
     write_readme()
-    sphinx_build_html(env.DOCSDIR,['-a'])
-    sync_docs_data(env.DOCSDIR)
+    for n in ('docs','userdocs'):
+        docs_dir = env.ROOTDIR.child(n)
+        if docs_dir.exists(): 
+            sphinx_build_html('html',docs_dir,['-a'])
+            sync_docs_data(docs_dir)
     
     
     
@@ -912,6 +931,4 @@ def run_tests_coverage():
     cov.html_report()    
     return rv
     
-
-
 

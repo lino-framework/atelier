@@ -1,19 +1,50 @@
 #!python
+"""
+USAGE : pp cmd1 [cmd2 ...]
+
+This will execute `fab cmd1 [cmd2 ...]` on each project,
+stopping upon the first error.
+
+Examples::
+
+  $ pp test 
+  $ pp alldocs pub
+  $ pp ci
+  $ pp sdist
+
+Projects are configured in %(config_file)s:
+%(PROJECTS)s
+
+"""
 import os
 import sys
 import subprocess
 
+config_file = '/etc/atelier/config.py'
+
+#~ env = dict()
+if os.path.exists(config_file):
+    #~ execfile(config_file,ENV)
+    execfile(config_file)
+
+
 # TODO: make these configurable:
-PROJECTS = 'atelier site north lino welfare'.split()
-PROJECTS_HOME = '/home/luc/hgwork'
+#~ PROJECTS = 'garden atelier site north lino welfare'.split()
+#~ PROJECTS_HOME = '/home/luc/hgwork'
 
 def main():
+    commands = sys.argv[1:]
+    
+    if '--help' in commands:
+        print __doc__ % globals()
+        return -1
+        
     for prj in PROJECTS:
         print "==== %s ====" % prj
         p = os.path.join(PROJECTS_HOME,prj)
         os.chdir(p)
         args = ["fab"]
-        args += sys.argv[1:]
+        args += commands
         rv = subprocess.call(args,cwd=p)
         if rv: return rv
     return 0

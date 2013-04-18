@@ -478,7 +478,7 @@ def configure(globals_dict,settings_module_name=None):
 
     HGWORK = DOCSDIR.ancestor(2)
     intersphinx_mapping = dict()
-    for n in ('atelier','site','north','lino','welfare'):
+    for n in ('atelier','site','north','lino','welfare','garden'):
         p = Path(HGWORK,n,'docs','.build','objects.inv')
         if p.exists():
             intersphinx_mapping[n] = ('http://%s.lino-framework.org' % n,p)
