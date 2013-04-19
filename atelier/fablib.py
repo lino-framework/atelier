@@ -636,7 +636,7 @@ def setup_sdist():
     """
     Write source distribution archive file.
     """
-    pipy_register()
+    #~ pipy_register()
     #~ puts(env.sdist_dir)
     args = ["python", "setup.py"]
     args += [ "sdist", "--formats=gztar" ]
