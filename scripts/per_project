@@ -35,7 +35,7 @@ if os.path.exists(config_file):
 def main():
     commands = sys.argv[1:]
     
-    if '--help' in commands:
+    if len(commands) == 0 or '-h' in commands or '--help' in commands:
         print __doc__ % globals()
         return -1
         
