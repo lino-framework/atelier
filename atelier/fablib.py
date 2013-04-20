@@ -227,6 +227,7 @@ def rename_data_url_friendly():
 def setup_babel_userdocs(babelcmd):
     """Create userdocs .po files if necessary."""
     userdocs = env.ROOTDIR.child('userdocs')
+    if not userdocs.isdir(): return
     locale_dir = userdocs.child('translations')
     for domain in locale_dir.listdir('*.pot',names_only=True):
         domain = domain[:-4]
