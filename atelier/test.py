@@ -103,7 +103,15 @@ class SubProcessTestCase(unittest.TestCase):
 
     def run_docs_doctests(self,filename):
         """
-        Run a simple doctest for specified file
+        Run a simple doctest for specified file after importing the 
+        docs `conf.py` (which causes the demo database to be activated).
+        
+        This is used e.g. for testing pages like
+        :ref:`welfare.tested.debts` or
+        :ref:`welfare.tested.courses`.
+        
+        These tests may fail for the simple reason that the demo database
+        has not been initialized (in that case, run `fab initdb`).
         """
         filename = 'docs/' + filename
         #~ p = self.project_root.child(*filename.split('/')).parent
@@ -115,13 +123,15 @@ class SubProcessTestCase(unittest.TestCase):
         #~ print p
         sys.path.insert(0,'docs')
         import conf # trigger Django startup
-        
-        from north.dbutils import set_language
-        set_language() 
-        """
-        Each test case starts with the site's default language.
-        Test cases are not required to restore the language afterwards.
-        """
+        try:
+            from north.dbutils import set_language
+            set_language() 
+            """
+            Each test case starts with the site's default language.
+            Test cases are not required to restore the language afterwards.
+            """
+        except ImportError:
+            pass # not everybody uses north
 
         doctest.testfile(filename, module_relative=False,encoding='utf-8')
         del sys.path[0]
