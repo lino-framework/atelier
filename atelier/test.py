@@ -114,7 +114,15 @@ class SubProcessTestCase(unittest.TestCase):
         #~ sys.path.insert(0,'.')
         #~ print p
         sys.path.insert(0,'docs')
-        import conf
+        import conf # trigger Django startup
+        
+        from north.dbutils import set_language
+        set_language() 
+        """
+        Each test case starts with the site's default language.
+        Test cases are not required to restore the language afterwards.
+        """
+
         doctest.testfile(filename, module_relative=False,encoding='utf-8')
         del sys.path[0]
         #~ os.chdir(oldcwd)
