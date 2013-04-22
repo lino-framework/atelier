@@ -20,3 +20,5 @@ class BasicTests(BaseTestCase):
 class PackagesTests(BaseTestCase):
     def test_packages(self): self.run_packages_test(SETUP_INFO['packages'])
 
+class SimpleTests(BaseTestCase):
+    def test_sphinxconf(self): self.run_simple_doctests('atelier/sphinxconf/__init__.py')

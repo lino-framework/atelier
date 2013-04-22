@@ -721,7 +721,8 @@ def checkin():
     #~ puts("Commit message refers to %s" % entry.absolute())
     args = ["hg","st"]
     local(' '.join(args))
-    must_confirm("OK to checkin %s ?" % env.SETUP_INFO['name'])
+    if not confirm("OK to checkin %s ?" % env.SETUP_INFO['name']):
+        return 
     args = ["hg","ci"]
     args += ['-m', entry.url ]
     cmd = ' '.join(args)
