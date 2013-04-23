@@ -11,9 +11,8 @@ Version 0.0.2 (in development)
   now activates the Site's default language for each testcase
   (when :mod:`north` is available)
 
-Version 0.0.1 (released :blogref:`20130413`)
+Version 0.0.1 (released :blogref:`20130422`)
 ============================================
-
 
 - This project was split out of 
   `djangosite <https://pypi.python.org/pypi/djangosite>` in 

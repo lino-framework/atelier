@@ -15,7 +15,7 @@ SETUP_INFO = dict(
   test_suite = 'tests',
   author = 'Luc Saffre',
   author_email = 'luc.saffre@gmail.com',
-  url = "http://code.google.com/p/python-atelier/",
+  url = "http://atelier.lino-framework.org",
   long_description="""\
 `atelier` is my collection of tools for people who write and 
 maintain multiple Python software projects.

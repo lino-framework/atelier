@@ -14,4 +14,4 @@ nobody except me who uses it.
 Let me know if you like it.
 
 
-Read more on http://code.google.com/p/python-atelier/
+Read more on http://atelier.lino-framework.org
