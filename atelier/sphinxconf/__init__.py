@@ -475,6 +475,8 @@ def configure(globals_dict,settings_module_name=None):
     filename = globals_dict.get('__file__')
     DOCSDIR = Path(filename).parent.absolute()
     sys.path.append(DOCSDIR)
+    
+    # TODO: make these configurable
 
     HGWORK = DOCSDIR.ancestor(2)
     intersphinx_mapping = dict()
@@ -484,7 +486,7 @@ def configure(globals_dict,settings_module_name=None):
             intersphinx_mapping[n] = ('http://%s.lino-framework.org' % n,p)
     p = Path(HGWORK,'welfare','userdocs','.build','fr','objects.inv')
     if p.exists():
-        intersphinx_mapping[n] = ('http://welfare-user.lino-framework.org',p)
+        intersphinx_mapping[n] = ('http://welfare-user.lino-framework.org/fr',p)
     #~ else:
         #~ raise Exception("%s does not exist" % p)
     #~ intersphinx_mapping.update(django = (
