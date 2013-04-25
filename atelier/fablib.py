@@ -158,8 +158,8 @@ def must_exist(p):
         
 def rmtree_after_confirm(p):
     if not p.exists(): return
-    must_confirm("OK to remove %s and everything under it?" % p.absolute())
-    p.rmtree()
+    if confirm("OK to remove %s and everything under it?" % p.absolute()):
+        p.rmtree()
     
 
 
