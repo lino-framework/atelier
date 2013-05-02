@@ -208,8 +208,8 @@ def extract_messages_userdocs():
     #~ args += ['-a'] # all files, not only outdated
     #~ args += ['-P'] # no postmortem
     #~ args += ['-Q'] # no output
-    if not env.tolerate_sphinx_warnings:
-        args += ['-W'] # consider warnings as errors
+    #~ if not env.tolerate_sphinx_warnings:
+        #~ args += ['-W'] # consider warnings as errors
     #~ args += ['-w',env.DOCSDIR.child('warnings.txt')]
     args += [userdocs]
     args += [userdocs.child("translations")]
