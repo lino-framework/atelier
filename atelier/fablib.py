@@ -713,16 +713,18 @@ def checkin():
     """
     Checkin & push to repository, using today's blog entry as commit message.
     """
+    args = ["hg","st"]
+    local(' '.join(args))
+    if not confirm("OK to checkin %s ?" % env.SETUP_INFO['name']):
+        return 
+        
     entry = get_blog_entry(datetime.date.today())
     #~ entry = Path(env.ROOTDIR,'..',env.blogger_project,*parts)
     #~ print env.ROOTDIR.parent.absolute()
     if not entry.path.exists():
         abort("%s does not exist!" % entry.path.absolute())
     #~ puts("Commit message refers to %s" % entry.absolute())
-    args = ["hg","st"]
-    local(' '.join(args))
-    if not confirm("OK to checkin %s ?" % env.SETUP_INFO['name']):
-        return 
+        
     args = ["hg","ci"]
     args += ['-m', entry.url ]
     cmd = ' '.join(args)
