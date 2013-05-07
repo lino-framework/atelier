@@ -1,4 +1,10 @@
 """
+Defines an extended TestCase whith shortcut methods that launch
+a subprocess.
+
+- :meth:`TestCase.run_packages_test`
+- :meth:`TestCase.run_subprocess`
+- :meth:`TestCase.run_simple_doctests`
 
 :copyright: Copyright 2013 by Luc Saffre.
 :license: BSD, see LICENSE for more details.
@@ -13,7 +19,7 @@ from setuptools import find_packages
 
 import six
         
-class SubProcessTestCase(unittest.TestCase):
+class TestCase(unittest.TestCase):
     "Deserves a docstring"
     project_root = NotImplementedError
     default_environ = dict()
@@ -30,16 +36,20 @@ class SubProcessTestCase(unittest.TestCase):
         declared_packages.sort()
         self.assertEqual(found_packages,declared_packages)
         
-    def run_subprocess(self,args,**kw): 
-        """
-        Additional keywords can be 
-        `cwd` : the working directory
-        """
+    def build_environment(self):
         env = dict(self.default_environ)
         for k in self.inheritable_envvars:
             v = os.environ.get(k,None)
             if v is not None:
                 env[k] = v
+        return env
+        
+    def run_subprocess(self,args,**kw): 
+        """
+        Additional keywords can be 
+        `cwd` : the working directory
+        """
+        env = self.build_environment()
         kw.update(env=env)
         #~ subprocess.check_output(args,**kw)
         #~ from StringIO import StringIO
@@ -59,80 +69,14 @@ class SubProcessTestCase(unittest.TestCase):
             print msg
             self.fail(msg)
         
-    def run_simple_doctests(self,n,**kw): # env.simple_doctests
+    def run_simple_doctests(self,filename,**kw): # env.simple_doctests
+        """
+        """
         #~ cmd = "python -m doctest %s" % filename    
         args = ["python"] 
         args += ["-m"]
         args += ["doctest"]
-        args += [n]
+        args += [filename]
         self.run_subprocess(args,**kw)
         
-    def run_docs_django_tests(self,n,**kw): # django_doctests
-        args = ["django-admin.py"] 
-        args += ["test"]
-        args += ["--settings=%s" % n]
-        args += ["--failfast"]
-        args += ["--verbosity=0"]
-        args += ["--pythonpath=%s" % self.project_root.child('docs')]
-        self.run_subprocess(args,**kw)
 
-    def run_django_manage_test(self,db,**kw): # run_django_databases_tests
-        p = self.project_root.child(*db.split('/'))
-        args = ["python","manage.py"] 
-        args += ["test"]
-        #~ args += more
-        args += ["--noinput"]
-        args += ["--failfast"]
-        #~ args += ["--settings=settings"]
-        args += ["--pythonpath=%s" % p.absolute()]
-        kw.update(cwd=p)
-        self.run_subprocess(args,**kw)
-        
-    #~ def run_django_admin_tests(self,settings_module,**kw): # django_admin_tests
-    def run_django_admin_test(self,settings_module,**kw): # django_admin_tests
-        args = ["django-admin.py"] 
-        args += ["test"]
-        args += ["--settings=%s" % settings_module]
-        args += ["--noinput"]
-        args += ["--failfast"]
-        args += ["--traceback"]
-        args += ["--verbosity=0"]
-        self.run_subprocess(args,**kw)
-    
-        #~ cmd = "django-admin.py test --settings=%s --verbosity=0 --failfast --traceback" % prj
-
-    def run_docs_doctests(self,filename):
-        """
-        Run a simple doctest for specified file after importing the 
-        docs `conf.py` (which causes the demo database to be activated).
-        
-        This is used e.g. for testing pages like
-        :ref:`welfare.tested.debts` or
-        :ref:`welfare.tested.courses`.
-        
-        These tests may fail for the simple reason that the demo database
-        has not been initialized (in that case, run `fab initdb`).
-        """
-        filename = 'docs/' + filename
-        #~ p = self.project_root.child(*filename.split('/')).parent
-        #~ os.environ['DJANGO_SETTINGS_MODULE']='settings'
-        #~ oldcwd = os.getcwd()
-        #~ self.project_root.child('docs').chdir()
-        #~ p.chdir()
-        #~ sys.path.insert(0,'.')
-        #~ print p
-        sys.path.insert(0,'docs')
-        import conf # trigger Django startup
-        try:
-            from north.dbutils import set_language
-            set_language() 
-            """
-            Each test case starts with the site's default language.
-            Test cases are not required to restore the language afterwards.
-            """
-        except ImportError:
-            pass # not everybody uses north
-
-        doctest.testfile(filename, module_relative=False,encoding='utf-8')
-        del sys.path[0]
-        #~ os.chdir(oldcwd)

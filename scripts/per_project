@@ -1,36 +1,34 @@
 #!python
 """
-USAGE : pp cmd1 [cmd2 ...]
+USAGE : per_project cmd1 [cmd2 ...]
 
-This will execute `fab cmd1 [cmd2 ...]` on each project,
+This will execute `cmd1 [cmd2 ...]` in the root directory of each project,
 stopping upon the first error.
 
 Examples::
 
-  $ pp test 
-  $ pp alldocs pub
-  $ pp ci
-  $ pp sdist
+  $ per_project fab test 
+  $ per_project fab alldocs pub
+  $ per_project fab ci
+  $ per_project fab sdist
+  $ per_project geany tests/__init__.py
 
-Projects are configured in %(config_file)s:
-%(PROJECTS)s
+Projects are configured in a file `/etc/atelier/config.py` 
+which is expected to define a global variable PROJECTS containing 
+a list of names of python modules to be managed in this atelier.
+For example something like::
+
+  # PROJECTS_HOME = '/home/me/hgwork'
+  PROJECTS = 'p1 p2 p3'.split()
+  
+
 
 """
 import os
 import sys
 import subprocess
 
-config_file = '/etc/atelier/config.py'
-
-#~ env = dict()
-if os.path.exists(config_file):
-    #~ execfile(config_file,ENV)
-    execfile(config_file)
-
-
-# TODO: make these configurable:
-#~ PROJECTS = 'garden atelier site north lino welfare'.split()
-#~ PROJECTS_HOME = '/home/luc/hgwork'
+import atelier
 
 def main():
     commands = sys.argv[1:]
@@ -39,13 +37,15 @@ def main():
         print __doc__ % globals()
         return -1
         
-    for prj in PROJECTS:
-        print "==== %s ====" % prj
-        p = os.path.join(PROJECTS_HOME,prj)
-        os.chdir(p)
-        args = ["fab"]
-        args += commands
-        rv = subprocess.call(args,cwd=p)
+    for prj in atelier.load_projects():
+        print "==== %s ====" % prj.nickname
+        #~ p = os.path.join(atelier.PROJECTS_HOME,prj)
+        #~ os.chdir(p)
+        #~ print prj.root_dir
+        os.chdir(prj.root_dir)
+        #~ args = ["fab"]
+        #~ args += commands
+        rv = subprocess.call(commands,cwd=prj.root_dir)
         if rv: return rv
     return 0
         

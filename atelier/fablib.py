@@ -29,7 +29,6 @@ This fablib uses the following `env` keys:
 import os
 import sys
 import doctest
-import pkg_resources
 import textwrap
 
 #~ def clean_sys_path():
@@ -48,6 +47,7 @@ import sphinx
 #~ import six
 #~ from distutils.core import run_setup
 
+import atelier
 #~ import djangosite ; print djangosite.__file__
 from atelier.utils import AttrDict
 from atelier import rstgen
@@ -61,8 +61,6 @@ from fabric.api import lcd
 
 #~ LONG_DATE_FORMAT = 
 
-PROJECTS = []
-
 class RstFile(object):
     def __init__(self,local_root,url_root,parts):
         self.path = local_root.child(*parts)
@@ -70,19 +68,6 @@ class RstFile(object):
         #~ self.parts = parts
         
       
-
-class Project(object):
-    def __init__(self,i,name):
-        self.index = i
-        self.name = name
-        self.dist = pkg_resources.get_distribution(name)
-        self.module = __import__(name)
-    
-def load_projects():
-    if len(PROJECTS) > 0: 
-        return 
-    for i,prj in enumerate(env.projects.split()):
-        PROJECTS.append(Project(i,prj))
       
 
 def setup_from_project(main_package=None):
@@ -102,12 +87,12 @@ def setup_from_project(main_package=None):
     #~ env.setdefault('work_root','')
     env.work_root = Path(env.work_root)
     env.sdist_dir = Path(env.sdist_dir)
-    env.django_doctests = []
-    env.django_admin_tests = []
-    env.bash_tests = []
+    #~ env.django_doctests = []
+    #~ env.django_admin_tests = []
+    #~ env.bash_tests = []
     #~ env.django_databases = []
-    env.simple_doctests = []
-    env.docs_doctests = []
+    #~ env.simple_doctests = []
+    #~ env.docs_doctests = []
     env.main_package = main_package
     env.tolerate_sphinx_warnings = False
     env.demo_databases = []
@@ -328,7 +313,6 @@ def compile_catalog():
 @task(alias='summary')
 def summary(*cmdline_args):
     """Print a summary to stdout."""
-    load_projects()
     headers = (
       #~ '#','Location',
       'Project','Old version','New version')
@@ -343,7 +327,7 @@ def summary(*cmdline_args):
             self.dist.version,
             self.module.__version__)
         
-    print rstgen.table(headers,[cells(p) for p in PROJECTS])
+    print rstgen.table(headers,[cells(p) for p in atelier.load_projects()])
         
   
 @task(alias='api')
@@ -808,96 +792,15 @@ Read more on %(url)s
     #~ local(cmd)
     #~ pipy_register()
     
-#~ @task(alias='t2')
-def unused_run_django_admin_tests():
-    """
-    Run `django-admin test` for each `env.django_admin_tests`.
-    """
-    for prj in env.django_admin_tests:
-        cmd = "django-admin.py test --settings=%s --verbosity=0 --failfast --traceback" % prj
-        local(cmd)
   
-#~ @task(alias='t3')
-def unused_run_django_doctests():
-    """
-    Run `django-admin test` in the `docs` dir for each `env.django_doctests`
-    """
-    #~ must_exist(env.DOCSDIR.child('manage.py'))
-    #~ env.DOCSDIR.chdir()
-    for prj in env.django_doctests:
-        args = ["django-admin.py"] 
-        args += ["test --settings=%s --failfast" % prj]
-        args += [" --verbosity=0"]
-        args += [" --pythonpath=%s" % env.DOCSDIR]
-        cmd = " ".join(args)
-        #~ cmd = "manage.py test --settings=%s --failfast" % prj
-        #~ cmd = "python runtest.py %s" % prj
-        local(cmd)
 
-#~ @task(alias='t1')
-def unused_run_simple_doctests():
-    """
-    Run a simple doctest for files specified in `env.simple_doctests`.
-    """
-    os.environ['DJANGO_SETTINGS_MODULE']='lino.projects.std.settings'
-    for filename in env.simple_doctests:
-        cmd = "python -m doctest %s" % filename
-        #~ print cmd
-        local(cmd)
-        #~ doctest.testfile(filename, module_relative=False,encoding='utf-8')
-
-#~ @task(alias='t4')
-def unused_run_docs_doctests():
-    """
-    Run a simple doctest for files specified in `env.docs_doctests`.
-    """
-    os.environ['DJANGO_SETTINGS_MODULE']='settings'
-    #~ with lcd(env.DOCSDIR):
-    env.DOCSDIR.chdir()
-    sys.path.insert(0,'.')
-    for filename in env.docs_doctests:
-        #~ cmd = "python -m doctest %s" % filename
-        #~ print cmd
-        #~ local(cmd)
-        #~ fn = env.DOCSDIR.child(*filename.split('/'))
-        doctest.testfile(filename, module_relative=False,encoding='utf-8')
-    del sys.path[0]
-
-#~ @task(alias='t5')
-def unused_run_django_databases_tests():    
-    """
-    Run "manage.py test" for each `env.django_databases`.
-    """
-    run_in_demo_databases('test',"--noinput",'--failfast')
-
-#~ @task(alias='t6')
-def unused_run_setup_tests():    
-    """
-    Run hardcoded tests related to packaging.
-    """
-    unittest.main(argv=['fab','SetupTest'],module=__name__,exit=False)
-
-#~ @task(alias='t7')
-def unused_run_bash_tests():
-    """
-    Run the commands in `env.bash_tests`.
-    """
-    for cmd in env.bash_tests:
-        local(cmd)
   
 @task(alias='test')
 def run_tests():
     """
-    Run all tests
+    Run the complete test suite of this project.
     """
     local('python setup.py -q test')
-    #~ run_django_admin_tests() # t2
-    #~ run_django_doctests() # t3
-    #~ run_simple_doctests() # t4
-    #~ run_django_databases_tests() # t5
-    #~ run_setup_tests() # t6
-    #~ run_bash_tests() # t7
-    #~ print "run_tests() done"
     
 
 #~ @task(alias='listpkg')
@@ -936,3 +839,15 @@ def run_tests_coverage():
     return rv
     
 
+
+@task(alias='esi')
+def edit_setup_info():
+    """
+    Edit the `setup_info.py` file of this project.
+    """
+    sif = Path(env.ROOTDIR,env.main_package,'setup_info.py')
+    print sif
+    args = [ os.environ['EDITOR'] ]
+    args += [sif]
+    local(' '.join(args))
+  
