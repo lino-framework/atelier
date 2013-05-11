@@ -242,9 +242,13 @@ class Table(object):
                 + self.margin)
         return '\n'.join(x)
         
-    def write(self,fd,data):
-        if len(data) == 0:
-            raise Exception("No rows in %r" % data)
+    def write(self,fd,data=[]):
+        """
+        rstgen.table(['header1','header2']) no longer raises an exception "No rows in []"
+        but renders a table with only headers and no rows.
+        """
+        #~ if len(data) == 0:
+            #~ raise Exception("No rows in %r" % data)
         rows = []
         for i,row in enumerate(data):
             assert len(row) == len(self.cols)
@@ -286,7 +290,7 @@ class Table(object):
           
 
 
-def table(headers,rows,**kw):
+def table(headers,rows=tuple(),**kw):
     t = Table(headers,**kw)
     return t.to_rst(rows)
     
@@ -304,8 +308,27 @@ def table(headers,rows,**kw):
     
     
     
-def ul(items):
+def ul(items,bullet="-"):
     r"""
+    Render the given `items` as a `bullet list 
+    <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#bullet-lists>`.
+    `items` must be an iterable whose elements are strings.
+    
+    If at least one item contains more than one paragraph, 
+    then all items are separated by an additional blank line.
+    
+    >>> print ul(["Foo","Bar","Baz"])
+    - Foo
+    - Bar
+    - Baz
+    <BLANKLINE>
+    >>> print ul([
+    ...   "Foo", "An item\nwith several lines of text.", "Bar"])
+    - Foo
+    - An item
+      with several lines of text.
+    - Bar
+    <BLANKLINE>
     >>> print ul([
     ...   "A first item\nwith several lines of text.",
     ...   "Another item with a nested paragraph:\n\n  Like this.\n\nWow."])
@@ -322,10 +345,53 @@ def ul(items):
 
     """
     s = ""
+    compressed = True
     for i in items:
-        text = '\n  '.join(i.splitlines())
-        s += "\n- %s\n" % text
+        if '\n\n' in i: 
+            compressed = False
+            break
+            
+    innersep = '\n' + (' ' * (len(bullet)+1))
+    if compressed:
+        for i in items:
+            text = innersep.join(i.splitlines())
+            s += "%s %s\n" % (bullet,text)
+    else:
+        for i in items:
+            text = innersep.join(i.splitlines())
+            s += "\n%s %s\n" % (bullet,text)
     return s
+    
+
+def ol(items,bullet="#."):
+    r"""
+    >>> print ol(["Foo","Bar","Baz"])
+    #. Foo
+    #. Bar
+    #. Baz
+    <BLANKLINE>
+    >>> print ol([
+    ...   "Foo", "An item\nwith several lines of text.", "Bar"])
+    #. Foo
+    #. An item
+       with several lines of text.
+    #. Bar
+    <BLANKLINE>
+    >>> print ol([
+    ...   "A first item\nwith several lines of text.",
+    ...   "Another item with a nested paragraph:\n\n  Like this.\n\nWow."])
+    <BLANKLINE>
+    #. A first item
+       with several lines of text.
+    <BLANKLINE>
+    #. Another item with a nested paragraph:
+    <BLANKLINE>
+         Like this.
+    <BLANKLINE>
+       Wow.
+    <BLANKLINE>
+    """
+    return ul(items,bullet)
     
     
     

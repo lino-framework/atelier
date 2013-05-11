@@ -355,7 +355,7 @@ def build_api(*cmdline_args):
     local(cmd)
     
 
-def sphinx_build_html(builder,docs_dir,cmdline_args=[],language=None):
+def sphinx_build(builder,docs_dir,cmdline_args=[],language=None):
     args = ['sphinx-build','-b',builder]
     args += cmdline_args
     #~ args += ['-a'] # all files, not only outdated
@@ -393,7 +393,7 @@ def build_userdocs(*cmdline_args):
     docs_dir = env.ROOTDIR.child('userdocs')
     if not docs_dir.exists(): return
     for lng in env.languages:
-        sphinx_build_html('html',docs_dir,cmdline_args,lng)
+        sphinx_build('html',docs_dir,cmdline_args,lng)
     dest = docs_dir.child('.build','index.html')
     docs_dir.child('index.html').copy(dest)
     sync_docs_data(docs_dir)
@@ -403,17 +403,17 @@ def sphinx_build_linkcheck(*cmdline_args):
     """sphinxbuild -b linkcheck docs."""
     docs_dir = env.ROOTDIR.child('docs')
     if docs_dir.exists(): 
-        sphinx_build_html('linkcheck',docs_dir,cmdline_args)
+        sphinx_build('linkcheck',docs_dir,cmdline_args)
     docs_dir = env.ROOTDIR.child('userdocs')
     if docs_dir.exists(): 
         lng = env.languages[0] # 
-        sphinx_build_html('linkcheck',docs_dir,cmdline_args,lng)
+        sphinx_build('linkcheck',docs_dir,cmdline_args,lng)
     
 @task(alias='docs')
 def build_docs(*cmdline_args): 
     """write_readme + build sphinx html docs."""
     write_readme()
-    sphinx_build_html('html',env.DOCSDIR,cmdline_args)
+    sphinx_build('html',env.DOCSDIR,cmdline_args)
     sync_docs_data(env.DOCSDIR)
     
 @task(alias='alldocs')
@@ -423,7 +423,7 @@ def build_all_docs():
     for n in ('docs','userdocs'):
         docs_dir = env.ROOTDIR.child(n)
         if docs_dir.exists(): 
-            sphinx_build_html('html',docs_dir,['-a'])
+            sphinx_build('html',docs_dir,['-a'])
             sync_docs_data(docs_dir)
     
     
