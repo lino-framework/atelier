@@ -11,7 +11,8 @@ config_file = '/etc/atelier/config.py'
 PROJECTS = []
 _PROJECT_INFOS = []
 
-execfile(config_file)
+if os.path.exists(config_file):
+    execfile(config_file)
 
 import pkg_resources
 from unipath import Path
