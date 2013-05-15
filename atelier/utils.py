@@ -7,9 +7,11 @@
 
 from __future__ import unicode_literals
 
+import os
 import sys
 import types
 import datetime
+import subprocess
 from dateutil import parser as dateparser
 
 
@@ -234,3 +236,32 @@ def unindent(s):
         return s
     return '\n'.join([ln[mini:] for ln in lines])
     
+
+class SubProcessParent(object):
+    default_environ = dict()
+    inheritable_envvars = ('VIRTUAL_ENV','PYTHONPATH','PATH')
+        
+    def build_environment(self):
+        env = dict(self.default_environ)
+        for k in self.inheritable_envvars:
+            v = os.environ.get(k,None)
+            if v is not None:
+                env[k] = v
+        return env
+        
+    def open_subprocess(self,args,**kw): 
+        """
+        Additional keywords will be passed to the 
+        `Popen constrctor <http://docs.python.org/2.7/library/subprocess.html#popen-constructor>`_.
+        They can be e.g.
+        `cwd` : the working directory
+        """
+        env = self.build_environment()
+        kw.update(env=env)
+        #~ subprocess.check_output(args,**kw)
+        #~ from StringIO import StringIO
+        #~ buffer = StringIO()
+        #~ kw.update(stdout=subprocess.PIPE)
+        #~ kw.update(stderr=subprocess.STDOUT)
+        return subprocess.Popen(args,**kw)
+        

@@ -18,12 +18,12 @@ import subprocess
 from setuptools import find_packages
 
 import six
-        
-class TestCase(unittest.TestCase):
+
+from atelier.utils import SubProcessParent
+
+class TestCase(unittest.TestCase,SubProcessParent):
     "Deserves a docstring"
     project_root = NotImplementedError
-    default_environ = dict()
-    inheritable_envvars = ('VIRTUAL_ENV','PYTHONPATH','PATH')
     #~ maxDiff = None
     
     def run_packages_test(self,declared_packages):
@@ -36,27 +36,12 @@ class TestCase(unittest.TestCase):
         declared_packages.sort()
         self.assertEqual(found_packages,declared_packages)
         
-    def build_environment(self):
-        env = dict(self.default_environ)
-        for k in self.inheritable_envvars:
-            v = os.environ.get(k,None)
-            if v is not None:
-                env[k] = v
-        return env
-        
     def run_subprocess(self,args,**kw): 
         """
-        Additional keywords can be 
-        `cwd` : the working directory
+        Run a subprocess, wait until it terminates, 
+        fail if the returncode is not 0.
         """
-        env = self.build_environment()
-        kw.update(env=env)
-        #~ subprocess.check_output(args,**kw)
-        #~ from StringIO import StringIO
-        #~ buffer = StringIO()
-        kw.update(stdout=subprocess.PIPE)
-        kw.update(stderr=subprocess.STDOUT)
-        p = subprocess.Popen(args,**kw)
+        p = self.open_subprocess(args,**kw)
         p.wait()
         rv = p.returncode
         #~ kw.update(stderr=buffer)
@@ -65,7 +50,7 @@ class TestCase(unittest.TestCase):
             cmd = ' '.join(args)
             #~ self.fail("%s returned %d:-----\n%s\n-----" % (cmd,rv,buffer.getvalue()))
             (out, err) = p.communicate()
-            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (cmd,env,rv,out)
+            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (cmd,kw,rv,out)
             print msg
             self.fail(msg)
         

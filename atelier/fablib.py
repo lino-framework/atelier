@@ -309,6 +309,27 @@ def compile_catalog():
 
 
 
+@task(alias='bss')
+def build_screenshots():
+    """create screenshot .jpg files if they don't exist."""
+    docs_dir = env.ROOTDIR.child('userdocs')
+    if not docs_dir.exists(): return
+    cwd = os.getcwd()
+    os.chdir(docs_dir)
+    import sys
+    sys.path.insert(0,'')
+    try:
+        import conf
+        from lino.utils import screenshots
+        for lng in env.languages:
+            screenshots.build_screenshots('gen/screenshots',lng)
+    finally:
+        os.chdir(cwd)
+        del sys.path[0]
+     
+        
+
+
 
 @task(alias='summary')
 def summary(*cmdline_args):
@@ -546,34 +567,9 @@ def initdb_demo():
     """
     Run initdb_demo on each demo database of this project (env.demo_databases)
     """
-    #~ for db in env.django_databases:
-        #~ args = ["django-admin"] 
-        #~ args += ["initdb_demo --settings=%s" % prj]
-        #~ args += [" --pythonpath=%s" % env.DOCSDIR]
-        #~ cmd = " ".join(args)
-        #~ local(cmd)
-        
-    #~ cwd = Path(os.getcwd())
-    #~ for db in env.django_databases:
-        #~ env.ROOTDIR.child(db).chdir()
-        #~ # cmd = 'python manage.py initdb --noinput'
-        #~ args = ["django-admin"] 
-        #~ args += ["initdb_demo --settings=settings"]
-        #~ args += [" --pythonpath=."]
-        #~ cmd = " ".join(args)
-        
-        #~ local(cmd)
-    #~ cwd.chdir()
-    
     run_in_demo_databases('initdb_demo',"--noinput")
-    #~ run_in_demo_database('initdb_demo',"--noinput")
     
    
-
-#~ @task()
-#~ def runserver():
-    #~ run_in_demo_databases('runserver')
-    
         
 @task()
 def unused_run_sphinx_doctest():
@@ -621,7 +617,7 @@ def setup_sdist():
     """
     Write source distribution archive file.
     """
-    #~ pipy_register()
+    #~ pypi_register()
     #~ puts(env.sdist_dir)
     args = ["python", "setup.py"]
     args += [ "sdist", "--formats=gztar" ]
@@ -634,7 +630,7 @@ def pypi_upload():
     """
     Upload sourcxe distribution to PyPI.
     """
-    pipy_register()
+    pypi_register()
     args = ["python", "setup.py"]
     args += ["sdist", "--formats=gztar" ]
     args += ["--dist-dir", env.sdist_dir.child(env.SETUP_INFO['name'])]
@@ -655,7 +651,7 @@ def pypi_upload():
     
   
 @task(alias='reg')
-def pipy_register():
+def pypi_register():
     """
     Register to PyPI.
     """
@@ -790,7 +786,7 @@ Read more on %(url)s
     env.DOCSDIR.child('index.rst').set_times()
     #~ cmd = "touch " + env.DOCSDIR.child('index.rst')
     #~ local(cmd)
-    #~ pipy_register()
+    #~ pypi_register()
     
   
 

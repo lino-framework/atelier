@@ -75,9 +75,9 @@ def srcref(mod):
     >>> print srcref(commands)
     None
 
-    >>> from lino_welfare.demo import settings
-    >>> print srcref(settings)
-    lino_welfare/demo/settings.py
+    >>> from lino_welfare.demo.settings import test
+    >>> print srcref(test)
+    lino_welfare/demo/settings/test.py
 
     """
     root_module_name = mod.__name__.split('.')[0]
