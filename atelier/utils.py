@@ -249,6 +249,12 @@ class SubProcessParent(object):
                 env[k] = v
         return env
         
+    def check_output(self,args,**kw): 
+        env = self.build_environment()
+        kw.update(env=env)
+        kw.update(stderr=subprocess.STDOUT)
+        return subprocess.check_output(args,**kw)
+        
     def open_subprocess(self,args,**kw): 
         """
         Additional keywords will be passed to the 
@@ -261,7 +267,7 @@ class SubProcessParent(object):
         #~ subprocess.check_output(args,**kw)
         #~ from StringIO import StringIO
         #~ buffer = StringIO()
-        #~ kw.update(stdout=subprocess.PIPE)
-        #~ kw.update(stderr=subprocess.STDOUT)
+        kw.update(stdout=subprocess.PIPE)
+        kw.update(stderr=subprocess.STDOUT)
         return subprocess.Popen(args,**kw)
         

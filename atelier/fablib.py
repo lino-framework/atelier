@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 """
-The fabric tasks I use to manage my projects.
-Use at your own risk.
+A library for `fabric` with tasks I use to manage my projects.
 
 To be used by creating a `fabfile.py` with at least the following 
 two lines::
@@ -9,18 +8,18 @@ two lines::
   from atelier.fablib import *
   setup_from_project("foobar")
   
+And optionally some more configuration like::  
   
-  env.django_admin_tests.append(...)
-  env.simple_doctests.append(...)
+  env.languages = "de fr et nl".split()
   env.tolerate_sphinx_warnings = True
   env.demo_databases.append('foobar.demo.settings')
   
 Where "foobar" is the name of your main package.
-  
+ 
 This fablib uses the following `env` keys:
 
 - `tolerate_sphinx_warnings` : whether `sphinx-build html` should tolerate warnings.
-
+- `languages` : whether `sphinx-build html` should tolerate warnings.
 - (consult the source code)
 
 :copyright: Copyright 2013 by Luc Saffre.
@@ -309,26 +308,16 @@ def compile_catalog():
 
 
 
-@task(alias='bss')
-def build_screenshots():
-    """create screenshot .jpg files if they don't exist."""
-    docs_dir = env.ROOTDIR.child('userdocs')
-    if not docs_dir.exists(): return
-    cwd = os.getcwd()
-    os.chdir(docs_dir)
-    import sys
-    sys.path.insert(0,'')
-    try:
-        import conf
-        from lino.utils import screenshots
-        for lng in env.languages:
-            screenshots.build_screenshots('gen/screenshots',lng)
-    finally:
-        os.chdir(cwd)
-        del sys.path[0]
-     
-        
-
+@task(alias='mss')
+def makescreenshots():
+    """generate screenshot .jpg files to gen/screenshots."""
+    run_in_demo_databases('makescreenshots','--traceback')
+    
+@task(alias='sss')
+def syncscreenshots():
+    """synchronize gen/screenshots to userdocs/gen/screenshots."""
+    run_in_demo_databases('syncscreenshots','--traceback','gen/screenshots','userdocs/gen/screenshots')
+    
 
 
 @task(alias='summary')
@@ -565,7 +554,7 @@ def clean_cache():
 @task(alias="initdb")
 def initdb_demo():
     """
-    Run initdb_demo on each demo database of this project (env.demo_databases)
+    Run initdb_demo on the demo database of this project (env.demo_databases)
     """
     run_in_demo_databases('initdb_demo',"--noinput")
     
