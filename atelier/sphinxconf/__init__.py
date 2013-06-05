@@ -21,11 +21,7 @@ import datetime
 from StringIO import StringIO
 
 from unipath import Path
-#~ import lino
 
-#~ from django.conf import settings
-
-#~ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from docutils import nodes, utils
 from docutils import statemachine
@@ -35,6 +31,7 @@ from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 from sphinx.util.nodes import split_explicit_title
 
+import atelier
 from atelier import rstgen
 
 from atelier.utils import i2d
@@ -450,13 +447,6 @@ def blogref_role(name, rawtext, text, lineno, inliner,options={}, content=[]):
                             refuri=get_blog_url(date),
                             **options)], []
     
-    
-
-
-
-
-
-
 
 
 
@@ -471,27 +461,41 @@ def configure(globals_dict,settings_module_name=None):
     This contains the things that all my Sphinx docs configuration 
     files have in common.
     
+    Automatically adds the intersphinx entries 
+    for projects managed in this atelier
+    by checking for an attribute `intersphinx_mapping` in 
+    the global namespace of each project's main module.
+    
+    
     """
     filename = globals_dict.get('__file__')
     DOCSDIR = Path(filename).parent.absolute()
     sys.path.append(DOCSDIR)
     
-    # TODO: make these configurable
 
-    HGWORK = DOCSDIR.ancestor(2)
     intersphinx_mapping = dict()
-    for n in ('atelier','site','north','lino','welfare','garden'):
-        p = Path(HGWORK,n,'docs','.build','objects.inv')
+    #~ for n in ('atelier','site','north','lino','welfare','patrols','faggio','garden'):
+    for prj in atelier.load_projects():
+        p = prj.root_dir.child('docs','.build','objects.inv')
+        #~ p = Path(HGWORK,n,'docs','.build','objects.inv')
         if p.exists():
-            intersphinx_mapping[n] = ('http://%s.lino-framework.org' % n,p)
+            #~ intersphinx_mapping[n] = ('http://%s.lino-framework.org' % n,p)
+            try:
+                intersphinx_mapping[prj.nickname] = (prj.module.intersphinx_url,p)
+            except AttributeError:
+                pass
+        
+    # TODO: make these configurable
+    HGWORK = DOCSDIR.ancestor(2)
     p = Path(HGWORK,'welfare','userdocs','.build','fr','objects.inv')
     if p.exists():
-        intersphinx_mapping[n] = ('http://welfare-user.lino-framework.org/fr',p)
-    #~ else:
-        #~ raise Exception("%s does not exist" % p)
+        intersphinx_mapping['welfareuserfr'] = ('http://welfare-user.lino-framework.org/fr',p)
+        
+        
     #~ intersphinx_mapping.update(django = (
         #~ 'http://docs.djangoproject.com/en/dev/', 
         #~ 'http://docs.djangoproject.com/en/dev/_objects/'))
+        
     globals_dict.update(intersphinx_mapping=intersphinx_mapping)
     
     globals_dict.update(extensions = [

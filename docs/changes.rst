@@ -7,6 +7,11 @@ Changes in `atelier`
 Version 0.0.3 (in development)
 ==============================
 
+- :func:`atelier.sphinxconf.configure` now 
+  automatically adds the intersphinx entries 
+  for projects managed in this atelier.
+
+
 - The `PROJECTS` variable in `/etc/atelier/config.py` is now a list of 
   importable Python module names, and their local path will be 
   automatically extracted. 

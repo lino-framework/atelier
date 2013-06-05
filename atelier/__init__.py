@@ -2,6 +2,8 @@ import os
 execfile(os.path.join(os.path.dirname(__file__),'setup_info.py'))
 __version__ = SETUP_INFO['version'] 
 
+intersphinx_url = "http://atelier.lino-framework.org"
+
 config_file = '/etc/atelier/config.py'
 
 #~ env = dict()
