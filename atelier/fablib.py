@@ -556,7 +556,7 @@ def initdb_demo():
     """
     Run initdb_demo on the demo database of this project (env.demo_databases)
     """
-    run_in_demo_databases('initdb_demo',"--noinput")
+    run_in_demo_databases('initdb_demo',"--noinput",'--traceback')
     
    
         
