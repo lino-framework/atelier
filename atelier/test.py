@@ -56,12 +56,17 @@ class TestCase(unittest.TestCase,SubProcessParent):
         
     def run_simple_doctests(self,filename,**kw): # env.simple_doctests
         """
+        run doctest of given file in a subprocess
         """
         #~ cmd = "python -m doctest %s" % filename    
         args = ["python"] 
         args += ["-m"]
-        args += ["doctest"]
+        args += ["atelier.doctest_utf8"]
+        #~ args += ["doctest"]
         args += [filename]
         self.run_subprocess(args,**kw)
-        
 
+    #~ def run_simple_doctests(self,filename,**kw): # env.simple_doctests
+        #~ doctest.testfile(os.path.abspath(filename),
+            #~ encoding='utf-8',
+            #~ module_relative=False)

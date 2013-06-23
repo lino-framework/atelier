@@ -255,6 +255,7 @@ def compile_catalog_userdocs():
 #~ @task(alias='im')
 def init_catalog_code():
     """Create code .po files if necessary."""
+    from north import to_locale
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
@@ -265,7 +266,7 @@ def init_catalog_code():
             args = ["python", "setup.py"]
             args += [ "init_catalog"]
             args += [ "--domain django"]
-            args += [ "-l" , loc ]
+            args += [ "-l" , to_locale(loc) ]
             args += [ "-d" , locale_dir ]
             #~ args += [ "-o" , f ]
             args += [ "-i" , locale_dir.child('django.pot') ]
@@ -278,15 +279,17 @@ def init_catalog_code():
 #~ @task(alias='um')
 def update_catalog_code():
     """Update .po files from .pot file."""
+    from north import to_locale
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
         args = ["python", "setup.py"]
         args += [ "update_catalog"]
         args += [ "--domain django"]
-        args += [ "-d" , locale_dir ]
+        #~ args += [ "-d" , locale_dir ]
+        args += [ "-o" , locale_dir.child(loc,'LC_MESSAGES','django.po') ]
         args += [ "-i", locale_dir.child("django.pot")]
-        args += [ "-l" , loc ]
+        args += [ "-l" , to_locale(loc) ]
         cmd = ' '.join(args)
         #~ must_confirm(cmd)
         local(cmd)
@@ -294,14 +297,17 @@ def update_catalog_code():
 @task(alias='cm')
 def compile_catalog():
     """Compile .po files to .mo files."""
+    from north import to_locale
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
         args = ["python", "setup.py"]
         args += [ "compile_catalog"]
+        args += [ "-i" , locale_dir.child(loc,'LC_MESSAGES','django.po') ]
+        args += [ "-o" , locale_dir.child(loc,'LC_MESSAGES','django.mo') ]
         args += [ "--domain django"]
-        args += [ "-d" , locale_dir ]
-        args += [ "-l" , loc ]
+        #~ args += [ "-d" , locale_dir ]
+        args += [ "-l" , to_locale(loc) ]
         cmd = ' '.join(args)
         #~ must_confirm(cmd)
         local(cmd)

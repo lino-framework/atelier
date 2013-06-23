@@ -7,6 +7,19 @@ Changes in `atelier`
 Version 0.0.3 (in development)
 ==============================
 
+-   (:blogref:`20130623`) 
+    :meth:`atelier.test.TestCase.run_simple_doctests` 
+    didn't yet support non-ascii characters.
+
+    Now it does. 
+    Had to add a new module :mod:`atelier.doctest_utf8`
+    for this. 
+    Because we need to run each doctest in a separate subprocess 
+    and because the command-line interface
+    of `python -m doctest`  has no way to specify an encoding 
+    of the input file.
+
+
 - :func:`atelier.sphinxconf.configure` now 
   automatically adds the intersphinx entries 
   for projects managed in this atelier.
