@@ -13,6 +13,10 @@ Thanks to
 
 
 """
+
+import logging
+logger = logging.getLogger(__name__)
+
   
 import os
 import sys
@@ -21,7 +25,6 @@ import datetime
 from StringIO import StringIO
 
 from unipath import Path
-
 
 from docutils import nodes, utils
 from docutils import statemachine
@@ -474,7 +477,6 @@ def configure(globals_dict,settings_module_name=None):
     
 
     intersphinx_mapping = dict()
-    #~ for n in ('atelier','site','north','lino','welfare','patrols','faggio','garden'):
     for prj in atelier.load_projects():
         p = prj.root_dir.child('docs','.build','objects.inv')
         #~ p = Path(HGWORK,n,'docs','.build','objects.inv')
@@ -483,6 +485,7 @@ def configure(globals_dict,settings_module_name=None):
             try:
                 intersphinx_mapping[prj.nickname] = (prj.module.intersphinx_url,p)
             except AttributeError:
+                logger.warning("No intersphinx_url in %s",prj.module)
                 pass
         
     # TODO: make these configurable
