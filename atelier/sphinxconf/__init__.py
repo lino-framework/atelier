@@ -489,10 +489,10 @@ def configure(globals_dict,settings_module_name=None):
                 pass
         
     # TODO: make these configurable
-    HGWORK = DOCSDIR.ancestor(2)
-    p = Path(HGWORK,'welfare','userdocs','.build','fr','objects.inv')
-    if p.exists():
-        intersphinx_mapping['welfareuserfr'] = ('http://welfare-user.lino-framework.org/fr',p)
+    #~ HGWORK = DOCSDIR.ancestor(2)
+    #~ p = Path(HGWORK,'welfare','userdocs','.build','fr','objects.inv')
+    #~ if p.exists():
+        #~ intersphinx_mapping['welfareuserfr'] = ('http://welfare-user.lino-framework.org/fr',p)
         
         
     #~ intersphinx_mapping.update(django = (
