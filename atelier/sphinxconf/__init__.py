@@ -494,6 +494,28 @@ def configure(globals_dict,settings_module_name=None):
     #~ if p.exists():
         #~ intersphinx_mapping['welfareuserfr'] = ('http://welfare-user.lino-framework.org/fr',p)
         
+    # TODO: make these configurable
+    HGWORK = Path(__file__).ancestor(4).absolute()
+    def f(prj,lng=None):
+        if lng:
+            p = Path(HGWORK,prj,'userdocs','.build',lng,'objects.inv')
+        else:
+            p = Path(HGWORK,prj,'userdocs','.build','objects.inv')
+        if p.exists():
+            if lng:
+                k = '%suser%s' % (prj,lng)
+                url = 'http://%s-user.lino-framework.org/%s' % (prj,lng)
+            else:
+                k = '%suser' % prj
+                url = 'http://%s-user.lino-framework.org' % prj
+            intersphinx_mapping[k] = (url,p)
+        else:
+            print "No path", p
+    f('welfare','fr')
+    f('faggio')
+    
+        
+        
         
     #~ intersphinx_mapping.update(django = (
         #~ 'http://docs.djangoproject.com/en/dev/', 
