@@ -407,10 +407,15 @@ class ComplexTableDirective(InsertInputDirective):
 
 
 def get_blog_url(today):
-    blogger_project = "lino"
-    url_root = "http://code.google.com/p/%s/source/browse/" % blogger_project
-    parts = ('docs','blog',str(today.year),today.strftime("%m%d.rst"))
-    url = url_root + "/".join(parts)
+    """
+    TODO: make this configurable
+    """
+    #~ blogger_project = "lino"
+    #~ url_root = "http://code.google.com/p/%s/source/browse/" % blogger_project
+    #~ parts = ('docs','blog',str(today.year),today.strftime("%m%d.rst"))
+    #~ url = url_root + "/".join(parts)
+    
+    url = today.strftime("http://www.lino-framework.org/blog/%Y/%m%d.html")
     return url
 
 
