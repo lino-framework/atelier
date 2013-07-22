@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-"""
+#~ Copyright 2011-2013 by Luc Saffre.
+#~ License: BSD, see LICENSE for more details.
 
+"""
 This Sphinx extension defines the 
 ``blogger_year`` and 
 ``blogger_index``
-directives and the ``blogref`` text role.
+directives.
 
+Usage: add the following to your `conf.py`::
 
-:copyright: Copyright 2011-2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
+  extensions += ['atelier.sphinxconf.blog']
 
 Thanks to 
 

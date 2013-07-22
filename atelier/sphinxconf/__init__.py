@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
+#~ Copyright 2011-2013 by Luc Saffre.
+#~ License: BSD, see LICENSE for more details.
 """
 
 Sphinx setup used to build the Lino documentation.
-
-:copyright: Copyright 2011-2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
 
 Thanks to 
 
@@ -314,7 +313,7 @@ class Django2rstDirective(Py2rstDirective):
         
 class TextImageDirective(InsertInputDirective):
     """
-    See Blog entry 2013/0116 for documentation.
+    See :blogref:`20130116` for documentation.
     """
     required_arguments = 1
     final_argument_whitespace = True
@@ -408,14 +407,18 @@ class ComplexTableDirective(InsertInputDirective):
 
 def get_blog_url(today):
     """
-    TODO: make this configurable
+    Return the URL to your developer blog entry of that date.
     """
-    #~ blogger_project = "lino"
-    #~ url_root = "http://code.google.com/p/%s/source/browse/" % blogger_project
-    #~ parts = ('docs','blog',str(today.year),today.strftime("%m%d.rst"))
-    #~ url = url_root + "/".join(parts)
+    if today.year < 2013: # TODO: make this configurable
+        blogger_project = "lino"
+        url_root = "http://code.google.com/p/%s/source/browse/" % blogger_project
+        parts = ('docs','blog',str(today.year),today.strftime("%m%d.rst"))
+        return url_root + "/".join(parts)
     
-    url = today.strftime("http://www.lino-framework.org/blog/%Y/%m%d.html")
+    #~ url = today.strftime("http://www.lino-framework.org/blog/%Y/%m%d.html")
+    if not atelier.BLOG_URL:
+        raise Exception("Please set BLOG_URL in your `/etc/atelier/config.py` to something like 'http://www.example.com/blog/%Y/%m%d.html'")
+    url = today.strftime(atelier.BLOG_URL)
     return url
 
 
