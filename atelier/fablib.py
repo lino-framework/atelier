@@ -58,6 +58,12 @@ from fabric.utils import abort, fastprint, puts, warn
 from fabric.contrib.console import confirm
 from fabric.api import lcd
 
+MAIN_LANGUAGE_INDEX = True
+"""
+True means that for userdocs the first item of env.languages 
+is the "default" language at top-level url.
+"""
+
 #~ LONG_DATE_FORMAT = 
 
 class RstFile(object):
@@ -69,7 +75,7 @@ class RstFile(object):
       
       
 
-def setup_from_project(main_package=None):
+def setup_from_project(main_package=None,settings_module_name=None):
   
     #~ env.docs_rsync_dest = 'luc@lino-framework.org'
     #~ env.sdist_dir = '../lino/docs/dl'
@@ -112,6 +118,14 @@ def setup_from_project(main_package=None):
         env.SETUP_INFO = SETUP_INFO
     else:
         env.SETUP_INFO = None
+        
+    if settings_module_name is not None:
+        os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
+        from django.conf import settings
+        settings.SITE.startup()
+        env.languages = [lng.django_code for lng in settings.SITE.languages]
+        env.demo_databases.append(settings_module_name)
+        
         
     
 
@@ -216,6 +230,7 @@ def setup_babel_userdocs(babelcmd):
     for domain in locale_dir.listdir('*.pot',names_only=True):
         domain = domain[:-4]
         for loc in env.languages:
+          if loc != 'en':
             po_file = Path(locale_dir,loc,'LC_MESSAGES','%s.po' % domain)
             mo_file = Path(locale_dir,loc,'LC_MESSAGES','%s.mo' % domain)
             pot_file = Path(locale_dir,'%s.pot' % domain)
@@ -259,6 +274,7 @@ def init_catalog_code():
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
+      if loc != 'en':
         f = locale_dir.child(loc,'LC_MESSAGES','django.po')
         if f.exists():
             print "Skip %s because file exists." % f
@@ -283,6 +299,7 @@ def update_catalog_code():
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
+      if loc != 'en':
         args = ["python", "setup.py"]
         args += [ "update_catalog"]
         args += [ "--domain django"]
@@ -301,6 +318,7 @@ def compile_catalog():
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
+      if loc != 'en':
         args = ["python", "setup.py"]
         args += [ "compile_catalog"]
         args += [ "-i" , locale_dir.child(loc,'LC_MESSAGES','django.po') ]
@@ -379,10 +397,12 @@ def sphinx_build(builder,docs_dir,cmdline_args=[],language=None):
     #~ args += ['-Q'] # no output
     build_dir = docs_dir.child('.build')
     build_root = docs_dir.child('.build')
-    if language:
+    if language is not None:
         args += ['-D', 'language=' + language] 
         args += ['-A', 'language=' + language] # needed in select_lang.html template
-        build_dir = build_dir.child(language)
+        if language != env.languages[0] or not MAIN_LANGUAGE_INDEX:
+            build_dir = build_dir.child(language)
+            print 20130726, build_dir
     if env.tolerate_sphinx_warnings:
         args += ['-w',docs_dir.child('warnings_%s.txt' % builder)]
     else:
@@ -410,8 +430,9 @@ def build_userdocs(*cmdline_args):
     if not docs_dir.exists(): return
     for lng in env.languages:
         sphinx_build('html',docs_dir,cmdline_args,lng)
-    dest = docs_dir.child('.build','index.html')
-    docs_dir.child('index.html').copy(dest)
+    if not MAIN_LANGUAGE_INDEX:
+        dest = docs_dir.child('.build','index.html')
+        docs_dir.child('index.html').copy(dest)
     sync_docs_data(docs_dir)
     
 @task(alias='linkcheck')
@@ -431,16 +452,18 @@ def build_docs(*cmdline_args):
     write_readme()
     sphinx_build('html',env.DOCSDIR,cmdline_args)
     sync_docs_data(env.DOCSDIR)
-    
-@task(alias='alldocs')
-def build_all_docs(): 
-    """write_readme + build ALL sphinx html docs."""
-    write_readme()
-    for n in ('docs','userdocs'):
-        docs_dir = env.ROOTDIR.child(n)
-        if docs_dir.exists(): 
-            sphinx_build('html',docs_dir,['-a'])
-            sync_docs_data(docs_dir)
+
+if False:
+        
+    @task(alias='alldocs')
+    def build_all_docs(): 
+        """write_readme + build ALL sphinx html docs."""
+        write_readme()
+        for n in ('docs','userdocs'):
+            docs_dir = env.ROOTDIR.child(n)
+            if docs_dir.exists(): 
+                sphinx_build('html',docs_dir,['-a'])
+                sync_docs_data(docs_dir)
     
     
     

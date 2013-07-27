@@ -1,0 +1,17 @@
+<p align="center">
+{%- for lng in settings.SITE.languages %} 
+{%- if lng.django_code == language %}
+  {{lng.django_code.upper()}}
+{%- else %}
+{%- if language == settings.SITE.languages[0].django_code %}
+  <a href="{{pathto(lng.django_code+"/"+pagename)}}">{{lng.django_code.upper()}}</a> 
+{%- else %}
+  {%- if lng.index == 0 %}
+  <a href="{{pathto("../"+pagename)}}">{{lng.django_code.upper()}}</a> 
+  {%- else %}
+  <a href="{{pathto("../"+lng.django_code+"/"+pagename)}}">{{lng.django_code.upper()}}</a> 
+  {%- endif %}
+{%- endif %}
+{%- endif %}
+{%- endfor %} 
+</p>

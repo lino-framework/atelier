@@ -504,23 +504,17 @@ def configure(globals_dict,settings_module_name=None):
         
     # TODO: make these configurable
     HGWORK = Path(__file__).ancestor(4).absolute()
-    def f(prj,lng=None):
-        if lng:
-            p = Path(HGWORK,prj,'userdocs','.build',lng,'objects.inv')
-        else:
-            p = Path(HGWORK,prj,'userdocs','.build','objects.inv')
+    def f(prj):
+        p = Path(HGWORK,prj,'userdocs','.build','objects.inv')
         if p.exists():
-            if lng:
-                k = '%suser%s' % (prj,lng)
-                url = 'http://%s-user.lino-framework.org/%s' % (prj,lng)
-            else:
-                k = '%suser' % prj
-                url = 'http://%s-user.lino-framework.org' % prj
+            k = '%suser' % prj
+            url = 'http://%s-user.lino-framework.org' % prj
             intersphinx_mapping[k] = (url,p)
         else:
-            print "No path", p
-    f('welfare','fr')
+            print "No path %s" % p
+    f('welfare')
     f('faggio')
+    f('patrols')
     
         
         
@@ -555,7 +549,10 @@ def configure(globals_dict,settings_module_name=None):
         settings.SITE.startup()
     globals_dict.update(setup=setup)
 
-        
+    globals_dict.update(template_bridge = 'atelier.sphinxconf.DjangoTemplateBridge')
+    
+    globals_dict.update(templates_path = ['.templates',Path(__file__).parent.absolute()])
+
 
 def setup2(app):
     # also used by `vor/conf.py`
@@ -618,3 +615,27 @@ def version2rst(self,m):
 
 
 
+
+#~ from sphinx.application import TemplateBridge
+
+from sphinx.jinja2glue import BuiltinTemplateLoader
+#~ class DjangoTemplateBridge(TemplateBridge):
+class DjangoTemplateBridge(BuiltinTemplateLoader):
+    """
+    `template_bridge <http://sphinx-doc.org/config.html#confval-template_bridge>`_ 
+    
+    Adds a template variable ``settings`` 
+    to the Sphinx template context
+    (which cannot be done using 
+    `html_context <http://sphinx-doc.org/config.html#confval-html_context>`_
+    because Django settings are not pickleable.
+    """
+    def render(self,template, context):
+        from django.conf import settings
+        context.update(settings=settings)
+        return super(DjangoTemplateBridge,self).render(template, context)
+
+    def render_string(self, source, context):
+        from django.conf import settings
+        context.update(settings=settings)
+        return super(DjangoTemplateBridge,self).render_string(source, context)
