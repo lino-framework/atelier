@@ -87,7 +87,9 @@ def setup_from_project(main_package=None,settings_module_name=None):
     env.ROOTDIR = Path().absolute()
 
     env.project_name = env.ROOTDIR.absolute().name
-
+    
+    #~ env.userdocs_base_language = None
+    
     env.setdefault('long_date_format',"%Y%m%d (%A, %d %B %Y)"  )
     #~ env.setdefault('work_root','')
     env.work_root = Path(env.work_root)
@@ -123,8 +125,9 @@ def setup_from_project(main_package=None,settings_module_name=None):
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
         from django.conf import settings
         settings.SITE.startup()
-        env.languages = [lng.django_code for lng in settings.SITE.languages]
+        env.languages = [lng.name for lng in settings.SITE.languages]
         env.demo_databases.append(settings_module_name)
+        #~ env.userdocs_base_language = settings.SITE.languages[0].name
         
         
     
@@ -230,7 +233,7 @@ def setup_babel_userdocs(babelcmd):
     for domain in locale_dir.listdir('*.pot',names_only=True):
         domain = domain[:-4]
         for loc in env.languages:
-          if loc != 'en':
+          if loc != env.languages[0]:
             po_file = Path(locale_dir,loc,'LC_MESSAGES','%s.po' % domain)
             mo_file = Path(locale_dir,loc,'LC_MESSAGES','%s.mo' % domain)
             pot_file = Path(locale_dir,'%s.pot' % domain)
@@ -299,7 +302,7 @@ def update_catalog_code():
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
-      if loc != 'en':
+      if loc != env.languages[0]:
         args = ["python", "setup.py"]
         args += [ "update_catalog"]
         args += [ "--domain django"]
@@ -318,7 +321,7 @@ def compile_catalog():
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
-      if loc != 'en':
+      if loc != env.languages[0]:
         args = ["python", "setup.py"]
         args += [ "compile_catalog"]
         args += [ "-i" , locale_dir.child(loc,'LC_MESSAGES','django.po') ]
@@ -402,7 +405,7 @@ def sphinx_build(builder,docs_dir,cmdline_args=[],language=None):
         args += ['-A', 'language=' + language] # needed in select_lang.html template
         if language != env.languages[0] or not MAIN_LANGUAGE_INDEX:
             build_dir = build_dir.child(language)
-            print 20130726, build_dir
+            #~ print 20130726, build_dir
     if env.tolerate_sphinx_warnings:
         args += ['-w',docs_dir.child('warnings_%s.txt' % builder)]
     else:
@@ -444,6 +447,7 @@ def sphinx_build_linkcheck(*cmdline_args):
     docs_dir = env.ROOTDIR.child('userdocs')
     if docs_dir.exists(): 
         lng = env.languages[0] # 
+        #~ lng = env.userdocs_base_language
         sphinx_build('linkcheck',docs_dir,cmdline_args,lng)
     
 @task(alias='docs')
