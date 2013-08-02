@@ -77,12 +77,6 @@ class RstFile(object):
 
 def setup_from_project(main_package=None,settings_module_name=None):
   
-    #~ env.docs_rsync_dest = 'luc@lino-framework.org'
-    #~ env.sdist_dir = '../lino/docs/dl'
-
-    #~ HOME = Path(os.path.expanduser("~"))
-    #~ REMOTE = AttrDict(
-      #~ lf='lino-framework.org')
       
     env.ROOTDIR = Path().absolute()
 
@@ -112,10 +106,10 @@ def setup_from_project(main_package=None,settings_module_name=None):
     env.DOCSDIR = Path(env.ROOTDIR,'docs')
     #~ env.BUILDDIR = Path(env.DOCSDIR,'.build')
 
-    if not Path(env.ROOTDIR,'setup.py').exists():
-        raise Exception("You must call 'fab' from a project's root directory.")
         
     if env.main_package:
+        if not Path(env.ROOTDIR,'setup.py').exists():
+            raise Exception("You must call 'fab' from a project's root directory.")
         execfile(env.ROOTDIR.child(env.main_package,'setup_info.py'),globals()) # will set SETUP_INFO 
         env.SETUP_INFO = SETUP_INFO
     else:
@@ -508,13 +502,17 @@ def publish():
     """
     Upload docs to public web server.
     """
-    build_dir = env.DOCSDIR.child('.build')
-    dest_url = env.docs_rsync_dest + ':~/public_html/' + env.project_name
-    publish_docs(build_dir,dest_url)
+    if not env.docs_rsync_dest:
+        raise Exception("Must set env.docs_rsync_dest in `fabfile.py` or `~/.fabricrc`")
+        
+    if env.DOCSDIR.exists():
+        build_dir = env.DOCSDIR.child('.build')
+        dest_url = env.docs_rsync_dest % (env.project_name)
+        publish_docs(build_dir,dest_url)
     
     build_dir = env.ROOTDIR.child('userdocs','.build')
-    dest_url = env.docs_rsync_dest + ':~/public_html/' + env.project_name + '-userdocs'
     if build_dir.exists():
+        dest_url = env.docs_rsync_dest % (env.project_name + '-userdocs')
         publish_docs(build_dir,dest_url)
     #~ if env.languages:
         #~ for lang in env.languages:
