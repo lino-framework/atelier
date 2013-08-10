@@ -39,11 +39,16 @@ class AttrDict(dict):
     
     """
   
-    #~ def __getattr__(self, name):
-        #~ return self[name]
-        
     def __getattr__(self, name):
-        return self.get(name)
+        try:
+            return self[name]
+        except KeyError:
+            raise AttributeError(
+                "AttrDict instance has no key '%s' (keys are %s)" % (
+                    name,', '.join(self.keys())))
+        
+    #~ def __getattr__(self, name):
+        #~ return self.get(name)
         
     #~ def __getattr__(self, name,*args):
         #~ return self.get(name,*args)
