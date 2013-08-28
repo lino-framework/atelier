@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#~ Copyright 2011-2013 by Luc Saffre.
-#~ License: BSD, see LICENSE for more details.
+## Copyright 2011-2013 by Luc Saffre.
+## License: BSD, see LICENSE for more details.
 """
 
 Sphinx setup used to build the Lino documentation.
@@ -280,14 +280,19 @@ class Py2rstDirective(InsertInputDirective):
 
 class Django2rstDirective(Py2rstDirective):
     def get_context(self):
-        from djangosite.dbutils import set_language
+        #~ from djangosite.dbutils import set_language
         from django.conf import settings
         context = super(Django2rstDirective,self).get_context()
-        lng = self.state.document.settings.env.config.language
-        set_language(lng)
+        #~ set_language(lng)
         context.update(settings=settings)
         context.update(settings.SITE.modules)
         return context
+        
+    def output_from_exec(self,code):
+        lng = self.state.document.settings.env.config.language
+        from django.utils import translation
+        with translation.override(lng):
+            return super(Django2rstDirective,self).output_from_exec(code)
         
         
         
