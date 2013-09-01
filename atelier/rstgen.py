@@ -147,6 +147,30 @@ the result will be a complex table:
   | and the Grenadines |               |        |
   +--------------------+---------------+--------+
   
+  
+rstgen.header() uses the following system of header levels::
+
+   =======
+   Level 1
+   =======
+   
+   -------
+   Level 2
+   -------
+   
+   ~~~~~~~
+   Level 3
+   ~~~~~~~
+   
+   Level 4
+   =======
+
+   Level 5
+   -------
+   
+   Level 6
+   ~~~~~~~
+  
 """
 
 #~ import cStringIO as StringIO
@@ -178,21 +202,28 @@ def header(level,text):
         result.write(s + '\n')
     _write_header(writeln,level,text)
     return result.getvalue()
+    
         
 def _write_header(writeln,level,s):
     if level == 1:
         writeln('=' * len(s))
     elif level == 2:
         writeln('-' * len(s))
+    elif level == 3:
+        writeln('~' * len(s))
     writeln(s)
     if level == 1:
         writeln('=' * len(s))
     elif level == 2:
         writeln('-' * len(s))
     elif level == 3:
-        writeln('=' * len(s))
+        writeln('~' * len(s))
     elif level == 4:
+        writeln('=' * len(s))
+    elif level == 5:
         writeln('-' * len(s))
+    elif level == 6:
+        writeln('~' * len(s))
     else:
         raise Exception("Invalid level %d" % level)
     writeln()
