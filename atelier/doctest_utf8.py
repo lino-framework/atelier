@@ -1,4 +1,7 @@
 # -*- coding: UTF-8 -*-
+# Copyright 2013 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
+
 """
 
 A wrapper for Python's doctest.
@@ -9,8 +12,6 @@ of a (non-.py) input file.
 
 Code originally copied from Python 2.7 doctest.py
 
-:copyright: Copyright 2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
 """
 
 import os
@@ -18,7 +19,15 @@ import sys
 import doctest
 
 def _test():
+    
     testfiles = [arg for arg in sys.argv[1:] if arg and arg[0] != '-']
+    if not testfiles:
+        name = os.path.basename(sys.argv[0])
+        if '__loader__' in globals():          # python -m
+            name, _ = os.path.splitext(name)
+        print("usage: {0} [-v] file ...".format(name))
+        return 2
+    
     for filename in testfiles:
         if filename.endswith(".py"):
             # It is a module -- insert its dir into sys.path and try to

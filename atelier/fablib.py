@@ -109,7 +109,7 @@ def setup_from_project(main_package=None,settings_module_name=None):
         
     if env.main_package:
         if not Path(env.ROOTDIR,'setup.py').exists():
-            raise Exception("You must call 'fab' from a project's root directory.")
+            raise RuntimeError("You must call 'fab' from a project's root directory.")
         execfile(env.ROOTDIR.child(env.main_package,'setup_info.py'),globals()) # will set SETUP_INFO 
         env.SETUP_INFO = SETUP_INFO
     else:
@@ -386,7 +386,7 @@ def build_api(*cmdline_args):
     local(cmd)
     
 
-def sphinx_build(builder,docs_dir,cmdline_args=[],language=None):
+def sphinx_build(builder,docs_dir,cmdline_args=[],language=None,build_dir_cmd=None):
     args = ['sphinx-build','-b',builder]
     args += cmdline_args
     #~ args += ['-a'] # all files, not only outdated
@@ -408,6 +408,10 @@ def sphinx_build(builder,docs_dir,cmdline_args=[],language=None):
     args += [docs_dir,build_dir]
     cmd = ' '.join(args)
     local(cmd)
+    if build_dir_cmd is not None:
+        with lcd(build_dir):
+            local(build_dir_cmd)
+        
     
 def sync_docs_data(docs_dir):
     build_dir = docs_dir.child('.build')
@@ -430,6 +434,15 @@ def build_userdocs(*cmdline_args):
     if not MAIN_LANGUAGE_INDEX:
         dest = docs_dir.child('.build','index.html')
         docs_dir.child('index.html').copy(dest)
+    sync_docs_data(docs_dir)
+    
+@task(alias='pdf')
+def build_userdocs_pdf(*cmdline_args): 
+    if env.languages is None: return
+    docs_dir = env.ROOTDIR.child('userdocs')
+    if not docs_dir.exists(): return
+    for lng in env.languages:
+        sphinx_build('latex',docs_dir,cmdline_args,lng,build_dir_cmd='make all-pdf')
     sync_docs_data(docs_dir)
     
 @task(alias='linkcheck')
