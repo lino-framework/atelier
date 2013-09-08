@@ -22,6 +22,7 @@ import sys
 import calendar
 import datetime
 from StringIO import StringIO
+import inspect
 
 from unipath import Path
 
@@ -32,6 +33,11 @@ from docutils.parsers.rst import roles
 from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 from sphinx.util.nodes import split_explicit_title
+
+try:
+    from importlib import import_module
+except ImportError:
+    from django.utils.importlib import import_module
 
 import atelier
 from atelier import rstgen
@@ -64,11 +70,11 @@ def srcref(mod):
     >>> from atelier.sphinxconf import srcref
     >>> from lino.utils import log
     >>> print srcref(log)
-    lino/utils/log.py
+    http://code.google.com/p/lino/source/browse/lino/utils/log.py
 
     >>> from lino import utils
     >>> print srcref(utils)
-    lino/utils/__init__.py
+    http://code.google.com/p/lino/source/browse/lino/utils/__init__.py
     
     >>> from lino.management import commands
     >>> print srcref(commands)
@@ -76,22 +82,78 @@ def srcref(mod):
 
     >>> from lino_welfare.settings import test
     >>> print srcref(test)
-    lino_welfare/settings/test.py
+    http://code.google.com/p/lino-welfare/source/browse/lino_welfare/settings/test.py
 
     """
     root_module_name = mod.__name__.split('.')[0]
     root_mod = __import__(root_module_name)
+    srcref_url = getattr(root_mod,'srcref_url',None)
+    if srcref_url is None:
+        return 
     #~ if not mod.__name__.startswith('lino.'): 
         #~ return
     srcref = mod.__file__
     if srcref.endswith('.pyc'):
         srcref = srcref[:-1]
     if os.stat(srcref).st_size == 0:
-        return 
+        return
     #~ srcref = srcref[len(lino.__file__)-17:]
     srcref = srcref[len(Path(root_mod.__file__).ancestor(2))+1:]
     srcref = srcref.replace(os.path.sep,'/')
-    return srcref
+    return srcref_url % srcref
+    
+    
+    
+def coderef_role(typ, rawtext, text, lineno, inliner, options={}, content=[]):
+    text = utils.unescape(text)
+    has_explicit_title, title, target = split_explicit_title(text)
+    try:
+        modname, name = target.rsplit('.', 1)
+    except ValueError:
+        raise Exception("Don't know how to import name %s" % target)
+    mod = import_module(modname)
+    
+    try:
+        value = getattr(mod, name,None)
+    except AttributeError:
+        raise Exception("No name '%s' in module '%s'" % (name, modname))
+    #~ raise Exception("20130908 %s " % lines)
+    if isinstance(value,type):
+        if value.__module__ != modname:
+            raise Exception("20130908 %r != %r" % (value.__module__ ,modname))
+            
+            
+    url = srcref(mod) 
+    
+    lines,line_no = inspect.getsourcelines(value)
+    if line_no:
+        url += "#" + str(line_no)
+    if not has_explicit_title:
+        pass
+    pnode = nodes.reference(title, title, internal=False, refuri=url)
+    return [pnode], []
+    
+    
+def unused_srcref_role(typ, rawtext, text, lineno, inliner, options={}, content=[]):
+    text = utils.unescape(text)
+    has_explicit_title, title, target = split_explicit_title(text)
+    url = srcref(target)
+    try:
+        full_url = base_url % part
+    except (TypeError, ValueError):
+        inliner.reporter.warning(
+            'unable to expand %s extlink with base URL %r, please make '
+            'sure the base contains \'%%s\' exactly once'
+            % (typ, base_url), line=lineno)
+        full_url = base_url + part
+    if not has_explicit_title:
+        if prefix is None:
+            title = full_url
+        else:
+            title = prefix + part
+    pnode = nodes.reference(title, title, internal=False, refuri=full_url)
+    return [pnode], []
+    
     
 
 
@@ -591,6 +653,8 @@ def setup(app):
     
     app.add_directive('textimage', TextImageDirective)
 
+    app.add_role('coderef', coderef_role)
+    
     roles.register_canonical_role('blogref', blogref_role)
     
     setup2(app)

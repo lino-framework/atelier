@@ -425,6 +425,8 @@ def ol(items,bullet="#."):
     return ul(items,bullet)
     
     
+def boldheader(title):
+    return "\n\n**%s**\n\n" % unicode(title).strip()
     
 def _test():
     import doctest
