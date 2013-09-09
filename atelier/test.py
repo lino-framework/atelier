@@ -1,13 +1,13 @@
+# Copyright 2013 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
+
 """
-Defines an extended TestCase whith shortcut methods that launch
+Defines an extended TestCase whith shortcut methods to launch
 a subprocess.
 
 - :meth:`TestCase.run_packages_test`
 - :meth:`TestCase.run_subprocess`
 - :meth:`TestCase.run_simple_doctests`
-
-:copyright: Copyright 2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
 
 """
 import os
@@ -16,8 +16,6 @@ import doctest
 import unittest
 import subprocess
 from setuptools import find_packages
-
-import six
 
 from atelier.utils import SubProcessParent
 

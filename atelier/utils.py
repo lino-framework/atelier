@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-"""
+# Copyright 2009-2013 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
 
-:copyright: Copyright 2009-2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
+"""
+Defines a series of utility classes and functions.
+
 """
 
 from __future__ import unicode_literals
@@ -163,6 +165,9 @@ def ispure(s):
     return False
 
 def assert_pure(s):
+    """
+    raise an Exception if the given string is not :func:`ispure`.
+    """
     #~ assert ispure(s), "%r: not pure" % s
     if s is None: return 
     if isinstance(s,unicode):

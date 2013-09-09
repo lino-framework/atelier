@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
+# Copyright 2013 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
+
 """
-A library for `fabric` with tasks I use to manage my projects.
+A library for `fabric <http://docs.fabfile.org>`_ 
+with tasks I use to manage my projects.
 
 To be used by creating a `fabfile.py` with at least the following 
 two lines::
@@ -22,8 +26,6 @@ This fablib uses the following `env` keys:
 - `languages` : whether `sphinx-build html` should tolerate warnings.
 - (consult the source code)
 
-:copyright: Copyright 2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
 """
 import os
 import sys

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-r"""
-A suite of utilities to programmatically generate rst source text.
+# Copyright 2011-2013 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
 
-:copyright: Copyright 2011-2013 by Luc Saffre.
-:license: BSD, see LICENSE for more details.
+r"""
+A suite of utilities to programmatically generate chunks of 
+`reStructuredText <http://docutils.sourceforge.net/rst.html>`__.
 
 Especially the :func:`table` function is used by the 
 :class:`complextable <djangosite.utils.sphinxconf.ComplexTableDirective>` 
@@ -148,28 +149,6 @@ the result will be a complex table:
   +--------------------+---------------+--------+
   
   
-rstgen.header() uses the following system of header levels::
-
-   =======
-   Level 1
-   =======
-   
-   -------
-   Level 2
-   -------
-   
-   ~~~~~~~
-   Level 3
-   ~~~~~~~
-   
-   Level 4
-   =======
-
-   Level 5
-   -------
-   
-   Level 6
-   ~~~~~~~
   
 """
 
@@ -196,6 +175,30 @@ def write_header(fd,level,s):
 def header(level,text):
     """
     Render the text as a header with the specified level.
+    
+    It uses and supposes the following system of header levels::
+
+       =======
+       Level 1
+       =======
+       
+       -------
+       Level 2
+       -------
+       
+       ~~~~~~~
+       Level 3
+       ~~~~~~~
+       
+       Level 4
+       =======
+
+       Level 5
+       -------
+       
+       Level 6
+       ~~~~~~~
+    
     """
     result = StringIO.StringIO()
     def writeln(s=''):
