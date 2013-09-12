@@ -8,7 +8,7 @@ and possibly some external tools, too.
 """
 SETUP_INFO = dict(
   name = 'atelier', 
-  version = '0.0.2',
+  version = '0.0.3', # released 20130911
   install_requires = ['Sphinx','unipath','python_dateutil'],
   scripts = ['scripts/per_project'],
   description = "A collection of tools for software artists",
