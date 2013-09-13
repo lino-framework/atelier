@@ -676,7 +676,6 @@ VE_DIR=%(ve_path)s
 virtualenv $VE_DIR
 . $VE_DIR/bin/activate
 pip install --extra-index file:%(sdist_dir)s %(name)s
-python setup.py test
 """    
     
 @task(alias='test_sdist')
@@ -699,21 +698,23 @@ def setup_test_sdist():
       [global]
       download-cache=/home/luc/.pip/cache
 
-
-    
-
     """
+    if len(env.demo_databases) == 0: return
     ve_path = Path(env.temp_dir,'test_sdist')
     rmtree_after_confirm(ve_path)
     ve_path.mkdir()
     script = ve_path.child('tmp.sh')
     
-    context = dict(name=env.SETUP_INFO['name'],sdist_dir=env.sdist_dir,ve_path=ve_path)
+    context = dict(name=env.SETUP_INFO['name'],sdist_dir=env.sdist_dir,
+        ve_path=ve_path)
     #~ file(script,'w').write(TEST_SDIST_TEMPLATE % context)
-    script.write_file(TEST_SDIST_TEMPLATE % context)
+    txt = TEST_SDIST_TEMPLATE % context
+    for db in env.demo_databases:
+        txt += "django-admin.py test --settings=%s --traceback\n" % db
+    script.write_file(txt)
     script.chmod(0o777)
-    local(script)
-    #~ script.remove()
+    with lcd(ve_path):
+        local(script)
     
   
 @task(alias='upload')
@@ -939,14 +940,14 @@ def edit_setup_info():
     local(' '.join(args))
   
 
-@task(alias='sdist_test')
-def extract_messages():
-    """Create a temporary virtual environment"""
-    locale_dir = get_locale_dir()
-    if locale_dir is None: return 
-    args = ["python", "setup.py"]
-    args += [ "extract_messages"]
-    args += [ "-o", locale_dir.child("django.pot")]
-    cmd = ' '.join(args)
+#~ @task(alias='sdist_test')
+#~ def extract_messages():
+    #~ """Create a temporary virtual environment"""
+    #~ locale_dir = get_locale_dir()
+    #~ if locale_dir is None: return 
+    #~ args = ["python", "setup.py"]
+    #~ args += [ "extract_messages"]
+    #~ args += [ "-o", locale_dir.child("django.pot")]
+    #~ cmd = ' '.join(args)
     #~ must_confirm(cmd)
-    local(cmd)
+    #~ local(cmd)
