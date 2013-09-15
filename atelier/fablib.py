@@ -717,6 +717,29 @@ def setup_test_sdist():
         local(script)
     
   
+@task(alias='ddt')
+def double_dump_test():
+    """
+    Perform a "double dump test" on every demo database.
+    """
+    if len(env.demo_databases) == 0: return
+    a = Path(env.temp_dir,'a')
+    b = Path(env.temp_dir,'b')
+    rmtree_after_confirm(a)
+    rmtree_after_confirm(b)
+    #~ if not confirm("This will possibly break the demo databases. Are you sure?"):
+        #~ return 
+    #~ a.mkdir()
+    with lcd(env.temp_dir):
+        for db in env.demo_databases:
+            if a.exists(): a.rmtree()
+            if b.exists(): b.rmtree()
+            local("django-admin.py dump2py --settings=%s --traceback a" % db)
+            local("django-admin.py run --settings=%s --traceback a/restore.py" % db)
+            local("django-admin.py dump2py --settings=%s --traceback b" % db)
+            local("diff a b")
+    
+    
 @task(alias='upload')
 def pypi_upload():
     """
