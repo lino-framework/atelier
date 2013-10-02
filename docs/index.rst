@@ -25,5 +25,6 @@ Sitemap
    :maxdepth: 2
 
    API <api/atelier>
+   fab
    changes
 

@@ -633,8 +633,11 @@ def setup(app):
     The Sphinx setup function used for Lino-related documentation trees.
    
     """
-    app.add_object_type(directivename='xfile',rolename='xfile',
-      indextemplate='pair: %s; file')
+    app.add_object_type(directivename='management_command',rolename='manage',
+        indextemplate='pair: %s; management command')
+    app.add_object_type(directivename='fab_command',rolename='fab',
+        indextemplate='pair: %s; fab command')
+    app.add_object_type(directivename='xfile',rolename='xfile',indextemplate='pair: %s; file')
     app.add_object_type(directivename='setting',rolename='setting',
       indextemplate='pair: %s; setting')
     #~ app.add_object_type(directivename='model',rolename='model',
