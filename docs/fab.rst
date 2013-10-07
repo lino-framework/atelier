@@ -70,3 +70,8 @@ Extracts messages, then initializes and updates all catalogs.
       [global]
       download-cache=/home/luc/.pip/cache
 
+
+
+.. fab_command:: release
+
+    Create official source distribution and upload it to PyPI.

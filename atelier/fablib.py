@@ -689,11 +689,12 @@ def double_dump_test():
             local("diff a b")
     
     
-@task(alias='upload')
-def pypi_upload():
+@task(alias='release')
+def pypi_release():
     """
-    Upload sourcxe distribution to PyPI.
+    Create official source distribution and upload it to PyPI.
     """
+    must_confirm("This is going to officially release %(name)s %(version)s to PyPI" % env.SETUP_INFO)
     pypi_register()
     args = ["python", "setup.py"]
     args += ["sdist", "--formats=gztar" ]
