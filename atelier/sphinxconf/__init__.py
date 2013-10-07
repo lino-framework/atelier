@@ -186,7 +186,7 @@ def autodoc_skip_member(app, what, name, obj, skip, options):
 #~ """  
 
 SIDEBAR = """
-(:srcref:`source code </%s>`)
+(`source code <%s>`__)
 
 """  
 
