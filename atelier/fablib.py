@@ -648,7 +648,9 @@ pip install --extra-index file:%(sdist_dir)s %(name)s
 def setup_test_sdist():
     if len(env.demo_databases) == 0: return
     ve_path = Path(env.temp_dir,'test_sdist')
-    rmtree_after_confirm(ve_path)
+    #~ if ve_path.exists(): 
+    ve_path.rmtree()
+    #~ rmtree_after_confirm(ve_path)
     ve_path.mkdir()
     script = ve_path.child('tmp.sh')
     
