@@ -68,6 +68,7 @@ def setup_from_project(main_package=None,settings_module_name=None):
     env.main_package = main_package
     env.tolerate_sphinx_warnings = False
     env.demo_databases = []
+    env.use_mercurial = True
     
 
     env.setdefault('languages',None)
@@ -84,7 +85,7 @@ def setup_from_project(main_package=None,settings_module_name=None):
     if env.main_package:
         if not Path(env.ROOTDIR,'setup.py').exists():
             raise RuntimeError("You must call 'fab' from a project's root directory.")
-        execfile(env.ROOTDIR.child(env.main_package,'setup_info.py'),globals()) # will set SETUP_INFO 
+        execfile(env.ROOTDIR.child(env.main_package,'project_info.py'),globals()) # will set SETUP_INFO 
         env.SETUP_INFO = SETUP_INFO
     else:
         env.SETUP_INFO = None
@@ -758,9 +759,12 @@ def checkin():
     """
     Checkin & push to repository, using today's blog entry as commit message.
     """
-    args = ["hg","st"]
+    if env.use_mercurial:
+        args = ["hg","st"]
+    else:
+        args = ["git","status"]
     local(' '.join(args))
-    if not confirm("OK to checkin %s ?" % env.SETUP_INFO['name']):
+    if not confirm("OK to checkin %s ?" % env.project_name):
         return 
         
     entry = get_blog_entry(datetime.date.today())
@@ -770,12 +774,17 @@ def checkin():
         abort("%s does not exist!" % entry.path.absolute())
     #~ puts("Commit message refers to %s" % entry.absolute())
         
-    args = ["hg","ci"]
+    if env.use_mercurial:
+        args = ["hg","ci"]
+    else:
+        args = ["git","commit"]
     args += ['-m', entry.url ]
     cmd = ' '.join(args)
-    #~ confirm(cmd)
     local(cmd)
-    local("hg push %s" % env.project_name)
+    if env.use_mercurial:
+        local("hg push %s" % env.project_name)
+    else:
+        local("git push")
     
 #~ @task()
 def unused_write_release_notes():
@@ -904,9 +913,9 @@ def run_tests_coverage():
 @task(alias='esi')
 def edit_setup_info():
     """
-    Edit the `setup_info.py` file of this project.
+    Edit the `project_info.py` file of this project.
     """
-    sif = Path(env.ROOTDIR,env.main_package,'setup_info.py')
+    sif = Path(env.ROOTDIR,env.main_package,'project_info.py')
     print sif
     args = [ os.environ['EDITOR'] ]
     args += [sif]
