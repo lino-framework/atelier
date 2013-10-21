@@ -242,7 +242,7 @@ def compile_catalog_userdocs():
 #~ @task(alias='im')
 def init_catalog_code():
     """Create code .po files if necessary."""
-    from north import to_locale
+    from north.utils import to_locale
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
@@ -267,7 +267,7 @@ def init_catalog_code():
 #~ @task(alias='um')
 def update_catalog_code():
     """Update .po files from .pot file."""
-    from north import to_locale
+    from north.utils import to_locale
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
@@ -286,7 +286,7 @@ def update_catalog_code():
 @task(alias='cm')
 def compile_catalog():
     """Compile .po files to .mo files."""
-    from north import to_locale
+    from north.utils import to_locale
     locale_dir = get_locale_dir()
     if locale_dir is None: return 
     for loc in env.languages:
