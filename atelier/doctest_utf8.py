@@ -38,6 +38,7 @@ def _test():
             m = __import__(filename[:-3])
             del sys.path[0]
             failures, _ = doctest.testmod(m)
+            #~ raise Exception("20131022 tested %s" % m)
         else:
             failures, _ = doctest.testfile(os.path.abspath(filename),
                 encoding='utf-8',
