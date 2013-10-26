@@ -41,6 +41,7 @@ def _test():
             #~ raise Exception("20131022 tested %s" % m)
         else:
             failures, _ = doctest.testfile(os.path.abspath(filename),
+                optionflags=doctest.REPORT_ONLY_FIRST_FAILURE,
                 encoding='utf-8',
                 module_relative=False)
             

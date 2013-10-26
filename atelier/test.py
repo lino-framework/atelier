@@ -51,7 +51,7 @@ class TestCase(unittest.TestCase,SubProcessParent):
             msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (cmd,kw,rv,out)
             print msg
             self.fail(msg)
-        
+            
     def run_simple_doctests(self,filename,**kw): # env.simple_doctests
         """
         run doctest of given file in a subprocess
