@@ -2,8 +2,7 @@
 # License: BSD, see LICENSE for more details.
 
 """
-Defines an extended TestCase whith shortcut methods to launch
-a subprocess.
+Defines an extended TestCase whith methods to launch a subprocess.
 
 - :meth:`TestCase.run_packages_test`
 - :meth:`TestCase.run_subprocess`
@@ -61,6 +60,18 @@ class TestCase(unittest.TestCase,SubProcessParent):
         args += ["-m"]
         args += ["atelier.doctest_utf8"]
         #~ args += ["doctest"]
+        args += [filename]
+        self.run_subprocess(args,**kw)
+
+    def run_unittest(self,filename,**kw): 
+        """
+        run unittest of given file in a subprocess
+        """
+        args = ["python"] 
+        #~ args += ["-Wall"]
+        args += ["-m"]
+        args += ["unittest"]
+        #~ args += ["--buffer"]
         args += [filename]
         self.run_subprocess(args,**kw)
 

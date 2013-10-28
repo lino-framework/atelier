@@ -251,6 +251,10 @@ def unindent(s):
     
 
 class SubProcessParent(object):
+    """
+    Base class for :class:`atelier.test.TestCase`.
+    Also used standalone by `lino.management.commands.makescreenshots`.
+    """
     default_environ = dict()
     inheritable_envvars = ('VIRTUAL_ENV','PYTHONPATH','PATH')
         
