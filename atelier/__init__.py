@@ -1,5 +1,10 @@
 #~ Copyright 2011-2013 by Luc Saffre.
 #~ License: BSD, see LICENSE for more details.
+"""
+This is the :mod:`atelier` package.
+
+It deserves more documentation.
+"""
 
 import os
 execfile(os.path.join(os.path.dirname(__file__),'project_info.py'))
@@ -9,9 +14,15 @@ intersphinx_url = "http://atelier.lino-framework.org"
 
 config_file = '/etc/atelier/config.py'
 
+TODAY = None 
+"""
+Used by  :func:`atelier.fablib.get_current_date`.
+"""
+
 BLOG_URL = None
 PROJECTS = []
 _PROJECT_INFOS = []
+
 
 if os.path.exists(config_file):
     execfile(config_file)

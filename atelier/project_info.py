@@ -1,11 +1,10 @@
 # Copyright 2013 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""
-This module is being execfile'd from `setup.py`, `atelier/__init__.py`
-and possibly some external tools, too.
+#~ This module has no docstring because it is to be execfile'd 
+#~ from `setup.py`, `atelier/__init__.py` and possibly some external 
+#~ tools, too.
 
-"""
 SETUP_INFO = dict(
   name = 'atelier', 
   version = '0.0.3', # released 20130911

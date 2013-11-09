@@ -30,6 +30,7 @@ import sphinx
 import atelier
 #~ import djangosite ; print djangosite.__file__
 from atelier.utils import AttrDict
+from atelier.utils import i2d
 from atelier import rstgen
 #~ from timtools.tools.synchronizer import Synchronizer
 
@@ -38,6 +39,23 @@ from fabric.api import env, local, task, prompt
 from fabric.utils import abort, fastprint, puts, warn
 from fabric.contrib.console import confirm
 from fabric.api import lcd
+
+def get_current_date():
+    """
+    Useful when a working day lasted longer than midnight,
+    or when you start some work in the evening, knowing that you won't 
+    commit it before the next morning.
+    
+    In such cases you want to temporarily specify a hard-coded `TODAY` 
+    date in your :file:`/etc/atelier/config.py` file::
+   
+        TODAY = 20131109
+        
+    Note that you must specify the date using the YYYYMMDD format.
+    """
+    if atelier.TODAY is not None:
+        return i2d(atelier.TODAY)
+    return datetime.date.today()
 
 class RstFile(object):
     def __init__(self,local_root,url_root,parts):
@@ -736,14 +754,13 @@ def get_blog_entry(today):
     return RstFile(local_root,
       "http://code.google.com/p/%s/source/browse/" % env.blogger_project,
       parts)
-  
 
 @task(alias='blog')
 def edit_blog_entry():
     """
     Edit today's blog entry, create an empty file if it doesn't yet exist.
     """
-    today = datetime.date.today()
+    today = get_current_date() 
     entry = get_blog_entry(today)
     if not entry.path.exists():
         if confirm("Create file %s?" % entry.path):
@@ -757,27 +774,32 @@ def edit_blog_entry():
 @task(alias='ci')
 def checkin():
     """
-    Checkin & push to repository, using today's blog entry as commit message.
+    Checkin and push to repository, using today's blog entry as commit message.
     """
     if env.use_mercurial:
         args = ["hg","st"]
     else:
         args = ["git","status"]
     local(' '.join(args))
+    
+    if atelier.TODAY is not None:
+        if not confirm("Hard-coded TODAY in your %s! Are you sure?" % atelier.config_file):
+            return 
+        
     if not confirm("OK to checkin %s ?" % env.project_name):
         return 
         
-    entry = get_blog_entry(datetime.date.today())
+    entry = get_blog_entry(get_current_date())
     #~ entry = Path(env.ROOTDIR,'..',env.blogger_project,*parts)
     #~ print env.ROOTDIR.parent.absolute()
     if not entry.path.exists():
         abort("%s does not exist!" % entry.path.absolute())
     #~ puts("Commit message refers to %s" % entry.absolute())
-        
+    
     if env.use_mercurial:
         args = ["hg","ci"]
     else:
-        args = ["git","commit"]
+        args = ["git","commit","-a"]
     args += ['-m', entry.url ]
     cmd = ' '.join(args)
     local(cmd)
@@ -798,8 +820,8 @@ def unused_write_release_notes():
     if notes.exists():
         return
     must_confirm("Create %s" % notes.absolute())
-    #~ context = dict(date=datetime.date.today().strftime(env.long_date_format))
-    context = dict(date=datetime.date.today().strftime('%Y%m%d'))
+    #~ context = dict(date=get_current_date().strftime(env.long_date_format))
+    context = dict(date=get_current_date().strftime('%Y%m%d'))
     context.update(env.SETUP_INFO)
     txt = """\
 ==========================

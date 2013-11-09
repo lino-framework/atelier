@@ -8,7 +8,7 @@ Overview
 A library for `fabric <http://docs.fabfile.org>`_ 
 with tasks I use to manage my projects.
 
-To be used by creating a `fabfile.py` with at least the following 
+To be used by creating a :file:`fabfile.py` with at least the following 
 two lines::
 
   from atelier.fablib import *
@@ -16,14 +16,22 @@ two lines::
   
 Where "foobar" is the name of your main package.
 
-And optionally some more configuration like::  
+Configuration
+-------------
+
+In your :file:`fabfile.py` file you may 
+optionally specify some project-specific configuration settings like::  
   
+  from atelier.fablib import *
+  setup_from_project("foobar")
   env.languages = "de fr et nl".split()
   env.tolerate_sphinx_warnings = True
   env.demo_databases.append('foobar.demo.settings')
 
-Some of these settings 
-:file:`.fabricrc`
+
+You may define user-specific default values for some of these settings 
+(those who are simple strings) by creating a file :file:`.fabricrc` 
+in your home directory with content like this::
 
     work_root = /home/luc/hgwork
     user = luc
@@ -31,8 +39,7 @@ Some of these settings
     docs_rsync_dest = luc@lino-framework.org:~/public_html/%s
     sdist_dir = /home/luc/hgwork/lino/docs/dl
 
-
-This fablib uses the following `env` keys:
+List of existing `env` keys:
 
 - `tolerate_sphinx_warnings` : whether `sphinx-build html` should 
   tolerate warnings.
@@ -71,6 +78,11 @@ Extracts messages, then initializes and updates all catalogs.
       download-cache=/home/luc/.pip/cache
 
 
+
+.. fab_command:: ci
+
+    Checkin and push to repository, using today's blog entry as commit message.
+    
 
 .. fab_command:: release
 
