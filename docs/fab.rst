@@ -8,8 +8,8 @@ Overview
 A library for `fabric <http://docs.fabfile.org>`_ 
 with tasks I use to manage my projects.
 
-To be used by creating a :file:`fabfile.py` with at least the following 
-two lines::
+To be used by creating a :file:`fabfile.py` in your project's root directory 
+with at least the following two lines::
 
   from atelier.fablib import *
   setup_from_project("foobar")
