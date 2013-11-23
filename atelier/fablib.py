@@ -860,7 +860,10 @@ def write_readme():
     Generate README.txt file from setup_info (if necessary).
     """
     if not env.main_package: return
-    readme = env.ROOTDIR.child('README.txt')
+    if env.use_mercurial:
+        readme = env.ROOTDIR.child('README.txt')
+    else:
+        readme = env.ROOTDIR.child('README.rst')
     txt = """\
 ==========================
 %(name)s README
