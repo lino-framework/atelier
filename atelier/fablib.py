@@ -796,9 +796,8 @@ def checkin():
     if atelier.TODAY is not None:
         if not confirm("Hard-coded TODAY in your %s! Are you sure?" %
                        atelier.config_file):
-            return 
-        
-        
+            return
+
     entry = get_blog_entry(get_current_date())
     #~ entry = Path(env.ROOTDIR,'..',env.blogger_project,*parts)
     #~ print env.ROOTDIR.parent.absolute()
@@ -808,7 +807,7 @@ def checkin():
     msg = entry.url
 
     if not confirm("OK to checkin %s %s?" % (env.project_name, msg)):
-        return 
+        return
     #~ puts("Commit message refers to %s" % entry.absolute())
     
     if env.use_mercurial:
