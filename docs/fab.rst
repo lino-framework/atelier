@@ -79,6 +79,11 @@ Extracts messages, then initializes and updates all catalogs.
 
 
 
+.. fab_command:: initdb
+
+Run :manage:`initdb_demo` on every demo database of this project 
+(specified in `env.demo_databases`)
+
 .. fab_command:: ci
 
     Checkin and push to repository, using today's blog entry as commit message.

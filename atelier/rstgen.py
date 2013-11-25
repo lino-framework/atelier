@@ -155,24 +155,28 @@ the result will be a complex table:
 #~ import cStringIO as StringIO
 import StringIO
 
+
 class Column(object):
-    def __init__(self,index,header,width=None):
+
+    def __init__(self, index, header, width=None):
         self.header = header
         self.width = width
         self.index = index
-        
-    def adjust_width(self,row):
+
+    def adjust_width(self, row):
         s = unicode(row[self.index])
         for ln in s.splitlines():
             if self.width is None or self.width < len(ln):
                 self.width = len(ln)
 
-def write_header(fd,level,s):
+
+def write_header(fd, level, s):
     def writeln(s=''):
-        fd.write(s+'\n')
-    _write_header(writeln,level,s)
-    
-def header(level,text):
+        fd.write(s + '\n')
+    _write_header(writeln, level, s)
+
+
+def header(level, text):
     """
     Render the text as a header with the specified level.
     
@@ -201,13 +205,14 @@ def header(level,text):
     
     """
     result = StringIO.StringIO()
+
     def writeln(s=''):
         result.write(s + '\n')
-    _write_header(writeln,level,text)
+    _write_header(writeln, level, text)
     return result.getvalue()
-    
-        
-def _write_header(writeln,level,s):
+
+
+def _write_header(writeln, level, s):
     if level == 1:
         writeln('=' * len(s))
     elif level == 2:
@@ -230,53 +235,56 @@ def _write_header(writeln,level,s):
     else:
         raise Exception("Invalid level %d" % level)
     writeln()
-    
+
+
 class Table(object):
+
     """
     Renders as a table.
     
     """
     simple = True
-    
-    def convert(self,v):
+
+    def convert(self, v):
         return unicode(v)
-    
-    def __init__(self,headers,show_headers=True):
+
+    def __init__(self, headers, show_headers=True):
         self.headers = [self.convert(h) for h in headers]
         self.show_headers = show_headers
-        self.cols = [ Column(i,h) for i,h in enumerate(headers)]
+        self.cols = [Column(i, h) for i, h in enumerate(headers)]
         self.adjust_widths(headers)
-          
-        
-    def adjust_widths(self,row):
+
+    def adjust_widths(self, row):
         if len(row) != len(self.headers):
             raise Exception("Invalid row %(row)s" % dict(row=row))
         for col in self.cols:
             col.adjust_width(row)
             if '\n' in row[col.index]:
                 self.simple = False
-      
-    def format_row(self,row):
+
+    def format_row(self, row):
         #~ return ' '.join([unicode(row[c.index]).ljust(c.width) for c in self.cols])
-        lines = [ [] for x in self.cols ]
+        lines = [[] for x in self.cols]
         for c in self.cols:
             cell = row[c.index]
             for ln in cell.splitlines():
                 lines[c.index].append(ln.ljust(c.width))
         height = 1
         for c in self.cols:
-            height = max(height,len(lines[c.index]))
+            height = max(height, len(lines[c.index]))
         for c in self.cols:
             while len(lines[c.index]) < height:
                 lines[c.index].append(''.ljust(c.width))
         x = []
         for i in range(height):
-            x.append(self.margin 
-                + self.colsep.join([' '+lines[c.index][i]+' ' for c in self.cols]) 
-                + self.margin)
+            x.append(self.margin
+                     +
+                     self.colsep.join(
+                         [' ' + lines[c.index][i] + ' ' for c in self.cols])
+                     + self.margin)
         return '\n'.join(x)
-        
-    def write(self,fd,data=[]):
+
+    def write(self, fd, data=[]):
         """
         rstgen.table(['header1','header2']) no longer raises an exception "No rows in []"
         but renders a table with only headers and no rows.
@@ -284,27 +292,29 @@ class Table(object):
         #~ if len(data) == 0:
             #~ raise Exception("No rows in %r" % data)
         rows = []
-        for i,row in enumerate(data):
+        for i, row in enumerate(data):
             assert len(row) == len(self.cols)
             rows.append([self.convert(v) for v in row])
-              
-        for row in rows: self.adjust_widths(row)
-          
+
+        for row in rows:
+            self.adjust_widths(row)
+
         if self.simple:
-            self.header1 = ' '.join([('=' * (c.width+2)) for c in self.cols])
-            self.header2 = ' '.join([('-' * (c.width+2)) for c in self.cols])
-            self.margin = '' 
-            self.colsep = ' ' 
+            self.header1 = ' '.join([('=' * (c.width + 2)) for c in self.cols])
+            self.header2 = ' '.join([('-' * (c.width + 2)) for c in self.cols])
+            self.margin = ''
+            self.colsep = ' '
         else:
-            self.header1 = '+'+'+'.join([('-' * (c.width+2)) for c in self.cols])+'+'
-            self.header2 = '+'+'+'.join([('=' * (c.width+2)) for c in self.cols])+'+'
-            self.margin = '|' 
-            self.colsep = '|' 
-            
+            self.header1 = '+' + \
+                '+'.join([('-' * (c.width + 2)) for c in self.cols]) + '+'
+            self.header2 = '+' + \
+                '+'.join([('=' * (c.width + 2)) for c in self.cols]) + '+'
+            self.margin = '|'
+            self.colsep = '|'
+
         def writeln(s):
-            fd.write(s.rstrip()+'\n')
-            
-            
+            fd.write(s.rstrip() + '\n')
+
         writeln(self.header1)
         if self.show_headers:
             writeln(self.format_row(self.headers))
@@ -315,22 +325,20 @@ class Table(object):
                 writeln(self.header1)
         if self.simple:
             writeln(self.header1)
-          
-    def to_rst(self,rows):
+
+    def to_rst(self, rows):
         fd = StringIO.StringIO()
-        self.write(fd,rows)
+        self.write(fd, rows)
         return fd.getvalue()
-        
-          
 
 
-def table(headers,rows=tuple(),**kw):
-    t = Table(headers,**kw)
+def table(headers, rows=tuple(), **kw):
+    t = Table(headers, **kw)
     return t.to_rst(rows)
-    
-    
+
+
 #~ def py2rst(v):
-    #~ from django.db import models 
+    #~ from django.db import models
     #~ if issubclass(v,models.Model):
         #~ headers = ("name","verbose name","type","help text")
         #~ rows = [
@@ -339,10 +347,9 @@ def table(headers,rows=tuple(),**kw):
         #~ ]
         #~ return table(headers,rows)
     #~ return unicode(v)
-    
-    
-    
-def ul(items,bullet="-"):
+
+
+def ul(items, bullet="-"):
     r"""
     Render the given `items` as a `bullet list 
     <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#bullet-lists>`.
@@ -381,23 +388,23 @@ def ul(items,bullet="-"):
     s = ""
     compressed = True
     for i in items:
-        if '\n\n' in i: 
+        if '\n\n' in i:
             compressed = False
             break
-            
-    innersep = '\n' + (' ' * (len(bullet)+1))
+
+    innersep = '\n' + (' ' * (len(bullet) + 1))
     if compressed:
         for i in items:
             text = innersep.join(i.splitlines())
-            s += "%s %s\n" % (bullet,text)
+            s += "%s %s\n" % (bullet, text)
     else:
         for i in items:
             text = innersep.join(i.splitlines())
-            s += "\n%s %s\n" % (bullet,text)
+            s += "\n%s %s\n" % (bullet, text)
     return s
-    
 
-def ol(items,bullet="#."):
+
+def ol(items, bullet="#."):
     r"""
     >>> print ol(["Foo","Bar","Baz"])
     #. Foo
@@ -425,17 +432,16 @@ def ol(items,bullet="#."):
        Wow.
     <BLANKLINE>
     """
-    return ul(items,bullet)
-    
-    
+    return ul(items, bullet)
+
+
 def boldheader(title):
     return "\n\n**%s**\n\n" % unicode(title).strip()
-    
+
+
 def _test():
     import doctest
     doctest.testmod()
 
 if __name__ == "__main__":
     _test()
-
-    

@@ -17,8 +17,8 @@ import subprocess
 from dateutil import parser as dateparser
 
 
-
 class AttrDict(dict):
+
     """
     Dictionary-like helper object.
     
@@ -40,36 +40,36 @@ class AttrDict(dict):
     {u'baz': 2}
     
     """
-  
+
     def __getattr__(self, name):
         try:
             return self[name]
         except KeyError:
             raise AttributeError(
                 "AttrDict instance has no key '%s' (keys are %s)" % (
-                    name,', '.join(self.keys())))
-        
+                    name, ', '.join(self.keys())))
+
     #~ def __getattr__(self, name):
         #~ return self.get(name)
-        
+
     #~ def __getattr__(self, name,*args):
         #~ return self.get(name,*args)
         #~ raise AttributeError("%r has no attribute '%s'" % (self,name))
-        
-    def define2(self,name,value):
-        return self.define(*name.split('.')+[value])
-        
-    def define(self,*args):
+
+    def define2(self, name, value):
+        return self.define(*name.split('.') + [value])
+
+    def define(self, *args):
         "args must be a series of names followed by the value"
         assert len(args) >= 2
         d = s = self
         for n in args[:-2]:
-            d = s.get(n,None)
+            d = s.get(n, None)
             if d is None:
                 d = AttrDict()
                 s[n] = d
             s = d
-        oldvalue = d.get(args[-2],None)
+        oldvalue = d.get(args[-2], None)
         #~ if oldvalue is not None:
             #~ print 20120217, "Overriding %s from %r to %r" % (
               #~ '.'.join(args[:-1]),
@@ -78,19 +78,19 @@ class AttrDict(dict):
               #~ )
         d[args[-2]] = args[-1]
         return oldvalue
-    
-    def resolve(self,name,default=None):
+
+    def resolve(self, name, default=None):
         """
         return an attribute with dotted name
         """
         o = self
         for part in name.split('.'):
-            o = getattr(o,part,default)
+            o = getattr(o, part, default)
             # o = o.__getattr__(part)
         return o
 
 
-def iif(condition,true_value,false_value): 
+def iif(condition, true_value, false_value):
     """
     "Inline If" : an ``if`` statement as a function.
     
@@ -102,9 +102,11 @@ def iif(condition,true_value,false_value):
     Hello, real world!
     
     """
-    if condition: return true_value
+    if condition:
+        return true_value
     return false_value
-    
+
+
 def i2d(i):
     """
     Convert `int` to `date`. Examples:
@@ -114,10 +116,11 @@ def i2d(i):
     
     """
     d = dateparser.parse(str(i))
-    d = datetime.date(d.year,d.month,d.day)
-    #print i, "->", v
+    d = datetime.date(d.year, d.month, d.day)
+    # print i, "->", v
     return d
-    
+
+
 def i2t(s):
     """
     Convert `int` to `time`. Examples:
@@ -137,23 +140,21 @@ def i2t(s):
     """
     s = str(s)
     if len(s) == 4:
-        return datetime.time(int(s[:2]),int(s[2:]))
+        return datetime.time(int(s[:2]), int(s[2:]))
     if len(s) == 3:
-        return datetime.time(int(s[:1]),int(s[1:]))
+        return datetime.time(int(s[:1]), int(s[1:]))
     if len(s) <= 2:
-        return datetime.time(int(s),0)
+        return datetime.time(int(s), 0)
     raise ValueError(s)
 
-    
-    
-    
 
 def ispure(s):
     """
     Returns `True` if the specified string `s` is either a unicode 
     string or contains only ASCII characters.
     """
-    if s is None: return True 
+    if s is None:
+        return True
     if type(s) == types.UnicodeType:
         return True
     if type(s) == types.StringType:
@@ -164,20 +165,20 @@ def ispure(s):
         return True
     return False
 
+
 def assert_pure(s):
     """
     raise an Exception if the given string is not :func:`ispure`.
     """
     #~ assert ispure(s), "%r: not pure" % s
-    if s is None: return 
-    if isinstance(s,unicode):
+    if s is None:
+        return
+    if isinstance(s, unicode):
         return True
     try:
         s.decode('ascii')
     except UnicodeDecodeError as e:
-        raise Exception("%r is not pure : %s" % (s,e))
-     
-
+        raise Exception("%r is not pure : %s" % (s, e))
 
 
 def confirm(prompt=None):
@@ -186,12 +187,11 @@ def confirm(prompt=None):
     """
     while True:
         ln = raw_input(prompt)
-        if ln.lower() in ('y','j','o'):
+        if ln.lower() in ('y', 'j', 'o'):
             return True
         if ln.lower() == 'n':
             return False
         print "Please anwer Y or N"
-
 
 
 def indentation(s):
@@ -207,7 +207,7 @@ def indentation(s):
     1
     
     """
-    return len(s)-len(s.lstrip())
+    return len(s) - len(s.lstrip())
 
 
 def unindent(s):
@@ -236,43 +236,44 @@ def unindent(s):
         foo
     """
     lines = s.splitlines()
-    if len(lines) == 0: 
+    if len(lines) == 0:
         return s.lstrip()
     mini = sys.maxint
     for ln in lines:
         ln = ln.rstrip()
-        if len(ln) > 0: 
-            mini = min(mini,indentation(ln))
+        if len(ln) > 0:
+            mini = min(mini, indentation(ln))
             if mini == 0:
                 break
-    if mini == sys.maxint: 
+    if mini == sys.maxint:
         return s
     return '\n'.join([ln[mini:] for ln in lines])
-    
+
 
 class SubProcessParent(object):
+
     """
     Base class for :class:`atelier.test.TestCase`.
     Also used standalone by `lino.management.commands.makescreenshots`.
     """
     default_environ = dict()
-    inheritable_envvars = ('VIRTUAL_ENV','PYTHONPATH','PATH')
-        
+    inheritable_envvars = ('VIRTUAL_ENV', 'PYTHONPATH', 'PATH')
+
     def build_environment(self):
         env = dict(self.default_environ)
         for k in self.inheritable_envvars:
-            v = os.environ.get(k,None)
+            v = os.environ.get(k, None)
             if v is not None:
                 env[k] = v
         return env
-        
-    def check_output(self,args,**kw): 
+
+    def check_output(self, args, **kw):
         env = self.build_environment()
         kw.update(env=env)
         kw.update(stderr=subprocess.STDOUT)
-        return subprocess.check_output(args,**kw)
-        
-    def open_subprocess(self,args,**kw): 
+        return subprocess.check_output(args, **kw)
+
+    def open_subprocess(self, args, **kw):
         """
         Additional keywords will be passed to the 
         `Popen constrctor <http://docs.python.org/2.7/library/subprocess.html#popen-constructor>`_.
@@ -286,5 +287,4 @@ class SubProcessParent(object):
         #~ buffer = StringIO()
         kw.update(stdout=subprocess.PIPE)
         kw.update(stderr=subprocess.STDOUT)
-        return subprocess.Popen(args,**kw)
-        
+        return subprocess.Popen(args, **kw)

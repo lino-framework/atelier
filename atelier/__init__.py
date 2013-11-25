@@ -8,13 +8,13 @@ It deserves more documentation.
 
 import os
 execfile(os.path.join(os.path.dirname(__file__), 'project_info.py'))
-__version__ = SETUP_INFO['version'] 
+__version__ = SETUP_INFO['version']
 
 intersphinx_url = "http://atelier.lino-framework.org"
 
 config_file = '/etc/atelier/config.py'
 
-TODAY = None 
+TODAY = None
 """
 Used by  :func:`atelier.fablib.get_current_date`.
 """
@@ -32,6 +32,7 @@ from unipath import Path
 
 
 class Project(object):
+
     def __init__(self, i, name):
         self.index = i
         #~ self.local_name = local_name

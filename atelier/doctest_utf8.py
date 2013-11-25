@@ -18,8 +18,9 @@ import os
 import sys
 import doctest
 
+
 def _test():
-    
+
     testfiles = [arg for arg in sys.argv[1:] if arg and arg[0] != '-']
     if not testfiles:
         name = os.path.basename(sys.argv[0])
@@ -27,7 +28,7 @@ def _test():
             name, _ = os.path.splitext(name)
         print("usage: {0} [-v] file ...".format(name))
         return 2
-    
+
     for filename in testfiles:
         if filename.endswith(".py"):
             # It is a module -- insert its dir into sys.path and try to
@@ -41,10 +42,10 @@ def _test():
             #~ raise Exception("20131022 tested %s" % m)
         else:
             failures, _ = doctest.testfile(os.path.abspath(filename),
-                optionflags=doctest.REPORT_ONLY_FIRST_FAILURE,
-                encoding='utf-8',
-                module_relative=False)
-            
+                                           optionflags=doctest.REPORT_ONLY_FIRST_FAILURE,
+                                           encoding='utf-8',
+                                           module_relative=False)
+
         if failures:
             return 1
     return 0

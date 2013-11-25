@@ -1,21 +1,21 @@
 # Copyright 2013 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-#~ This module has no docstring because it is to be execfile'd 
-#~ from `setup.py`, `atelier/__init__.py` and possibly some external 
+#~ This module has no docstring because it is to be execfile'd
+#~ from `setup.py`, `atelier/__init__.py` and possibly some external
 #~ tools, too.
 
 SETUP_INFO = dict(
-  name = 'atelier', 
-  version = '0.0.3', # released 20130911
-  install_requires = ['Sphinx','unipath','python_dateutil'],
-  scripts = ['scripts/per_project'],
-  description = "A collection of tools for software artists",
-  license = 'Free BSD',
-  test_suite = 'tests',
-  author = 'Luc Saffre',
-  author_email = 'luc.saffre@gmail.com',
-  url = "http://atelier.lino-framework.org",
+    name='atelier',
+    version='0.0.3',  # released 20130911
+    install_requires=['Sphinx', 'unipath', 'python_dateutil'],
+    scripts=['scripts/per_project'],
+    description="A collection of tools for software artists",
+    license='Free BSD',
+    test_suite='tests',
+    author='Luc Saffre',
+    author_email='luc.saffre@gmail.com',
+    url="http://atelier.lino-framework.org",
   long_description="""\
 `atelier` is my collection of tools for people who write and 
 maintain multiple Python software projects.
@@ -33,16 +33,17 @@ Let me know if you like it.
   Natural Language :: English
   Operating System :: OS Independent""".splitlines())
 
-SETUP_INFO.update(packages = [str(n) for n in """
+SETUP_INFO.update(packages=[str(n) for n in """
 atelier
 atelier.sphinxconf
 """.splitlines() if n])
-  
+
 SETUP_INFO.update(package_data=dict())
-def add_package_data(package,*patterns):
-    l = SETUP_INFO['package_data'].setdefault(package,[])
+
+
+def add_package_data(package, *patterns):
+    l = SETUP_INFO['package_data'].setdefault(package, [])
     l.extend(patterns)
     return l
 
-add_package_data('atelier.sphinxconf','*.html')
-
+add_package_data('atelier.sphinxconf', '*.html')
