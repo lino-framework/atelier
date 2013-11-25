@@ -57,11 +57,15 @@ def get_current_date():
         return i2d(atelier.TODAY)
     return datetime.date.today()
 
+
 class RstFile(object):
-    def __init__(self,local_root,url_root,parts):
-        self.path = local_root.child(*parts)
-        self.url = url_root + "/".join(parts)
-        #~ self.parts = parts
+    def __init__(self, local_root, url_root, parts):
+        self.path = local_root.child(*parts) + '.rst'
+        if parts[0] == 'docs':
+            self.url = url_root + "/" + "/".join(parts[1:]) + '.html'
+        else:
+            raise Exception("20131125")
+            # self.url = url_root + "/" + "/".join(parts) + '.html'
         
 
 def setup_from_project(main_package=None,settings_module_name=None):
@@ -744,63 +748,74 @@ def pypi_register():
     #~ run_setup('setup.py',args)
     local(' '.join(args))
 
+
+#BLOG_URL_TPL = "http://code.google.com/p/%s/source/browse/"
+#BLOG_URL_TPL = "http://%s.lino-framework.org/"
+
+
 def get_blog_entry(today):
     """
     Return an RstFile object representing the blog entry for that date.
     """
     local_root = env.work_root.child(env.blogger_project)
-    parts = ('docs','blog',str(today.year),today.strftime("%m%d.rst"))
-    #~ return blogdir.child(*parts)
-    return RstFile(local_root,
-      "http://code.google.com/p/%s/source/browse/" % env.blogger_project,
-      parts)
+    parts = ('docs', 'blog', str(today.year), today.strftime("%m%d"))
+    m = __import__(env.blogger_project)
+    return RstFile(local_root, m.intersphinx_url, parts)
+
 
 @task(alias='blog')
 def edit_blog_entry():
     """
     Edit today's blog entry, create an empty file if it doesn't yet exist.
     """
-    today = get_current_date() 
+    today = get_current_date()
     entry = get_blog_entry(today)
     if not entry.path.exists():
         if confirm("Create file %s?" % entry.path):
-            txt = rstgen.header(1,today.strftime(env.long_date_format))
+            txt = rstgen.header(1, today.strftime(env.long_date_format))
             entry.path.write_file(txt)
-            entry.path.parent.child('index.rst').set_times() # touch it for Sphinx
-    args = [ os.environ['EDITOR'] ]
+            # touch it for Sphinx:
+            entry.path.parent.child('index.rst').set_times()
+    args = [os.environ['EDITOR']]
     args += [entry.path]
     local(' '.join(args))
-  
+
+
 @task(alias='ci')
 def checkin():
     """
-    Checkin and push to repository, using today's blog entry as commit message.
+    Checkin and push to repository, using today's blog entry as commit
+    message.
     """
     if env.use_mercurial:
-        args = ["hg","st"]
+        args = ["hg", "st"]
     else:
-        args = ["git","status"]
+        args = ["git", "status"]
     local(' '.join(args))
     
     if atelier.TODAY is not None:
-        if not confirm("Hard-coded TODAY in your %s! Are you sure?" % atelier.config_file):
+        if not confirm("Hard-coded TODAY in your %s! Are you sure?" %
+                       atelier.config_file):
             return 
         
-    if not confirm("OK to checkin %s ?" % env.project_name):
-        return 
         
     entry = get_blog_entry(get_current_date())
     #~ entry = Path(env.ROOTDIR,'..',env.blogger_project,*parts)
     #~ print env.ROOTDIR.parent.absolute()
     if not entry.path.exists():
         abort("%s does not exist!" % entry.path.absolute())
+
+    msg = entry.url
+
+    if not confirm("OK to checkin %s %s?" % (env.project_name, msg)):
+        return 
     #~ puts("Commit message refers to %s" % entry.absolute())
     
     if env.use_mercurial:
-        args = ["hg","ci"]
+        args = ["hg", "ci"]
     else:
-        args = ["git","commit","-a"]
-    args += ['-m', entry.url ]
+        args = ["git", "commit", "-a"]
+    args += ['-m', msg]
     cmd = ' '.join(args)
     local(cmd)
     if env.use_mercurial:

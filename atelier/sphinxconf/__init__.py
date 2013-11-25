@@ -19,8 +19,6 @@ logger = logging.getLogger(__name__)
   
 import os
 import sys
-import calendar
-import datetime
 from StringIO import StringIO
 import inspect
 
