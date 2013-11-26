@@ -390,6 +390,7 @@ def build_api(*cmdline_args):
     args = ['sphinx-apidoc']
     # ~ args += ['-f'] # force the overwrite of all files that it generates.
     args += ['--no-toc']  # no modules.rst file
+    args += ['--separate']  # separate page for each module
     args += ['-o', api_dir]
     args += [env.main_package]  # packagedir
     if False:  # doesn't seem to work
