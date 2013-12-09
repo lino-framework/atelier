@@ -9,11 +9,8 @@ Defines an extended TestCase whith methods to launch a subprocess.
 - :meth:`TestCase.run_simple_doctests`
 
 """
-import os
-import sys
-import doctest
 import unittest
-import subprocess
+import glob
 from setuptools import find_packages
 
 from atelier.utils import SubProcessParent
@@ -53,17 +50,19 @@ class TestCase(unittest.TestCase, SubProcessParent):
             print msg
             self.fail(msg)
 
-    def run_simple_doctests(self, filename, **kw):  # env.simple_doctests
+    def run_simple_doctests(self, filenames, **kw):  # env.simple_doctests
         """
         run doctest of given file in a subprocess
         """
-        #~ cmd = "python -m doctest %s" % filename
-        args = ["python"]
-        args += ["-m"]
-        args += ["atelier.doctest_utf8"]
-        #~ args += ["doctest"]
-        args += [filename]
-        self.run_subprocess(args, **kw)
+        for ln in filenames.splitlines():
+            ln = ln.strip()
+            if ln and not ln.startswith('#'):
+                for fn in glob.glob(ln):
+                    args = ["python"]
+                    args += ["-m"]
+                    args += ["atelier.doctest_utf8"]
+                    args += [ln]
+                    self.run_subprocess(args, **kw)
 
     def run_unittest(self, filename, **kw):
         """
