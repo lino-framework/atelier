@@ -57,10 +57,10 @@ from atelier.utils import i2d
 
 
 def srcref(mod):
-    """
-    Return the `source file name` for usage by Sphinx's ``srcref`` role.
-    Returns None if the source file is empty (which happens e.g. for __init__.py 
-    files whose only purpose is to mark a package).
+    """Return the `source file name` for usage by Sphinx's ``srcref``
+    role.  Returns None if the source file is empty (which happens
+    e.g. for :file:`__init__.py` files whose only purpose is to mark a
+    package).
     
     >>> from atelier.sphinxconf import srcref
     >>> from lino.utils import log
