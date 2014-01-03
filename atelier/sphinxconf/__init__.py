@@ -65,11 +65,11 @@ def srcref(mod):
     >>> from atelier.sphinxconf import srcref
     >>> from lino.utils import log
     >>> print srcref(log)
-    http://code.google.com/p/lino/source/browse/lino/utils/log.py
+    https://github.com/lsaffre/lino/blob/master/lino/utils/log.py
 
     >>> from lino import utils
     >>> print srcref(utils)
-    http://code.google.com/p/lino/source/browse/lino/utils/__init__.py
+    https://github.com/lsaffre/lino/blob/master/lino/utils/__init__.py
     
     >>> from lino.management import commands
     >>> print srcref(commands)
@@ -77,7 +77,7 @@ def srcref(mod):
 
     >>> from lino_welfare.settings import test
     >>> print srcref(test)
-    http://code.google.com/p/lino-welfare/source/browse/lino_welfare/settings/test.py
+    https://github.com/lsaffre/lino-welfare/blob/master/lino_welfare/settings/test.py
 
     """
     root_module_name = mod.__name__.split('.')[0]
