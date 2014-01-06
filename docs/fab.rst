@@ -55,7 +55,9 @@ List of existing `env` keys:
 .. fab_command:: mm
 
 ("make messages")
-Extracts messages, then initializes and updates all catalogs.
+
+Extracts messages from both code and userdocs, then initializes and
+updates all catalogs.
 
 
 .. fab_command:: test_sdist

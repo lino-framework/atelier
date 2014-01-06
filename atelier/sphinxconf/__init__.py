@@ -516,9 +516,9 @@ def configure(globals_dict, settings_module_name=None):
     This contains the things that all my Sphinx docs configuration 
     files have in common.
     
-    Automatically adds the intersphinx entries 
+    Automatically adds the intersphinx entries
     for projects managed in this atelier
-    by checking for an attribute `intersphinx_mapping` in 
+    by checking for an attribute `intersphinx_mapping` in
     the global namespace of each project's main module.
     
     
@@ -530,9 +530,7 @@ def configure(globals_dict, settings_module_name=None):
     intersphinx_mapping = dict()
     for prj in atelier.load_projects():
         p = prj.root_dir.child('docs', '.build', 'objects.inv')
-        #~ p = Path(HGWORK,n,'docs','.build','objects.inv')
         if p.exists():
-            #~ intersphinx_mapping[n] = ('http://%s.lino-framework.org' % n,p)
             try:
                 intersphinx_mapping[prj.nickname] = (
                     prj.module.intersphinx_url, p)
@@ -540,11 +538,16 @@ def configure(globals_dict, settings_module_name=None):
                 logger.warning("No intersphinx_url in %s", prj.module)
                 pass
 
-    # TODO: make these configurable
-    #~ HGWORK = DOCSDIR.ancestor(2)
-    #~ p = Path(HGWORK,'welfare','userdocs','.build','fr','objects.inv')
-    #~ if p.exists():
-        #~ intersphinx_mapping['welfareuserfr'] = ('http://welfare-user.lino-framework.org/fr',p)
+        p = prj.root_dir.child('userdocs', '.build', 'objects.inv')
+        if p.exists():
+            k = '%suser' % prj.nickname
+            try:
+                intersphinx_mapping[k] = (
+                    prj.module.intersphinx_url_userdocs, p)
+            except AttributeError:
+                # logger.warning("No intersphinx_url_userdocs in %s",
+                #                prj.module)
+                pass
 
     # TODO: make these configurable
     HGWORK = Path(__file__).ancestor(4).absolute()
@@ -557,9 +560,10 @@ def configure(globals_dict, settings_module_name=None):
             intersphinx_mapping[k] = (url, p)
         else:
             print "No path %s" % p
-    f('welfare')
-    f('faggio')
-    f('patrols')
+    # f('welfare')
+    # f('faggio')
+    # f('patrols')
+    # f('cosi')
 
     #~ intersphinx_mapping.update(django = (
         #~ 'http://docs.djangoproject.com/en/dev/',

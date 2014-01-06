@@ -61,7 +61,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
                     args = ["python"]
                     args += ["-m"]
                     args += ["atelier.doctest_utf8"]
-                    args += [ln]
+                    args += [fn]
                     self.run_subprocess(args, **kw)
 
     def run_unittest(self, filename, **kw):
