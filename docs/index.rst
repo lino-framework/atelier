@@ -5,7 +5,7 @@ Atelier
 .. py2rst::
 
   import atelier
-  print atelier.SETUP_INFO['long_description']
+  print(atelier.SETUP_INFO['long_description'])
 
 
 
@@ -26,5 +26,6 @@ Sitemap
 
    API <api/atelier>
    fab
+   sphinxext
    changes
 
