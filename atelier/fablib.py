@@ -379,16 +379,14 @@ def summary(*cmdline_args):
 @task(alias='api')
 def build_api(*cmdline_args):
     """
-    Generate .rst files in `docs/api`.
+    Generate `.rst` files in `docs/api`. See :fab:`api`. 
     """
-    #~ if len(env.SETUP_INFO['packages']) != 1:
-        #~ abort("env.SETUP_INFO['packages'] is %s" % env.SETUP_INFO['packages'])
 
     os.environ.update(SPHINX_APIDOC_OPTIONS="members,show-inheritance")
     api_dir = env.DOCSDIR.child("api").absolute()
     rmtree_after_confirm(api_dir)
     args = ['sphinx-apidoc']
-    # ~ args += ['-f'] # force the overwrite of all files that it generates.
+    # args += ['-f'] # force the overwrite of all files that it generates.
     args += ['--no-toc']  # no modules.rst file
     args += ['--separate']  # separate page for each module
     args += ['-o', api_dir]

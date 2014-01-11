@@ -94,3 +94,7 @@ Run :manage:`initdb_demo` on every demo database of this project
 .. fab_command:: release
 
     Create official source distribution and upload it to PyPI.
+
+.. fab_command:: api
+
+Generate `.rst` files below `docs/api`.
