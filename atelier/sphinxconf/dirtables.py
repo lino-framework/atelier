@@ -128,15 +128,21 @@ class DirectoryTable(InsertInputDirective):
 class TicketsTable(DirectoryTable):
 
     def get_headers(self):
-        return ["#", 'title', 'state', 'reporter', 'since', 'for']
+        return ['title', 'state', 'module', 'since', 'for']
 
     def format_entry(self, e):
         cells = []
-        cells.append(e.docname)
+        # cells.append(e.docname)
         text = ''.join([unicode(c) for c in e.title.children])
         cells.append(":doc:`%s <%s>`" % (text, e.docname))
         cells.append(unicode(e.meta.get('state', '')))
-        cells.append(unicode(e.meta.get('reporter', '')))
+        # cells.append(unicode(e.meta.get('reporter', '')))
+        ref = e.meta.get('module', '')
+        if ref:
+            cells.append(":mod:`%s`" % ref)
+        else:
+            cells.append("(N/A)")
+
         cells.append(unicode(e.meta.get('since', '')))
         cells.append(unicode(e.meta.get('for', '')))
         return cells

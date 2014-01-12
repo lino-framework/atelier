@@ -400,7 +400,8 @@ def build_api(*cmdline_args):
     local(cmd)
 
 
-def sphinx_build(builder, docs_dir, cmdline_args=[], language=None, build_dir_cmd=None):
+def sphinx_build(builder, docs_dir,
+                 cmdline_args=[], language=None, build_dir_cmd=None):
     args = ['sphinx-build', '-b', builder]
     args += cmdline_args
     # ~ args += ['-a'] # all files, not only outdated
@@ -487,47 +488,16 @@ def build_docs(*cmdline_args):
     sphinx_build('html', env.DOCSDIR, cmdline_args)
     sync_docs_data(env.DOCSDIR)
 
-if False:
-
-    @task(alias='alldocs')
-    def build_all_docs():
-        """write_readme + build ALL sphinx html docs."""
-        write_readme()
-        for n in ('docs', 'userdocs'):
-            docs_dir = env.ROOTDIR.child(n)
-            if docs_dir.exists():
-                sphinx_build('html', docs_dir, ['-a'])
-                sync_docs_data(docs_dir)
-
 
 @task(alias='clean')
-def clean_html(*cmdline_args):
+def sphinx_clean(*cmdline_args):
     """
-    Delete all built Sphinx files.
+    Delete all generated Sphinx files.
     """
-    build_dir = env.DOCSDIR.child('.build')
-    rmtree_after_confirm(build_dir)
+    rmtree_after_confirm(env.DOCSDIR.child('.build'))
     if env.languages:
-        build_dir = env.ROOTDIR.child('userdocs', '.build')
-        rmtree_after_confirm(build_dir)
+        rmtree_after_confirm(env.ROOTDIR.child('userdocs', '.build'))
 
-
-#~ @task(alias='pub')
-#~ def publish_all():
-    #~ """
-    #~ Run `publish_docs` followed by `hg_push`.
-    #~ """
-    #~ publish_docs()
-    #~ hg_push()
-
-
-@task(alias='prep')
-def prepare():
-    """
-    Sames as `fab test html`.
-    """
-    run_tests()
-    build_docs()
 
 
 @task(alias='pub')
@@ -578,17 +548,10 @@ def publish_docs(build_dir, dest_url):
         #~ cwd.chdir()
     #~ return subprocess.call(args)
 
-#~ def run_in_demo_database(admin_cmd,*more):
-        #~ if not env.demo_database: return
-        #~ args = ["django-admin.py"]
-        #~ args += [admin_cmd]
-        #~ args += more
-        #~ args += ["--settings=" + env.demo_database]
-        #~ cmd = " ".join(args)
-        #~ local(cmd)
-
 
 def run_in_demo_databases(admin_cmd, *more):
+    """Run the given django admin command for each demo database.
+    """
     for db in env.demo_databases:
         args = ["django-admin.py"]
         args += [admin_cmd]
@@ -599,15 +562,6 @@ def run_in_demo_databases(admin_cmd, *more):
         cmd = " ".join(args)
         local(cmd)
 
-
-        #~ p = env.ROOTDIR.child(*db.split('/'))
-        #~ with lcd(p):
-            #~ args = ["python manage.py"]
-            #~ args += [admin_cmd]
-            #~ args += more
-            #~ args += [" --pythonpath=%s" % p.absolute()]
-            #~ cmd = " ".join(args)
-            #~ local(cmd)
 
 @task()
 def clean_cache():

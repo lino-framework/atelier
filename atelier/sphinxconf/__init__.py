@@ -239,28 +239,6 @@ def autodoc_add_srcref(app, what, name, obj, options, lines):
             #~ lines.insert(0,'(We also recommend to read the source code at :srcref:`/%s.py`)' % name.replace('.','/'))
 
 
-class SetCurrentLanguage(Directive):
-    """
-    Tell Sphinx to switch to the specified language until the end of this 
-    document.
-    """
-
-    has_content = False
-    required_arguments = 1
-    optional_arguments = 0
-    final_argument_whitespace = False
-    option_spec = {}
-
-    def run(self):
-        env = self.state.document.settings.env
-        language = self.arguments[0].strip()
-        if language == 'None':
-            env.temp_data['language'] = env.config.language
-        else:
-            env.temp_data['language'] = language
-        return []
-
-
 class Py2rstDirective(InsertInputDirective):
 
     """
@@ -603,7 +581,6 @@ def setup2(app):
     app.add_directive('complextable', ComplexTableDirective)
     app.add_directive('py2rst', Py2rstDirective)
     app.add_directive('django2rst', Django2rstDirective)
-    app.add_directive('currentlanguage', SetCurrentLanguage)
     #~ app.add_directive('linotable', InsertTableDirective)
     
 
