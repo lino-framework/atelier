@@ -41,7 +41,7 @@ from sphinx.util.compat import Directive
 
 from atelier import rstgen
 
-from atelier.sphinxconf import InsertInputDirective
+from .insert_input import InsertInputDirective
 
 import jinja2
 

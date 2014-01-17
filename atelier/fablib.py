@@ -503,6 +503,15 @@ def build_docs(*cmdline_args):
     sync_docs_data(env.DOCSDIR)
 
 
+@task(alias='alldocs')
+def build_all_docs(*cmdline_args):
+    """rebuild all docs."""
+    write_readme()
+    cmdline_args += ('-aE',)
+    sphinx_build('html', env.DOCSDIR, cmdline_args)
+    sync_docs_data(env.DOCSDIR)
+
+
 @task(alias='clean')
 def sphinx_clean(*cmdline_args):
     """

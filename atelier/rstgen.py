@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2013 by Luc Saffre.
+# Copyright 2011-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 r"""
@@ -152,6 +152,8 @@ the result will be a complex table:
   
 """
 
+from __future__ import unicode_literals
+
 #~ import cStringIO as StringIO
 import StringIO
 
@@ -245,11 +247,11 @@ class Table(object):
     """
     simple = True
 
-    def convert(self, v):
+    def format_value(self, v):
         return unicode(v)
 
     def __init__(self, headers, show_headers=True):
-        self.headers = [self.convert(h) for h in headers]
+        self.headers = [self.format_value(h) for h in headers]
         self.show_headers = show_headers
         self.cols = [Column(i, h) for i, h in enumerate(headers)]
         self.adjust_widths(headers)
@@ -294,7 +296,7 @@ class Table(object):
         rows = []
         for i, row in enumerate(data):
             assert len(row) == len(self.cols)
-            rows.append([self.convert(v) for v in row])
+            rows.append([self.format_value(v) for v in row])
 
         for row in rows:
             self.adjust_widths(row)

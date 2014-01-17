@@ -50,6 +50,8 @@ I solved this by a manual patch in line 308 of
 import logging
 logger = logging.getLogger(__name__)
 
+import sys
+from StringIO import StringIO
 
 from docutils import nodes
 from docutils import statemachine
@@ -57,10 +59,19 @@ from docutils.parsers.rst import directives
 from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 
-try:
-    from importlib import import_module
-except ImportError:
-    from django.utils.importlib import import_module
+from atelier import rstgen
+
+#~ class ScreenshotDirective(directives.images.Image):
+    #~ """
+    #~ Directive to insert a screenshot.
+    #~ """
+    #~ def run(self):
+        #~ assert len(self.arguments) == 1
+        # ~ # name = '/../gen/screenshots/' + self.arguments[0]
+        #~ name = '/gen/screenshots/' + self.arguments[0]
+        #~ self.arguments = [name]
+        #~ (image_node,) = directives.images.Image.run(self)
+        #~ return [image_node]
 
 
 class InsertInputDirective(Directive):
@@ -80,19 +91,6 @@ class InsertInputDirective(Directive):
     def get_rst(self):
         "Override this to return a string in rst syntax"
         raise NotImplementedError()
-
-    #~ def run(self):
-        #~ out = self.get_rst()
-        #~ env = self.state.document.settings.env
-        #~ if self.debug:
-            #~ print env.docname
-            #~ print '-' * 50
-            #~ print out
-            #~ print '-' * 50
-        #~ self.state_machine.insert_input(out.splitlines(),out)
-        #~ return []
-
-    #~ class InsertTableDirective(InsertInputDirective):
 
     def run(self):
 
@@ -144,4 +142,195 @@ class InsertInputDirective(Directive):
         #~ table_node['classes'] += self.options.get('class', [])
         #~ return [table_node]
 
+
+class Py2rstDirective(InsertInputDirective):
+
+    """
+    Run a Python code block and interpret the output as if it 
+    were rst source.
+    """
+    titles_allowed = True
+    has_content = True
+    debug = False
+    #~ def get_rst(self):
+        #~ return self.output_from_exec('\n'.join(self.content))
+
+    def get_context(self):
+        context = dict()
+        context.update(self=self)
+        context.update(env=self.state.document.settings.env)
+        return context
+
+    def get_rst(self):
+        if not self.content:
+            warning = self.state_machine.reporter.warning(
+                'Content block expected for the "%s" directive; none found.'
+                % self.name, nodes.literal_block(
+                    self.block_text, self.block_text), line=self.lineno)
+            return [warning]
+
+        #~ raise Exception("20130331 %r" % self.content)
+        code = '\n'.join(self.content)
+        return self.output_from_exec(code)
+
+    def output_from_exec(self, code):
+        old = sys.stdout
+        buffer = StringIO()
+        sys.stdout = buffer
+        context = self.get_context()
+
+        # TODO: catch exceptions and report them together with the
+        # name of the guilty file
+
+        exec(code, context)
+        sys.stdout = old
+        s = buffer.getvalue()
+        #~ print 20130331, type(s)
+        return s
+
+
+class Django2rstDirective(Py2rstDirective):
+
+    def get_context(self):
+        #~ from djangosite.dbutils import set_language
+        from django.conf import settings
+        context = super(Django2rstDirective, self).get_context()
+        #~ set_language(lng)
+        context.update(settings=settings)
+        context.update(settings.SITE.modules)
+        return context
+
+    def output_from_exec(self, code):
+        from django.utils import translation
+        with translation.override(self.language):
+            return super(Django2rstDirective, self).output_from_exec(code)
+
+
+#~ class DjangoTableDirective(InsertInputDirective):
+    #~ def get_rst(self):
+        #~ assert len(self.content) == 1
+        #~ code = '\n'.join(self.content)
+        #~ from django.conf import settings
+        #~ print .jobs.Candidatures.request(limit=5).to_rst()
+        #~ code = """
+        #~ """
+        #~ old = sys.stdout
+        #~ buffer = StringIO()
+        #~ sys.stdout = buffer
+        #~ context = dict()
+        #~ context.update(settings.SITE.modules)
+        #~ context = dict(settings=settings)
+        #~ exec(code,context)
+        #~ sys.stdout = old
+        #~ return buffer.getvalue()
+
+
+class TextImageDirective(InsertInputDirective):
+
+    """
+    See :blogref:`20130116` for documentation.
+    """
+    required_arguments = 1
+    final_argument_whitespace = True
+    option_spec = dict(scale=directives.unchanged)
+    #~ optional_arguments = 4
+
+    def get_rst(self):
+        #~ print 'MainBlogIndexDirective.get_rst()'
+        #~ env = self.state.document.settings.env
+        #~ print self.arguments, self.options, self.content
+        left = '\n'.join(self.content)
+        right = ''
+        for arg in self.arguments[0].split():
+            right += '.. figure:: %s\n' % arg
+            for i in self.options.items():
+                right += "  :%s: %s\n" % i
+            right += "\n  %s\n\n" % arg
+            #~ right += "\n  \n\n" % arg
+
+        return rstgen.table(["", ""], [[left, right]], show_headers=False)
+
+
+class ComplexTableDirective(InsertInputDirective):
+
+    """
+    The `complextable` directive is used to create tables
+    with complex cell content
+    
+    Usage example::
+    
+      .. complextable::
+    
+        A1
+        <NEXTCELL>
+        A2
+        <NEXTROW>
+        B1
+        <NEXTCELL>
+        B2
+        
+    
+    Result:
+    
+    .. complextable::
+    
+        A1
+        <NEXTCELL>
+        A2
+        <NEXTROW>
+        B1
+        <NEXTCELL>
+        B2
+        
+        
+    See Blog entry 2013/0116 for documentation.
+    """
+    required_arguments = 0
+    final_argument_whitespace = True
+    option_spec = dict(header=directives.flag)
+    #~ option_spec = dict(scale=unchanged)
+    #~ optional_arguments = 4
+
+    def get_rst(self):
+        #~ print 'MainBlogIndexDirective.get_rst()'
+        #~ env = self.state.document.settings.env
+        #~ print self.arguments, self.options, self.content
+        cellsep = '<NEXTCELL>'
+        rowsep = '<NEXTROW>'
+        if len(self.arguments) > 0:
+            cellsep = self.arguments[0]
+        if len(self.arguments) > 1:
+            rowsep = self.arguments[1]
+
+        content = '\n'.join(self.content)
+        rows = []
+        colcount = None
+
+        for row in content.split(rowsep):
+            cells = [cell.strip() for cell in row.split(cellsep)]
+            if colcount is None:
+                colcount = len(cells)
+            else:
+                assert colcount == len(cells)
+            rows.append(cells)
+
+        if 'header' in self.options:
+            return rstgen.table(rows[0], rows[1:])
+
+        return rstgen.table([""] * colcount, rows, show_headers=False)
+
+
+class BlogNoteDirective(Py2rstDirective):
+
+    def get_rst(self):
+        return '\n'.join(self.content)
+
+
+def setup(app):
+    # also used by `vor/conf.py`
+    app.add_directive(str('complextable'), ComplexTableDirective)
+    app.add_directive(str('py2rst'), Py2rstDirective)
+    app.add_directive(str('django2rst'), Django2rstDirective)
+    app.add_directive(str('blognote'), BlogNoteDirective)
+    app.add_directive(str('textimage'), TextImageDirective)
 

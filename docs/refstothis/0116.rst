@@ -1,0 +1,6 @@
+Thu 16 January 2014
+===================
+
+Today I saw another :ref:`foo`, and a :ref:`bar`.
+But still no :doc:`baz`.
+

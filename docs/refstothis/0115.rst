@@ -1,0 +1,5 @@
+Wed 15 January 2014
+===================
+
+Today I saw a :ref:`foo`!
+

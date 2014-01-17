@@ -28,4 +28,5 @@ Sitemap
    fab
    sphinxext
    changes
+   refstothis/index
 
