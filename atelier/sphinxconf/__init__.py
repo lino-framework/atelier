@@ -76,7 +76,7 @@ from atelier import rstgen
 
 from atelier.utils import i2d
 
-from .insert_input import InsertInputDirective
+from atelier.sphinxconf.insert_input import InsertInputDirective
 
 #~ class ScreenshotDirective(directives.images.Image):
     #~ """
@@ -274,6 +274,10 @@ class Py2rstDirective(InsertInputDirective):
         buffer = StringIO()
         sys.stdout = buffer
         context = self.get_context()
+
+        # TODO: catch exceptions and report them together with the
+        # name of the guilty file
+
         exec(code, context)
         sys.stdout = old
         s = buffer.getvalue()
@@ -567,13 +571,22 @@ def configure(globals_dict, settings_module_name=None):
         from django.conf import settings
         # ~ settings.SITE # must at least access some variable in the settings
         settings.SITE.startup()
-    globals_dict.update(setup=setup)
 
-    globals_dict.update(
-        template_bridge='atelier.sphinxconf.DjangoTemplateBridge')
+        globals_dict.update(
+            template_bridge='atelier.sphinxconf.DjangoTemplateBridge')
 
     globals_dict.update(
         templates_path=['.templates', Path(__file__).parent.absolute()])
+
+    
+    globals_dict.update(setup=setup)
+
+    # some settings i use in all projects:
+
+    globals_dict.update(master_doc='index')
+    globals_dict.update(source_suffix='.rst')
+    globals_dict.update(primary_domain='py')
+    globals_dict.update(pygments_style='sphinx')
 
 
 def setup2(app):

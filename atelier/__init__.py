@@ -1,4 +1,4 @@
-#~ Copyright 2011-2013 by Luc Saffre.
+#~ Copyright 2011-2014 by Luc Saffre.
 #~ License: BSD, see LICENSE for more details.
 """
 This is the :mod:`atelier` package.
@@ -28,8 +28,9 @@ _PROJECT_INFOS = []
 if os.path.exists(config_file):
     execfile(config_file)
 
-import pkg_resources
+# import pkg_resources
 from unipath import Path
+from importlib import import_module
 
 
 class Project(object):
@@ -39,9 +40,12 @@ class Project(object):
         #~ self.local_name = local_name
         #~ self.root_dir = Path(atelier.PROJECTS_HOME,local_name)
         self.name = name
-        self.dist = pkg_resources.get_distribution(name)
-        self.module = __import__(name)
-        self.root_dir = Path(self.module.__file__).ancestor(2)
+        # removed 20140116:
+        # self.dist = pkg_resources.get_distribution(name)
+        self.module = import_module(name)
+        number_of_parts = len(name.split('.'))
+        self.root_dir = Path(self.module.__file__).ancestor(
+            number_of_parts + 1)
         self.nickname = self.root_dir.name
 
 

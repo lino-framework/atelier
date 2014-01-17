@@ -7,6 +7,12 @@ Changes in `atelier`
 Version 0.0.3 (in development)
 ==============================
 
+-   (:blogref:`20140117`) atelier now supports namespace packages
+    (and thus the :fab:`summary` fablib command no longer prints "old" and
+    "new" version because that would require the Distribution object
+    (returned from `pkg_resources.get_distribution`) which afaics makes
+    problems for namespace packages.
+
 -   (:blogref:`20130623`) 
     :meth:`atelier.test.TestCase.run_simple_doctests` 
     didn't yet support non-ascii characters.

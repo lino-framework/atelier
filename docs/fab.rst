@@ -2,6 +2,8 @@
 The ``atelier.fablib`` module
 =============================
 
+Here is a reference to :ref:`atelier.changes`.
+
 Overview
 ========
 
@@ -93,8 +95,15 @@ Run :manage:`initdb_demo` on every demo database of this project
 
 .. fab_command:: release
 
-    Create official source distribution and upload it to PyPI.
+Create official source distribution and upload it to PyPI.
 
 .. fab_command:: api
 
 Generate `.rst` files below `docs/api`.
+
+
+.. fab_command:: blog
+
+Edit today's blog entry, create an empty file if it doesn't yet exist.
+
+

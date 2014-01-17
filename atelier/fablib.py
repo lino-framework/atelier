@@ -1,9 +1,15 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 by Luc Saffre.
+# Copyright 2013-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""
-See :doc:`/fab`
+"""See :doc:`/fab`
+
+20140116 : added support for managing namespace packages
+
+TODO:
+
+- replace `env.blogger_project` by an attribute of the main module
+  (like `intersphinx_url`)
 
 """
 import os
@@ -107,8 +113,11 @@ def setup_from_project(main_package=None, settings_module_name=None):
         if not Path(env.ROOTDIR, 'setup.py').exists():
             raise RuntimeError(
                 "You must call 'fab' from a project's root directory.")
-        # will set SETUP_INFO
-        execfile(env.ROOTDIR.child(env.main_package, 'project_info.py'),
+        # Expected to define global SETUP_INFO.
+        # Note: main_package may be "sphinxcontrib.dailyblog"
+        args = env.main_package.split('.')
+        args.append('project_info.py')
+        execfile(env.ROOTDIR.child(*args),
                  globals())
         env.SETUP_INFO = SETUP_INFO
     else:
@@ -158,7 +167,9 @@ def rmtree_after_confirm(p):
 def get_locale_dir():
     if not env.main_package:
         return None  # abort("No main_package")
-    p = env.ROOTDIR.child(env.main_package, "locale")
+    args = env.main_package.split('.')
+    args.append('locale')
+    p = env.ROOTDIR.child(*args)
     if not p.isdir():
         return None  # abort("Directory %s does not exist." % p)
     return p
@@ -355,9 +366,12 @@ def summary(*cmdline_args):
     """Print a summary to stdout."""
     headers = (
         # ~ '#','Location',
-        'Project', 'Old version', 'New version')
+        'Project',
+        # 'Old version',
+        'Version')
 
     def cells(self):
+        print 2014116, self.module
         url = self.module.SETUP_INFO['url']
         desc = "`%s <%s>`__ -- %s" % (
             self.name, url,
@@ -369,8 +383,8 @@ def summary(*cmdline_args):
         #~ print 20130911, self.name, d.version
 
         return (
-            '\n'.join(textwrap.wrap(desc, 40)),
-            self.dist.version,
+            '\n'.join(textwrap.wrap(desc, 60)),
+            # self.dist.version,
             self.module.__version__)
 
     print rstgen.table(headers, [cells(p) for p in atelier.load_projects()])
@@ -390,7 +404,7 @@ def build_api(*cmdline_args):
     args += ['--no-toc']  # no modules.rst file
     args += ['--separate']  # separate page for each module
     args += ['-o', api_dir]
-    args += [env.main_package]  # packagedir
+    args += [env.main_package.replace('.', '/')]  # packagedir
     if False:  # doesn't seem to work
         excluded = [env.ROOTDIR.child('lino', 'sandbox').absolute()]
         args += excluded  # pathnames to be ignored
@@ -731,18 +745,18 @@ def pypi_register():
     local(' '.join(args))
 
 
-#BLOG_URL_TPL = "http://code.google.com/p/%s/source/browse/"
-#BLOG_URL_TPL = "http://%s.lino-framework.org/"
-
-
 def get_blog_entry(today):
+    """Return an RstFile object representing the blog entry for that date
+    in the current project.
+
     """
-    Return an RstFile object representing the blog entry for that date.
-    """
-    local_root = env.work_root.child(env.blogger_project)
     parts = ('docs', 'blog', str(today.year), today.strftime("%m%d"))
-    m = __import__(env.blogger_project)
-    return RstFile(local_root, m.intersphinx_url, parts)
+    if env.blogger_project:
+        local_root = env.work_root.child(env.blogger_project)
+        m = __import__(env.blogger_project)
+        return RstFile(local_root, m.intersphinx_url, parts)
+    else:
+        return RstFile(env.ROOTDIR, "http://blog.example.com/", parts)
 
 
 @task(alias='blog')
