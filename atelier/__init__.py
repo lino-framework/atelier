@@ -30,8 +30,10 @@ if os.path.exists(config_file):
 
 # import pkg_resources
 from unipath import Path
-from importlib import import_module
-
+try:
+    from importlib import import_module
+except ImportError:
+    from django.utils.importlib import import_module
 
 class Project(object):
 
