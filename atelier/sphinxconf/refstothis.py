@@ -7,25 +7,6 @@ directive.
 
 A fictive usage example is in :doc:`/refstothis/index`.
 
-.. directive:: refstothis
-
-Inserts a bulleted list of documents referring to "this", where "this"
-can be either the current document or a specified reference name.
-
-It recognizes all references made using `XRefRole` roles, including
-for example `:ref:
-<http://sphinx-doc.org/markup/inline.html#role-ref>`__ and `:doc:
-<http://sphinx-doc.org/markup/inline.html#role-doc>`__.
-
-The list has a hard-coded, non configurable, format: one entry for
-each page, consisting of the title of the document where the reference
-was made, followed by the time of last modification of that document.
-
-The list is ordered by these file timestamps.
-
-If a label gets referenced more than once in a same document, it is
-mentioned only once.
-
 Thanks to Tomasz Czyż who inspired me to write this.
 His `sphinxcontrib-taglist
 <https://github.com/spinus/sphinxcontrib-taglist>`_ module uses a
@@ -69,6 +50,29 @@ def py2rst(x):
 
 
 class RefsToThis(InsertInputDirective):
+    """
+
+.. directive:: refstothis
+
+Inserts a bulleted list of documents referring to "this", where "this"
+can be either the current document or a specified reference name.
+
+It recognizes all references made using `XRefRole` roles, including
+for example `:ref:
+<http://sphinx-doc.org/markup/inline.html#role-ref>`__ and `:doc:
+<http://sphinx-doc.org/markup/inline.html#role-doc>`__.
+
+The list has a hard-coded, non configurable, format: one entry for
+each page, consisting of the title of the document where the reference
+was made, followed by the time of last modification of that document.
+
+The list is ordered by these file timestamps.
+
+If a label gets referenced more than once in a same document, it is
+mentioned only once.
+
+
+    """
 
     # debug = True
 

@@ -1,16 +1,61 @@
 # -*- coding: utf-8 -*-
 # Copyright 2011-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
-"""
 
-Sphinx setup used to build the Lino documentation.
+"""Defines the :class:`InsertInputDirective` class and some
+subclasses, installing the following directives:
 
-Thanks to 
+- :directive:`py2rst`
+- :directive:`django2rst`
+- :directive:`textimage`
+- :directive:`complextable`
 
-- `Creating reStructuredText Directives 
-  <http://docutils.sourceforge.net/docs/howto/rst-directives.html>`_
+
+.. directive:: py2rst
+
+Run a Python code block and interpret the output as if it were rst
+source.
+
+.. directive:: django2rst
+
+Like :directive:`py2rst` but with the Django environment
+initialized.
+
+.. directive:: textimage
+
+Insert a text and an image side by side.
+See :blogref:`20130116` for documentation.
+
+.. directive:: complextable
+
+Create tables with complex cell content
+
+Usage example (imagine that A1...B2 is more complex.
+It can contain other tables, headers, images, code snippets, ...)::
+
+  .. complextable::
+
+    A1
+    <NEXTCELL>
+    A2
+    <NEXTROW>
+    B1
+    <NEXTCELL>
+    B2
 
 
+Result:
+
+.. complextable::
+
+    A1
+    <NEXTCELL>
+    A2
+    <NEXTROW>
+    B1
+    <NEXTCELL>
+    B2
+        
 
 
 
@@ -75,7 +120,6 @@ from atelier import rstgen
 
 
 class InsertInputDirective(Directive):
-
     """
     Base class for directives that work by generating rst markup
     to be forwarded to `state_machine.insert_input()`.
@@ -145,10 +189,8 @@ class InsertInputDirective(Directive):
 
 class Py2rstDirective(InsertInputDirective):
 
-    """
-    Run a Python code block and interpret the output as if it 
-    were rst source.
-    """
+    """Defines the :directive:`py2rst` directive."""
+
     titles_allowed = True
     has_content = True
     debug = False
@@ -190,6 +232,7 @@ class Py2rstDirective(InsertInputDirective):
 
 
 class Django2rstDirective(Py2rstDirective):
+    """Defines the :directive:`django2rst` directive."""
 
     def get_context(self):
         #~ from djangosite.dbutils import set_language
@@ -226,10 +269,8 @@ class Django2rstDirective(Py2rstDirective):
 
 
 class TextImageDirective(InsertInputDirective):
+    """Defines the :directive:`textimage` directive."""
 
-    """
-    See :blogref:`20130116` for documentation.
-    """
     required_arguments = 1
     final_argument_whitespace = True
     option_spec = dict(scale=directives.unchanged)
@@ -253,38 +294,8 @@ class TextImageDirective(InsertInputDirective):
 
 class ComplexTableDirective(InsertInputDirective):
 
-    """
-    The `complextable` directive is used to create tables
-    with complex cell content
-    
-    Usage example::
-    
-      .. complextable::
-    
-        A1
-        <NEXTCELL>
-        A2
-        <NEXTROW>
-        B1
-        <NEXTCELL>
-        B2
-        
-    
-    Result:
-    
-    .. complextable::
-    
-        A1
-        <NEXTCELL>
-        A2
-        <NEXTROW>
-        B1
-        <NEXTCELL>
-        B2
-        
-        
-    See Blog entry 2013/0116 for documentation.
-    """
+    """Defines the :directive:`complextable` directive."""
+
     required_arguments = 0
     final_argument_whitespace = True
     option_spec = dict(header=directives.flag)
@@ -320,10 +331,10 @@ class ComplexTableDirective(InsertInputDirective):
         return rstgen.table([""] * colcount, rows, show_headers=False)
 
 
-class BlogNoteDirective(Py2rstDirective):
+# class BlogNoteDirective(Py2rstDirective):
 
-    def get_rst(self):
-        return '\n'.join(self.content)
+#     def get_rst(self):
+#         return '\n'.join(self.content)
 
 
 def setup(app):
@@ -331,6 +342,6 @@ def setup(app):
     app.add_directive(str('complextable'), ComplexTableDirective)
     app.add_directive(str('py2rst'), Py2rstDirective)
     app.add_directive(str('django2rst'), Django2rstDirective)
-    app.add_directive(str('blognote'), BlogNoteDirective)
+    # app.add_directive(str('blognote'), BlogNoteDirective)
     app.add_directive(str('textimage'), TextImageDirective)
 
