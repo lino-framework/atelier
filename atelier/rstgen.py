@@ -2,15 +2,14 @@
 # Copyright 2011-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-r"""
-A suite of utilities to programmatically generate chunks of 
+r"""A suite of utilities to programmatically generate chunks of
 `reStructuredText <http://docutils.sourceforge.net/rst.html>`__.
 
-Especially the :func:`table` function is used by the 
-:class:`complextable <djangosite.utils.sphinxconf.ComplexTableDirective>` 
-directive and by 
-:meth:`Table.to_rst <lino.core.actions.ActionRequest.to_rst>`.
-Here we present the raw API.
+Especially the :func:`table` function is used by the
+:class:`complextable
+<djangosite.utils.sphinxconf.ComplexTableDirective>` directive and by
+:meth:`Table.to_rst <lino.core.actions.ActionRequest.to_rst>`.  Here
+we present the raw API.
 
 Usage examples
 --------------
@@ -160,13 +159,17 @@ import StringIO
 
 class Column(object):
 
-    def __init__(self, index, header, width=None):
+    def __init__(self, table, index, header, width=None):
+        self.table = table
         self.header = header
         self.width = width
         self.index = index
 
     def adjust_width(self, row):
-        s = unicode(row[self.index])
+        """Adjust required width of this column for the given row.
+        """
+        s = self.table.format_value(row[self.index])
+        s = unicode(s)
         for ln in s.splitlines():
             if self.width is None or self.width < len(ln):
                 self.width = len(ln)
@@ -253,7 +256,7 @@ class Table(object):
     def __init__(self, headers, show_headers=True):
         self.headers = [self.format_value(h) for h in headers]
         self.show_headers = show_headers
-        self.cols = [Column(i, h) for i, h in enumerate(headers)]
+        self.cols = [Column(self, i, h) for i, h in enumerate(headers)]
         self.adjust_widths(headers)
 
     def adjust_widths(self, row):
