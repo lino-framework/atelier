@@ -158,7 +158,7 @@ import StringIO
 
 
 class Column(object):
-
+    "A column in a table. "
     def __init__(self, table, index, header, width=None):
         self.table = table
         self.header = header
