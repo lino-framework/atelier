@@ -421,8 +421,8 @@ def sphinx_build(builder, docs_dir,
     # ~ args += ['-a'] # all files, not only outdated
     # ~ args += ['-P'] # no postmortem
     # ~ args += ['-Q'] # no output
-    build_dir = docs_dir.child('.build')
-    build_root = docs_dir.child('.build')
+    # build_dir = docs_dir.child('.build')
+    build_dir = Path('.build')
     if language is not None:
         args += ['-D', 'language=' + language]
         # needed in select_lang.html template
@@ -431,13 +431,14 @@ def sphinx_build(builder, docs_dir,
             build_dir = build_dir.child(language)
             #~ print 20130726, build_dir
     if env.tolerate_sphinx_warnings:
-        args += ['-w', docs_dir.child('warnings_%s.txt' % builder)]
+        args += ['-w', 'warnings_%s.txt' % builder]
     else:
         args += ['-W']  # consider warnings as errors
     #~ args += ['-w'+Path(env.ROOTDIR,'sphinx_doctest_warnings.txt')]
-    args += [docs_dir, build_dir]
+    args += ['.', build_dir]
     cmd = ' '.join(args)
-    local(cmd)
+    with lcd(docs_dir):
+        local(cmd)
     if build_dir_cmd is not None:
         with lcd(build_dir):
             local(build_dir_cmd)
