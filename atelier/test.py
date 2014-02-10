@@ -1,4 +1,4 @@
-# Copyright 2013 by Luc Saffre.
+# Copyright 2013-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -57,12 +57,16 @@ class TestCase(unittest.TestCase, SubProcessParent):
         for ln in filenames.splitlines():
             ln = ln.strip()
             if ln and not ln.startswith('#'):
+                ok = False
                 for fn in glob.glob(ln):
+                    ok = True
                     args = ["python"]
                     args += ["-m"]
                     args += ["atelier.doctest_utf8"]
                     args += [fn]
                     self.run_subprocess(args, **kw)
+                if not ok:
+                    self.fail("no files matching %s" % ln)
 
     def run_unittest(self, filename, **kw):
         """
