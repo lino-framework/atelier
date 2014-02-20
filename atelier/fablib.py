@@ -76,18 +76,19 @@ class RstFile(object):
             # self.url = url_root + "/" + "/".join(parts) + '.html'
 
 
-def setup_from_project(main_package=None, settings_module_name=None):
+def setup_from_project(
+        main_package=None,
+        settings_module_name=None):
 
     env.ROOTDIR = Path().absolute()
 
     env.project_name = env.ROOTDIR.absolute().name
 
-    #~ env.userdocs_base_language = None
-
     env.setdefault('long_date_format', "%Y%m%d (%A, %d %B %Y)")
-    #~ env.setdefault('work_root','')
-    env.work_root = Path(env.work_root)
-    env.sdist_dir = Path(env.sdist_dir)
+    # env.work_root = Path(env.work_root)
+    env.setdefault('sdist_dir', None)
+    if env.sdist_dir is not None:
+        env.sdist_dir = Path(env.sdist_dir)
     #~ env.django_doctests = []
     #~ env.django_admin_tests = []
     #~ env.bash_tests = []
@@ -117,8 +118,7 @@ def setup_from_project(main_package=None, settings_module_name=None):
         # Note: main_package may be "sphinxcontrib.dailyblog"
         args = env.main_package.split('.')
         args.append('project_info.py')
-        execfile(env.ROOTDIR.child(*args),
-                 globals())
+        execfile(env.ROOTDIR.child(*args), globals())
         env.SETUP_INFO = SETUP_INFO
     else:
         env.SETUP_INFO = None
@@ -762,8 +762,9 @@ def get_blog_entry(today):
     """
     parts = ('docs', 'blog', str(today.year), today.strftime("%m%d"))
     if env.blogger_project:
-        local_root = env.work_root.child(env.blogger_project)
+        # local_root = env.work_root.child(env.blogger_project)
         m = __import__(env.blogger_project)
+        local_root = Path(m.__file__).parent.parent
         return RstFile(local_root, m.intersphinx_url, parts)
     else:
         return RstFile(env.ROOTDIR, "http://blog.example.com/", parts)

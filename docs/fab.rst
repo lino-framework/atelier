@@ -4,11 +4,14 @@ The ``atelier.fablib`` module
 
 Here is a reference to :ref:`atelier.changes`.
 
+sdist_dir
+
 Overview
 ========
 
-A library for `fabric <http://docs.fabfile.org>`_ 
-with tasks I use to manage my projects.
+A library for fabric_ with tasks I use to manage my projects.
+
+.. _fabric: http://docs.fabfile.org
 
 To be used by creating a :file:`fabfile.py` in your project's root directory 
 with at least the following two lines::
@@ -16,10 +19,23 @@ with at least the following two lines::
   from atelier.fablib import *
   setup_from_project("foobar")
   
-Where "foobar" is the name of your main package.
+Where "foobar" is the Python name of your main package.
 
 Configuration
 -------------
+
+.. file:: .fabricrc
+
+To get started, you need a file `.fabricrc` file with at least the
+following content::
+
+
+sdist_dir
+long_date_format
+
+
+
+.. file:: fabfile.py
 
 In your :file:`fabfile.py` file you may 
 optionally specify some project-specific configuration settings like::  

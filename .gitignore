@@ -19,3 +19,4 @@ docs/api
 .build
 htmlcov
 *.egg-info
+.DS_Store
