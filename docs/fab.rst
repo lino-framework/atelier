@@ -24,18 +24,18 @@ Where "foobar" is the Python name of your main package.
 Configuration
 -------------
 
-.. file:: .fabricrc
+.fabricrc
+---------
 
 To get started, you need a file `.fabricrc` file with at least the
 following content::
 
-
-sdist_dir
-long_date_format
-
+  sdist_dir
+  long_date_format
 
 
-.. file:: fabfile.py
+fabfile.py
+----------
 
 In your :file:`fabfile.py` file you may 
 optionally specify some project-specific configuration settings like::  
