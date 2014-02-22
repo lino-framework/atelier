@@ -288,3 +288,28 @@ class SubProcessParent(object):
         kw.update(stdout=subprocess.PIPE)
         kw.update(stderr=subprocess.STDOUT)
         return subprocess.Popen(args, **kw)
+
+
+def date_offset(ref, days=0, **offset):
+    """
+    Compute a date using a "reference date" and an offset.
+
+    >>> r = i2d(20140222)
+
+    In 10 days:
+    >>> date_offset(r, 10)
+    datetime.date(2014, 3, 4)
+
+    Four hundred days ago:
+    >>> date_offset(r, -400)
+    datetime.date(2013, 1, 18)
+
+
+    """
+    if days:
+        offset.update(days=days)
+    if offset:
+        return ref + datetime.timedelta(**offset)
+    return ref
+
+
