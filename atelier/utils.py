@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 by Luc Saffre.
+# Copyright 2009-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -49,13 +49,6 @@ class AttrDict(dict):
                 "AttrDict instance has no key '%s' (keys are %s)" % (
                     name, ', '.join(self.keys())))
 
-    #~ def __getattr__(self, name):
-        #~ return self.get(name)
-
-    #~ def __getattr__(self, name,*args):
-        #~ return self.get(name,*args)
-        #~ raise AttributeError("%r has no attribute '%s'" % (self,name))
-
     def define2(self, name, value):
         return self.define(*name.split('.') + [value])
 
@@ -70,12 +63,6 @@ class AttrDict(dict):
                 s[n] = d
             s = d
         oldvalue = d.get(args[-2], None)
-        #~ if oldvalue is not None:
-            #~ print 20120217, "Overriding %s from %r to %r" % (
-              #~ '.'.join(args[:-1]),
-              #~ oldvalue,
-              #~ args[-1]
-              #~ )
         d[args[-2]] = args[-1]
         return oldvalue
 
@@ -93,14 +80,14 @@ class AttrDict(dict):
 def iif(condition, true_value, false_value):
     """
     "Inline If" : an ``if`` statement as a function.
-    
+
     Examples:
-    
+
     >>> import six
     >>> from atelier.utils import iif
     >>> six.print_("Hello, %s world!" % iif(1+1==2,"real","imaginary"))
     Hello, real world!
-    
+
     """
     if condition:
         return true_value
@@ -110,10 +97,10 @@ def iif(condition, true_value, false_value):
 def i2d(i):
     """
     Convert `int` to `date`. Examples:
-    
+
     >>> i2d(20121224)
     datetime.date(2012, 12, 24)
-    
+
     """
     d = dateparser.parse(str(i))
     d = datetime.date(d.year, d.month, d.day)
