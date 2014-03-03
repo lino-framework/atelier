@@ -33,14 +33,11 @@ I solved this by a manual patch in line 308 of
         try:
             module, name = objname.rsplit('.', 1)
         except ValueError, err:
-    
 
 """
 
-
 import logging
 logger = logging.getLogger(__name__)
-
 
 import os
 import sys
@@ -51,21 +48,29 @@ import atelier
 
 
 def configure(globals_dict, settings_module_name=None):
-    """
-    To be callsed from inside the Sphinx `conf.py` as follows::
+    """Adds to your `conf.py` an arbitrary series of things that all my
+    Sphinx docs configuration files have in common.
+    
+    To be called from inside the Sphinx `conf.py` as follows::
     
       from djangosite.utils.sphinxconf import configure
       configure(globals())
 
-    This contains the things that all my Sphinx docs configuration 
-    files have in common.
-    
-    Automatically adds the intersphinx entries
-    for projects managed in this atelier
-    by checking for an attribute `intersphinx_mapping` in
-    the global namespace of each project's main module.
-    
-    
+    Incomplete list of `conf.py` settings that will be set:
+
+    - `intersphinx_mapping` : The intersphinx entries for projects
+       managed in this atelier. Atelier gets this information by
+       checking for an attribute `intersphinx_mapping` in the global
+       namespace of each project's main module.
+
+    - `extensions`
+    - `templates_path`
+    - master_doc='index'
+    - source_suffix='.rst'
+    - primary_domain='py'
+    - pygments_style='sphinx'
+
+
     """
     filename = globals_dict.get('__file__')
     DOCSDIR = Path(filename).parent.absolute()
@@ -115,28 +120,25 @@ def configure(globals_dict, settings_module_name=None):
     if settings_module_name is not None:
         #~ os.environ['DJANGO_SETTINGS_MODULE'] = 'north.docs_settings'
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
-        """
-        Trigger loading of Djangos model cache in order to avoid side effects that 
-        would occur when this happens later while importing one of the models modules.
-        """
+
+        # Trigger loading of Djangos model cache in order to avoid
+        # side effects that would occur when this happens later while
+        # importing one of the models modules.
         from django.conf import settings
-        # ~ settings.SITE # must at least access some variable in the settings
         settings.SITE.startup()
 
         globals_dict.update(
-            template_bridge='atelier.sphinxconf.DjangoTemplateBridge')
+            template_bridge=str('atelier.sphinxconf.DjangoTemplateBridge'))
 
     globals_dict.update(
         templates_path=['.templates', Path(__file__).parent.absolute()])
 
-    
     # some settings i use in all projects:
 
     globals_dict.update(master_doc='index')
     globals_dict.update(source_suffix='.rst')
     globals_dict.update(primary_domain='py')
     globals_dict.update(pygments_style='sphinx')
-
 
 
 def version2rst(self, m):
@@ -155,21 +157,19 @@ def version2rst(self, m):
         #~ print("We're currently working on :doc:`coming`.")
 
 
-#~ from sphinx.application import TemplateBridge
 from sphinx.jinja2glue import BuiltinTemplateLoader
-#~ class DjangoTemplateBridge(TemplateBridge):
 
 
 class DjangoTemplateBridge(BuiltinTemplateLoader):
 
-    """
-    `template_bridge <http://sphinx-doc.org/config.html#confval-template_bridge>`_ 
-    
-    Adds a template variable ``settings`` 
-    to the Sphinx template context
-    (which cannot be done using 
-    `html_context <http://sphinx-doc.org/config.html#confval-html_context>`_
-    because Django settings are not pickleable.
+    """The :meth:`configure` method installs this as `template_bridge
+    <http://sphinx-doc.org/config.html#confval-template_bridge>`_ for
+    Sphinx.  It causes a template variable ``settings`` to be added
+    the Sphinx template context. This cannot be done using
+    `html_context
+    <http://sphinx-doc.org/config.html#confval-html_context>`_ because
+    Django settings are not pickleable.
+
     """
 
     def render(self, template, context):
