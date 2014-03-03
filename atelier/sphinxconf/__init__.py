@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # Copyright 2011-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
-"""
 
-Sphinx setup used to build the Lino documentation.
+"""Sphinx setup used to build most of the documentation trees
+mainained by myself.
 
 """
 
@@ -50,9 +50,9 @@ import atelier
 def configure(globals_dict, settings_module_name=None):
     """Adds to your `conf.py` an arbitrary series of things that all my
     Sphinx docs configuration files have in common.
-    
+
     To be called from inside the Sphinx `conf.py` as follows::
-    
+
       from djangosite.utils.sphinxconf import configure
       configure(globals())
 
