@@ -453,6 +453,14 @@ def sync_docs_data(docs_dir):
             target.mkdir()
             cmd = 'cp -ur %s %s' % (src, target.parent)
             local(cmd)
+    if False:
+        # according to http://mathiasbynens.be/notes/rel-shortcut-icon
+        for n in ['favicon.ico']:
+            src = docs_dir.child(n).absolute()
+            if src.exists():
+                target = build_dir.child(n)
+                cmd = 'cp %s %s' % (src, target.parent)
+                local(cmd)
 
 
 @task(alias='userdocs')
