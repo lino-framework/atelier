@@ -186,11 +186,9 @@ def make_messages():
     setup_babel_userdocs('init_catalog')
     setup_babel_userdocs('update_catalog')
 
-#~ @task(alias='em')
-
 
 def extract_messages():
-    """Extract messages from source files to .pot file"""
+    """Extract messages from source files to `django.pot` file"""
     locale_dir = get_locale_dir()
     if locale_dir is None:
         return
@@ -201,17 +199,15 @@ def extract_messages():
     #~ must_confirm(cmd)
     local(cmd)
 
-#~ @task(alias='emu')
-
 
 def extract_messages_userdocs():
     """
     Run the Sphinx gettext builder on userdocs.
     """
-    args = ['sphinx-build', '-b', 'gettext']
     userdocs = env.ROOTDIR.child('userdocs')
     if not userdocs.isdir():
         return  # abort("Directory %s does not exist." % userdocs)
+    args = ['sphinx-build', '-b', 'gettext']
     #~ args += cmdline_args
     # ~ args += ['-a'] # all files, not only outdated
     # ~ args += ['-P'] # no postmortem

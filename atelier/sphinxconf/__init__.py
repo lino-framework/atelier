@@ -60,7 +60,7 @@ def configure(globals_dict, settings_module_name=None):
 
     - `intersphinx_mapping` : The intersphinx entries for projects
        managed in this atelier. Atelier gets this information by
-       checking for an attribute `intersphinx_mapping` in the global
+       checking for an attribute `intersphinx_url` in the global
        namespace of each project's main module.
 
     - `extensions`

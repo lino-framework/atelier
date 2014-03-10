@@ -1,4 +1,6 @@
 #!python
+# Copyright 2013-2014 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
 """
 USAGE : per_project cmd1 [cmd2 ...]
 
