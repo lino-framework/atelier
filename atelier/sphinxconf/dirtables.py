@@ -2,6 +2,26 @@
 # Copyright 2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
+"""Defines the :directive:`directory`, :directive:`tickets_table` and
+:directive:`entry_intro` directives.
+
+.. directive:: directory
+
+Inserts a table containing three columns 'title', 'author' and 'date',
+and one row for each `.rst` file found in this directory (except for
+the calling file).
+
+.. directive:: tickets_table
+
+This is used e.g. to build
+http://lino-framework.org/tickets
+
+.. directive:: entry_intro
+
+This doesn't yet work unfortunately.
+
+"""
+
 from __future__ import print_function
 from __future__ import unicode_literals
 
@@ -117,8 +137,9 @@ class DirectoryTable(InsertInputDirective):
 
     def format_entry(self, e):
         cells = []
-        text = ''.join([unicode(c) for c in e.title.children])
-        cells.append(":doc:`%s <%s>`" % (text, e.docname))
+        # text = ''.join([unicode(c) for c in e.title.children])
+        # cells.append(":doc:`%s <%s>`" % (text, e.docname))
+        cells.append(":doc:`%s`" % e.docname)
         cells.append(unicode(e.meta.get('author', '')))
         cells.append(unicode(e.meta.get('date', '')))
         return cells
@@ -127,13 +148,14 @@ class DirectoryTable(InsertInputDirective):
 class TicketsTable(DirectoryTable):
 
     def get_headers(self):
-        return ['title', 'state', 'module', 'since', 'for']
+        return ['title' + ' '*50, 'state', 'module', 'since', 'for']
 
     def format_entry(self, e):
         cells = []
         # cells.append(e.docname)
-        text = ''.join([unicode(c) for c in e.title.children])
-        cells.append(":doc:`%s <%s>`" % (text, e.docname))
+        cells.append(":doc:`%s`" % e.docname)
+        # text = ''.join([unicode(c) for c in e.title.children])
+        # cells.append(":doc:`%s <%s>`" % (text, e.docname))
         cells.append(unicode(e.meta.get('state', '')))
         # cells.append(unicode(e.meta.get('reporter', '')))
         ref = e.meta.get('module', '')
