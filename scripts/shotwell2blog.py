@@ -3,7 +3,6 @@
 # License: BSD, see LICENSE for more details.
 
 """
-get filenames of tagged photos and videos from shotwell photo database
 
 Thanks to Maarek for first inspiration
 http://forum.ubuntu-fr.org/viewtopic.php?id=415396
@@ -131,14 +130,32 @@ def get_photos(conn, tagname):
      help='Your Shotwell library directory')
 @arg('-d', '--shotwell_db',
      help='Your Shotwell database file')
-def main(target_root=expanduser("~/sigal_pictures/pictures"),
+def main(target_root=None,
          shotwell_lib=expanduser("~/Pictures/"),
          shotwell_db=expanduser("~/.local/share/shotwell/data/photo.db"),
          *tags):
+    """Copy tagged photos and videos from shotwell photo database to a target
+filesystem.
 
-    if not os.path.exists(target_root):
-        raise CommandError(
-            "Target directory %s does not exist!" % target_root)
+Usage examples:
+
+  $ python shotwell2blog.py -t ~/myblog/pictures blog
+
+  Copy all photos marked "blog" to a directory `~/myblog/pictures`.
+  Maintain subdirectories.
+  Don't touch existing photos.
+
+  $ python shotwell2blog.py Foo | xargs zip -j foo.zip
+
+  Create a zip file with a copy of each photo marked "Foo".
+  The `-j` option is to *not* include directory names.
+
+    """
+
+    if target_root:
+        if not os.path.exists(target_root):
+            raise CommandError(
+                "Target directory %s does not exist!" % target_root)
 
     conn = sqlite3.connect(shotwell_db)
     conn.row_factory = sqlite3.Row
@@ -155,17 +172,20 @@ def main(target_root=expanduser("~/sigal_pictures/pictures"),
 
     for tag in tags:
         for orig in get_photos(conn, tag):
-            target = chop(orig, shotwell_lib)
-            target = target.lower()
-            target = os.path.join(target_root, target)
-            if os.path.exists(target):
-                yield "{0} exists".format(target)
+            if target_root:
+                target = chop(orig, shotwell_lib)
+                target = target.lower()
+                target = os.path.join(target_root, target)
+                if os.path.exists(target):
+                    yield "{0} exists".format(target)
+                else:
+                    dn = os.path.dirname(target)
+                    if not os.path.exists(dn):
+                        yield "{0} created".format(dn)
+                        os.makedirs(dn)
+                    yield "{0} copied".format(target)
+                    shutil.copyfile(orig, target)
             else:
-                dn = os.path.dirname(target)
-                if not os.path.exists(dn):
-                    yield "{0} created".format(dn)
-                    os.makedirs(dn)
-                yield "{0} copied".format(target)
-                shutil.copyfile(orig, target)
+                yield orig
 
     conn.close()
