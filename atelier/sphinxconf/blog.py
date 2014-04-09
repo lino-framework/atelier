@@ -4,13 +4,15 @@
 
 """
 This Sphinx extension defines the 
-``blogger_year`` and 
-``blogger_index``
+:directive:`blogger_year` and 
+:directive:`blogger_index`
 directives.
 
 Usage: add the following to your `conf.py`::
 
   extensions += ['atelier.sphinxconf.blog']
+
+
 
 Thanks to 
 
@@ -27,11 +29,6 @@ import datetime
 from StringIO import StringIO
 
 from unipath import Path
-#~ import lino
-
-#~ from django.conf import settings
-
-#~ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from docutils import nodes, utils
 from docutils import statemachine
@@ -77,9 +74,6 @@ class Year(object):
     A :class:`Year` instance is created for each 
     `blogger_year` directive.
     """
-    #~ _instances = dict()
-    #~ def __init__(self,env,blogname,starting_year):
-    #~ def __init__(self,env,blogname,year):
 
     def __init__(self, env):
         """

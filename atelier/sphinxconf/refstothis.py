@@ -50,27 +50,26 @@ def py2rst(x):
 
 
 class RefsToThis(InsertInputDirective):
-    """
-
-.. directive:: refstothis
+    """.. directive:: refstothis
 
 Inserts a bulleted list of documents referring to "this", where "this"
 can be either the current document or a specified reference name.
 
 It recognizes all references made using `XRefRole` roles, including
-for example `:ref:
-<http://sphinx-doc.org/markup/inline.html#role-ref>`__ and `:doc:
-<http://sphinx-doc.org/markup/inline.html#role-doc>`__.
+for example
+`:ref: <http://sphinx-doc.org/markup/inline.html#role-ref>`__
+and
+`:doc: <http://sphinx-doc.org/markup/inline.html#role-doc>`__.
 
-The list has a hard-coded, non configurable, format: one entry for
-each page, consisting of the title of the document where the reference
-was made, followed by the time of last modification of that document.
+The list has currently a hard-coded, non configurable, format: one
+entry for each page, consisting of the title of the document where the
+reference was made, followed by the time of last modification of that
+document.
 
 The list is ordered by these file timestamps.
 
 If a label gets referenced more than once in a same document, it is
 mentioned only once.
-
 
     """
 
@@ -82,6 +81,7 @@ mentioned only once.
         target = ' '.join(self.content).strip()
         if not target:
             target = env.temp_data['docname']
+            # print("20140409 target is %r" % target)
         found = set()
         rows = set()
 
@@ -111,6 +111,7 @@ mentioned only once.
                     other = ref['reftarget']
                 if other == target:
                     found.add(ref['refdoc'])
+                    print("20140409 found", ref)
                 else:
                     # rows.add(ref['reftarget'])
                     rows.add(other)
@@ -122,7 +123,7 @@ mentioned only once.
     
         if len(found) == 0:
             s = """No documents found for target %r.""" % target
-            s += """\nPending xrefs were %r.""" % rows
+            # s += """\nPending xrefs were %r.""" % rows
             return s
 
         entries = []
@@ -147,8 +148,6 @@ mentioned only once.
 
         return rstgen.ul(items)
     
-
-
 
 def setup(app):
     app.add_directive('refstothis', RefsToThis)

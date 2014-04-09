@@ -11,6 +11,19 @@ who reported it. That language is not necessarily English. I don't
 want to translate tickets. But I want to expand :role:`ddref` roles
 into the user's language, not to English.
 
+Blogging
+--------
+
+.. directive:: blogger_year
+
+Inserts a calendar for the given year with the twelve months.  The
+individual days are linked to their respective daily entry.
+
+.. directive:: blogger_index
+
+Inserts a main index page forthis blog, one entry for every year.
+
+
 Inline markup
 -------------
 

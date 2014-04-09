@@ -17,6 +17,8 @@ import sys
 import doctest
 import textwrap
 
+from babel.dates import format_date
+
 #~ def clean_sys_path():
     # ~ # print sys.path
     #~ if sys.path[0] == '':
@@ -26,19 +28,13 @@ import textwrap
 
 import datetime
 import unittest
-#~ import subprocess
-#~ from setuptools import find_packages
 from unipath import Path
 import sphinx
-#~ import six
-#~ from distutils.core import run_setup
 
 import atelier
-#~ import djangosite ; print djangosite.__file__
 from atelier.utils import AttrDict
 from atelier.utils import i2d
 from atelier import rstgen
-#~ from timtools.tools.synchronizer import Synchronizer
 
 
 from fabric.api import env, local, task, prompt
@@ -89,21 +85,21 @@ def setup_from_project(
     env.setdefault('sdist_dir', None)
     if env.sdist_dir is not None:
         env.sdist_dir = Path(env.sdist_dir)
-    #~ env.django_doctests = []
-    #~ env.django_admin_tests = []
-    #~ env.bash_tests = []
-    #~ env.django_databases = []
-    #~ env.simple_doctests = []
-    #~ env.docs_doctests = []
     env.main_package = main_package
     env.tolerate_sphinx_warnings = False
     env.demo_databases = []
     env.use_mercurial = True
+    # env.blogger_url = "http://blog.example.com/"
 
     env.setdefault('languages', None)
+    env.setdefault('blogger_project', None)
+    env.setdefault('blogger_url', None)
 
     if isinstance(env.languages, basestring):
-        env.languages = env.languages.split()
+        if ' ' in env.languages:
+            env.languages = env.languages.split()
+        else:
+            env.languages = [env.languages]
 
     #~ print env.project_name
 
@@ -771,7 +767,7 @@ def get_blog_entry(today):
         local_root = Path(m.__file__).parent.parent
         return RstFile(local_root, m.intersphinx_url, parts)
     else:
-        return RstFile(env.ROOTDIR, "http://blog.example.com/", parts)
+        return RstFile(env.ROOTDIR, env.blogger_url, parts)
 
 
 @task(alias='blog')
@@ -783,8 +779,12 @@ def edit_blog_entry():
     entry = get_blog_entry(today)
     if not entry.path.exists():
         if confirm("Create file %s?" % entry.path):
-            txt = rstgen.header(1, today.strftime(env.long_date_format))
-            entry.path.write_file(txt)
+            if env.languages is None:
+                txt = today.strftime(env.long_date_format)
+            else:
+                txt = format_date(
+                    today, format='full', locale=env.languages[0])
+            entry.path.write_file(rstgen.header(1, txt))
             # touch it for Sphinx:
             entry.path.parent.child('index.rst').set_times()
     args = [os.environ['EDITOR']]
