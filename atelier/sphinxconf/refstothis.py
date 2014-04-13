@@ -111,7 +111,7 @@ mentioned only once.
                     other = ref['reftarget']
                 if other == target:
                     found.add(ref['refdoc'])
-                    print("20140409 found", ref)
+                    # print("20140409 found", ref)
                 else:
                     # rows.add(ref['reftarget'])
                     rows.add(other)

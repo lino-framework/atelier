@@ -778,15 +778,16 @@ def edit_blog_entry():
     today = get_current_date()
     entry = get_blog_entry(today)
     if not entry.path.exists():
-        if confirm("Create file %s?" % entry.path):
-            if env.languages is None:
-                txt = today.strftime(env.long_date_format)
-            else:
-                txt = format_date(
-                    today, format='full', locale=env.languages[0])
-            entry.path.write_file(rstgen.header(1, txt))
-            # touch it for Sphinx:
-            entry.path.parent.child('index.rst').set_times()
+        if not confirm("Create file %s?" % entry.path):
+            return
+        if env.languages is None:
+            txt = today.strftime(env.long_date_format)
+        else:
+            txt = format_date(
+                today, format='full', locale=env.languages[0])
+        entry.path.write_file(rstgen.header(1, txt))
+        # touch it for Sphinx:
+        entry.path.parent.child('index.rst').set_times()
     args = [os.environ['EDITOR']]
     args += [entry.path]
     local(' '.join(args))

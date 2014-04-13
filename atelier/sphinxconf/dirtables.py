@@ -58,6 +58,7 @@ def render_entry(tplname, context):
         template = template_env.get_template('dirtables/entry.rst')
     return template.render(context)
 
+
 def rel_docname(a, b):
     """
     >>> print(rel_docname('tickets/index','tickets/2'))
@@ -195,7 +196,6 @@ class EntryIntro(InsertInputDirective):
 #         # RREFS[]
 #         print("20140115 result_nodes", document, env, node, is_ref)
 #         return [node], []
-
 
 
 def setup(app):
