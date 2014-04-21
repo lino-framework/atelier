@@ -395,6 +395,8 @@ def build_api(*cmdline_args):
     # args += ['-f'] # force the overwrite of all files that it generates.
     args += ['--no-toc']  # no modules.rst file
     args += ['--separate']  # separate page for each module
+    args += ['--module-first']  # Put module documentation before
+                                # submodule documentation
     args += ['-o', api_dir]
     args += [env.main_package.replace('.', '/')]  # packagedir
     if False:  # doesn't seem to work
