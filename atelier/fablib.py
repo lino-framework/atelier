@@ -13,8 +13,6 @@ TODO:
 
 """
 import os
-import sys
-import doctest
 import textwrap
 
 from babel.dates import format_date
@@ -27,17 +25,15 @@ from babel.dates import format_date
 
 
 import datetime
-import unittest
 from unipath import Path
 import sphinx
 
 import atelier
-from atelier.utils import AttrDict
 from atelier.utils import i2d
 from atelier import rstgen
 
 
-from fabric.api import env, local, task, prompt
+from fabric.api import env, local, task
 from fabric.utils import abort, fastprint, puts, warn
 from fabric.contrib.console import confirm
 from fabric.api import lcd
