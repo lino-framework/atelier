@@ -395,8 +395,8 @@ def build_api(*cmdline_args):
                                 # submodule documentation
     args += ['-o', api_dir]
     args += [env.main_package.replace('.', '/')]  # packagedir
-    if False:  # doesn't seem to work
-        excluded = [env.ROOTDIR.child('lino', 'sandbox').absolute()]
+    if False:
+        excluded = ['lino/dd.py']
         args += excluded  # pathnames to be ignored
     cmd = ' '.join(args)
     #~ puts("%s> %s" % (os.getcwd(), cmd))
