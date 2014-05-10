@@ -231,24 +231,6 @@ class Py2rstDirective(InsertInputDirective):
         return s
 
 
-class Django2rstDirective(Py2rstDirective):
-    """Defines the :directive:`django2rst` directive."""
-
-    def get_context(self):
-        #~ from djangosite.dbutils import set_language
-        from django.conf import settings
-        context = super(Django2rstDirective, self).get_context()
-        #~ set_language(lng)
-        context.update(settings=settings)
-        context.update(settings.SITE.modules)
-        return context
-
-    def output_from_exec(self, code):
-        from django.utils import translation
-        with translation.override(self.language):
-            return super(Django2rstDirective, self).output_from_exec(code)
-
-
 #~ class DjangoTableDirective(InsertInputDirective):
     #~ def get_rst(self):
         #~ assert len(self.content) == 1
@@ -341,7 +323,6 @@ def setup(app):
     # also used by `vor/conf.py`
     app.add_directive(str('complextable'), ComplexTableDirective)
     app.add_directive(str('py2rst'), Py2rstDirective)
-    app.add_directive(str('django2rst'), Django2rstDirective)
     # app.add_directive(str('blognote'), BlogNoteDirective)
     app.add_directive(str('textimage'), TextImageDirective)
 
