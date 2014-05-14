@@ -11,6 +11,7 @@ Defines an extended TestCase whith methods to launch a subprocess.
 """
 import unittest
 import glob
+import sys
 from setuptools import find_packages
 
 from atelier.utils import SubProcessParent
@@ -60,7 +61,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
                 ok = False
                 for fn in glob.glob(ln):
                     ok = True
-                    args = ["python"]
+                    args = [sys.executable]
                     args += ["-m"]
                     args += ["atelier.doctest_utf8"]
                     args += [fn]
