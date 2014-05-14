@@ -7,7 +7,8 @@ Defines a series of utility classes and functions.
 
 """
 
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
+# causes problems on windows where `subprocess.Popen` wants only plain strings
 
 import os
 import sys
@@ -29,7 +30,7 @@ class AttrDict(dict):
     >>> a.define('foo',1)
     >>> a.define('bar','baz',2)
     >>> print a
-    {u'foo': 1, u'bar': {u'baz': 2}}
+    {'foo': 1, 'bar': {'baz': 2}}
     >>> print a.foo
     1
     >>> print a.bar.baz
@@ -37,7 +38,7 @@ class AttrDict(dict):
     >>> print a.resolve('bar.baz')
     2
     >>> print a.bar
-    {u'baz': 2}
+    {'baz': 2}
     
     """
 
@@ -206,7 +207,7 @@ def unindent(s):
     
     >>> from atelier.utils import unindent
     >>> unindent('')
-    u''
+    ''
     >>> print unindent('''
     ...   foo
     ...     foo
@@ -261,11 +262,10 @@ class SubProcessParent(object):
         return subprocess.check_output(args, **kw)
 
     def open_subprocess(self, args, **kw):
-        """
-        Additional keywords will be passed to the 
-        `Popen constrctor <http://docs.python.org/2.7/library/subprocess.html#popen-constructor>`_.
-        They can be e.g.
-        `cwd` : the working directory
+        """Additional keywords will be passed to the `Popen constrctor
+        <http://docs.python.org/2.7/library/subprocess.html#popen-constructor>`_.
+        They can be e.g.  `cwd` : the working directory
+
         """
         env = self.build_environment()
         kw.update(env=env)
@@ -298,5 +298,4 @@ def date_offset(ref, days=0, **offset):
     if offset:
         return ref + datetime.timedelta(**offset)
     return ref
-
 
