@@ -906,6 +906,7 @@ Description
 
 Read more on %(url)s
 """ % env.SETUP_INFO
+    txt = txt.encode('utf-8')
     if readme.exists() and readme.read_file() == txt:
         return
     must_confirm("Overwrite %s" % readme.absolute())
