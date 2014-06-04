@@ -70,7 +70,7 @@ List of existing `env` keys:
 ``fab`` commands
 ================
 
-.. fab_command:: mm
+.. command:: fab mm
 
 ("make messages")
 
@@ -78,7 +78,11 @@ Extracts messages from both code and userdocs, then initializes and
 updates all catalogs.
 
 
-.. fab_command:: test_sdist
+.. command:: fab test
+
+Run the test suite of this project.
+
+.. command:: fab test_sdist
 
     Creates a temporay virtualenv, installs your project and runs your test suite.
         
@@ -99,27 +103,43 @@ updates all catalogs.
 
 
 
-.. fab_command:: initdb
+.. command:: fab initdb
 
 Run :manage:`initdb_demo` on every demo database of this project 
 (specified in `env.demo_databases`)
 
-.. fab_command:: ci
+.. command:: fab ci
 
     Checkin and push to repository, using today's blog entry as commit message.
     
 
-.. fab_command:: release
+.. command:: fab release
 
 Create official source distribution and upload it to PyPI.
 
-.. fab_command:: api
+.. command:: fab userdocs
+
+Run `sphinx build html` in `userdocs`.
+
+.. command:: fab write_readme
+
+Generate `README.txt` file from project_info (if necessary).
+
+
+.. command:: fab api
 
 Generate `.rst` files below `docs/api`.
 
 
-.. fab_command:: blog
+
+.. command:: fab blog
 
 Edit today's blog entry, create an empty file if it doesn't yet exist.
+
+
+.. command:: fab docs
+
+Run `sphinx build html` in `docs`.
+
 
 

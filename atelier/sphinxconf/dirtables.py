@@ -2,21 +2,21 @@
 # Copyright 2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""Defines the :directive:`directory`, :directive:`tickets_table` and
-:directive:`entry_intro` directives.
+"""Defines the :rst:dir:`directory`, :rst:dir:`tickets_table` and
+:rst:dir:`entry_intro` directives.
 
-.. directive:: directory
+.. rst:directive:: directory
 
 Inserts a table containing three columns 'title', 'author' and 'date',
 and one row for each `.rst` file found in this directory (except for
 the calling file).
 
-.. directive:: tickets_table
+.. rst:directive:: tickets_table
 
 This is used e.g. to build
 http://lino-framework.org/tickets
 
-.. directive:: entry_intro
+.. rst:directive:: entry_intro
 
 This doesn't yet work unfortunately.
 

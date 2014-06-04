@@ -19,7 +19,12 @@ Thanks to
 """
 
 from __future__ import print_function
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
+# removed 20140604 because it causes:
+# File "/home/luc/repositories/sphinx/sphinx/application.py", line 548, in add_object_type
+#     'doc_field_types': doc_field_types})
+# TypeError: type() argument 1 must be string, not unicode
+
 
 import os
 import inspect
@@ -245,6 +250,17 @@ def unused_srcref_role(typ, rawtext, text, lineno, inliner, options={}, content=
     pnode = nodes.reference(title, title, internal=False, refuri=full_url)
     return [pnode], []
 
+from sphinx import addnodes
+
+
+def command_parse(env, sig, signode):
+    # x, y = sig.split()
+    signode += addnodes.literal_strong(sig, sig)
+    # signode += addnodes.desc_name(x, x)
+    # signode += addnodes.desc_parameterlist()
+    # signode[-1] += addnodes.desc_parameter(y, y)
+    return sig
+
 
 def setup(app):
     """
@@ -262,14 +278,18 @@ def setup(app):
         rolename='manage',
         indextemplate='pair: %s; management command')
 
-    add(directivename='role', rolename='role',
-        indextemplate='pair: %s; docutils role')
-    add(directivename='directive', rolename='directive',
-        indextemplate='pair: %s; docutils directive')
+    # add(directivename='role', rolename='role',
+    #     indextemplate='pair: %s; docutils role')
+    # add(directivename='directive', rolename='directive',
+    #     indextemplate='pair: %s; docutils directive')
 
-    add(directivename='fab_command',
-        rolename='fab',
-        indextemplate='pair: %s; fab command')
+    # add(directivename='fab_command',
+    #     rolename='fab',
+    #     indextemplate='pair: %s; fab command')
+
+    app.add_object_type(
+        'command', 'cmd', 'pair: %s; command', command_parse)
+
     add(directivename='xfile',
         rolename='xfile',
         indextemplate='pair: %s; file')

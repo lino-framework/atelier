@@ -2,9 +2,9 @@
 # Copyright 2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""Defines the :directive:`sigal_image` directive.
+"""Defines the :rst:dir:`sigal_image` directive.
 
-.. directive:: sigal_image
+.. rst:directive:: sigal_image
 
 Example::
 
@@ -30,7 +30,7 @@ Then I use the :mod:`atelier.scripts.shotwell2blog.py` script to
 extract those images to a separate tree. This tree serves as input for
 sigal which will generate a static html gallery.
 
-The :directive:`sigal_image` directive was the last missing part of
+The :rst:dir:`sigal_image` directive was the last missing part of
 this publishing chain.
 
 **Why?**

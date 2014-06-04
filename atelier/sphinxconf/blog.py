@@ -4,8 +4,8 @@
 
 """
 This Sphinx extension defines the 
-:directive:`blogger_year` and 
-:directive:`blogger_index`
+:rst:dir:`blogger_year` and 
+:rst:dir:`blogger_index`
 directives.
 
 Usage: add the following to your `conf.py`::

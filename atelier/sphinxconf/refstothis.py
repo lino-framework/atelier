@@ -2,7 +2,7 @@
 # Copyright 2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""A Sphinx extension which defines the :directive:`refstothis`
+"""A Sphinx extension which defines the :rst:dir:`refstothis`
 directive.
 
 A fictive usage example is in :doc:`/refstothis/index`.
@@ -12,15 +12,15 @@ His `sphinxcontrib-taglist
 <https://github.com/spinus/sphinxcontrib-taglist>`_ module uses a
 different approach, based on the idea that every "reference" to a tag
 also specifies a text to appear in the list of references.
-:directive:`refstothis` is for people who don't want to specify their
+:rst:dir:`refstothis` is for people who don't want to specify their
 own text for each tag directive.
 
 TODO:
 
-- When I do `fab` :fab:`clean` followed by :fab:`docs`, then e.g. the
+- When I do `fab` :cmd:`fab clean` followed by :cmd:`fab docs`, then e.g. the
   `refstothis` in :doc:`/refstothis/baz` does not mention all other
   documents. But when I then touch the `baz.rst` file and run
-  :fab:`docs`, then they are all there.  I guess this is because not
+  :cmd:`fab docs`, then they are all there.  I guess this is because not
   all documents have been loaded when the rst is being generated.
 
 """
@@ -50,7 +50,7 @@ def py2rst(x):
 
 
 class RefsToThis(InsertInputDirective):
-    """.. directive:: refstothis
+    """.. rst:directive:: refstothis
 
 Inserts a bulleted list of documents referring to "this", where "this"
 can be either the current document or a specified reference name.

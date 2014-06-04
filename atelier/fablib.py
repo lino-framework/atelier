@@ -381,7 +381,7 @@ def summary(*cmdline_args):
 @task(alias='api')
 def build_api(*cmdline_args):
     """
-    Generate `.rst` files in `docs/api`. See :fab:`api`. 
+    Generate `.rst` files in `docs/api`. See :cmd:`fab api`.
     """
 
     os.environ.update(SPHINX_APIDOC_OPTIONS="members,show-inheritance")

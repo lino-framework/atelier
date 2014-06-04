@@ -2,7 +2,7 @@
 About foos, bars and bazes
 ==========================
 
-An example to demonstrate the :directive:`refstothis` directive.
+An example to demonstrate the :rst:dir:`refstothis` directive.
 
 This example consists of four files:
 

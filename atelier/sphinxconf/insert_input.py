@@ -5,28 +5,52 @@
 """Defines the :class:`InsertInputDirective` class and some
 subclasses, installing the following directives:
 
-- :directive:`py2rst`
-- :directive:`django2rst`
-- :directive:`textimage`
-- :directive:`complextable`
+- :rst:dir:`py2rst`
+- :rst:dir:`django2rst`
+- :rst:dir:`textimage`
+- :rst:dir:`complextable`
 
 
-.. directive:: py2rst
 
-Run a Python code block and interpret the output as if it were rst
-source.
+.. rst:directive:: py2rst
 
-.. directive:: django2rst
+Executes the Python code, capturing the `stdout` and inserting it to
+the document, parsing it as reStructuredText.
 
-Like :directive:`py2rst` but with the Django environment
+For example, if you write::
+
+  .. py2rst::
+
+      url = 'http://planet.python.org/'
+      print("`This <%s>`_ is my *favourite* planet." % url)
+
+then you get:
+
+.. py2rst::
+
+  url = 'http://planet.python.org/'
+  print("`This <%s>`_ is my *favourite* planet." % url)
+
+Note that when the Sphinx builder is running under Python 2.7, the
+following future imports have been done::
+
+  from __future__ import print_function
+  from __future__ import unicode_literals
+
+
+
+
+.. rst:directive:: django2rst
+
+Like :rst:dir:`py2rst` but with the Django environment
 initialized.
 
-.. directive:: textimage
+.. rst:directive:: textimage
 
 Insert a text and an image side by side.
 See :blogref:`20130116` for documentation.
 
-.. directive:: complextable
+.. rst:directive:: complextable
 
 Create tables with complex cell content
 
@@ -189,7 +213,7 @@ class InsertInputDirective(Directive):
 
 class Py2rstDirective(InsertInputDirective):
 
-    """Defines the :directive:`py2rst` directive."""
+    """Defines the :rst:dir:`py2rst` directive."""
 
     titles_allowed = True
     has_content = True
@@ -251,7 +275,7 @@ class Py2rstDirective(InsertInputDirective):
 
 
 class TextImageDirective(InsertInputDirective):
-    """Defines the :directive:`textimage` directive."""
+    """Defines the :rst:dir:`textimage` directive."""
 
     required_arguments = 1
     final_argument_whitespace = True
@@ -276,7 +300,7 @@ class TextImageDirective(InsertInputDirective):
 
 class ComplexTableDirective(InsertInputDirective):
 
-    """Defines the :directive:`complextable` directive."""
+    """Defines the :rst:dir:`complextable` directive."""
 
     required_arguments = 0
     final_argument_whitespace = True
