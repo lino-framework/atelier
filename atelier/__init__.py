@@ -6,9 +6,11 @@ This is the :mod:`atelier` package.
 It deserves more documentation.
 """
 
+import sys
 import os
 execfile(os.path.join(os.path.dirname(__file__), 'project_info.py'))
 __version__ = SETUP_INFO['version']
+
 
 intersphinx_url = "http://atelier.lino-framework.org"
 srcref_url = 'https://github.com/lsaffre/atelier/blob/master/%s'
@@ -35,6 +37,32 @@ try:
 except ImportError:
     from django.utils.importlib import import_module
 
+
+def get_setup_info(root_dir):
+    if not root_dir.child('setup.py').exists():
+        raise RuntimeError(
+            "You must call 'fab' from a project's root directory.")
+    # sys.path.insert(0, root_dir)
+    # setup_module = __import__('setup')
+    # print 20140610, root_dir
+    # del sys.path[0]
+    # return getattr(setup_module, 'SETUP_INFO', None)
+    g = dict()
+    g['__name__'] = 'not_main'
+    cwd = root_dir.cwd()
+    root_dir.chdir()
+    execfile(root_dir.child('setup.py'), g)
+    cwd.chdir()
+    return g.get('SETUP_INFO')
+
+    # # Expected to define global SETUP_INFO.
+    # # Note that main_package may be "sphinxcontrib.dailyblog"
+    # args = env.main_package.split('.')
+    # args.append('project_info.py')
+    # execfile(env.ROOTDIR.child(*args), globals())
+    # env.SETUP_INFO = SETUP_INFO
+
+
 class Project(object):
 
     def __init__(self, i, name):
@@ -49,7 +77,8 @@ class Project(object):
         self.root_dir = Path(self.module.__file__).ancestor(
             number_of_parts + 1)
         self.nickname = self.root_dir.name
-
+        self.SETUP_INFO = get_setup_info(self.root_dir)
+        
 
 def load_projects():
     if len(_PROJECT_INFOS) == 0:

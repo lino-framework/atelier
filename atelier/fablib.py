@@ -31,6 +31,7 @@ import sphinx
 import atelier
 from atelier.utils import i2d
 from atelier import rstgen
+from atelier import get_setup_info
 
 
 from fabric.api import env, local, task
@@ -74,7 +75,7 @@ def setup_from_project(
 
     env.ROOTDIR = Path().absolute()
 
-    env.project_name = env.ROOTDIR.absolute().name
+    env.project_name = env.ROOTDIR.name
 
     env.setdefault('long_date_format', "%Y%m%d (%A, %d %B %Y)")
     # env.work_root = Path(env.work_root)
@@ -92,33 +93,19 @@ def setup_from_project(
     env.setdefault('blogger_url', None)
 
     if isinstance(env.languages, basestring):
-        if ' ' in env.languages:
-            env.languages = env.languages.split()
-        else:
-            env.languages = [env.languages]
-
-    #~ print env.project_name
+        env.languages = env.languages.split()
 
     env.DOCSDIR = Path(env.ROOTDIR, 'docs')
-    #~ env.BUILDDIR = Path(env.DOCSDIR,'.build')
 
     if env.main_package:
-        if not Path(env.ROOTDIR, 'setup.py').exists():
-            raise RuntimeError(
-                "You must call 'fab' from a project's root directory.")
-        # Expected to define global SETUP_INFO.
-        # Note: main_package may be "sphinxcontrib.dailyblog"
-        args = env.main_package.split('.')
-        args.append('project_info.py')
-        execfile(env.ROOTDIR.child(*args), globals())
-        env.SETUP_INFO = SETUP_INFO
+        env.SETUP_INFO = get_setup_info(Path(env.ROOTDIR))
     else:
         env.SETUP_INFO = None
 
     if settings_module_name is not None:
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
         from django.conf import settings
-        settings.SITE.startup()
+        # why was this? settings.SITE.startup()
         env.languages = [lng.name for lng in settings.SITE.languages]
         env.demo_databases.append(settings_module_name)
         #~ env.userdocs_base_language = settings.SITE.languages[0].name
@@ -359,11 +346,11 @@ def summary(*cmdline_args):
         'Version')
 
     def cells(self):
-        print 2014116, self.module
-        url = self.module.SETUP_INFO['url']
+        # print 20140116, self.module
+        url = self.SETUP_INFO['url']
         desc = "`%s <%s>`__ -- %s" % (
             self.name, url,
-            self.module.SETUP_INFO['description'])
+            self.SETUP_INFO['description'])
         #~ import pkg_resources
         #~ for d in pkg_resources.find_distributions(self.name):
         #~ d = pkg_resources.get_distribution(self.name)
@@ -373,7 +360,7 @@ def summary(*cmdline_args):
         return (
             '\n'.join(textwrap.wrap(desc, 60)),
             # self.dist.version,
-            self.module.__version__)
+            self.SETUP_INFO['version'])
 
     print rstgen.table(headers, [cells(p) for p in atelier.load_projects()])
 
