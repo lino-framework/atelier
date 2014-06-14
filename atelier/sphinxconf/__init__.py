@@ -116,6 +116,11 @@ def configure(globals_dict, settings_module_name=None):
         'atelier.sphinxconf.refstothis',
         'atelier.sphinxconf.insert_input',
     ])
+    extlinks = dict(
+        linoticket=(
+            'http://lino-framework.org/tickets/%s.html',
+            'Lino Ticket #'))
+    globals_dict.update(extlinks=extlinks)
 
     if settings_module_name is not None:
         #~ os.environ['DJANGO_SETTINGS_MODULE'] = 'north.docs_settings'

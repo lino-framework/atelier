@@ -484,6 +484,9 @@ def sphinx_build_linkcheck(*cmdline_args):
 @task(alias='docs')
 def build_docs(*cmdline_args):
     """write_readme + build sphinx html docs."""
+    docs_dir = env.ROOTDIR.child('docs')
+    if not docs_dir.exists():
+        return
     write_readme()
     sphinx_build('html', env.DOCSDIR, cmdline_args)
     sync_docs_data(env.DOCSDIR)
