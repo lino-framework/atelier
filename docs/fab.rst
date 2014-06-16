@@ -37,8 +37,8 @@ following content::
 fabfile.py
 ----------
 
-In your :file:`fabfile.py` file you may 
-optionally specify some project-specific configuration settings like::  
+In your :file:`fabfile.py` file you may optionally specify some
+project-specific configuration settings like::
   
   from atelier.fablib import *
   setup_from_project("foobar")
@@ -106,7 +106,12 @@ Run the test suite of this project.
 .. command:: fab initdb
 
 Run :manage:`initdb_demo` on every demo database of this project 
-(specified in `env.demo_databases`)
+(specified in `env.demo_databases`).
+
+Demo databases are used by the test suite and the Sphinx
+documentation.  They are not included in the code repository since
+they are generated data.  Since initializing these databases can take
+some time, this is not automatically launched for each test run.
 
 .. command:: fab ci
 
