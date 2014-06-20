@@ -16,7 +16,7 @@ Usage examples
 
 Here is the data we are going to render into different tables:
 
->>> headers = ["Country","City","Name"]
+>>> headers = ["Country", "City", "Name"]
 >>> rows = []
 >>> rows.append(["Belgium","Eupen","Gerd"])
 >>> rows.append(["Estonia","Vigala","Luc"])
@@ -31,7 +31,7 @@ The simplest case of :func:`table`:
   Code <NEXTCELL> Result <NEXTROW>
 
   >>> from atelier.rstgen import table
-  >>> print table(headers,rows)
+  >>> print(table(headers,rows))
   ================================ =============== ========
    Country                          City            Name
   -------------------------------- --------------- --------
@@ -60,7 +60,7 @@ A table without headers:
   
   Code <NEXTCELL> Result <NEXTROW>
 
-  >>> print table(headers,rows,show_headers=False)
+  >>> print(table(headers,rows,show_headers=False))
   ================================ =============== ========
    Belgium                          Eupen           Gerd
    Estonia                          Vigala          Luc
@@ -87,7 +87,7 @@ You might prefer to use directly the :class:`Table` class:
 
   >>> from atelier.rstgen import Table
   >>> t = Table(headers)
-  >>> print t.to_rst(rows)
+  >>> print(t.to_rst(rows))
   ================================ =============== ========
    Country                          City            Name
   -------------------------------- --------------- --------
@@ -119,7 +119,7 @@ the result will be a complex table:
 
   >>> rows[2] = ['''St. Vincent
   ... and the Grenadines''',"Chateaubelair","Nicole"]
-  >>> print table(headers,rows)
+  >>> print(table(headers,rows))
   +--------------------+---------------+--------+
   | Country            | City          | Name   |
   +====================+===============+========+
@@ -147,11 +147,29 @@ the result will be a complex table:
   | and the Grenadines |               |        |
   +--------------------+---------------+--------+
   
+
+Empty tables
+------------
   
-  
+A special case is a table with no rows.  For ``table(headers, [])``
+the following output would be logical::
+
+    ========= ====== ======
+     Country   City   Name
+    --------- ------ ------
+    ========= ====== ======
+
+But Sphinx would consider this a malformed table.  That's why we
+return a blank line when there are no rows:
+
+>>> print(table(headers, []))
+<BLANKLINE>
+<BLANKLINE>
+
 """
 
 from __future__ import unicode_literals
+from __future__ import print_function
 
 #~ import cStringIO as StringIO
 import StringIO
@@ -332,6 +350,8 @@ class Table(object):
             writeln(self.header1)
 
     def to_rst(self, rows):
+        if len(rows) == 0:
+            return "\n"
         fd = StringIO.StringIO()
         self.write(fd, rows)
         return fd.getvalue()
@@ -363,21 +383,21 @@ def ul(items, bullet="-"):
     If at least one item contains more than one paragraph, 
     then all items are separated by an additional blank line.
     
-    >>> print ul(["Foo","Bar","Baz"])
+    >>> print(ul(["Foo", "Bar", "Baz"]))
     - Foo
     - Bar
     - Baz
     <BLANKLINE>
-    >>> print ul([
-    ...   "Foo", "An item\nwith several lines of text.", "Bar"])
+    >>> print(ul([
+    ...   "Foo", "An item\nwith several lines of text.", "Bar"]))
     - Foo
     - An item
       with several lines of text.
     - Bar
     <BLANKLINE>
-    >>> print ul([
+    >>> print(ul([
     ...   "A first item\nwith several lines of text.",
-    ...   "Another item with a nested paragraph:\n\n  Like this.\n\nWow."])
+    ...   "Another item with a nested paragraph:\n\n  Like this.\n\nWow."]))
     <BLANKLINE>
     - A first item
       with several lines of text.
@@ -411,21 +431,21 @@ def ul(items, bullet="-"):
 
 def ol(items, bullet="#."):
     r"""
-    >>> print ol(["Foo","Bar","Baz"])
+    >>> print(ol(["Foo", "Bar", "Baz"]))
     #. Foo
     #. Bar
     #. Baz
     <BLANKLINE>
-    >>> print ol([
-    ...   "Foo", "An item\nwith several lines of text.", "Bar"])
+    >>> print(ol([
+    ...   "Foo", "An item\nwith several lines of text.", "Bar"]))
     #. Foo
     #. An item
        with several lines of text.
     #. Bar
     <BLANKLINE>
-    >>> print ol([
+    >>> print(ol([
     ...   "A first item\nwith several lines of text.",
-    ...   "Another item with a nested paragraph:\n\n  Like this.\n\nWow."])
+    ...   "Another item with a nested paragraph:\n\n  Like this.\n\nWow."]))
     <BLANKLINE>
     #. A first item
        with several lines of text.

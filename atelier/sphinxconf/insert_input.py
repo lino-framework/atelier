@@ -247,8 +247,12 @@ class Py2rstDirective(InsertInputDirective):
 
         # TODO: catch exceptions and report them together with the
         # name of the guilty file
+        try:
+            exec(code, context)
+        except Exception as e:
+            import traceback
+            traceback.print_exc(e)
 
-        exec(code, context)
         sys.stdout = old
         s = buffer.getvalue()
         #~ print 20130331, type(s)
