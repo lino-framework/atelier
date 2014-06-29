@@ -95,8 +95,6 @@ def setup_from_project(
     if isinstance(env.languages, basestring):
         env.languages = env.languages.split()
 
-    env.DOCSDIR = Path(env.ROOTDIR, 'docs')
-
     if env.main_package:
         env.SETUP_INFO = get_setup_info(Path(env.ROOTDIR))
     else:
@@ -370,9 +368,11 @@ def build_api(*cmdline_args):
     """
     Generate `.rst` files in `docs/api`. See :cmd:`fab api`.
     """
-
+    docs_dir = env.ROOTDIR.child('docs')
+    if not docs_dir.exists():
+        return
     os.environ.update(SPHINX_APIDOC_OPTIONS="members,show-inheritance")
-    api_dir = env.DOCSDIR.child("api").absolute()
+    api_dir = docs_dir.child("api").absolute()
     rmtree_after_confirm(api_dir)
     args = ['sphinx-apidoc']
     # args += ['-f'] # force the overwrite of all files that it generates.
@@ -488,17 +488,8 @@ def build_docs(*cmdline_args):
     if not docs_dir.exists():
         return
     write_readme()
-    sphinx_build('html', env.DOCSDIR, cmdline_args)
-    sync_docs_data(env.DOCSDIR)
-
-
-@task(alias='alldocs')
-def build_all_docs(*cmdline_args):
-    """rebuild all docs."""
-    write_readme()
-    cmdline_args += ('-aE',)
-    sphinx_build('html', env.DOCSDIR, cmdline_args)
-    sync_docs_data(env.DOCSDIR)
+    sphinx_build('html', docs_dir, cmdline_args)
+    sync_docs_data(docs_dir)
 
 
 @task(alias='clean')
@@ -506,7 +497,7 @@ def sphinx_clean(*cmdline_args):
     """
     Delete all generated Sphinx files.
     """
-    rmtree_after_confirm(env.DOCSDIR.child('.build'))
+    rmtree_after_confirm(env.ROOTDIR.child('docs', '.build'))
     if env.languages:
         rmtree_after_confirm(env.ROOTDIR.child('userdocs', '.build'))
 
@@ -521,8 +512,9 @@ def publish():
         raise Exception(
             "Must set env.docs_rsync_dest in `fabfile.py` or `~/.fabricrc`")
 
-    if env.DOCSDIR.exists():
-        build_dir = env.DOCSDIR.child('.build')
+    docs_dir = env.ROOTDIR.child('docs')
+    if docs_dir.exists():
+        build_dir = docs_dir.child('.build')
         dest_url = env.docs_rsync_dest % (env.project_name)
         publish_docs(build_dir, dest_url)
 
@@ -612,8 +604,8 @@ def unused_run_sphinx_doctest():
     args += ['-Q']  # no output
     if not onlythis:
         args += ['-W']  # consider warnings as errors
-    build_dir = env.DOCSDIR.child('.build')
-    args += [env.DOCSDIR, build_dir]
+    build_dir = env.ROOTDIR.child('docs', '.build')
+    args += [env.ROOTDIR.child('docs'), build_dir]
     if onlythis:  # test only this document
         args += [onlythis]
     #~ args = ['sphinx-build','-b','doctest',env.DOCSDIR,env.BUILDDIR]
@@ -901,7 +893,7 @@ Read more on %(url)s
         return
     must_confirm("Overwrite %s" % readme.absolute())
     readme.write_file(txt)
-    env.DOCSDIR.child('index.rst').set_times()
+    env.ROOTDIR.child('docs', 'index.rst').set_times()
     #~ cmd = "touch " + env.DOCSDIR.child('index.rst')
     #~ local(cmd)
     #~ pypi_register()
