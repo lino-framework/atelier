@@ -142,7 +142,7 @@ def configure(globals_dict, settings_module_name=None):
     mydir = Path(__file__).parent.absolute()
     globals_dict.update(templates_path=['.templates', mydir])
 
-    globals_dict.update(html_static_path=['.static', mydir.child('static')])
+    # globals_dict.update(html_static_path=['.static'])
 
     # some settings i use in all projects:
 
