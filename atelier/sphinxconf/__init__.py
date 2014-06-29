@@ -65,6 +65,7 @@ def configure(globals_dict, settings_module_name=None):
 
     - `extensions`
     - `templates_path`
+    - `html_static_path`
     - master_doc='index'
     - source_suffix='.rst'
     - primary_domain='py'
@@ -76,6 +77,10 @@ def configure(globals_dict, settings_module_name=None):
     DOCSDIR = Path(filename).parent.absolute()
     sys.path.append(DOCSDIR)
 
+    extlinks = dict(
+        linoticket=(
+            'http://lino-framework.org/tickets/%s.html',
+            'Lino Ticket #'))
     intersphinx_mapping = dict()
     for prj in atelier.load_projects():
         p = prj.root_dir.child('docs', '.build', 'objects.inv')
@@ -97,8 +102,13 @@ def configure(globals_dict, settings_module_name=None):
                 # logger.warning("No intersphinx_url_userdocs in %s",
                 #                prj.module)
                 pass
+        srcref_url = getattr(prj.module, 'srcref_url', None)
+        if srcref_url:
+            k = '%s_srcref' % prj.nickname
+            extlinks[str(k)] = (srcref_url, '')
 
     globals_dict.update(intersphinx_mapping=intersphinx_mapping)
+    globals_dict.update(extlinks=extlinks)
 
     globals_dict.update(extensions=[
         'sphinx.ext.autodoc',
@@ -116,12 +126,6 @@ def configure(globals_dict, settings_module_name=None):
         'atelier.sphinxconf.refstothis',
         'atelier.sphinxconf.insert_input',
     ])
-    extlinks = dict(
-        linoticket=(
-            'http://lino-framework.org/tickets/%s.html',
-            'Lino Ticket #'))
-    globals_dict.update(extlinks=extlinks)
-
     if settings_module_name is not None:
         #~ os.environ['DJANGO_SETTINGS_MODULE'] = 'north.docs_settings'
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
@@ -135,8 +139,10 @@ def configure(globals_dict, settings_module_name=None):
         globals_dict.update(
             template_bridge=str('atelier.sphinxconf.DjangoTemplateBridge'))
 
-    globals_dict.update(
-        templates_path=['.templates', Path(__file__).parent.absolute()])
+    mydir = Path(__file__).parent.absolute()
+    globals_dict.update(templates_path=['.templates', mydir])
+
+    globals_dict.update(html_static_path=['.static', mydir.child('static')])
 
     # some settings i use in all projects:
 
@@ -186,3 +192,5 @@ class DjangoTemplateBridge(BuiltinTemplateLoader):
         from django.conf import settings
         context.update(settings=settings)
         return super(DjangoTemplateBridge, self).render_string(source, context)
+
+
