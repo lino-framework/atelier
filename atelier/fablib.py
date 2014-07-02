@@ -240,21 +240,12 @@ def setup_babel_userdocs(babelcmd):
                     #~ must_confirm(cmd)
                     local(cmd)
 
-#~ @task(alias='imu')
-#~ def init_catalog_userdocs():
-    #~ setup_babel_userdocs('init_catalog')
-
-#~ @task(alias='umu')
-#~ def update_catalog_userdocs():
-    #~ setup_babel_userdocs('update_catalog')
-
 
 @task(alias='cmu')
 def compile_catalog_userdocs():
     setup_babel_userdocs('compile_catalog')
 
 
-#~ @task(alias='im')
 def init_catalog_code():
     """Create code .po files if necessary."""
     from north.utils import to_locale
@@ -279,7 +270,6 @@ def init_catalog_code():
                 local(cmd)
 
 
-#~ @task(alias='um')
 def update_catalog_code():
     """Update .po files from .pot file."""
     from north.utils import to_locale
@@ -500,7 +490,6 @@ def sphinx_clean(*cmdline_args):
     rmtree_after_confirm(env.ROOTDIR.child('docs', '.build'))
     if env.languages:
         rmtree_after_confirm(env.ROOTDIR.child('userdocs', '.build'))
-
 
 
 @task(alias='pub')
