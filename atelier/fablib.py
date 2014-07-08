@@ -76,6 +76,7 @@ def setup_from_project(
     env.ROOTDIR = Path().absolute()
 
     env.project_name = env.ROOTDIR.name
+    env.setdefault('build_dir_name', '.build')  # but ablog needs '_build'
 
     env.setdefault('long_date_format', "%Y%m%d (%A, %d %B %Y)")
     # env.work_root = Path(env.work_root)
@@ -388,8 +389,8 @@ def sphinx_build(builder, docs_dir,
     # ~ args += ['-a'] # all files, not only outdated
     # ~ args += ['-P'] # no postmortem
     # ~ args += ['-Q'] # no output
-    # build_dir = docs_dir.child('.build')
-    build_dir = Path('.build')
+    # build_dir = docs_dir.child(env.build_dir_name)
+    build_dir = Path(env.build_dir_name)
     if language is not None:
         args += ['-D', 'language=' + language]
         # needed in select_lang.html template
@@ -412,7 +413,7 @@ def sphinx_build(builder, docs_dir,
 
 
 def sync_docs_data(docs_dir):
-    build_dir = docs_dir.child('.build')
+    build_dir = docs_dir.child(env.build_dir_name)
     for data in ('dl', 'data'):
         src = docs_dir.child(data).absolute()
         if src.isdir():
@@ -487,9 +488,9 @@ def sphinx_clean(*cmdline_args):
     """
     Delete all generated Sphinx files.
     """
-    rmtree_after_confirm(env.ROOTDIR.child('docs', '.build'))
+    rmtree_after_confirm(env.ROOTDIR.child('docs', env.build_dir_name))
     if env.languages:
-        rmtree_after_confirm(env.ROOTDIR.child('userdocs', '.build'))
+        rmtree_after_confirm(env.ROOTDIR.child('userdocs', env.build_dir_name))
 
 
 @task(alias='pub')
@@ -503,11 +504,11 @@ def publish():
 
     docs_dir = env.ROOTDIR.child('docs')
     if docs_dir.exists():
-        build_dir = docs_dir.child('.build')
+        build_dir = docs_dir.child(env.build_dir_name)
         dest_url = env.docs_rsync_dest % (env.project_name)
         publish_docs(build_dir, dest_url)
 
-    build_dir = env.ROOTDIR.child('userdocs', '.build')
+    build_dir = env.ROOTDIR.child('userdocs', env.build_dir_name)
     if build_dir.exists():
         dest_url = env.docs_rsync_dest % (env.project_name + '-userdocs')
         publish_docs(build_dir, dest_url)
@@ -593,7 +594,7 @@ def unused_run_sphinx_doctest():
     args += ['-Q']  # no output
     if not onlythis:
         args += ['-W']  # consider warnings as errors
-    build_dir = env.ROOTDIR.child('docs', '.build')
+    build_dir = env.ROOTDIR.child('docs', env.build_dir_name)
     args += [env.ROOTDIR.child('docs'), build_dir]
     if onlythis:  # test only this document
         args += [onlythis]
