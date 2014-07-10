@@ -40,6 +40,47 @@ from fabric.contrib.console import confirm
 from fabric.api import lcd
 
 
+class JarBuilder(object):
+    """
+    Used by :ref:`davlink` and :ref:`eidreader`.
+    """
+    def __init__(self, jarfile, sourcedir):
+        self.jarfile = Path(jarfile)
+        self.sourcedir = Path(sourcedir)
+        self.sources = list(self.sourcedir.listdir('*.java'))
+
+        self.jarcontent = [Path('Manifest.txt')]
+        self.jarcontent += list(self.sourcedir.listdir('*.class'))
+        self.jarcontent = [
+            Path(x.replace("$", "\\$")) for x in self.jarcontent]
+        self.libjars = []
+
+    def add_lib(self, pth):
+        self.libjars.append(Path(pth))
+
+    def build_jar(self, outdir, alias):
+        flags = '-storepass "`cat ~/.secret/.keystore_password`"'
+        flags += ' -tsa http://timestamp.globalsign.com/scripts/timestamp.dll'
+        outdir = Path(outdir)
+        jarfile = outdir.child(self.jarfile)
+        if jarfile.needs_update(self.jarcontent):
+            local("jar cvfm %s %s" % (jarfile, ' '.join(self.jarcontent)))
+        local("jarsigner %s %s %s" % (flags, jarfile, alias))
+        for libfile in self.libjars:
+            jarfile = outdir.child(libfile.name)
+            if libfile.needs_update([jarfile]):
+                libfile.copy(jarfile)
+            local("jarsigner %s %s %s" % (flags, jarfile, alias))
+
+    def build_classes(self):
+        flags = "-Xlint:unchecked"
+        if len(self.libjars):
+            cp = ':'.join(self.libjars)
+            flags += " -classpath %s" % cp
+        for src in self.sources:
+            local("javac %s %s" % (flags, src))
+
+
 def get_current_date():
     """
     Useful when a working day lasted longer than midnight,
@@ -956,3 +997,5 @@ def edit_setup_info():
     #~ cmd = ' '.join(args)
     #~ must_confirm(cmd)
     #~ local(cmd)
+
+
