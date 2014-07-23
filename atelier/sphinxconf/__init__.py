@@ -119,7 +119,7 @@ def configure(globals_dict, settings_module_name=None):
         'sphinx.ext.graphviz',
         'sphinx.ext.intersphinx',
         # no i18n, no discovery, only one entry per doc,
-        'sphinxcontrib.newsfeed',
+        # 'sphinxcontrib.newsfeed',
         #~ 'sphinx.ext.doctest',
         'atelier.sphinxconf.base',
         'atelier.sphinxconf.dirtables',

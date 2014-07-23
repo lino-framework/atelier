@@ -122,6 +122,9 @@ def get_photos(conn, tagname):
                 yield row[1]
 
 
+RSTLINE = """.. sigal_image:: %s\n"""
+
+
 @dispatch_command
 @arg('tags', help='One ore more Shotwell tags.')
 @arg('-t', '--target_root',
@@ -139,6 +142,10 @@ filesystem.
 
 Usage examples:
 
+  $ python shotwell2blog.py foo
+
+  List the file names of all photos tagged "foo".
+
   $ python shotwell2blog.py -t ~/myblog/pictures blog
 
   Copy all photos marked "blog" to a directory `~/myblog/pictures`.
@@ -147,7 +154,7 @@ Usage examples:
 
   $ python shotwell2blog.py Foo | xargs zip -j foo.zip
 
-  Create a zip file with a copy of each photo marked "Foo".
+  Create a zip file with a copy of each photo tagged "Foo".
   The `-j` option is to *not* include directory names.
 
     """
@@ -160,7 +167,7 @@ Usage examples:
     conn = sqlite3.connect(shotwell_db)
     conn.row_factory = sqlite3.Row
 
-    if False:  # used this to discover the database structure.
+    if False:  # I used this to discover the database structure.
         yield show_tables(conn)
         yield schema(conn, 'TagTable')
         yield schema(conn, 'PhotoTable')
@@ -170,11 +177,13 @@ Usage examples:
     if len(tags) == 0:
         raise CommandError("Must specify at least one tag!")
 
+    targets = []
     for tag in tags:
         for orig in get_photos(conn, tag):
             if target_root:
                 target = chop(orig, shotwell_lib)
                 target = target.lower()
+                targets.append(target)
                 target = os.path.join(target_root, target)
                 if os.path.exists(target):
                     yield "{0} exists".format(target)
@@ -189,3 +198,10 @@ Usage examples:
                 yield orig
 
     conn.close()
+
+    if target_root:
+        targets.sort()
+        rstfile = file(os.path.join(target_root, 'index.rst'), "w")
+        for t in targets:
+            rstfile.write(RSTLINE % t)
+        rstfile.close()

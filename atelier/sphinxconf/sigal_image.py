@@ -54,12 +54,11 @@ from docutils.parsers.rst import directives
 
 from .insert_input import InsertInputDirective
 
-BASE_URL = "http://sigal.saffre-rumma.net"
 TEMPLATE = """
 
 .. raw:: html
 
-    <a href="%(target)s"><img src="%(src)s"/></a>
+    <a href="%(target)s"><img src="%(src)s" style="padding:4px"/></a>
 
 """
 

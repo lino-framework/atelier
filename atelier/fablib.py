@@ -87,15 +87,10 @@ def get_current_date():
     or when you start some work in the evening, knowing that you won't
     commit it before the next morning.
 
-    In such cases you want to temporarily specify a hard-coded `TODAY`
-    date in your :file:`/etc/atelier/config.py` file::
-
-        TODAY = 20131109
-
     Note that you must specify the date using the YYYYMMDD format.
     """
-    if atelier.TODAY is not None:
-        return i2d(atelier.TODAY)
+    # if atelier.TODAY is not None:
+    #     return i2d(atelier.TODAY)
     return datetime.date.today()
 
 
@@ -122,6 +117,8 @@ def setup_from_project(
     env.setdefault('long_date_format', "%Y%m%d (%A, %d %B %Y)")
     # env.work_root = Path(env.work_root)
     env.setdefault('sdist_dir', None)
+    env.setdefault('use_dirhtml', False)
+
     if env.sdist_dir is not None:
         env.sdist_dir = Path(env.sdist_dir)
     env.main_package = main_package
@@ -520,7 +517,10 @@ def build_docs(*cmdline_args):
     if not docs_dir.exists():
         return
     write_readme()
-    sphinx_build('html', docs_dir, cmdline_args)
+    builder = 'html'
+    if env.use_dirhtml:
+        builder = 'dirhtml'
+    sphinx_build(builder, docs_dir, cmdline_args)
     sync_docs_data(docs_dir)
 
 
@@ -782,11 +782,14 @@ def get_blog_entry(today):
 
 
 @task(alias='blog')
-def edit_blog_entry():
+def edit_blog_entry(today=None):
     """
     Edit today's blog entry, create an empty file if it doesn't yet exist.
     """
-    today = get_current_date()
+    if today is None:
+        today = get_current_date()
+    else:
+        today = i2d(today)
     entry = get_blog_entry(today)
     if not entry.path.exists():
         if not confirm("Create file %s?" % entry.path):
@@ -805,7 +808,7 @@ def edit_blog_entry():
 
 
 @task(alias='ci')
-def checkin():
+def checkin(today=None):
     """
     Checkin and push to repository, using today's blog entry as commit
     message.
@@ -816,12 +819,17 @@ def checkin():
         args = ["git", "status"]
     local(' '.join(args))
 
-    if atelier.TODAY is not None:
-        if not confirm("Hard-coded TODAY in your %s! Are you sure?" %
-                       atelier.config_file):
-            return
+    if today is None:
+        today = get_current_date()
+    else:
+        today = i2d(today)
 
-    entry = get_blog_entry(get_current_date())
+    # if atelier.TODAY is not None:
+    #     if not confirm("Hard-coded TODAY in your %s! Are you sure?" %
+    #                    atelier.config_file):
+    #         return
+
+    entry = get_blog_entry(today)
     #~ entry = Path(env.ROOTDIR,'..',env.blogger_project,*parts)
     #~ print env.ROOTDIR.parent.absolute()
     if not entry.path.exists():
