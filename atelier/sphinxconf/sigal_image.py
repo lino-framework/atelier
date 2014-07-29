@@ -20,11 +20,11 @@ will insert the following rst code::
     </a>
 
 
-For the first time I now have a bridge between my photo collection and
-my blog. I manage my personal photo collection with Shotwell. All
-photos are in a single tree, organized into years, months and days as
-Shotwell does automatically. Within Shotwell I use a special tag
-"blog" to mark all photos that are to be published.
+This creates a bridge between my photo collection and my blog. I
+manage my personal photo collection with Shotwell. All photos are in a
+single tree, organized into years, months and days as Shotwell does
+automatically. Within Shotwell I use a special tag "blog" to mark all
+photos that are to be published.
 
 Then I use the :mod:`atelier.scripts.shotwell2blog.py` script to
 extract those images to a separate tree. This tree serves as input for
@@ -40,6 +40,18 @@ host my pictures on my own server, to integrate them into blog
 entries, to extend the system in case I want to generate pdf files
 some day.
 
+
+New since 20140729: Requires `lightbox
+<http://lokeshdhakar.com/projects/lightbox2/>`_.  And then write a
+`layout.html` template as follows::
+
+    {%- block extrahead %}
+      {{ super() }}
+    <script src="{{ pathto('')}}data/lightbox/js/jquery-1.11.0.min.js"></script>
+    <script src="{{ pathto('')}}data/lightbox/js/lightbox.min.js"></script>
+    <link href="{{ pathto('')}}data/lightbox/css/lightbox.css" rel="stylesheet" />
+    {% endblock %}
+
 """
 
 from __future__ import print_function
@@ -54,11 +66,19 @@ from docutils.parsers.rst import directives
 
 from .insert_input import InsertInputDirective
 
-TEMPLATE = """
+TEMPLATE1 = """
 
 .. raw:: html
 
     <a href="%(target)s"><img src="%(src)s" style="padding:4px"/></a>
+
+"""
+
+TEMPLATE = """
+
+.. raw:: html
+
+    <a href="%(target)s" style="padding:4px" data-lightbox="image-1" data-title="%(caption)s"/><img src="%(src)s" style="padding:4px" title="%(caption)s"/></a>
 
 """
 
@@ -84,8 +104,16 @@ class SigalImage(InsertInputDirective):
         for name in self.content:
             if not name:
                 continue
-            head, tail = os.path.split(name)
             kw = dict()
+            chunks = name.split(None, 1)
+            if len(chunks) == 1:
+                kw.update(caption='')
+            elif len(chunks) == 2:
+                name = chunks[0]
+                kw.update(caption=chunks[1])
+            else:
+                raise Exception("FILENAME <whitespace> CAPTION %s" % chunks)
+            head, tail = os.path.split(name)
             kw.update(target=buildurl(head, tail))
             kw.update(src=buildurl(head, 'thumbnails', tail))
             s += TEMPLATE % kw
