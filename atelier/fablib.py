@@ -799,7 +799,7 @@ def edit_blog_entry(today=None):
         else:
             txt = format_date(
                 today, format='full', locale=env.languages[0])
-        entry.path.write_file(rstgen.header(1, txt))
+        entry.path.write_file(rstgen.header(1, txt).encode('utf-8'))
         # touch it for Sphinx:
         entry.path.parent.child('index.rst').set_times()
     args = [os.environ['EDITOR']]
