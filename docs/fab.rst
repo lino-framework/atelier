@@ -24,21 +24,10 @@ Where "foobar" is the Python name of your main package.
 Configuration
 -------------
 
-.fabricrc
----------
+.. xfile:: fabfile.py
 
-To get started, you need a file `.fabricrc` file with at least the
-following content::
-
-  sdist_dir
-  long_date_format
-
-
-fabfile.py
-----------
-
-In your :file:`fabfile.py` file you may optionally specify some
-project-specific configuration settings like::
+In your :xfile:`fabfile.py` file you can specify project-specific
+configuration settings.  Example content::
   
   from atelier.fablib import *
   setup_from_project("foobar")
@@ -46,25 +35,39 @@ project-specific configuration settings like::
   env.tolerate_sphinx_warnings = True
   env.demo_databases.append('foobar.demo.settings')
 
-
-You may define user-specific default values for some of these settings 
-(those who are simple strings) by creating a file :file:`.fabricrc` 
-in your home directory with content like this::
-
-    work_root = /home/luc/hgwork
-    user = luc
-    blogger_project = lino
-    docs_rsync_dest = luc@lino-framework.org:~/public_html/%s
-    sdist_dir = /home/luc/hgwork/lino/docs/dl
-
 List of existing `env` keys:
 
 - `tolerate_sphinx_warnings` : whether `sphinx-build html` should 
   tolerate warnings.
+
 - `languages` : a list of language codes for which userdocs are being 
   maintained.
 
+- `apidoc_exclude_pathnames` : a list of filenames (or directory
+  names) to be excluded when you run :command:`fab api`.
+
+- `use_mercurial` : set this to False if you use Git.
+  Used by :command:`fab ci`
+
 - (consult the source code)
+
+You may define user-specific default values for some of these settings
+(those who are simple strings) in a :file:`.fabricrc` file.
+
+
+.. xfile:: .fabricrc
+
+To specify certain default preferences for all your projects, you can
+create a file named :file:`.fabricrc` in your home directory with
+content like this::
+
+    user = luc
+    blogger_project = lino
+    docs_rsync_dest = luc@example.org:~/public_html/%s
+    sdist_dir = /home/luc/projects/lino/docs/dl
+    temp_dir = /home/luc/tmp
+
+
 
 
 ``fab`` commands
@@ -115,7 +118,8 @@ some time, this is not automatically launched for each test run.
 
 .. command:: fab ci
 
-    Checkin and push to repository, using today's blog entry as commit message.
+    Checkin and push to repository, using today's blog entry as commit
+    message.
     
 
 .. command:: fab release
@@ -133,7 +137,8 @@ Generate `README.txt` file from project_info (if necessary).
 
 .. command:: fab api
 
-Generate `.rst` files below `docs/api`.
+Generate `.rst` files below `docs/api` by running `sphinx-apidoc
+<http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`_.
 
 
 

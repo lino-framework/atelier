@@ -125,6 +125,7 @@ def setup_from_project(
     env.tolerate_sphinx_warnings = False
     env.demo_databases = []
     env.use_mercurial = True
+    env.apidoc_exclude_pathnames = []
     # env.blogger_url = "http://blog.example.com/"
 
     env.setdefault('languages', None)
@@ -411,6 +412,7 @@ def build_api(*cmdline_args):
                                 # submodule documentation
     args += ['-o', api_dir]
     args += [env.main_package.replace('.', '/')]  # packagedir
+    args += env.apidoc_exclude_pathnames
     if False:
         excluded = ['lino/dd.py']
         args += excluded  # pathnames to be ignored
