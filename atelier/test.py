@@ -28,7 +28,9 @@ class TestCase(unittest.TestCase, SubProcessParent):
         Checks whether the `packages` parameter to setup seems correct.
         """
         found_packages = find_packages()
-        found_packages.remove('tests')  # if it exists, remove it
+        # if tests exists, remove it:
+        if 'tests' in found_packages:
+            found_packages.remove('tests')
         found_packages.sort()
         declared_packages.sort()
         self.assertEqual(found_packages, declared_packages)
