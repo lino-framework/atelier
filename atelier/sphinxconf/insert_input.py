@@ -166,7 +166,16 @@ class InsertInputDirective(Directive):
         self.language = self.options.get('language', self.env.config.language)
         self.env.temp_data['language'] = self.language
 
-        output = self.get_rst()
+        # TODO: catch exceptions and report them together with the
+        # name of the guilty file
+        try:
+            output = self.get_rst()
+        except Exception as e:
+            import traceback
+            traceback.print_exc(e)
+            document = self.state.document
+            return [document.reporter.warning(str(e), line=self.lineno)]
+
         #~ output = output.decode('utf-8')
 
         if self.debug:
@@ -245,13 +254,7 @@ class Py2rstDirective(InsertInputDirective):
         sys.stdout = buffer
         context = self.get_context()
 
-        # TODO: catch exceptions and report them together with the
-        # name of the guilty file
-        try:
-            exec(code, context)
-        except Exception as e:
-            import traceback
-            traceback.print_exc(e)
+        exec(code, context)
 
         sys.stdout = old
         s = buffer.getvalue()
