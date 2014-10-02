@@ -2,11 +2,176 @@
 # Copyright 2013-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""See :doc:`/fab`
+"""This module is a library for fabric_ with tasks I use to manage my
+Python projects.
 
-20140116 : added support for managing namespace packages
+.. _fabric: http://docs.fabfile.org
 
-TODO:
+To be used by creating a :file:`fabfile.py` in your project's root
+directory with at least the following two lines::
+
+  from atelier.fablib import *
+  setup_from_project("foobar")
+  
+Where "foobar" is the Python name of your project's main package.
+
+Configuration files
+-------------------
+
+.. xfile:: fabfile.py
+
+In your :xfile:`fabfile.py` file you can specify project-specific
+configuration settings.  Example content::
+
+  from atelier.fablib import *
+  setup_from_project("foobar")
+  env.languages = "de fr et nl".split()
+  env.tolerate_sphinx_warnings = True
+  env.demo_databases.append('foobar.demo.settings')
+
+.. xfile:: .fabricrc
+
+To specify certain default preferences for all your projects, you can
+create a file named :file:`.fabricrc` in your home directory with
+content like this::
+
+    user = luc
+    blogger_project = lino
+    docs_rsync_dest = luc@example.org:~/public_html/%s
+    sdist_dir = /home/luc/projects/lino/docs/dl
+    temp_dir = /home/luc/tmp
+
+
+Project settings
+----------------
+
+fabric_ works with a global "environment" object named ``env``.  The
+following section documents the possible attributes of this object as
+used by :mod:`atelier.fablib`.
+
+.. class:: env
+
+  .. attribute:: doc_trees
+
+    A list of directory names (relative to your project directory)
+    containing Sphinx document trees.
+    Default value is ``['docs']``
+
+  .. attribute:: tolerate_sphinx_warnings
+
+    Whether `sphinx-build html` should tolerate warnings.
+
+  .. attribute:: languages
+
+    A list of language codes for which userdocs are being maintained.
+
+  .. attribute:: apidoc_exclude_pathnames
+
+    a list of filenames (or directory names) to be excluded when you
+    run :command:`fab api`.
+
+  .. attribute:: use_mercurial
+
+    set this to False if you use Git. Used by :command:`fab ci`
+
+  .. attribute:: demo_databases
+
+You may define user-specific default values for some of these settings
+(those who are simple strings) in a :file:`.fabricrc` file.
+
+
+``fab`` commands
+----------------
+
+.. command:: fab mm
+
+("make messages")
+
+Extracts messages from both code and userdocs, then initializes and
+updates all catalogs.
+
+
+.. command:: fab test
+
+Run the test suite of this project.
+
+.. command:: fab test_sdist
+
+    Creates a temporay virtualenv, installs your project and runs your
+    test suite.
+        
+    - creates and activates a temporay virtualenv,
+    - calls ``pip install --extra-index <env.sdist_dir> <prjname>``
+    - runs ``python setup.py test``
+    - removes temporary files.
+    
+    assumes that you previously did ``pp fab sdist``
+    i.e. your `env.sdist_dir` contains the pre-release sdist of all your 
+    projects.
+    
+    When using this, you should configure a local download cache for 
+    pip, e.g. with something like this in your :file:`~/.pip/pip.conf`::
+    
+      [global]
+      download-cache=/home/luc/.pip/cache
+
+
+.. command:: fab initdb
+
+Run :manage:`initdb_demo` on every demo database of this project 
+(specified in :attr:`env.demo_databases`).
+
+Demo databases are used by the test suite and the Sphinx
+documentation.  They are not included in the code repository since
+they are generated data.  Since initializing these databases can take
+some time, this is not automatically launched for each test run.
+
+.. command:: fab ci
+
+    Checkin and push to repository, using today's blog entry as commit
+    message.
+    
+
+.. command:: fab release
+
+Create official source distribution and upload it to PyPI.
+
+.. command:: fab userdocs
+
+Run `sphinx build html` in `userdocs`.
+
+.. command:: fab write_readme
+
+Generate `README.txt` file from project_info (if necessary).
+
+
+.. command:: fab api
+
+Generate `.rst` files below `docs/api` by running `sphinx-apidoc
+<http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`_.
+
+
+
+.. command:: fab blog
+
+Edit today's blog entry, create an empty file if it doesn't yet exist.
+
+
+.. command:: fab docs
+
+Run `sphinx build html` in `docs`.
+
+
+
+History
+-------
+
+- 20141001 added support for multiple doc trees per project
+  (:attr:`env.doc_trees`).
+- 20140116 : added support for managing namespace packages
+
+TODO
+----
 
 - replace `env.blogger_project` by an attribute of the main module
   (like `intersphinx_url`)
@@ -17,13 +182,6 @@ import textwrap
 
 from babel.dates import format_date
 
-#~ def clean_sys_path():
-    # ~ # print sys.path
-    #~ if sys.path[0] == '':
-        #~ del sys.path[0]
-        #~ print "Deleted working directory from PYTHONPATH"
-
-
 import datetime
 from unipath import Path
 import sphinx
@@ -33,7 +191,6 @@ from atelier.utils import i2d
 from atelier import rstgen
 from atelier import get_setup_info
 
-
 from fabric.api import env, local, task
 from fabric.utils import abort, fastprint, puts, warn
 from fabric.contrib.console import confirm
@@ -42,7 +199,7 @@ from fabric.api import lcd
 
 class JarBuilder(object):
     """
-    Used by :ref:`davlink` and :ref:`eidreader`.
+    Used by my Java projects :ref:`davlink` and :ref:`eidreader`.
     """
     def __init__(self, jarfile, sourcedir):
         self.jarfile = Path(jarfile)
@@ -131,6 +288,7 @@ def setup_from_project(
     env.setdefault('languages', None)
     env.setdefault('blogger_project', None)
     env.setdefault('blogger_url', None)
+    env.setdefault('doc_trees', ['docs'])
 
     if isinstance(env.languages, basestring):
         env.languages = env.languages.split()
@@ -199,9 +357,10 @@ def make_messages():
     init_catalog_code()
     update_catalog_code()
 
-    extract_messages_userdocs()
-    setup_babel_userdocs('init_catalog')
-    setup_babel_userdocs('update_catalog')
+    if False:
+        extract_messages_userdocs()
+        setup_babel_userdocs('init_catalog')
+        setup_babel_userdocs('update_catalog')
 
 
 def extract_messages():
@@ -512,18 +671,26 @@ def sphinx_build_linkcheck(*cmdline_args):
         sphinx_build('linkcheck', docs_dir, cmdline_args, lng)
 
 
+def get_doc_trees():
+    for rel_doc_tree in env.doc_trees:
+        docs_dir = env.ROOTDIR.child(rel_doc_tree)
+        if not docs_dir.exists():
+            msg = "Directory %s does not exist." % docs_dir
+            msg += "\nCheck `env.doc_trees` in `fabfile.py` or `~/.fabricrc`"
+            raise Exception(msg)
+        yield docs_dir
+
+
 @task(alias='docs')
 def build_docs(*cmdline_args):
     """write_readme + build sphinx html docs."""
-    docs_dir = env.ROOTDIR.child('docs')
-    if not docs_dir.exists():
-        return
-    write_readme()
-    builder = 'html'
-    if env.use_dirhtml:
-        builder = 'dirhtml'
-    sphinx_build(builder, docs_dir, cmdline_args)
-    sync_docs_data(docs_dir)
+    for docs_dir in get_doc_trees():
+        write_readme()
+        builder = 'html'
+        if env.use_dirhtml:
+            builder = 'dirhtml'
+        sphinx_build(builder, docs_dir, cmdline_args)
+        sync_docs_data(docs_dir)
 
 
 @task(alias='clean')
@@ -531,9 +698,10 @@ def sphinx_clean(*cmdline_args):
     """
     Delete all generated Sphinx files.
     """
-    rmtree_after_confirm(env.ROOTDIR.child('docs', env.build_dir_name))
-    if env.languages:
-        rmtree_after_confirm(env.ROOTDIR.child('userdocs', env.build_dir_name))
+    for docs_dir in get_doc_trees():
+        rmtree_after_confirm(docs_dir.child(env.build_dir_name))
+        # if env.languages:
+        #     rmtree_after_confirm(env.ROOTDIR.child('userdocs', env.build_dir_name))
 
 
 @task(alias='pub')
@@ -545,11 +713,11 @@ def publish():
         raise Exception(
             "Must set env.docs_rsync_dest in `fabfile.py` or `~/.fabricrc`")
 
-    docs_dir = env.ROOTDIR.child('docs')
-    if docs_dir.exists():
+    for docs_dir in get_doc_trees():
         build_dir = docs_dir.child(env.build_dir_name)
-        dest_url = env.docs_rsync_dest % (env.project_name)
-        publish_docs(build_dir, dest_url)
+        if build_dir.exists():
+            dest_url = env.docs_rsync_dest % (env.project_name)
+            publish_docs(build_dir, dest_url)
 
     build_dir = env.ROOTDIR.child('userdocs', env.build_dir_name)
     if build_dir.exists():
