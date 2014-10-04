@@ -685,6 +685,7 @@ def get_doc_trees():
 def build_docs(*cmdline_args):
     """write_readme + build sphinx html docs."""
     for docs_dir in get_doc_trees():
+        puts("Invoking Sphinx in in directory %s..." % docs_dir)
         write_readme()
         builder = 'html'
         if env.use_dirhtml:
@@ -716,28 +717,18 @@ def publish():
     for docs_dir in get_doc_trees():
         build_dir = docs_dir.child(env.build_dir_name)
         if build_dir.exists():
-            dest_url = env.docs_rsync_dest % (env.project_name)
+            name = '%s_%s' % (env.project_name, docs_dir.name)
+            dest_url = env.docs_rsync_dest % name
             publish_docs(build_dir, dest_url)
 
-    build_dir = env.ROOTDIR.child('userdocs', env.build_dir_name)
-    if build_dir.exists():
-        dest_url = env.docs_rsync_dest % (env.project_name + '-userdocs')
-        publish_docs(build_dir, dest_url)
-    #~ if env.languages:
-        #~ for lang in env.languages:
+    # build_dir = env.ROOTDIR.child('userdocs', env.build_dir_name)
+    # if build_dir.exists():
+    #     dest_url = env.docs_rsync_dest % (env.project_name + '-userdocs')
+    #     publish_docs(build_dir, dest_url)
 
 
 def publish_docs(build_dir, dest_url):
-    #~ from fabric.context_managers import cd
-    #~ cwd = Path(os.getcwd())
-    #~ if language:
-        #~ dest_url += '-userdocs/' + language
-        #~ build_dir = build_dir.child(language)
-
     with lcd(build_dir):
-        #~ env.BUILDDIR.chdir()
-        #~ with cd(env.BUILDDIR):
-        #~ addr = env.user+'@'+REMOTE.lf
         args = ['rsync', '-r']
         args += ['--verbose']
         args += ['--progress']  # show progress
@@ -750,8 +741,6 @@ def publish_docs(build_dir, dest_url):
         #~ must_confirm("%s> %s" % (build_dir, cmd))
         #~ confirm("yes")
         local(cmd)
-        #~ cwd.chdir()
-    #~ return subprocess.call(args)
 
 
 def run_in_demo_databases(admin_cmd, *more):

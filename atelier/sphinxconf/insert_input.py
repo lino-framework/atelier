@@ -150,10 +150,10 @@ class InsertInputDirective(Directive):
     """
     titles_allowed = False
     has_content = True
-    debug = False
     raw_insert = False
     option_spec = {
         'language': directives.unchanged_required,
+        'debug': directives.flag,
     }
 
     def get_rst(self):
@@ -166,8 +166,8 @@ class InsertInputDirective(Directive):
         self.language = self.options.get('language', self.env.config.language)
         self.env.temp_data['language'] = self.language
 
-        # TODO: catch exceptions and report them together with the
-        # name of the guilty file
+        # catch exceptions and report them together with the name of
+        # the guilty file
         try:
             output = self.get_rst()
         except Exception as e:
@@ -178,7 +178,7 @@ class InsertInputDirective(Directive):
 
         #~ output = output.decode('utf-8')
 
-        if self.debug:
+        if 'debug' in self.options:
             print(self.env.docname)
             print('-' * 50)
             print(output)
@@ -226,9 +226,6 @@ class Py2rstDirective(InsertInputDirective):
 
     titles_allowed = True
     has_content = True
-    debug = False
-    #~ def get_rst(self):
-        #~ return self.output_from_exec('\n'.join(self.content))
 
     def get_context(self):
         context = dict()
