@@ -143,7 +143,7 @@ mentioned only once.
             time=time.ctime(e[0]),
             doc=e[1]) for e in entries]
 
-        if self.debug:
+        if 'debug' in self.options:
             items.append("DEBUG: pending xrefs were %r." % rows)
 
         return rstgen.ul(items)
