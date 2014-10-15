@@ -63,6 +63,7 @@ TEXT, time_reimported INTEGER, flags INTEGER DEFAULT 0 , comment TEXT)
 
 import os
 import shutil
+import codecs
 from os.path import expanduser
 import sqlite3
 
@@ -122,7 +123,7 @@ def get_photos(conn, tagname):
                 yield row[1]
 
 
-RSTLINE = """.. sigal_image:: %s\n"""
+RSTLINE = u""".. sigal_image:: %s\n"""
 
 
 @dispatch_command
@@ -186,13 +187,13 @@ Usage examples:
                 targets.append(target)
                 target = os.path.join(target_root, target)
                 if os.path.exists(target):
-                    yield "{0} exists".format(target)
+                    yield u"{0} exists".format(target)
                 else:
                     dn = os.path.dirname(target)
                     if not os.path.exists(dn):
-                        yield "{0} created".format(dn)
+                        yield u"{0} created".format(dn)
                         os.makedirs(dn)
-                    yield "{0} copied".format(target)
+                    yield u"{0} copied".format(target)
                     shutil.copyfile(orig, target)
             else:
                 yield orig
@@ -201,7 +202,8 @@ Usage examples:
 
     if target_root:
         targets.sort()
-        rstfile = file(os.path.join(target_root, 'index.rst'), "w")
+        fn = os.path.join(target_root, 'index.rst')
+        rstfile = codecs.open(fn, "w", encoding="utf-8")
         for t in targets:
             rstfile.write(RSTLINE % t)
         rstfile.close()
