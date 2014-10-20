@@ -6,21 +6,15 @@ This is the :mod:`atelier` package.
 It deserves more documentation.
 """
 
-import sys
 import os
 execfile(os.path.join(os.path.dirname(__file__), 'project_info.py'))
 __version__ = SETUP_INFO['version']
 
 
-intersphinx_url = "http://atelier.lino-framework.org"
+intersphinx_urls = dict(docs="http://atelier.lino-framework.org")
 srcref_url = 'https://github.com/lsaffre/atelier/blob/master/%s'
 
 config_file = '/etc/atelier/config.py'
-
-TODAY = None
-"""
-Used by  :func:`atelier.fablib.get_current_date`.
-"""
 
 BLOG_URL = None
 PROJECTS = []
@@ -78,7 +72,10 @@ class Project(object):
             number_of_parts + 1)
         self.nickname = self.root_dir.name
         self.SETUP_INFO = get_setup_info(self.root_dir)
-        
+        self.srcref_url = getattr(self.module, 'srcref_url', None)
+        self.doc_trees = getattr(self.module, 'doc_trees', ['docs'])
+        self.intersphinx_urls = getattr(self.module, 'intersphinx_urls', {})
+
 
 def load_projects():
     if len(_PROJECT_INFOS) == 0:
@@ -86,3 +83,10 @@ def load_projects():
         for i, prj in enumerate(PROJECTS):
             _PROJECT_INFOS.append(Project(i, prj))
     return _PROJECT_INFOS
+
+
+def get_project_info(nickname):
+    for prj in load_projects():
+        if prj.nickname == nickname:
+            return prj
+    

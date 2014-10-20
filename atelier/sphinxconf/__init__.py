@@ -60,7 +60,7 @@ def configure(globals_dict, settings_module_name=None):
 
     - `intersphinx_mapping` : The intersphinx entries for projects
        managed in this atelier. Atelier gets this information by
-       checking for an attribute `intersphinx_url` in the global
+       checking for an attribute `intersphinx_urls` in the global
        namespace of each project's main module.
 
     - `extensions`
@@ -74,8 +74,7 @@ def configure(globals_dict, settings_module_name=None):
 
     """
     filename = globals_dict.get('__file__')
-    DOCSDIR = Path(filename).parent.absolute()
-    sys.path.append(DOCSDIR)
+    sys.path.append(Path(filename).parent.absolute())
 
     extlinks = dict(
         linoticket=(
@@ -83,29 +82,19 @@ def configure(globals_dict, settings_module_name=None):
             'Lino Ticket #'))
     intersphinx_mapping = dict()
     for prj in atelier.load_projects():
-        p = prj.root_dir.child('docs', '.build', 'objects.inv')
-        if p.exists():
-            try:
-                intersphinx_mapping[prj.nickname] = (
-                    prj.module.intersphinx_url, p)
-            except AttributeError:
-                logger.warning("No intersphinx_url in %s", prj.module)
-                pass
+        for doc_tree in prj.doc_trees:
+            p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
+            if p.exists():
+                if doc_tree == 'docs':
+                    k = prj.nickname
+                else:
+                    k = prj.nickname + doc_tree.replace('_', '')
+                url = prj.intersphinx_urls.get(doc_tree)
+                intersphinx_mapping[k] = (url, p)
 
-        p = prj.root_dir.child('userdocs', '.build', 'objects.inv')
-        if p.exists():
-            k = '%suser' % prj.nickname
-            try:
-                intersphinx_mapping[k] = (
-                    prj.module.intersphinx_url_userdocs, p)
-            except AttributeError:
-                # logger.warning("No intersphinx_url_userdocs in %s",
-                #                prj.module)
-                pass
-        srcref_url = getattr(prj.module, 'srcref_url', None)
-        if srcref_url:
+        if prj.srcref_url:
             k = '%s_srcref' % prj.nickname
-            extlinks[str(k)] = (srcref_url, '')
+            extlinks[str(k)] = (prj.srcref_url, '')
 
     globals_dict.update(intersphinx_mapping=intersphinx_mapping)
     globals_dict.update(extlinks=extlinks)

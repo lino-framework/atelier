@@ -53,6 +53,8 @@ used by :mod:`atelier.fablib`.
 
   .. attribute:: doc_trees
 
+    Replaced by `doc_trees` attribute of the project's main module.
+
     A list of directory names (relative to your project directory)
     containing Sphinx document trees.
     Default value is ``['docs']``
@@ -166,6 +168,7 @@ Run `sphinx build html` in `docs`.
 History
 -------
 
+- 20141020 moved `doc_trees` project to :class:`atelier.Project`.
 - 20141001 added support for multiple doc trees per project
   (:attr:`env.doc_trees`).
 - 20140116 : added support for managing namespace packages
@@ -174,7 +177,7 @@ TODO
 ----
 
 - replace `env.blogger_project` by an attribute of the main module
-  (like `intersphinx_url`)
+  (like `intersphinx_urls`)
 
 """
 import os
@@ -190,6 +193,7 @@ import atelier
 from atelier.utils import i2d
 from atelier import rstgen
 from atelier import get_setup_info
+from atelier import get_project_info
 
 from fabric.api import env, local, task
 from fabric.utils import abort, fastprint, puts, warn
@@ -270,6 +274,8 @@ def setup_from_project(
 
     env.project_name = env.ROOTDIR.name
     env.setdefault('build_dir_name', '.build')  # but ablog needs '_build'
+    
+    env.current_project = get_project_info(env.project_name)
 
     env.setdefault('long_date_format', "%Y%m%d (%A, %d %B %Y)")
     # env.work_root = Path(env.work_root)
@@ -288,7 +294,7 @@ def setup_from_project(
     env.setdefault('languages', None)
     env.setdefault('blogger_project', None)
     env.setdefault('blogger_url', None)
-    env.setdefault('doc_trees', ['docs'])
+    # env.setdefault('doc_trees', ['docs'])
 
     if isinstance(env.languages, basestring):
         env.languages = env.languages.split()
@@ -672,11 +678,12 @@ def sphinx_build_linkcheck(*cmdline_args):
 
 
 def get_doc_trees():
-    for rel_doc_tree in env.doc_trees:
+    for rel_doc_tree in env.current_project.doc_trees:
+    # for rel_doc_tree in env.doc_trees:
         docs_dir = env.ROOTDIR.child(rel_doc_tree)
         if not docs_dir.exists():
             msg = "Directory %s does not exist." % docs_dir
-            msg += "\nCheck `env.doc_trees` in `fabfile.py` or `~/.fabricrc`"
+            msg += "\nCheck `doc_trees` in your project's main module."
             raise Exception(msg)
         yield docs_dir
 
@@ -935,7 +942,7 @@ def get_blog_entry(today):
         # local_root = env.work_root.child(env.blogger_project)
         m = __import__(env.blogger_project)
         local_root = Path(m.__file__).parent.parent
-        return RstFile(local_root, m.intersphinx_url, parts)
+        return RstFile(local_root, m.intersphinx_urls['docs'], parts)
     else:
         return RstFile(env.ROOTDIR, env.blogger_url, parts)
 
