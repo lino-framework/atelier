@@ -85,8 +85,8 @@ def load_projects():
     return _PROJECT_INFOS
 
 
-def get_project_info(nickname):
+def get_project_info(name):
     for prj in load_projects():
-        if prj.nickname == nickname:
+        if prj.name == name:
             return prj
     

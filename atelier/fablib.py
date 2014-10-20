@@ -275,7 +275,7 @@ def setup_from_project(
     env.project_name = env.ROOTDIR.name
     env.setdefault('build_dir_name', '.build')  # but ablog needs '_build'
     
-    env.current_project = get_project_info(env.project_name)
+    env.current_project = get_project_info(main_package)
 
     env.setdefault('long_date_format', "%Y%m%d (%A, %d %B %Y)")
     # env.work_root = Path(env.work_root)
