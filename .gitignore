@@ -20,3 +20,4 @@ docs/api
 htmlcov
 *.egg-info
 .DS_Store
+.idea

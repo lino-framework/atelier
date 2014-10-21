@@ -82,6 +82,8 @@ You may define user-specific default values for some of these settings
 (those who are simple strings) in a :file:`.fabricrc` file.
 
 
+.. _fab_commands:
+
 ``fab`` commands
 ----------------
 
