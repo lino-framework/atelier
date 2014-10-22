@@ -109,12 +109,13 @@ Run the test suite of this project.
     - runs ``python setup.py test``
     - removes temporary files.
     
-    assumes that you previously did ``pp fab sdist``
-    i.e. your `env.sdist_dir` contains the pre-release sdist of all your 
+    Assumes that you previously did ``pp fab sdist`` i.e. your
+    `env.sdist_dir` contains the pre-release sdist of all your
     projects.
     
-    When using this, you should configure a local download cache for 
-    pip, e.g. with something like this in your :file:`~/.pip/pip.conf`::
+    When using this, you should configure a local download cache for
+    pip, e.g. with something like this in your
+    :file:`~/.pip/pip.conf`::
     
       [global]
       download-cache=/home/luc/.pip/cache
@@ -122,7 +123,7 @@ Run the test suite of this project.
 
 .. command:: fab initdb
 
-Run :manage:`initdb_demo` on every demo database of this project 
+Run :manage:`initdb_demo` on every demo database of this project
 (specified in :attr:`env.demo_databases`).
 
 Demo databases are used by the test suite and the Sphinx
