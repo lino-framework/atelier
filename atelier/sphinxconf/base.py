@@ -42,8 +42,6 @@ try:
 except ImportError:
     from django.utils.importlib import import_module
 
-
-import atelier
 from atelier.utils import i2d
 
 
@@ -104,7 +102,7 @@ def autodoc_add_srcref(app, what, name, obj, options, lines):
 
 
 
-def get_blog_url(today):
+def get_blog_url(env, today):
     """
     Return the URL to your developer blog entry of that date.
     """
@@ -114,11 +112,12 @@ def get_blog_url(today):
         parts = ('docs', 'blog', str(today.year), today.strftime("%m%d.rst"))
         return url_root + "/".join(parts)
 
-    #~ url = today.strftime("http://www.lino-framework.org/blog/%Y/%m%d.html")
-    if not atelier.BLOG_URL:
+    fmt = env.blogref_format
+    if not fmt:
         raise Exception(
-            "Please set BLOG_URL in your `/etc/atelier/config.py` to something like 'http://www.example.com/blog/%Y/%m%d.html'")
-    url = today.strftime(atelier.BLOG_URL)
+            "Please set your `blogref_format` to something "
+            "like 'http://www.example.com/blog/%Y/%m%d.html'")
+    url = today.strftime(fmt)
     return url
 
 
@@ -155,7 +154,7 @@ def blogref_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
         title = date.strftime(env.settings.get('today_fmt', '%Y-%m-%d'))
     title = utils.unescape(title)
     return [nodes.reference(rawtext, title,
-                            refuri=get_blog_url(date),
+                            refuri=get_blog_url(env, date),
                             **options)], []
 
 

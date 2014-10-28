@@ -137,6 +137,11 @@ some time, this is not automatically launched for each test run.
     message.
     
 
+.. command:: fab pyc
+
+    Remove .pyc files which don't have a corresponding .py file.
+    
+
 .. command:: fab release
 
 Create official source distribution and upload it to PyPI.
@@ -195,11 +200,9 @@ import sphinx
 import atelier
 from atelier.utils import i2d
 from atelier import rstgen
-from atelier import get_setup_info
-from atelier import get_project_info
 
 from fabric.api import env, local, task
-from fabric.utils import abort, fastprint, puts, warn
+from fabric.utils import abort, puts
 from fabric.contrib.console import confirm
 from fabric.api import lcd
 
@@ -262,10 +265,11 @@ class RstFile(object):
 
     def __init__(self, local_root, url_root, parts):
         self.path = local_root.child(*parts) + '.rst'
-        if parts[0] == 'docs':
-            self.url = url_root + "/" + "/".join(parts[1:]) + '.html'
-        else:
-            raise Exception("20131125")
+        self.url = url_root + "/" + "/".join(parts) + '.html'
+        # if parts[0] == 'docs':
+        #     self.url = url_root + "/" + "/".join(parts[1:]) + '.html'
+        # else:
+        #     raise Exception("20131125")
             # self.url = url_root + "/" + "/".join(parts) + '.html'
 
 
@@ -274,16 +278,16 @@ def setup_from_project(
         settings_module_name=None):
 
     env.ROOTDIR = Path().absolute()
+    # print("20141027 %s %s " % (main_package, env.ROOTDIR))
 
     env.project_name = env.ROOTDIR.name
     env.setdefault('build_dir_name', '.build')  # but ablog needs '_build'
     
-    env.current_project = get_project_info(main_package)
-
     env.setdefault('long_date_format', "%Y%m%d (%A, %d %B %Y)")
     # env.work_root = Path(env.work_root)
     env.setdefault('sdist_dir', None)
     env.setdefault('use_dirhtml', False)
+    env.setdefault('blog_root', env.ROOTDIR.child('docs'))
 
     if env.sdist_dir is not None:
         env.sdist_dir = Path(env.sdist_dir)
@@ -302,10 +306,10 @@ def setup_from_project(
     if isinstance(env.languages, basestring):
         env.languages = env.languages.split()
 
-    if env.main_package:
-        env.SETUP_INFO = get_setup_info(Path(env.ROOTDIR))
-    else:
-        env.SETUP_INFO = None
+    # if env.main_package:
+    #     env.SETUP_INFO = get_setup_info(Path(env.ROOTDIR))
+    # else:
+    #     env.SETUP_INFO = None
 
     if settings_module_name is not None:
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
@@ -314,6 +318,12 @@ def setup_from_project(
         env.languages = [lng.name for lng in settings.SITE.languages]
         env.demo_databases.append(settings_module_name)
         #~ env.userdocs_base_language = settings.SITE.languages[0].name
+
+    # The following import will populate the projects
+    from atelier.projects import get_project_info
+    env.current_project = get_project_info(env.ROOTDIR)
+
+    # env.SETUP_INFO = env.current_project.SETUP_INFO
 
 
 #~ def confirm(msg,default='y',others='n',**override_callbacks):
@@ -357,6 +367,22 @@ def get_locale_dir():
     if not p.isdir():
         return None  # abort("Directory %s does not exist." % p)
     return p
+
+
+def cleanup_pyc(p):
+    """Thanks to oddthinking on http://stackoverflow.com/questions/2528283
+    """
+    for root, dirs, files in os.walk(p):
+        pyc_files = filter(
+            lambda filename: filename.endswith(".pyc"), files)
+        py_files = set(filter(
+            lambda filename: filename.endswith(".py"), files))
+        excess_pyc_files = filter(
+            lambda pyc_filename: pyc_filename[:-1] not in py_files, pyc_files)
+        for excess_pyc_file in excess_pyc_files:
+            full_path = os.path.join(root, excess_pyc_file)
+            must_confirm("Remove excess file %s:" % full_path)
+            os.remove(full_path)
 
 
 @task(alias='mm')
@@ -543,16 +569,12 @@ def summary(*cmdline_args):
 
     def cells(self):
         # print 20140116, self.module
-        url = self.SETUP_INFO['url']
+        url = self.SETUP_INFO.get('url', None)
+        if not url:
+            return [self.name, '']
         desc = "`%s <%s>`__ -- %s" % (
             self.name, url,
             self.SETUP_INFO['description'])
-        #~ import pkg_resources
-        #~ for d in pkg_resources.find_distributions(self.name):
-        #~ d = pkg_resources.get_distribution(self.name)
-        #~ d = pkg_resources.Distribution.from_location("http://pypi.python.org/simple/",self.name)
-        #~ print 20130911, self.name, d.version
-
         return (
             '\n'.join(textwrap.wrap(desc, 60)),
             # self.dist.version,
@@ -711,8 +733,16 @@ def sphinx_clean(*cmdline_args):
     """
     for docs_dir in get_doc_trees():
         rmtree_after_confirm(docs_dir.child(env.build_dir_name))
-        # if env.languages:
-        #     rmtree_after_confirm(env.ROOTDIR.child('userdocs', env.build_dir_name))
+
+
+@task(alias='pyc')
+def py_clean(*cmdline_args):
+    if env.current_project.module is not None:
+        p = Path(env.current_project.module.__file__).parent
+        cleanup_pyc(p)
+    p = env.ROOTDIR.child('tests')
+    if p.exists():
+        cleanup_pyc(p)
 
 
 @task(alias='pub')
@@ -777,10 +807,6 @@ def clean_cache():
 
 @task(alias="initdb")
 def initdb_demo():
-    """
-    Run initdb_demo on every demo database of this project
-    (env.demo_databases)
-    """
     run_in_demo_databases('initdb_demo', "--noinput", '--traceback')
 
 
@@ -833,7 +859,8 @@ def setup_sdist():
     """
     args = ["python", "setup.py"]
     args += ["sdist", "--formats=gztar"]
-    args += ["--dist-dir", env.sdist_dir.child(env.SETUP_INFO['name'])]
+    args += ["--dist-dir", env.sdist_dir.child(
+        env.current_project.SETUP_INFO['name'])]
     local(' '.join(args))
 
 
@@ -857,7 +884,7 @@ def setup_test_sdist():
     ve_path.mkdir()
     script = ve_path.child('tmp.sh')
 
-    context = dict(name=env.SETUP_INFO['name'], sdist_dir=env.sdist_dir,
+    context = dict(name=env.current_project.SETUP_INFO['name'], sdist_dir=env.sdist_dir,
                    ve_path=ve_path)
     #~ file(script,'w').write(TEST_SDIST_TEMPLATE % context)
     txt = TEST_SDIST_TEMPLATE % context
@@ -904,11 +931,11 @@ def pypi_release():
     """
     must_confirm(
         "This is going to officially release %(name)s %(version)s to PyPI" %
-        env.SETUP_INFO)
+        env.current_project.SETUP_INFO)
     pypi_register()
     args = ["python", "setup.py"]
     args += ["sdist", "--formats=gztar"]
-    args += ["--dist-dir", env.sdist_dir.child(env.SETUP_INFO['name'])]
+    args += ["--dist-dir", env.sdist_dir.child(env.current_project.SETUP_INFO['name'])]
     args += ["upload"]
     local(' '.join(args))
     #~ run_setup('setup.py',args)
@@ -919,7 +946,7 @@ def pypi_release():
     #~ Checks whether the `packages` list seems correct.
     #~ """
     #~ packages = find_packages()
-    #~ if packages == env.SETUP_INFO['packages']:
+    #~ if packages == env.current_project.SETUP_INFO['packages']:
         #~ puts("%d packages okay" % len(packages))
         #~ return
 
@@ -940,14 +967,8 @@ def get_blog_entry(today):
     in the current project.
 
     """
-    parts = ('docs', 'blog', str(today.year), today.strftime("%m%d"))
-    if env.blogger_project:
-        # local_root = env.work_root.child(env.blogger_project)
-        m = __import__(env.blogger_project)
-        local_root = Path(m.__file__).parent.parent
-        return RstFile(local_root, m.intersphinx_urls['docs'], parts)
-    else:
-        return RstFile(env.ROOTDIR, env.blogger_url, parts)
+    parts = ('blog', str(today.year), today.strftime("%m%d"))
+    return RstFile(Path(env.blog_root), env.blogref_url, parts)
 
 
 @task(alias='blog')
@@ -1029,7 +1050,7 @@ def unused_write_release_notes():
     """
     Generate docs/releases/x.y.z.rst file from setup_info.
     """
-    v = env.SETUP_INFO['version']
+    v = env.current_project.SETUP_INFO['version']
     if v.endswith('+'):
         return
     notes = Path(env.ROOTDIR, 'docs', 'releases', '%s.rst' % v)
@@ -1038,7 +1059,7 @@ def unused_write_release_notes():
     must_confirm("Create %s" % notes.absolute())
     #~ context = dict(date=get_current_date().strftime(env.long_date_format))
     context = dict(date=get_current_date().strftime('%Y%m%d'))
-    context.update(env.SETUP_INFO)
+    context.update(env.current_project.SETUP_INFO)
     txt = """\
 ==========================
 Version %(version)s
@@ -1095,7 +1116,7 @@ Description
 %(long_description)s
 
 Read more on %(url)s
-""" % env.SETUP_INFO
+""" % env.current_project.SETUP_INFO
     txt = txt.encode('utf-8')
     if readme.exists() and readme.read_file() == txt:
         return
@@ -1131,7 +1152,7 @@ def run_tests_coverage():
     puts("Running tests for '%s' within coverage..." % env.project_name)
     #~ env.DOCSDIR.chdir()
     source = []
-    for package_name in env.SETUP_INFO['packages']:
+    for package_name in env.current_project.SETUP_INFO['packages']:
         m = __import__(package_name)
         source.append(os.path.dirname(m.__file__))
     #~ cov = coverage.coverage(source=['djangosite'])

@@ -30,7 +30,7 @@ import os
 import sys
 import subprocess
 
-import atelier
+from atelier.projects import load_projects
 
 def main():
     commands = sys.argv[1:]
@@ -39,7 +39,7 @@ def main():
         print __doc__ % globals()
         return -1
         
-    for prj in atelier.load_projects():
+    for prj in load_projects():
         print "==== %s ====" % prj.nickname
         #~ p = os.path.join(atelier.PROJECTS_HOME,prj)
         #~ os.chdir(p)

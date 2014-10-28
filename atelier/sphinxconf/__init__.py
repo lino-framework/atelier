@@ -44,7 +44,7 @@ import sys
 
 from unipath import Path
 
-import atelier
+from atelier.projects import load_projects
 
 
 def configure(globals_dict, settings_module_name=None):
@@ -81,7 +81,7 @@ def configure(globals_dict, settings_module_name=None):
             'http://lino-framework.org/tickets/%s.html',
             'Lino Ticket #'))
     intersphinx_mapping = dict()
-    for prj in atelier.load_projects():
+    for prj in load_projects():
         for doc_tree in prj.doc_trees:
             p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
             if p.exists():
@@ -90,7 +90,8 @@ def configure(globals_dict, settings_module_name=None):
                 else:
                     k = prj.nickname + doc_tree.replace('_', '')
                 url = prj.intersphinx_urls.get(doc_tree)
-                intersphinx_mapping[k] = (url, p)
+                if url:
+                    intersphinx_mapping[k] = (url, p)
 
         if prj.srcref_url:
             k = '%s_srcref' % prj.nickname
@@ -98,6 +99,8 @@ def configure(globals_dict, settings_module_name=None):
 
     globals_dict.update(intersphinx_mapping=intersphinx_mapping)
     globals_dict.update(extlinks=extlinks)
+    globals_dict.update(
+        blogref_format="http://www.lino-framework.org/blog/%Y/%m%d.html")
 
     globals_dict.update(extensions=[
         'sphinx.ext.autodoc',
