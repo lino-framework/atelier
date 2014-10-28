@@ -140,7 +140,7 @@ some time, this is not automatically launched for each test run.
 .. command:: fab pyc
 
     Remove .pyc files which don't have a corresponding .py file.
-    
+
 
 .. command:: fab release
 
@@ -301,7 +301,6 @@ def setup_from_project(
     env.setdefault('languages', None)
     env.setdefault('blogger_project', None)
     env.setdefault('blogger_url', None)
-    # env.setdefault('doc_trees', ['docs'])
 
     if isinstance(env.languages, basestring):
         env.languages = env.languages.split()
@@ -322,6 +321,8 @@ def setup_from_project(
     # The following import will populate the projects
     from atelier.projects import get_project_info
     env.current_project = get_project_info(env.ROOTDIR)
+
+    env.setdefault('doc_trees', env.current_project.doc_trees)
 
     # env.SETUP_INFO = env.current_project.SETUP_INFO
 
@@ -703,8 +704,7 @@ def sphinx_build_linkcheck(*cmdline_args):
 
 
 def get_doc_trees():
-    for rel_doc_tree in env.current_project.doc_trees:
-    # for rel_doc_tree in env.doc_trees:
+    for rel_doc_tree in env.doc_trees:
         docs_dir = env.ROOTDIR.child(rel_doc_tree)
         if not docs_dir.exists():
             msg = "Directory %s does not exist." % docs_dir

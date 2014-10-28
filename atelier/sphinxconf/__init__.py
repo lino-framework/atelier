@@ -82,6 +82,7 @@ def configure(globals_dict, settings_module_name=None):
             'Lino Ticket #'))
     intersphinx_mapping = dict()
     for prj in load_projects():
+        prj.load_fabfile()
         for doc_tree in prj.doc_trees:
             p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
             if p.exists():
@@ -99,8 +100,8 @@ def configure(globals_dict, settings_module_name=None):
 
     globals_dict.update(intersphinx_mapping=intersphinx_mapping)
     globals_dict.update(extlinks=extlinks)
-    globals_dict.update(
-        blogref_format="http://www.lino-framework.org/blog/%Y/%m%d.html")
+    # globals_dict.update(
+    #     blogref_format="http://www.lino-framework.org/blog/%Y/%m%d.html")
 
     globals_dict.update(extensions=[
         'sphinx.ext.autodoc',

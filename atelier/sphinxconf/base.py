@@ -101,7 +101,6 @@ def autodoc_add_srcref(app, what, name, obj, options, lines):
             #~ lines.insert(0,'(We also recommend to read the source code at :srcref:`/%s.py`)' % name.replace('.','/'))
 
 
-
 def get_blog_url(env, today):
     """
     Return the URL to your developer blog entry of that date.
@@ -112,8 +111,9 @@ def get_blog_url(env, today):
         parts = ('docs', 'blog', str(today.year), today.strftime("%m%d.rst"))
         return url_root + "/".join(parts)
 
-    fmt = env.blogref_format
+    fmt = env.settings.get('blogref_format')
     if not fmt:
+        return "oops"
         raise Exception(
             "Please set your `blogref_format` to something "
             "like 'http://www.example.com/blog/%Y/%m%d.html'")
@@ -311,6 +311,9 @@ def setup(app):
 
     roles.register_canonical_role(str('blogref'), blogref_role)
 
+    app.add_config_value(
+        'blogref_format',
+        "http://www.lino-framework.org/blog/%Y/%m%d.html", 'html')
     # setup2(app)
 
     # from .dirtables import setup

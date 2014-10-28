@@ -111,7 +111,7 @@ class Project(object):
             self.module = import_module(main_package)
             self.SETUP_INFO = get_setup_info(self.root_dir)
             self.srcref_url = getattr(self.module, 'srcref_url', None)
-            self.doc_trees = getattr(self.module, 'doc_trees', ['docs'])
+            self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
             self.intersphinx_urls = getattr(
                 self.module, 'intersphinx_urls', {})
         else:
