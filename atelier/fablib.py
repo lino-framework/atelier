@@ -137,18 +137,18 @@ some time, this is not automatically launched for each test run.
     message.
     
 
-.. command:: fab pyc
+.. command:: fab clean
 
-    Remove .pyc files which don't have a corresponding .py file.
+    Remove temporary and generated files:
+
+    - .pyc files which don't have a corresponding .py file.
+    - Sphinx .build files
+    - cache of demo databases
 
 
 .. command:: fab release
 
 Create official source distribution and upload it to PyPI.
-
-.. command:: fab userdocs
-
-Run `sphinx build html` in `userdocs`.
 
 .. command:: fab write_readme
 
@@ -169,7 +169,7 @@ Edit today's blog entry, create an empty file if it doesn't yet exist.
 
 .. command:: fab docs
 
-Run `sphinx build html` in `docs`.
+Run `sphinx build html` in every directory defined in `doc_trees`.
 
 
 
@@ -322,7 +322,7 @@ def setup_from_project(
     from atelier.projects import get_project_info
     env.current_project = get_project_info(env.ROOTDIR)
 
-    env.setdefault('doc_trees', env.current_project.doc_trees)
+    env.doc_trees = env.current_project.doc_trees
 
     # env.SETUP_INFO = env.current_project.SETUP_INFO
 
@@ -562,6 +562,7 @@ def syncscreenshots():
 @task(alias='summary')
 def summary(*cmdline_args):
     """Print a summary to stdout."""
+    from atelier.projects import load_projects
     headers = (
         # ~ '#','Location',
         'Project',
@@ -569,19 +570,22 @@ def summary(*cmdline_args):
         'Version')
 
     def cells(self):
+        self.load_fabfile()
         # print 20140116, self.module
+        desc = "%s -- " % self.nickname
+        desc += "(doc_trees : %s)\n" % ', '.join(self.doc_trees)
         url = self.SETUP_INFO.get('url', None)
-        if not url:
-            return [self.name, '']
-        desc = "`%s <%s>`__ -- %s" % (
-            self.name, url,
-            self.SETUP_INFO['description'])
+        version = self.SETUP_INFO.get('version', '')
+        if url:
+            desc += "`%s <%s>`__ -- %s" % (
+                self.name, url,
+                self.SETUP_INFO['description'])
         return (
             '\n'.join(textwrap.wrap(desc, 60)),
             # self.dist.version,
-            self.SETUP_INFO['version'])
+            version)
 
-    print rstgen.table(headers, [cells(p) for p in atelier.load_projects()])
+    print rstgen.table(headers, [cells(p) for p in load_projects()])
 
 
 @task(alias='api')
@@ -665,7 +669,7 @@ def sync_docs_data(docs_dir):
 @task(alias='userdocs')
 def build_userdocs(*cmdline_args):
     """
-    sphinx-build the userdocs tree in all languages
+    Deprecated. sphinx-build the userdocs tree in all languages
     """
     if env.languages is None:
         return
@@ -716,9 +720,9 @@ def get_doc_trees():
 @task(alias='docs')
 def build_docs(*cmdline_args):
     """write_readme + build sphinx html docs."""
+    write_readme()
     for docs_dir in get_doc_trees():
         puts("Invoking Sphinx in in directory %s..." % docs_dir)
-        write_readme()
         builder = 'html'
         if env.use_dirhtml:
             builder = 'dirhtml'
@@ -727,16 +731,24 @@ def build_docs(*cmdline_args):
 
 
 @task(alias='clean')
-def sphinx_clean(*cmdline_args):
-    """
-    Delete all generated Sphinx files.
+def clean(*cmdline_args):
+    sphinx_clean()
+    py_clean()
+    clean_demo_caches()
+
+
+def sphinx_clean():
+    """Delete all generated Sphinx files.
+
     """
     for docs_dir in get_doc_trees():
         rmtree_after_confirm(docs_dir.child(env.build_dir_name))
 
 
-@task(alias='pyc')
-def py_clean(*cmdline_args):
+def py_clean():
+    """Delete dangling `.pyc` files.
+
+    """
     if env.current_project.module is not None:
         p = Path(env.current_project.module.__file__).parent
         cleanup_pyc(p)
@@ -797,10 +809,10 @@ def run_in_demo_databases(admin_cmd, *more):
         local(cmd)
 
 
-@task()
-def clean_cache():
+def clean_demo_caches():
+    from django.utils.importlib import import_module
     for db in env.demo_databases:
-        m = __import__(db)
+        m = import_module(db)
         p = Path(m.SITE.project_dir).child('media', 'cache')
         rmtree_after_confirm(p)
 

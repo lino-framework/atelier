@@ -76,6 +76,49 @@ def configure(globals_dict, settings_module_name=None):
     filename = globals_dict.get('__file__')
     sys.path.append(Path(filename).parent.absolute())
 
+    globals_dict.update(extensions=[
+        'sphinx.ext.autodoc',
+        #~ 'sphinx.ext.autosummary',
+        'sphinx.ext.inheritance_diagram',
+        'sphinx.ext.todo',
+        'sphinx.ext.extlinks',
+        'sphinx.ext.graphviz',
+        'sphinx.ext.intersphinx',
+        # no i18n, no discovery, only one entry per doc,
+        # 'sphinxcontrib.newsfeed',
+        #~ 'sphinx.ext.doctest',
+        'atelier.sphinxconf.base',
+        'atelier.sphinxconf.dirtables',
+        'atelier.sphinxconf.refstothis',
+        'atelier.sphinxconf.insert_input',
+    ])
+    if settings_module_name is not None:
+        os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
+
+        # Trigger loading of Djangos model cache in order to avoid
+        # side effects that would occur when this happens later while
+        # importing one of the models modules.
+        from django.conf import settings
+        settings.SITE.startup()
+
+        globals_dict.update(
+            template_bridge=str('atelier.sphinxconf.DjangoTemplateBridge'))
+
+    mydir = Path(__file__).parent.absolute()
+    globals_dict.update(templates_path=['.templates', mydir])
+
+    # globals_dict.update(html_static_path=['.static'])
+
+    # some settings i use in all projects:
+
+    globals_dict.update(master_doc='index')
+    globals_dict.update(source_suffix='.rst')
+    globals_dict.update(primary_domain='py')
+    globals_dict.update(pygments_style='sphinx')
+
+    # The following will load the `fabfile.py` of other
+    # projects. Possible side effects.
+
     extlinks = dict(
         linoticket=(
             'http://lino-framework.org/tickets/%s.html',
@@ -102,47 +145,6 @@ def configure(globals_dict, settings_module_name=None):
     globals_dict.update(extlinks=extlinks)
     # globals_dict.update(
     #     blogref_format="http://www.lino-framework.org/blog/%Y/%m%d.html")
-
-    globals_dict.update(extensions=[
-        'sphinx.ext.autodoc',
-        #~ 'sphinx.ext.autosummary',
-        'sphinx.ext.inheritance_diagram',
-        'sphinx.ext.todo',
-        'sphinx.ext.extlinks',
-        'sphinx.ext.graphviz',
-        'sphinx.ext.intersphinx',
-        # no i18n, no discovery, only one entry per doc,
-        # 'sphinxcontrib.newsfeed',
-        #~ 'sphinx.ext.doctest',
-        'atelier.sphinxconf.base',
-        'atelier.sphinxconf.dirtables',
-        'atelier.sphinxconf.refstothis',
-        'atelier.sphinxconf.insert_input',
-    ])
-    if settings_module_name is not None:
-        #~ os.environ['DJANGO_SETTINGS_MODULE'] = 'north.docs_settings'
-        os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
-
-        # Trigger loading of Djangos model cache in order to avoid
-        # side effects that would occur when this happens later while
-        # importing one of the models modules.
-        from django.conf import settings
-        settings.SITE.startup()
-
-        globals_dict.update(
-            template_bridge=str('atelier.sphinxconf.DjangoTemplateBridge'))
-
-    mydir = Path(__file__).parent.absolute()
-    globals_dict.update(templates_path=['.templates', mydir])
-
-    # globals_dict.update(html_static_path=['.static'])
-
-    # some settings i use in all projects:
-
-    globals_dict.update(master_doc='index')
-    globals_dict.update(source_suffix='.rst')
-    globals_dict.update(primary_domain='py')
-    globals_dict.update(pygments_style='sphinx')
 
 
 def version2rst(self, m):
