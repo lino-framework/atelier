@@ -23,24 +23,23 @@ Thanks to
 """
 
 import os
-import sys
 import calendar
 import datetime
-from StringIO import StringIO
 
-from unipath import Path
+import jinja2
 
-from docutils import nodes, utils
-from docutils import statemachine
-from docutils.parsers.rst import directives
-from docutils.parsers.rst import roles
-from sphinx.util.compat import Directive
-
-from atelier import rstgen
+from babel.dates import format_date
 
 from .insert_input import InsertInputDirective
 
-import jinja2
+
+def monthname(n, language):
+    """
+    Return the monthname for month # n in specified language.
+    """
+    d = datetime.date(2013, n, 1)
+    return format_date(d, "MMMM", locale=language)
+
 
 templates = dict()
 templates['calendar.rst'] = """
@@ -163,6 +162,7 @@ class MainBlogIndexDirective(InsertInputDirective):
         return text
 
 
+
 class YearBlogIndexDirective(InsertInputDirective):
 
     """
@@ -173,7 +173,6 @@ class YearBlogIndexDirective(InsertInputDirective):
     raw_insert = True
 
     def get_rst(self):
-        from djangosite.dbutils import monthname
 
         #~ year = self.arguments[0]
         env = self.state.document.settings.env
@@ -194,7 +193,7 @@ class YearBlogIndexDirective(InsertInputDirective):
 
             text += """        
             
-.. |M%02d| replace::  **%s**""" % (month, monthname(month))
+.. |M%02d| replace::  **%s**""" % (month, monthname(month, self.language))
 
             weeknum = None
             #~ text += "\n  |br| Mo Tu We Th Fr Sa Su "
