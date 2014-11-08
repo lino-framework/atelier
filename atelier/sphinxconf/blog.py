@@ -189,6 +189,8 @@ class YearBlogIndexDirective(InsertInputDirective):
         cal = calendar.Calendar()
         text = ''
 
+        # return "20141108 %r" % self.language
+
         for month in range(1, 13):
 
             text += """        
