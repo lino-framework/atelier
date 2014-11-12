@@ -277,17 +277,18 @@ def setup_from_project(
         main_package=None,
         settings_module_name=None):
 
-    env.ROOTDIR = Path().absolute()
-    # print("20141027 %s %s " % (main_package, env.ROOTDIR))
+    # env.ROOTDIR = Path().absolute()
+    env.root_dir = Path().absolute()
+    # print("20141027 %s %s " % (main_package, env.root_dir))
 
-    env.project_name = env.ROOTDIR.name
+    env.project_name = env.root_dir.name
     env.setdefault('build_dir_name', '.build')  # but ablog needs '_build'
     
     env.setdefault('long_date_format', "%Y%m%d (%A, %d %B %Y)")
     # env.work_root = Path(env.work_root)
     env.setdefault('sdist_dir', None)
     env.setdefault('use_dirhtml', False)
-    env.setdefault('blog_root', env.ROOTDIR.child('docs'))
+    env.setdefault('blog_root', env.root_dir.child('docs'))
 
     if env.sdist_dir is not None:
         env.sdist_dir = Path(env.sdist_dir)
@@ -306,7 +307,7 @@ def setup_from_project(
         env.languages = env.languages.split()
 
     # if env.main_package:
-    #     env.SETUP_INFO = get_setup_info(Path(env.ROOTDIR))
+    #     env.SETUP_INFO = get_setup_info(Path(env.root_dir))
     # else:
     #     env.SETUP_INFO = None
 
@@ -320,7 +321,7 @@ def setup_from_project(
 
     # The following import will populate the projects
     from atelier.projects import get_project_info
-    env.current_project = get_project_info(env.ROOTDIR)
+    env.current_project = get_project_info(env.root_dir)
 
     env.doc_trees = env.current_project.doc_trees
 
@@ -364,7 +365,7 @@ def get_locale_dir():
         return None  # abort("No main_package")
     args = env.main_package.split('.')
     args.append('locale')
-    p = env.ROOTDIR.child(*args)
+    p = env.root_dir.child(*args)
     if not p.isdir():
         return None  # abort("Directory %s does not exist." % p)
     return p
@@ -416,7 +417,7 @@ def extract_messages_userdocs():
     """
     Run the Sphinx gettext builder on userdocs.
     """
-    userdocs = env.ROOTDIR.child('userdocs')
+    userdocs = env.root_dir.child('userdocs')
     if not userdocs.isdir():
         return  # abort("Directory %s does not exist." % userdocs)
     args = ['sphinx-build', '-b', 'gettext']
@@ -435,14 +436,14 @@ def extract_messages_userdocs():
 
 @task(alias='rename')
 def rename_data_url_friendly():
-    data_dir = env.ROOTDIR.child('docs', 'data')
+    data_dir = env.root_dir.child('docs', 'data')
     #~ print list(data_dir.listdir(names_only=True))
     print list(data_dir.walk())
 
 
 def setup_babel_userdocs(babelcmd):
     """Create userdocs .po files if necessary."""
-    userdocs = env.ROOTDIR.child('userdocs')
+    userdocs = env.root_dir.child('userdocs')
     if not userdocs.isdir():
         return
     locale_dir = userdocs.child('translations')
@@ -593,7 +594,7 @@ def build_api(*cmdline_args):
     """
     Generate `.rst` files in `docs/api`. See :cmd:`fab api`.
     """
-    docs_dir = env.ROOTDIR.child('docs')
+    docs_dir = env.root_dir.child('docs')
     if not docs_dir.exists():
         return
     os.environ.update(SPHINX_APIDOC_OPTIONS="members,show-inheritance")
@@ -637,7 +638,7 @@ def sphinx_build(builder, docs_dir,
         args += ['-w', 'warnings_%s.txt' % builder]
     else:
         args += ['-W']  # consider warnings as errors
-    #~ args += ['-w'+Path(env.ROOTDIR,'sphinx_doctest_warnings.txt')]
+    #~ args += ['-w'+Path(env.root_dir,'sphinx_doctest_warnings.txt')]
     args += ['.', build_dir]
     cmd = ' '.join(args)
     with lcd(docs_dir):
@@ -673,7 +674,7 @@ def build_userdocs(*cmdline_args):
     """
     if env.languages is None:
         return
-    docs_dir = env.ROOTDIR.child('userdocs')
+    docs_dir = env.root_dir.child('userdocs')
     if not docs_dir.exists():
         return
     for lng in env.languages:
@@ -685,7 +686,7 @@ def build_userdocs(*cmdline_args):
 def build_userdocs_pdf(*cmdline_args):
     if env.languages is None:
         return
-    docs_dir = env.ROOTDIR.child('userdocs')
+    docs_dir = env.root_dir.child('userdocs')
     if not docs_dir.exists():
         return
     for lng in env.languages:
@@ -697,10 +698,10 @@ def build_userdocs_pdf(*cmdline_args):
 @task(alias='linkcheck')
 def sphinx_build_linkcheck(*cmdline_args):
     """sphinxbuild -b linkcheck docs."""
-    docs_dir = env.ROOTDIR.child('docs')
+    docs_dir = env.root_dir.child('docs')
     if docs_dir.exists():
         sphinx_build('linkcheck', docs_dir, cmdline_args)
-    docs_dir = env.ROOTDIR.child('userdocs')
+    docs_dir = env.root_dir.child('userdocs')
     if docs_dir.exists():
         lng = env.languages[0]
         #~ lng = env.userdocs_base_language
@@ -709,7 +710,7 @@ def sphinx_build_linkcheck(*cmdline_args):
 
 def get_doc_trees():
     for rel_doc_tree in env.doc_trees:
-        docs_dir = env.ROOTDIR.child(rel_doc_tree)
+        docs_dir = env.root_dir.child(rel_doc_tree)
         if not docs_dir.exists():
             msg = "Directory %s does not exist." % docs_dir
             msg += "\nCheck `doc_trees` in your project's main module."
@@ -752,7 +753,7 @@ def py_clean():
     if env.current_project.module is not None:
         p = Path(env.current_project.module.__file__).parent
         cleanup_pyc(p)
-    p = env.ROOTDIR.child('tests')
+    p = env.root_dir.child('tests')
     if p.exists():
         cleanup_pyc(p)
 
@@ -773,7 +774,7 @@ def publish():
             dest_url = env.docs_rsync_dest % name
             publish_docs(build_dir, dest_url)
 
-    # build_dir = env.ROOTDIR.child('userdocs', env.build_dir_name)
+    # build_dir = env.root_dir.child('userdocs', env.build_dir_name)
     # if build_dir.exists():
     #     dest_url = env.docs_rsync_dest % (env.project_name + '-userdocs')
     #     publish_docs(build_dir, dest_url)
@@ -842,8 +843,8 @@ def unused_run_sphinx_doctest():
     args += ['-Q']  # no output
     if not onlythis:
         args += ['-W']  # consider warnings as errors
-    build_dir = env.ROOTDIR.child('docs', env.build_dir_name)
-    args += [env.ROOTDIR.child('docs'), build_dir]
+    build_dir = env.root_dir.child('docs', env.build_dir_name)
+    args += [env.root_dir.child('docs'), build_dir]
     if onlythis:  # test only this document
         args += [onlythis]
     #~ args = ['sphinx-build','-b','doctest',env.DOCSDIR,env.BUILDDIR]
@@ -1032,8 +1033,8 @@ def checkin(today=None):
     #         return
 
     entry = get_blog_entry(today)
-    #~ entry = Path(env.ROOTDIR,'..',env.blogger_project,*parts)
-    #~ print env.ROOTDIR.parent.absolute()
+    #~ entry = Path(env.root_dir,'..',env.blogger_project,*parts)
+    #~ print env.root_dir.parent.absolute()
     if not entry.path.exists():
         abort("%s does not exist!" % entry.path.absolute())
 
@@ -1065,7 +1066,7 @@ def unused_write_release_notes():
     v = env.current_project.SETUP_INFO['version']
     if v.endswith('+'):
         return
-    notes = Path(env.ROOTDIR, 'docs', 'releases', '%s.rst' % v)
+    notes = Path(env.root_dir, 'docs', 'releases', '%s.rst' % v)
     if notes.exists():
         return
     must_confirm("Create %s" % notes.absolute())
@@ -1112,9 +1113,9 @@ def write_readme():
     if not env.main_package:
         return
     if env.use_mercurial:
-        readme = env.ROOTDIR.child('README.txt')
+        readme = env.root_dir.child('README.txt')
     else:
-        readme = env.ROOTDIR.child('README.rst')
+        readme = env.root_dir.child('README.rst')
     txt = """\
 ==========================
 %(name)s README
@@ -1134,7 +1135,7 @@ Read more on %(url)s
         return
     must_confirm("Overwrite %s" % readme.absolute())
     readme.write_file(txt)
-    env.ROOTDIR.child('docs', 'index.rst').set_times()
+    env.root_dir.child('docs', 'index.rst').set_times()
     #~ cmd = "touch " + env.DOCSDIR.child('index.rst')
     #~ local(cmd)
     #~ pypi_register()
@@ -1150,8 +1151,8 @@ def run_tests():
 
 #~ @task(alias='listpkg')
 #~ def list_subpackages():
-    # ~ # lst = list(env.ROOTDIR.walk("__init__.py"))
-    #~ for fn in env.ROOTDIR.child('lino').walk('*.py'):
+    # ~ # lst = list(env.root_dir.walk("__init__.py"))
+    #~ for fn in env.root_dir.child('lino').walk('*.py'):
         #~ print fn
 
 @task(alias='cov')
@@ -1189,7 +1190,7 @@ def edit_setup_info():
     """
     Edit the `project_info.py` file of this project.
     """
-    sif = Path(env.ROOTDIR, env.main_package, 'project_info.py')
+    sif = Path(env.root_dir, env.main_package, 'project_info.py')
     print sif
     args = [os.environ['EDITOR']]
     args += [sif]
