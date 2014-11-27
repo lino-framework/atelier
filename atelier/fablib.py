@@ -27,7 +27,7 @@ configuration settings.  Example content::
   setup_from_project("foobar")
   env.languages = "de fr et nl".split()
   env.tolerate_sphinx_warnings = True
-  env.demo_databases.append('foobar.demo.settings')
+  add_demo_database('foobar.demo.settings')
 
 .. xfile:: .fabricrc
 
@@ -271,6 +271,13 @@ class RstFile(object):
         # else:
         #     raise Exception("20131125")
             # self.url = url_root + "/" + "/".join(parts) + '.html'
+
+
+def add_demo_database(db):
+    if db in env.demo_databases:
+        return
+        # raise Exception("Duplicate entry %r in demo_databases." % db)
+    env.demo_databases.append(db)
 
 
 def setup_from_project(
