@@ -11,16 +11,13 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+extensions = []
 from atelier.sphinxconf import configure
 configure(globals())
 
-#~ from unipath import Path
-#~ DOCSDIR = Path(__file__).parent.absolute()
-#~ sys.path.append(DOCSDIR)
+extensions += ['atelier.sphinxconf.complex_tables']
 
 import atelier
-
 
 primary_domain = 'py'
 
@@ -38,7 +35,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u"atelier"
-copyright = u'2002-2013, Luc Saffre'
+copyright = u'2002-2014, Luc Saffre'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
