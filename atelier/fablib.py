@@ -1119,6 +1119,9 @@ def write_readme():
     """
     if not env.main_package:
         return
+    if len(env.doc_trees) == 0:
+        # when there are no docs, then the README file is manually maintained
+        return
     if env.use_mercurial:
         readme = env.root_dir.child('README.txt')
     else:
@@ -1142,7 +1145,9 @@ Read more on %(url)s
         return
     must_confirm("Overwrite %s" % readme.absolute())
     readme.write_file(txt)
-    env.root_dir.child('docs', 'index.rst').set_times()
+    docs_index = env.root_dir.child('docs', 'index.rst')
+    if docs_index.exists():
+        docs_index.set_times()
     #~ cmd = "touch " + env.DOCSDIR.child('index.rst')
     #~ local(cmd)
     #~ pypi_register()
