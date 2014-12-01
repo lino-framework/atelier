@@ -1,14 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 by Luc Saffre.
+# Copyright 2013-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""
+"""A wrapper for Python's doctest.
 
-A wrapper for Python's doctest.
-
-Because the command-line interface
-of `python -m doctest` has no way to specify an encoding 
-of a (non-.py) input file.
+Because the command-line interface of `python -m doctest` has no way
+to specify an encoding of a (non-.py) input file.
 
 Code originally copied from Python 2.7 doctest.py
 
@@ -41,10 +38,11 @@ def _test():
             failures, _ = doctest.testmod(m)
             #~ raise Exception("20131022 tested %s" % m)
         else:
-            failures, _ = doctest.testfile(os.path.abspath(filename),
-                                           optionflags=doctest.REPORT_ONLY_FIRST_FAILURE,
-                                           encoding='utf-8',
-                                           module_relative=False)
+            failures, _ = doctest.testfile(
+                os.path.abspath(filename),
+                optionflags=doctest.REPORT_ONLY_FIRST_FAILURE,
+                encoding='utf-8',
+                module_relative=False)
 
         if failures:
             return 1
