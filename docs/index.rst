@@ -25,7 +25,6 @@ Sitemap
    :maxdepth: 2
 
    api
-   fab
    sphinxext
    changes
    refstothis/index

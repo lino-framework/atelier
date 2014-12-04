@@ -150,6 +150,9 @@ some time, this is not automatically launched for each test run.
 
 Create official source distribution and upload it to PyPI.
 
+PyPI will refuse if this project has previously been released with the
+same version.
+
 .. command:: fab write_readme
 
 Generate `README.txt` file from project_info (if necessary).
