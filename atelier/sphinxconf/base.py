@@ -254,10 +254,8 @@ from sphinx import addnodes
 
 def command_parse(env, sig, signode):
     # x, y = sig.split()
-    signode += addnodes.literal_strong(sig, sig)
-    # signode += addnodes.desc_name(x, x)
-    # signode += addnodes.desc_parameterlist()
-    # signode[-1] += addnodes.desc_parameter(y, y)
+    signode += addnodes.literal(sig, sig)
+    # signode += addnodes.literal_strong(sig, sig)  # needs Sphinx >= 1.3
     return sig
 
 
