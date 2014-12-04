@@ -5,7 +5,7 @@ API (autosummary)
 .. toctree::
 
 .. autosummary::
-   :toctree: _autosummary
+   :toctree: _api
 
    atelier
    atelier.fablib

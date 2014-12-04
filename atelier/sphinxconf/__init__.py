@@ -9,7 +9,7 @@ mainained by myself.
 .. toctree::
 
 .. autosummary::
-   :toctree: _autosummary
+   :toctree: _sphinxconf
 
    insert_input
    refstothis
