@@ -1,0 +1,4 @@
+atelier
+unipath>=1.0
+python-dateutil>=2.1
+fabric>=1.6.0
