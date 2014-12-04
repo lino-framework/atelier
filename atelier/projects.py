@@ -11,7 +11,8 @@ try:
 except ImportError:
     from django.utils.importlib import import_module
 
-config_files = ['~/.atelier/config.py', '/etc/atelier/config.py']
+config_files = ['~/.atelier/config.py', '/etc/atelier/config.py',
+                '~/_atelier/config.py']
 
 # PROJECTS = []
 _PROJECT_INFOS = []
