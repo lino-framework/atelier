@@ -193,14 +193,12 @@ TODO
 """
 import os
 import textwrap
-
-from babel.dates import format_date
-
 import datetime
-from unipath import Path
-import sphinx
 
-import atelier
+import sphinx
+from babel.dates import format_date
+from unipath import Path
+
 from atelier.utils import i2d
 from atelier import rstgen
 

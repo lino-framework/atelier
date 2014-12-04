@@ -1,4 +1,3 @@
-atelier
 babel>=1.3
 unipath>=1.0
 python-dateutil>=2.1
