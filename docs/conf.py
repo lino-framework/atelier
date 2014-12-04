@@ -16,6 +16,7 @@ from atelier.sphinxconf import configure
 configure(globals())
 
 extensions += ['atelier.sphinxconf.complex_tables']
+extensions += ['sphinx.ext.autosummary']
 
 import atelier
 

@@ -5,6 +5,22 @@
 """Sphinx setup used to build most of the documentation trees
 mainained by myself.
 
+
+.. toctree::
+
+.. autosummary::
+   :toctree: _autosummary
+
+   insert_input
+   refstothis
+   sigal_image
+   complex_tables
+   blog
+   base
+   dirtables
+
+
+
 """
 
 from __future__ import print_function

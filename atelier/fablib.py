@@ -604,8 +604,10 @@ def build_api(*cmdline_args):
     docs_dir = env.root_dir.child('docs')
     if not docs_dir.exists():
         return
-    os.environ.update(SPHINX_APIDOC_OPTIONS="members,show-inheritance")
     api_dir = docs_dir.child("api").absolute()
+    if not api_dir.exists():
+        return
+    os.environ.update(SPHINX_APIDOC_OPTIONS="members,show-inheritance")
     rmtree_after_confirm(api_dir)
     args = ['sphinx-apidoc']
     # args += ['-f'] # force the overwrite of all files that it generates.

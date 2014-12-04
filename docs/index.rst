@@ -24,7 +24,7 @@ Sitemap
 .. toctree::
    :maxdepth: 2
 
-   API <api/atelier>
+   api
    fab
    sphinxext
    changes

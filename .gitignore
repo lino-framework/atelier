@@ -15,7 +15,7 @@ dist
 tmp
 */default.db
 docs/dl/*
-docs/api
+docs/_autosummary/
 .build
 htmlcov
 *.egg-info
