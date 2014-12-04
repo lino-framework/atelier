@@ -7,7 +7,7 @@
 
 SETUP_INFO = dict(
     name='atelier',
-    version='0.0.3',  # released 20130911
+    version='0.0.4',  # released 20141204
     install_requires=['Sphinx', 'unipath', 'python_dateutil'],
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
