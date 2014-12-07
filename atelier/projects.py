@@ -118,12 +118,19 @@ class Project(object):
         else:
             self.name = self.nickname
             # print("20141027 %s %s" % (i, root_dir))
-            
-    
+
+
 for fn in config_files:
     fn = os.path.expanduser(fn)
     if os.path.exists(fn):
-        execfile(fn)
+        execfile(fn)  # supposed to call add_project
 
-# for p in _PROJECT_INFOS:
-#     p.load_fabfile()
+if len(_PROJECT_INFOS) == 0:
+    # if no config.py found, add current working directory.
+    p = Path().absolute()
+    while p:
+        if p.child('fabfile.py').exists():
+            add_project(p)
+            break
+        p = p.parent
+

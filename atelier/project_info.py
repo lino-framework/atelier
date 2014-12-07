@@ -7,8 +7,8 @@
 
 SETUP_INFO = dict(
     name='atelier',
-    version='0.0.4',  # released 20141204
-    install_requires=['Sphinx', 'unipath', 'python_dateutil'],
+    version='0.0.5',  # released 20141207
+    install_requires=['fabric', 'Sphinx', 'unipath', 'python_dateutil'],
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
     license='Free BSD',
@@ -16,22 +16,28 @@ SETUP_INFO = dict(
     author='Luc Saffre',
     author_email='luc.saffre@gmail.com',
     url="http://atelier.lino-framework.org",
-  long_description="""\
-`atelier` is my collection of tools for people who write and 
-maintain multiple Python software projects.
-It is not yet well documented, and so far there is 
-nobody except me who uses it.
-Let me know if you like it.
+    long_description="""\
+`atelier` is my collection of tools for managing and
+maintaining multiple Python software projects.
+
+It contains
+
+- some general Python utilities (:mod:`atelier.utils`)
+- a library for generating reStructuredText from Python (:mod:`atelier.rstgen`)
+- some Sphinx extensions (:mod:`atelier.rstgen`)
+- a library of fabric commands (:mod:`atelier.fablib`)
+- a minimalistic project management (:mod:`atelier.projects`)
+
 """,
-  classifiers="""\
-  Programming Language :: Python
-  Programming Language :: Python :: 2.6
-  Programming Language :: Python :: 2.7
-  Development Status :: 4 - Beta
-  Intended Audience :: Developers
-  License :: OSI Approved :: BSD License
-  Natural Language :: English
-  Operating System :: OS Independent""".splitlines())
+    classifiers="""\
+Programming Language :: Python
+Programming Language :: Python :: 2.6
+Programming Language :: Python :: 2.7
+Development Status :: 4 - Beta
+Intended Audience :: Developers
+License :: OSI Approved :: BSD License
+Natural Language :: English
+Operating System :: OS Independent""".splitlines())
 
 SETUP_INFO.update(packages=[str(n) for n in """
 atelier
