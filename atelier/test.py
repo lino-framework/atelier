@@ -12,6 +12,7 @@ Defines an extended TestCase whith methods to launch a subprocess.
 import unittest
 import glob
 import sys
+import os
 from setuptools import find_packages
 
 from atelier.utils import SubProcessParent
@@ -37,10 +38,12 @@ class TestCase(unittest.TestCase, SubProcessParent):
 
     def run_subprocess(self, args, **kw):
         """
-        Run a subprocess, wait until it terminates, 
+        Run a subprocess, wait until it terminates,
         fail if the returncode is not 0.
         """
-        p = self.open_subprocess(args, **kw)
+        env = os.environ.copy()
+        env.update(kw)
+        p = self.open_subprocess(args, **env)
         p.wait()
         rv = p.returncode
         #~ kw.update(stderr=buffer)
