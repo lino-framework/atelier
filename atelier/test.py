@@ -12,7 +12,6 @@ Defines an extended TestCase whith methods to launch a subprocess.
 import unittest
 import glob
 import sys
-import os
 from setuptools import find_packages
 
 from atelier.utils import SubProcessParent

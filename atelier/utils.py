@@ -248,6 +248,10 @@ class SubProcessParent(object):
     # inheritable_envvars = ('VIRTUAL_ENV', 'PYTHONPATH', 'PATH')
 
     def build_environment(self):
+        """Contructs and return a `dict` with the environment variables for
+        the future subprocess.
+
+        """
         env = dict()
         env.update(os.environ)
         env.update(self.default_environ)
