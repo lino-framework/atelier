@@ -8,7 +8,8 @@
 SETUP_INFO = dict(
     name='atelier',
     version='0.0.5',  # released 20141207
-    install_requires=['fabric', 'Sphinx', 'unipath', 'python_dateutil'],
+    install_requires=[
+        'fabric', 'Sphinx', 'Babel', 'unipath', 'python_dateutil'],
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
     license='Free BSD',
