@@ -245,14 +245,16 @@ class SubProcessParent(object):
     Also used standalone by `lino.management.commands.makescreenshots`.
     """
     default_environ = dict()
-    inheritable_envvars = ('VIRTUAL_ENV', 'PYTHONPATH', 'PATH')
+    # inheritable_envvars = ('VIRTUAL_ENV', 'PYTHONPATH', 'PATH')
 
     def build_environment(self):
-        env = dict(self.default_environ)
-        for k in self.inheritable_envvars:
-            v = os.environ.get(k, None)
-            if v is not None:
-                env[k] = v
+        env = dict()
+        env.update(os.environ)
+        env.update(self.default_environ)
+        # for k in self.inheritable_envvars:
+        #     v = os.environ.get(k, None)
+        #     if v is not None:
+        #         env[k] = v
         return env
 
     def check_output(self, args, **kw):
@@ -262,7 +264,7 @@ class SubProcessParent(object):
         return subprocess.check_output(args, **kw)
 
     def open_subprocess(self, args, **kw):
-        """Additional keywords will be passed to the `Popen constrctor
+        """Additional keywords will be passed to the `Popen constructor
         <http://docs.python.org/2.7/library/subprocess.html#popen-constructor>`_.
         They can be e.g.  `cwd` : the working directory
 

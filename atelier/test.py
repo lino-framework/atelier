@@ -41,9 +41,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
         Run a subprocess, wait until it terminates,
         fail if the returncode is not 0.
         """
-        env = os.environ.copy()
-        env.update(kw)
-        p = self.open_subprocess(args, **env)
+        p = self.open_subprocess(args, **kw)
         p.wait()
         rv = p.returncode
         #~ kw.update(stderr=buffer)
