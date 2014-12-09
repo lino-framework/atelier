@@ -492,7 +492,7 @@ def compile_catalog_userdocs():
 
 def init_catalog_code():
     """Create code .po files if necessary."""
-    from lino.utils.mldbc import to_locale
+    from lino.core.site_def import to_locale
     locale_dir = get_locale_dir()
     if locale_dir is None:
         return
@@ -516,7 +516,7 @@ def init_catalog_code():
 
 def update_catalog_code():
     """Update .po files from .pot file."""
-    from lino.utils.mldbc import to_locale
+    from lino.core.site_def import to_locale
     locale_dir = get_locale_dir()
     if locale_dir is None:
         return
@@ -537,7 +537,7 @@ def update_catalog_code():
 @task(alias='cm')
 def compile_catalog():
     """Compile .po files to .mo files."""
-    from lino.utils.mldbc import to_locale
+    from lino.core.site_def import to_locale
     locale_dir = get_locale_dir()
     if locale_dir is None:
         return
