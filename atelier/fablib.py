@@ -923,6 +923,7 @@ def setup_test_sdist():
 def double_dump_test():
     """
     Perform a "double dump test" on every demo database.
+    TODO: convert this to a Lino management command.
     """
     if len(env.demo_databases) == 0:
         return

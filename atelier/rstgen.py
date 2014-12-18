@@ -171,6 +171,7 @@ return a blank line when there are no rows:
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import sys
 #~ import cStringIO as StringIO
 import StringIO
 
@@ -462,6 +463,24 @@ def ol(items, bullet="#."):
 
 def boldheader(title):
     return "\n\n**%s**\n\n" % unicode(title).strip()
+
+
+class stdout_prefix():
+    # experimental
+    def __init__(self, prefix):
+        self.prefix = '\n' + prefix
+        self.saved_stdout = sys.stdout
+
+    def __enter__(self):
+        sys.stdout = self
+
+    def write(self, s):
+        s = self.prefix + self.prefix.join(s.splitlines())
+        self.saved_stdout.write(s)
+            
+    def __exit__(self, type, value, traceback):
+        sys.stdout = self.saved_stdout
+        self.writer = None
 
 
 def _test():
