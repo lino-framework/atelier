@@ -36,6 +36,7 @@ from docutils.parsers.rst import roles
 from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 from sphinx.util.nodes import split_explicit_title
+from sphinx import addnodes
 
 try:
     from importlib import import_module
@@ -46,6 +47,12 @@ from atelier.utils import i2d
 
 
 def autodoc_skip_member(app, what, name, obj, skip, options):
+    defmod = getattr(obj, '__module__', None)
+    if defmod is not None:
+        if defmod.startswith('django.'):
+            return True
+    if name == 'Q':
+        print(20141219, app, what, name, obj, skip, options)
     if name != '__builtins__':
         #~ print 'autodoc_skip_member', what, repr(name), repr(obj)
 
@@ -62,6 +69,8 @@ def autodoc_skip_member(app, what, name, obj, skip, options):
     #~ if what == 'exception':
         #~ print 'autodoc_skip_member',what, repr(name), repr(obj), skip
         #~ return True
+
+    return skip
 
 
 #~ SIDEBAR = """
@@ -200,6 +209,19 @@ def srcref(mod):
     return srcref_url % srcref
 
 
+def message_role(typ, rawtext, text, lineno, inliner, options={}, content=[]):
+    text = utils.unescape(text)
+    has_explicit_title, title, target = split_explicit_title(text)
+    node = nodes.literal(rawtext, text)
+    return [node], []
+
+def actor_role(typ, rawtext, text, lineno, inliner, options={}, content=[]):
+    text = utils.unescape(text)
+    has_explicit_title, title, target = split_explicit_title(text)
+    node = nodes.literal(rawtext, text)
+    return [node], []
+
+
 def coderef_role(typ, rawtext, text, lineno, inliner, options={}, content=[]):
     text = utils.unescape(text)
     has_explicit_title, title, target = split_explicit_title(text)
@@ -248,8 +270,6 @@ def unused_srcref_role(typ, rawtext, text, lineno, inliner, options={}, content=
             title = prefix + part
     pnode = nodes.reference(title, title, internal=False, refuri=full_url)
     return [pnode], []
-
-from sphinx import addnodes
 
 
 def command_parse(env, sig, signode):
@@ -306,6 +326,8 @@ def setup(app):
     app.connect(str('autodoc-process-docstring'), autodoc_add_srcref)
 
     app.add_role(str('coderef'), coderef_role)
+    app.add_role(str('message'), message_role)
+    app.add_role(str('actor'), actor_role)
 
     roles.register_canonical_role(str('blogref'), blogref_role)
 
