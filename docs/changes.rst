@@ -4,8 +4,17 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.6 (released 20141222)
-=================================
+Version 0.0.7 (released :blogref:`20141222`)
+============================================
+
+This is a bugfix release for 0.0.6 which fixes one bug::
+
+  [localhost] local: git tag -a 0.0.6 -m Release atelier 0.0.6.
+  fatal: too many params
+
+
+Version 0.0.6 (released :blogref:`20141222`)
+============================================
 
 - The :cmd:`fab release` now also does `git tag`.
 - The :cmd:`fab release` command now reminds me of the things to check
