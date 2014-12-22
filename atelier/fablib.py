@@ -1011,7 +1011,7 @@ def pypi_release():
     if env.revision_control_system == 'git':
         args = ["git", "tag"]
         args += ["-a", version]
-        args += ["-m", "Release %(name)s %(version)s." % info]
+        args += ["-m", "'Release %(name)s %(version)s.'" % info]
         local(' '.join(args))
 
     pypi_register()
