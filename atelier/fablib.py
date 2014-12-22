@@ -962,18 +962,56 @@ def setup_sdist():
     local(' '.join(args))
 
 
+
+LASTREL_INFO = "Last release %(filename)s was %(upload_time)s (%(downloads)d downloads)."
+def show_pypi_status():
+
+    info = env.current_project.SETUP_INFO
+    version = info['version']
+    name = info['name']
+    
+    try:
+        import xmlrpclib
+    except ImportError:
+        import xmlrpc.client as xmlrpclib
+    client = xmlrpclib.ServerProxy('https://pypi.python.org/pypi')
+    released_versions = client.package_releases(name)
+    if len(released_versions) == 0:
+        must_confirm(
+            "This is your first release of %(name)s %(version)s "
+            "to PyPI" % info)
+    else:
+        lastrel = client.release_urls(name, released_versions[-1])[-1]
+        puts(LASTREL_INFO % lastrel)
+        if version in released_versions:
+            abort("Version %s has alread been released.")
+
+
+RELEASE_CONFIRM = """
+-------------------------------------------------------------------------------
+This is going to officially release %(name)s %(version)s to PyPI.
+It will fail if version %(version)s of %(name)s has previously been released.
+Your `docs/changes.rst` should have a section about this version.
+Your working directory should be clean (otherwise answer 'n' and run `fab ci`).
+Are you sure?"""
+
+
 @task(alias='release')
 def pypi_release():
     """See :cmd:`fab release`. """
-    must_confirm(
-        "This is going to officially release %(name)s %(version)s to PyPI" %
-        env.current_project.SETUP_INFO)
+
+    info = env.current_project.SETUP_INFO
+    version = info['version']
+
+    show_revision_status()
+    show_pypi_status()
+
+    must_confirm(RELEASE_CONFIRM % info)
 
     if env.revision_control_system == 'git':
-        version = env.current_project.SETUP_INFO['version']
         args = ["git", "tag"]
         args += ["-a", version]
-        args += ["-m", "Release version %s." % version]
+        args += ["-m", "Release %(name)s %(version)s." % info]
         local(' '.join(args))
 
     pypi_register()
@@ -1092,27 +1130,28 @@ def edit_blog_entry(today=None):
     local(' '.join(args))
 
 
-@task(alias='ci')
-def checkin(today=None):
-    """See :cmd:`fab ci`. """
+def show_revision_status():
 
     if env.revision_control_system == 'hg':
         args = ["hg", "st"]
     elif env.revision_control_system == 'git':
         args = ["git", "status"]
     else:
-        return
+        abort("Invalid revision_control_system %r !" %
+              env.revision_control_system)
     local(' '.join(args))
+
+
+@task(alias='ci')
+def checkin(today=None):
+    """See :cmd:`fab ci`. """
+
+    show_revision_status()
 
     if today is None:
         today = get_current_date()
     else:
         today = i2d(today)
-
-    # if atelier.TODAY is not None:
-    #     if not confirm("Hard-coded TODAY in your %s! Are you sure?" %
-    #                    atelier.config_file):
-    #         return
 
     entry = get_blog_entry(today)
     #~ entry = Path(env.root_dir,'..',env.blogger_project,*parts)

@@ -7,7 +7,10 @@ Changes in `atelier`
 Version 0.0.6 (released 20141222)
 =================================
 
-- :cmd:`fab release` now also does `git tag`.
+- The :cmd:`fab release` now also does `git tag`.
+- The :cmd:`fab release` command now reminds me of the things to check
+  before a release, communicates with PyPI and displays information
+  about the last official release.
 - Improved the documentation.
 
 
