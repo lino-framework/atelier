@@ -7,7 +7,7 @@
 
 SETUP_INFO = dict(
     name='atelier',
-    version='0.0.6',  # released 20141222
+    version='0.0.7',
     install_requires=[
         'fabric', 'Sphinx', 'Babel', 'unipath', 'python_dateutil'],
     scripts=['scripts/per_project', 'scripts/shotwell2blog.py'],

@@ -984,7 +984,7 @@ def show_pypi_status():
         lastrel = client.release_urls(name, released_versions[-1])[-1]
         puts(LASTREL_INFO % lastrel)
         if version in released_versions:
-            abort("Version %s has alread been released.")
+            abort("%(name)s %(version)s has already been released." % info)
 
 
 RELEASE_CONFIRM = """
