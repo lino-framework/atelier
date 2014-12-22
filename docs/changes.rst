@@ -4,7 +4,17 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.3 (in development)
+Version 0.0.6 (released 20141222)
+=================================
+
+- :cmd:`fab release` now also does `git tag`.
+- Improved the documentation.
+
+
+Version 0.0.5 (released 20141207)
+=================================
+
+Version 0.0.3
 ==============================
 
 - Fixed `AttributeError: work_root` occuring when there was 

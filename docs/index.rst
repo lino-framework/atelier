@@ -27,5 +27,4 @@ Sitemap
    api
    sphinxext
    changes
-   refstothis/index
 

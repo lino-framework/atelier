@@ -143,17 +143,16 @@ filesystem.
 
 Usage examples:
 
-  $ python shotwell2blog.py foo
+  $ shotwell2blog.py foo
 
   List the file names of all photos tagged "foo".
 
-  $ python shotwell2blog.py -t ~/myblog/pictures blog
+  $ shotwell2blog.py -t ~/myblog/pictures blog
 
   Copy all photos marked "blog" to a directory `~/myblog/pictures`.
-  Maintain subdirectories.
-  Don't touch existing photos.
+  Maintain subdirectories.  Don't touch existing photos.
 
-  $ python shotwell2blog.py Foo | xargs zip -j foo.zip
+  $ shotwell2blog.py Foo | xargs zip -j foo.zip
 
   Create a zip file with a copy of each photo tagged "Foo".
   The `-j` option is to *not* include directory names.

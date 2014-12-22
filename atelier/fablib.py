@@ -7,6 +7,152 @@ Python projects.
 
 .. _fabric: http://docs.fabfile.org
 
+.. contents::
+  :local:
+
+.. _fab_commands:
+
+``fab`` commands
+================
+
+Internationalization
+--------------------
+
+.. command:: fab mm
+
+    ("make messages")
+
+    Extracts messages from both code and userdocs, then initializes and
+    updates all catalogs.
+
+Deploy
+------
+
+.. command:: fab ci
+
+    Checkin and push to repository, using today's blog entry as commit
+    message.
+
+
+.. command:: fab release
+
+    Write a source distribution archive to your :attr:`env.sdist_dir`,
+    then upload it to PyPI.  Create a version tag if
+    :attr:`env.revision_control_system` is ``'git'``.
+
+    This command will fail if this project has previously been
+    released with the same version.
+
+
+
+.. command:: fab reg
+
+    Register this project (and its current version) to PyPI.
+
+.. command:: fab sdist
+
+    Write a source distribution archive to your :attr:`env.sdist_dir`.
+
+
+
+
+
+Testing
+-------
+
+.. command:: fab initdb
+
+    Run :manage:`initdb_demo` on every demo database of this project
+    (specified in :attr:`env.demo_databases`).
+
+    Demo databases are used by the test suite and the Sphinx
+    documentation.  They are not included in the code repository since
+    they are generated data.  Since initializing these databases can take
+    some time, this is not automatically launched for each test run.
+
+
+.. command:: fab test
+
+    Run the test suite of this project.
+
+.. command:: fab test_sdist
+
+    Creates a temporay virtualenv, installs your project and runs your
+    test suite.
+        
+    - creates and activates a temporay virtualenv,
+    - calls ``pip install --extra-index <env.sdist_dir> <prjname>``
+    - runs ``python setup.py test``
+    - removes temporary files.
+    
+    Assumes that you previously did :cmd:`fab sdist` of all your
+    projects related to this project.
+    
+    When using this, you should configure a local download cache for
+    pip, e.g. with something like this in your
+    :file:`~/.pip/pip.conf`::
+    
+      [global]
+      download-cache=/home/luc/.pip/cache
+
+
+Documenting
+-----------
+
+.. command:: fab blog
+
+    Edit today's blog entry, create an empty file if it doesn't yet exist.
+
+
+.. command:: fab md
+
+    Make docs. Build html docs for this project.
+
+    This run :cmd:`fab readme`, followed by `sphinx build html` in
+    every directory defined in :attr:`env.doc_trees`.
+
+
+.. command:: fab pd
+
+    Publish docs. Upload docs to public web server.
+
+
+.. command:: fab clean
+
+    Remove temporary and generated files:
+
+    - Sphinx `.build` files
+    - Dangling `.pyc` files which don't have a corresponding `.py` file.
+    - `cache` directories of demo databases
+
+
+.. command:: fab readme
+
+    Generate or update `README.txt` or `README.rst` file from
+    `SETUP_INFO`.
+
+
+.. command:: fab api
+
+    Generate `.rst` files below `docs/api` by running `sphinx-apidoc
+    <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`_.
+
+    This is no longer used by most of my projects, at least those
+    which I converted to autosummary.
+
+
+.. command:: fab docs
+
+    Has been replaced by :cmd:`fab md`.
+
+.. command:: fab pub
+
+    Has been replaced by :cmd:`fab pd`.
+
+
+Installation
+============
+
 To be used by creating a :file:`fabfile.py` in your project's root
 directory with at least the following two lines::
 
@@ -15,8 +161,10 @@ directory with at least the following two lines::
   
 Where "foobar" is the Python name of your project's main package.
 
+
+
 Configuration files
--------------------
+===================
 
 .. xfile:: fabfile.py
 
@@ -43,13 +191,26 @@ content like this::
 
 
 Project settings
-----------------
+================
 
 fabric_ works with a global "environment" object named ``env``.  The
 following section documents the possible attributes of this object as
 used by :mod:`atelier.fablib`.
 
 .. class:: env
+
+  .. attribute:: sdist_dir
+
+  .. attribute:: docs_rsync_dest
+
+    A Python template string which defines the rsync destination for
+    publishing your projects documentation.
+    Used by :cmd:`fab pub`.
+
+    Example::
+
+      env.docs_rsync_dest = 'luc@example.org:~/public_html/%s'
+
 
   .. attribute:: doc_trees
 
@@ -70,11 +231,17 @@ used by :mod:`atelier.fablib`.
   .. attribute:: apidoc_exclude_pathnames
 
     a list of filenames (or directory names) to be excluded when you
-    run :command:`fab api`.
+    run :cmd:`fab api`.
+
+  .. attribute:: revision_control_system
+
+    The revision control system used by your project.
+    Allowed values are `'git'`, `'hg'` or `None`.
+    Used by :cmd:`fab ci`.
 
   .. attribute:: use_mercurial
 
-    set this to False if you use Git. Used by :command:`fab ci`
+    **No longer used.** Use :attr:`env.revision_control_system` instead.)
 
   .. attribute:: demo_databases
 
@@ -82,102 +249,10 @@ You may define user-specific default values for some of these settings
 (those who are simple strings) in a :file:`.fabricrc` file.
 
 
-.. _fab_commands:
-
-``fab`` commands
-----------------
-
-.. command:: fab mm
-
-("make messages")
-
-Extracts messages from both code and userdocs, then initializes and
-updates all catalogs.
-
-
-.. command:: fab test
-
-Run the test suite of this project.
-
-.. command:: fab test_sdist
-
-    Creates a temporay virtualenv, installs your project and runs your
-    test suite.
-        
-    - creates and activates a temporay virtualenv,
-    - calls ``pip install --extra-index <env.sdist_dir> <prjname>``
-    - runs ``python setup.py test``
-    - removes temporary files.
-    
-    Assumes that you previously did ``pp fab sdist`` i.e. your
-    `env.sdist_dir` contains the pre-release sdist of all your
-    projects.
-    
-    When using this, you should configure a local download cache for
-    pip, e.g. with something like this in your
-    :file:`~/.pip/pip.conf`::
-    
-      [global]
-      download-cache=/home/luc/.pip/cache
-
-
-.. command:: fab initdb
-
-Run :manage:`initdb_demo` on every demo database of this project
-(specified in :attr:`env.demo_databases`).
-
-Demo databases are used by the test suite and the Sphinx
-documentation.  They are not included in the code repository since
-they are generated data.  Since initializing these databases can take
-some time, this is not automatically launched for each test run.
-
-.. command:: fab ci
-
-    Checkin and push to repository, using today's blog entry as commit
-    message.
-    
-
-.. command:: fab clean
-
-    Remove temporary and generated files:
-
-    - .pyc files which don't have a corresponding .py file.
-    - Sphinx .build files
-    - cache of demo databases
-
-
-.. command:: fab release
-
-Create official source distribution and upload it to PyPI.
-
-PyPI will refuse if this project has previously been released with the
-same version.
-
-.. command:: fab write_readme
-
-Generate `README.txt` file from project_info (if necessary).
-
-
-.. command:: fab api
-
-Generate `.rst` files below `docs/api` by running `sphinx-apidoc
-<http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`_.
-
-
-
-.. command:: fab blog
-
-Edit today's blog entry, create an empty file if it doesn't yet exist.
-
-
-.. command:: fab docs
-
-Run `sphinx build html` in every directory defined in `doc_trees`.
-
 
 
 History
--------
+=======
 
 - 20141020 moved `doc_trees` project to :class:`atelier.Project`.
 - 20141001 added support for multiple doc trees per project
@@ -185,10 +260,12 @@ History
 - 20140116 : added support for managing namespace packages
 
 TODO
-----
+====
 
 - replace `env.blogger_project` by an attribute of the main module
   (like `intersphinx_urls`)
+
+(The rest of this page is automatically generated stuff.)
 
 """
 import os
@@ -294,16 +371,17 @@ def setup_from_project(
     
     env.setdefault('long_date_format', "%Y%m%d (%A, %d %B %Y)")
     # env.work_root = Path(env.work_root)
-    env.setdefault('sdist_dir', None)
     env.setdefault('use_dirhtml', False)
     env.setdefault('blog_root', env.root_dir.child('docs'))
 
+    env.setdefault('sdist_dir', None)
     if env.sdist_dir is not None:
         env.sdist_dir = Path(env.sdist_dir)
     env.main_package = main_package
     env.tolerate_sphinx_warnings = False
     env.demo_databases = []
-    env.use_mercurial = True
+    # env.use_mercurial = True
+    env.revision_control_system = None
     env.apidoc_exclude_pathnames = []
     # env.blogger_url = "http://blog.example.com/"
 
@@ -728,9 +806,9 @@ def get_doc_trees():
         yield docs_dir
 
 
-@task(alias='docs')
+@task(alias='md')
 def build_docs(*cmdline_args):
-    """write_readme + build sphinx html docs."""
+    """See :cmd:`fab md`. """
     write_readme()
     for docs_dir in get_doc_trees():
         puts("Invoking Sphinx in in directory %s..." % docs_dir)
@@ -743,6 +821,7 @@ def build_docs(*cmdline_args):
 
 @task(alias='clean')
 def clean(*cmdline_args):
+    """See :cmd:`fab clean`. """
     sphinx_clean()
     py_clean()
     clean_demo_caches()
@@ -768,11 +847,9 @@ def py_clean():
         cleanup_pyc(p)
 
 
-@task(alias='pub')
+@task(alias='pd')
 def publish():
-    """
-    Upload docs to public web server.
-    """
+    """See :cmd:`fab pd`. """
     if not env.docs_rsync_dest:
         raise Exception(
             "Must set env.docs_rsync_dest in `fabfile.py` or `~/.fabricrc`")
@@ -877,13 +954,34 @@ Sphinx doctest failed with exit code %s
 
 @task(alias='sdist')
 def setup_sdist():
-    """
-    Write source distribution archive file.
-    """
+    """See :cmd:`fab sdist`. """
     args = ["python", "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", env.sdist_dir.child(
         env.current_project.SETUP_INFO['name'])]
+    local(' '.join(args))
+
+
+@task(alias='release')
+def pypi_release():
+    """See :cmd:`fab release`. """
+    must_confirm(
+        "This is going to officially release %(name)s %(version)s to PyPI" %
+        env.current_project.SETUP_INFO)
+
+    if env.revision_control_system == 'git':
+        version = env.current_project.SETUP_INFO['version']
+        args = ["git", "tag"]
+        args += ["-a", version]
+        args += ["-m", "Release version %s." % version]
+        local(' '.join(args))
+
+    pypi_register()
+    args = ["python", "setup.py"]
+    args += ["sdist", "--formats=gztar"]
+    args += ["--dist-dir", env.sdist_dir.child(
+        env.current_project.SETUP_INFO['name'])]
+    args += ["upload"]
     local(' '.join(args))
 
 
@@ -907,8 +1005,10 @@ def setup_test_sdist():
     ve_path.mkdir()
     script = ve_path.child('tmp.sh')
 
-    context = dict(name=env.current_project.SETUP_INFO['name'], sdist_dir=env.sdist_dir,
-                   ve_path=ve_path)
+    context = dict(
+        name=env.current_project.SETUP_INFO['name'],
+        sdist_dir=env.sdist_dir,
+        ve_path=ve_path)
     #~ file(script,'w').write(TEST_SDIST_TEMPLATE % context)
     txt = TEST_SDIST_TEMPLATE % context
     for db in env.demo_databases:
@@ -948,38 +1048,9 @@ def double_dump_test():
             local("diff a b")
 
 
-@task(alias='release')
-def pypi_release():
-    """
-    Create official source distribution and upload it to PyPI.
-    """
-    must_confirm(
-        "This is going to officially release %(name)s %(version)s to PyPI" %
-        env.current_project.SETUP_INFO)
-    pypi_register()
-    args = ["python", "setup.py"]
-    args += ["sdist", "--formats=gztar"]
-    args += ["--dist-dir", env.sdist_dir.child(env.current_project.SETUP_INFO['name'])]
-    args += ["upload"]
-    local(' '.join(args))
-    #~ run_setup('setup.py',args)
-
-#~ @task()
-#~ def check_packages():
-    #~ """
-    #~ Checks whether the `packages` list seems correct.
-    #~ """
-    #~ packages = find_packages()
-    #~ if packages == env.current_project.SETUP_INFO['packages']:
-        #~ puts("%d packages okay" % len(packages))
-        #~ return
-
-
 @task(alias='reg')
 def pypi_register():
-    """
-    Register to PyPI.
-    """
+    """See :cmd:`fab reg`. """
     args = ["python", "setup.py"]
     args += ["register"]
     #~ run_setup('setup.py',args)
@@ -1023,14 +1094,14 @@ def edit_blog_entry(today=None):
 
 @task(alias='ci')
 def checkin(today=None):
-    """
-    Checkin and push to repository, using today's blog entry as commit
-    message.
-    """
-    if env.use_mercurial:
+    """See :cmd:`fab ci`. """
+
+    if env.revision_control_system == 'hg':
         args = ["hg", "st"]
-    else:
+    elif env.revision_control_system == 'git':
         args = ["git", "status"]
+    else:
+        return
     local(' '.join(args))
 
     if today is None:
@@ -1055,19 +1126,17 @@ def checkin(today=None):
         return
     #~ puts("Commit message refers to %s" % entry.absolute())
 
-    if env.use_mercurial:
+    if env.revision_control_system == 'hg':
         args = ["hg", "ci"]
     else:
         args = ["git", "commit", "-a"]
     args += ['-m', msg]
     cmd = ' '.join(args)
     local(cmd)
-    if env.use_mercurial:
+    if env.revision_control_system == 'hg':
         local("hg push %s" % env.project_name)
     else:
         local("git push")
-
-#~ @task()
 
 
 def unused_write_release_notes():
@@ -1116,20 +1185,18 @@ Manual tasks after upgrade
     local(' '.join(args))
 
 
-@task()
+@task(alias='readme')
 def write_readme():
-    """
-    Generate README.txt file from setup_info (if necessary).
-    """
+    """See :cmd:`fab readme`. """
     if not env.main_package:
         return
     if len(env.doc_trees) == 0:
         # when there are no docs, then the README file is manually maintained
         return
-    if env.use_mercurial:
-        readme = env.root_dir.child('README.txt')
-    else:
+    if env.revision_control_system == 'git':
         readme = env.root_dir.child('README.rst')
+    else:
+        readme = env.root_dir.child('README.txt')
     txt = """\
 ==========================
 %(name)s README
@@ -1159,9 +1226,7 @@ Read more on %(url)s
 
 @task(alias='test')
 def run_tests():
-    """
-    Run the complete test suite of this project.
-    """
+    """See :cmd:`fab test`. """
     local('python setup.py -q test')
 
 

@@ -4,6 +4,7 @@
 Sphinx extensions
 =================
 
+
 .. default-domain:: rst
 
 .. directive:: currentlanguage
@@ -47,23 +48,15 @@ individual days are linked to their respective daily entry.
 Inserts a main index page forthis blog, one entry for every year.
 
 
-Inline markup
+Miscellaneous
 -------------
 
-Example::
+An example to demonstrate the :dir:`refstothis` directive.
 
-  The :role:`role` *role* inserts a *reference to* a
-  role *definition* which is defined somewhere else using a 
-  :dir:`role` *directive*.
+.. toctree::
+   :maxdepth: 2
 
-Result:
-
-  The role:`role` *role* inserts a *reference to* a
-  role *definition* which is defined somewhere else using a 
-  :dir:`role` *directive*.
-
-
-
+   refstothis/index
 
 
 

@@ -7,10 +7,10 @@
 
 SETUP_INFO = dict(
     name='atelier',
-    version='0.0.5',  # released 20141207
+    version='0.0.6',  # released 20141222
     install_requires=[
         'fabric', 'Sphinx', 'Babel', 'unipath', 'python_dateutil'],
-    scripts=['scripts/per_project'],
+    scripts=['scripts/per_project', 'scripts/shotwell2blog.py'],
     description="A collection of tools for software artists",
     license='Free BSD',
     test_suite='tests',
