@@ -9,7 +9,7 @@ mainained by myself.
 .. toctree::
 
 .. autosummary::
-   :toctree: _sphinxconf
+   :toctree:
 
    insert_input
    refstothis
@@ -94,7 +94,7 @@ def configure(globals_dict, settings_module_name=None):
 
     globals_dict.update(extensions=[
         'sphinx.ext.autodoc',
-        #~ 'sphinx.ext.autosummary',
+        'sphinx.ext.autosummary',
         'sphinx.ext.inheritance_diagram',
         'sphinx.ext.todo',
         'sphinx.ext.extlinks',
@@ -108,6 +108,11 @@ def configure(globals_dict, settings_module_name=None):
         'atelier.sphinxconf.refstothis',
         'atelier.sphinxconf.insert_input',
     ])
+
+    # default config for autosummary:
+    globals_dict.update(autosummary_generate=True)
+    globals_dict.update(autodoc_default_flags=['members'])
+
     if settings_module_name is not None:
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
 

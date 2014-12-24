@@ -173,7 +173,7 @@ class InsertInputDirective(Directive):
 
 class Py2rstDirective(InsertInputDirective):
 
-    """Defines the :rst:dir:`py2rst` directive."""
+    """Implements the :rst:dir:`py2rst` directive."""
 
     titles_allowed = True
     has_content = True
@@ -208,6 +208,37 @@ class Py2rstDirective(InsertInputDirective):
         s = buffer.getvalue()
         #~ print 20130331, type(s)
         return s
+
+    def shell_block(self, cmd):
+        """Run the given command and insert a :rst:dir:`code-block` directive
+        which displays both the command and its output.
+
+        For example, if your `.rst` document contains::
+
+            .. py2rst::
+
+                self.shell_block(["echo", "Hello", "world!"])
+            
+        Then it will be rendered as:
+
+        .. py2rst::
+
+            self.shell_block(["echo", "Hello", "world!"])
+        
+        This uses the `subprocess.check_output
+        <https://docs.python.org/2/library/subprocess.html#subprocess.check_output>`_
+        method and the security warnings apply.
+        
+        If the command returns with a non-zero exit code, the
+        exception is catched and converted into a warning.
+
+        """
+        print(".. code-block:: bash")
+        print()
+        import subprocess
+        print("    $ " + ' '.join(cmd))
+        for ln in subprocess.check_output(cmd).splitlines():
+            print("    " + ln)
 
 
 #~ class DjangoTableDirective(InsertInputDirective):

@@ -104,9 +104,9 @@ Documenting
     Edit today's blog entry, create an empty file if it doesn't yet exist.
 
 
-.. command:: fab md
+.. command:: fab bd
 
-    Make docs. Build html docs for this project.
+    Build docs. Build Sphinx HTML docs for this project.
 
     This run :cmd:`fab readme`, followed by `sphinx build html` in
     every directory defined in :attr:`env.doc_trees`.
@@ -138,12 +138,12 @@ Documenting
     <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`_.
 
     This is no longer used by most of my projects, at least those
-    which I converted to autosummary.
+    which I converted to `sphinx.ext.autosummary`.
 
 
 .. command:: fab docs
 
-    Has been replaced by :cmd:`fab md`.
+    Has been replaced by :cmd:`fab bd`.
 
 .. command:: fab pub
 
@@ -726,6 +726,7 @@ def sphinx_build(builder, docs_dir,
         args += ['-w', 'warnings_%s.txt' % builder]
     else:
         args += ['-W']  # consider warnings as errors
+        # args += ['-vvv']  # increase verbosity
     #~ args += ['-w'+Path(env.root_dir,'sphinx_doctest_warnings.txt')]
     args += ['.', build_dir]
     cmd = ' '.join(args)
@@ -806,9 +807,9 @@ def get_doc_trees():
         yield docs_dir
 
 
-@task(alias='md')
+@task(alias='bd')
 def build_docs(*cmdline_args):
-    """See :cmd:`fab md`. """
+    """See :cmd:`fab bd`. """
     write_readme()
     for docs_dir in get_doc_trees():
         puts("Invoking Sphinx in in directory %s..." % docs_dir)
@@ -962,8 +963,10 @@ def setup_sdist():
     local(' '.join(args))
 
 
+LASTREL_INFO = "Last release was %(filename)s \
+(%(upload_time)s,  %(downloads)d downloads)."
 
-LASTREL_INFO = "Last release %(filename)s was %(upload_time)s (%(downloads)d downloads)."
+
 def show_pypi_status():
 
     info = env.current_project.SETUP_INFO
@@ -982,13 +985,14 @@ def show_pypi_status():
             "to PyPI" % info)
     else:
         lastrel = client.release_urls(name, released_versions[-1])[-1]
+        # dt = lastrel['upload_time']
+        # lastrel['upload_time'] = dt.ISO()
         puts(LASTREL_INFO % lastrel)
         if version in released_versions:
             abort("%(name)s %(version)s has already been released." % info)
 
 
 RELEASE_CONFIRM = """
--------------------------------------------------------------------------------
 This is going to officially release %(name)s %(version)s to PyPI.
 It will fail if version %(version)s of %(name)s has previously been released.
 Your `docs/changes.rst` should have a section about this version.
@@ -1139,7 +1143,9 @@ def show_revision_status():
     else:
         abort("Invalid revision_control_system %r !" %
               env.revision_control_system)
+    puts("-" * 80)
     local(' '.join(args))
+    puts("-" * 80)
 
 
 @task(alias='ci')

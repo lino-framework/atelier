@@ -172,8 +172,10 @@ def srcref(mod):
     role.  Returns None if the source file is empty (which happens
     e.g. for :file:`__init__.py` files whose only purpose is to mark a
     package).
+
+    Examples:
     
-    >>> from atelier.sphinxconf import srcref
+    >>> from atelier.sphinxconf.base import srcref
     >>> from lino.utils import log
     >>> print(srcref(log))
     https://github.com/lsaffre/lino/blob/master/lino/utils/log.py
@@ -182,13 +184,9 @@ def srcref(mod):
     >>> print(srcref(utils))
     https://github.com/lsaffre/lino/blob/master/lino/utils/__init__.py
     
-    >>> from lino.management import commands
-    >>> print(srcref(commands))
+    >>> from lino.modlib.users import fixtures
+    >>> print(srcref(fixtures))
     None
-
-    >>> from lino_welfare.settings import test
-    >>> print(srcref(test))
-    https://github.com/lsaffre/lino-welfare/blob/master/lino_welfare/settings/test.py
 
     """
     root_module_name = mod.__name__.split('.')[0]

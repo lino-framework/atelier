@@ -3,7 +3,18 @@
 """
 This is the :mod:`atelier` package.
 
-It deserves more documentation.
+.. autosummary::
+   :toctree:
+
+   fablib
+   projects
+   rstgen
+   test
+   utils
+   sphinxconf
+
+
+
 """
 
 import os

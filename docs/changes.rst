@@ -4,6 +4,15 @@
 Changes in `atelier`
 =======================
 
+Version 0.0.8 (not yet released)
+================================
+
+- New method :meth:`shell_block
+  <atelier.sphinxconf.insert_input.Py2rstDirective.shell_block>`.
+- `fab docs` renamed to :cmd:`fab bd`, `fab pub` renamed to :cmd:`fab pd`
+
+
+
 Version 0.0.7 (released :blogref:`20141222`)
 ============================================
 
