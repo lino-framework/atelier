@@ -1165,8 +1165,9 @@ def show_revision_status():
     elif env.revision_control_system == 'git':
         args = ["git", "status"]
     else:
-        abort("Invalid revision_control_system %r !" %
-              env.revision_control_system)
+        puts("Invalid revision_control_system %r !" %
+             env.revision_control_system)
+        return
     puts("-" * 80)
     local(' '.join(args))
     puts("-" * 80)
@@ -1175,6 +1176,9 @@ def show_revision_status():
 @task(alias='ci')
 def checkin(today=None):
     """See :cmd:`fab ci`. """
+
+    if env.revision_control_system is None:
+        return
 
     show_revision_status()
 

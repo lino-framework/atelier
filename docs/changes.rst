@@ -7,6 +7,9 @@ Changes in `atelier`
 Version 0.0.9 (not yet released)
 ================================
 
+- :srcref:`scripts/per_project` no longer stumbles over projects whose
+  `revision_control_system` is None.
+
 Version 0.0.8  (released :blogref:`20141226`)
 =============================================
 
