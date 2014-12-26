@@ -157,9 +157,9 @@ To be used by creating a :file:`fabfile.py` in your project's root
 directory with at least the following two lines::
 
   from atelier.fablib import *
-  setup_from_project("foobar")
-  
-Where "foobar" is the Python name of your project's main package.
+  setup_from_fabfile(flobals())
+
+See :func:`setup_from_fabfile` for more information.
 
 
 
@@ -172,7 +172,7 @@ In your :xfile:`fabfile.py` file you can specify project-specific
 configuration settings.  Example content::
 
   from atelier.fablib import *
-  setup_from_project("foobar")
+  setup_from_fabfile(globals(), "foobar")
   env.languages = "de fr et nl".split()
   env.tolerate_sphinx_warnings = True
   add_demo_database('foobar.demo.settings')
@@ -358,12 +358,33 @@ def add_demo_database(db):
     env.demo_databases.append(db)
 
 
-def setup_from_project(
-        main_package=None,
-        settings_module_name=None):
+def setup_from_fabfile(
+        globals_dict, main_package=None, settings_module_name=None):
+    """To be called from within your project's :xfile:`fabfile.py`.
 
-    # env.ROOTDIR = Path().absolute()
-    env.root_dir = Path().absolute()
+    Minimal example::
+
+      from atelier.fablib import *
+      setup_from_fabfile(globals())
+
+    If this doctree is the main doctree of a Python project, then the
+    minimal example should be::
+
+      from atelier.fablib import *
+      setup_from_fabfile(globals(), "foobar")
+
+    Where "foobar" is the Python name of your project's main package.
+
+    """
+    if not '__file__' in globals_dict:
+        raise Exception(
+            "No '__file__' in %r. "
+            "First parameter to must be `globals()`" % globals_dict)
+        
+    fabfile = Path(globals_dict['__file__'])
+    if not fabfile.exists():
+        raise Exception("No such file: %s" % fabfile)
+    env.root_dir = fabfile.parent.absolute()
     # print("20141027 %s %s " % (main_package, env.root_dir))
 
     env.project_name = env.root_dir.name
@@ -412,6 +433,9 @@ def setup_from_project(
     env.doc_trees = env.current_project.doc_trees
 
     # env.SETUP_INFO = env.current_project.SETUP_INFO
+
+
+setup_from_project = setup_from_fabfile  # backwards compat
 
 
 #~ def confirm(msg,default='y',others='n',**override_callbacks):

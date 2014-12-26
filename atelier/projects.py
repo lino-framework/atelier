@@ -1,5 +1,20 @@
 #~ Copyright 2011-2014 by Luc Saffre.
 #~ License: BSD, see LICENSE for more details.
+"""A minimalistic command-line project management.
+
+The :xfile:`config.py` file
+---------------------------
+
+.. xfile:: config.py
+
+If you manage more than one project, then you declare them in a
+configuration file, usually named `~/.atelier/config.py`, which
+contains something like::
+
+  add_project('/home/john/myprojects/p1')
+  add_project('/home/john/myprojects/second_project', 'p2')
+
+"""
 
 import os
 import imp
@@ -20,19 +35,38 @@ _PROJECTS_DICT = {}
 
 
 def add_project(root_dir, nickname=None):
+    """To be called from your :xfile:`config.py` file.
+
+    `root_dir` is the name of a directory which is expected to contain
+    a :xfile:`fabfile.py`.
+
+    If no `nickname` is specified, the nickname will be the leaf name
+    of that directory.
+
+    Returns a :class:`Project` instance describing the project.
+
+    """
     i = len(_PROJECT_INFOS)
     root_dir = Path(root_dir).absolute()
     p = Project(i, root_dir, nickname=None)
     _PROJECT_INFOS.append(p)
     _PROJECTS_DICT[root_dir] = p
+    return p
 
 
 def get_project_info(root_dir):
-    if not root_dir in _PROJECTS_DICT:
-        raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
-    p = _PROJECTS_DICT[root_dir]
-    p.load_fabfile()
-    return p
+    "Find the project info for the given directory."
+    prj = _PROJECTS_DICT.get(root_dir)
+    if prj is None:
+        # if no config.py found, add current working directory.
+        p = Path().absolute()
+        while p:
+            if p.child('fabfile.py').exists():
+                return add_project(p)
+            p = p.parent
+        # raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
+    prj.load_fabfile()
+    return prj
 
 
 def load_projects():
@@ -66,6 +100,8 @@ def get_setup_info(root_dir):
 
 
 class Project(object):
+    """Describes a project.
+    """
     module = None
     srcref_url = None
     intersphinx_urls = {}
@@ -89,7 +125,7 @@ class Project(object):
     #     return getattr(self, k)
 
     def load_fabfile(self):
-        
+        """Load the :xfile:`fabfile.py` of this project."""
         if self._loaded:
             return
 
@@ -125,12 +161,12 @@ for fn in config_files:
     if os.path.exists(fn):
         execfile(fn)  # supposed to call add_project
 
-if len(_PROJECT_INFOS) == 0:
-    # if no config.py found, add current working directory.
-    p = Path().absolute()
-    while p:
-        if p.child('fabfile.py').exists():
-            add_project(p)
-            break
-        p = p.parent
+# if len(_PROJECT_INFOS) == 0:
+#     # if no config.py found, add current working directory.
+#     p = Path().absolute()
+#     while p:
+#         if p.child('fabfile.py').exists():
+#             add_project(p)
+#             break
+#         p = p.parent
 
