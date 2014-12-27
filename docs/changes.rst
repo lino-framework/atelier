@@ -19,6 +19,9 @@ Version 0.0.9  (released :blogref:`20141226`)
   creates both the directory and the default `index.rst` file for that
   year.
 
+- Removed :srcref:`scripts/shotwell2blog.py` which has now `its own
+  repository <https://github.com/lsaffre/shotwell2blog>`_.
+
 - :srcref:`scripts/per_project` no longer stumbles over projects whose
   `revision_control_system` is None.
 
