@@ -7,7 +7,7 @@
 
 SETUP_INFO = dict(
     name='atelier',
-    version='0.0.8',
+    version='0.0.9',
     install_requires=[
         'fabric', 'Sphinx', 'Babel', 'unipath', 'python_dateutil'],
     scripts=['scripts/per_project'],
