@@ -4,8 +4,20 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.9 (not yet released)
-================================
+Version 0.0.10 (not yet released)
+=================================
+
+
+Version 0.0.9  (released :blogref:`20141226`)
+=============================================
+
+- :cmd:`fab blog` failed when the user had only :envvar:`VISUAL` and
+  no `EDITOR` set (:blogref:`20141227`).
+
+- :cmd:`fab blog` failed when the directory for the current year
+  didn't yet exist.  Now it automatically wishes "Happy New Year",
+  creates both the directory and the default `index.rst` file for that
+  year.
 
 - :srcref:`scripts/per_project` no longer stumbles over projects whose
   `revision_control_system` is None.

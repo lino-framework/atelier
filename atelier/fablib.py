@@ -15,6 +15,60 @@ Python projects.
 ``fab`` commands
 ================
 
+Documenting
+-----------
+
+.. command:: fab blog
+
+    Edit today's blog entry, create an empty file if it doesn't yet exist.
+
+
+.. command:: fab bd
+
+    Build docs. Build Sphinx HTML docs for this project.
+
+    This run :cmd:`fab readme`, followed by `sphinx build html` in
+    every directory defined in :attr:`env.doc_trees`.
+
+
+.. command:: fab pd
+
+    Publish docs. Upload docs to public web server.
+
+
+.. command:: fab clean
+
+    Remove temporary and generated files:
+
+    - Sphinx `.build` files
+    - Dangling `.pyc` files which don't have a corresponding `.py` file.
+    - `cache` directories of demo databases
+
+
+.. command:: fab readme
+
+    Generate or update `README.txt` or `README.rst` file from
+    `SETUP_INFO`.
+
+
+.. command:: fab api
+
+    Generate `.rst` files below `docs/api` by running `sphinx-apidoc
+    <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`_.
+
+    This is no longer used by most of my projects, at least those
+    which I converted to `sphinx.ext.autosummary`.
+
+
+.. command:: fab docs
+
+    Has been replaced by :cmd:`fab bd`.
+
+.. command:: fab pub
+
+    Has been replaced by :cmd:`fab pd`.
+
+
 Internationalization
 --------------------
 
@@ -94,60 +148,6 @@ Testing
     
       [global]
       download-cache=/home/luc/.pip/cache
-
-
-Documenting
------------
-
-.. command:: fab blog
-
-    Edit today's blog entry, create an empty file if it doesn't yet exist.
-
-
-.. command:: fab bd
-
-    Build docs. Build Sphinx HTML docs for this project.
-
-    This run :cmd:`fab readme`, followed by `sphinx build html` in
-    every directory defined in :attr:`env.doc_trees`.
-
-
-.. command:: fab pd
-
-    Publish docs. Upload docs to public web server.
-
-
-.. command:: fab clean
-
-    Remove temporary and generated files:
-
-    - Sphinx `.build` files
-    - Dangling `.pyc` files which don't have a corresponding `.py` file.
-    - `cache` directories of demo databases
-
-
-.. command:: fab readme
-
-    Generate or update `README.txt` or `README.rst` file from
-    `SETUP_INFO`.
-
-
-.. command:: fab api
-
-    Generate `.rst` files below `docs/api` by running `sphinx-apidoc
-    <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`_.
-
-    This is no longer used by most of my projects, at least those
-    which I converted to `sphinx.ext.autosummary`.
-
-
-.. command:: fab docs
-
-    Has been replaced by :cmd:`fab bd`.
-
-.. command:: fab pub
-
-    Has been replaced by :cmd:`fab pd`.
 
 
 Installation
@@ -277,6 +277,7 @@ from babel.dates import format_date
 from unipath import Path
 
 from atelier.utils import i2d
+from atelier.utils import get_visual_editor
 from atelier import rstgen
 
 from fabric.api import env, local, task
@@ -1145,6 +1146,15 @@ def edit_blog_entry(today=None):
     if not entry.path.exists():
         if not confirm("Create file %s?" % entry.path):
             return
+        # for every year we create a new directory.
+        yd = entry.path.parent
+        if not yd.exists():
+            if not confirm("Happy New Year! Create directory %s?" % yd):
+                return
+            yd.mkdir()
+            txt = ".. blogger_year::\n"
+            yd.child('index.rst').write_file(txt.encode('utf-8'))
+            
         if env.languages is None:
             txt = today.strftime(env.long_date_format)
         else:
@@ -1153,7 +1163,7 @@ def edit_blog_entry(today=None):
         entry.path.write_file(rstgen.header(1, txt).encode('utf-8'))
         # touch it for Sphinx:
         entry.path.parent.child('index.rst').set_times()
-    args = [os.environ['EDITOR']]
+    args = [get_visual_editor()]
     args += [entry.path]
     local(' '.join(args))
 
@@ -1253,7 +1263,7 @@ Manual tasks after upgrade
 """ % context
     notes.write_file(txt)
     notes.parent.child('index.rst').set_times()
-    args = [os.environ['EDITOR']]
+    args = [get_visual_editor()]
     args += [notes.absolute()]
     local(' '.join(args))
 
@@ -1337,30 +1347,4 @@ def run_tests_coverage():
 
     cov.html_report()
     return rv
-
-
-@task(alias='esi')
-def edit_setup_info():
-    """
-    Edit the `project_info.py` file of this project.
-    """
-    sif = Path(env.root_dir, env.main_package, 'project_info.py')
-    print sif
-    args = [os.environ['EDITOR']]
-    args += [sif]
-    local(' '.join(args))
-
-
-#~ @task(alias='sdist_test')
-#~ def extract_messages():
-    #~ """Create a temporary virtual environment"""
-    #~ locale_dir = get_locale_dir()
-    #~ if locale_dir is None: return
-    #~ args = ["python", "setup.py"]
-    #~ args += [ "extract_messages"]
-    #~ args += [ "-o", locale_dir.child("django.pot")]
-    #~ cmd = ' '.join(args)
-    #~ must_confirm(cmd)
-    #~ local(cmd)
-
 

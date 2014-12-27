@@ -20,26 +20,29 @@ will insert the following rst code::
     </a>
 
 
+Supposing that `sigal_base_url` in your :xfile:`conf.py` is set to
+``"http://sigal.saffre-rumma.net"``.
+
+
+
+.. _shotwell2blog: https://github.com/lsaffre/shotwell2blog
+.. _Shotwell: https://en.wikipedia.org/wiki/Shotwell_%28software%29
+.. _Sigal: http://sigal.saimon.org/en/latest/
+
 This creates a bridge between my photo collection and my blog. I
-manage my personal photo collection with Shotwell. All photos are in a
-single tree, organized into years, months and days as Shotwell does
-automatically. Within Shotwell I use a special tag "blog" to mark all
-photos that are to be published.
+manage my personal photo collection with Shotwell_. All photos are in
+a single central file tree, organized into years, months and days as
+Shotwell does automatically.
 
-Then I use the :mod:`atelier.scripts.shotwell2blog.py` script to
-extract those images to a separate tree. This tree serves as input for
-sigal which will generate a static html gallery.
+From within Shotwell I use a tag "blog" to mark all photos that are to
+be published.  Then I use the shotwell2blog_ script to extract those
+images to a separate tree. This tree serves as input for Sigal_ which
+will generate a static html gallery. My pricate Sigal gallery is `here
+<http://sigal.saffre-rumma.net/>`__.
 
-The :rst:dir:`sigal_image` directive was the last missing part of
-this publishing chain.
-
-**Why?**
-
-Because I want to remain master of my data. This system allows me to
-host my pictures on my own server, to integrate them into blog
-entries, to extend the system in case I want to generate pdf files
-some day.
-
+The :rst:dir:`sigal_image` directive was the last missing part of this
+publishing bridge: it allows me to integrate these pictures into blog
+entries.
 
 New since 20140729: Requires `lightbox
 <http://lokeshdhakar.com/projects/lightbox2/>`_.  And then write a

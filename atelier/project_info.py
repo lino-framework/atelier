@@ -10,7 +10,7 @@ SETUP_INFO = dict(
     version='0.0.8',
     install_requires=[
         'fabric', 'Sphinx', 'Babel', 'unipath', 'python_dateutil'],
-    scripts=['scripts/per_project', 'scripts/shotwell2blog.py'],
+    scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
     license='Free BSD',
     test_suite='tests',

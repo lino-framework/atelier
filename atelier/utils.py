@@ -305,3 +305,15 @@ def date_offset(ref, days=0, **offset):
         return ref + datetime.timedelta(**offset)
     return ref
 
+
+def get_visual_editor():
+    """Returns the name of the visual editor, usually stored in the
+    `VISUAL` environment variable.  If `VISUAL` is not set, return the
+    value of `EDITOR`.
+
+    https://help.ubuntu.com/community/EnvironmentVariables
+
+    """
+    return os.environ.get('VISUAL') or os.environ.get('EDITOR')
+
+
