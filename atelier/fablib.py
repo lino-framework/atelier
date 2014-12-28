@@ -211,14 +211,18 @@ used by :mod:`atelier.fablib`.
 
       env.docs_rsync_dest = 'luc@example.org:~/public_html/%s'
 
+    The ``%s`` in this template will be replaced by a name `xxx_yyy`,
+    where `xxx` is the internal name of this project and `yyy` the
+    name of the doctree (taken from :attr:`doc_trees`).
 
   .. attribute:: doc_trees
-
-    Replaced by `doc_trees` attribute of the project's main module.
 
     A list of directory names (relative to your project directory)
     containing Sphinx document trees.
     Default value is ``['docs']``
+
+    If this project has a main package, then `env.doc_trees` will be
+    replaced by `doc_trees` attribute of that module.
 
   .. attribute:: tolerate_sphinx_warnings
 

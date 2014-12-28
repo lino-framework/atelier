@@ -11,13 +11,13 @@ Version 0.0.10 (not yet released)
 Version 0.0.9  (released :blogref:`20141226`)
 =============================================
 
-- :cmd:`fab blog` failed when the user had only :envvar:`VISUAL` and
-  no `EDITOR` set (:blogref:`20141227`).
+- :cmd:`fab blog` failed when the user had only :envvar:`VISUAL` but
+  not :envvar:`EDITOR` set (:blogref:`20141227`).
 
 - :cmd:`fab blog` failed when the directory for the current year
   didn't yet exist.  Now it automatically wishes "Happy New Year",
-  creates both the directory and the default `index.rst` file for that
-  year.
+  creates both the directory and the default :file:`index.rst` file
+  for that year.
 
 - Removed :srcref:`scripts/shotwell2blog.py` which has now `its own
   repository <https://github.com/lsaffre/shotwell2blog>`_.

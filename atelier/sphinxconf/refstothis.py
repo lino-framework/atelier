@@ -7,8 +7,8 @@ directive.
 
 A fictive usage example is in :doc:`/refstothis/index`.
 
-Thanks to Tomasz Czyż who inspired me to write this.
-His `sphinxcontrib-taglist
+Thanks to Tomasz Czyż who inspired me to write this.  His
+`sphinxcontrib-taglist
 <https://github.com/spinus/sphinxcontrib-taglist>`_ module uses a
 different approach, based on the idea that every "reference" to a tag
 also specifies a text to appear in the list of references.
