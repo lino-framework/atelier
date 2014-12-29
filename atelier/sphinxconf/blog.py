@@ -2,8 +2,7 @@
 #~ Copyright 2011-2013 by Luc Saffre.
 #~ License: BSD, see LICENSE for more details.
 
-"""
-This Sphinx extension defines the 
+"""This Sphinx extension defines the 
 :rst:dir:`blogger_year` and 
 :rst:dir:`blogger_index`
 directives.
@@ -12,13 +11,22 @@ Usage: add the following to your `conf.py`::
 
   extensions += ['atelier.sphinxconf.blog']
 
+And usually this file structure:
 
+- docs/blog/index.rst --> contains a main_blogindex directive (hidden toctree)
+    
+Individual blog entries, including yearly directories and
+`index.rst` files, are automatically created by :cmd:`fab blog`,
+leading to a file structure like this:
+    
+- docs/blog/2013/index.rst --> contains a blogger_year directive (calendar)
+- docs/blog/2013/0107.rst --> a blog entry
+- docs/blog/2010/0107.rst
+   
+Thanks to
 
-Thanks to 
-
-- `Creating reStructuredText Directives 
+- `Creating reStructuredText Directives
   <http://docutils.sourceforge.net/docs/howto/rst-directives.html>`_
-
 
 """
 
@@ -69,9 +77,9 @@ JINJA_ENV = jinja2.Environment(
 
 class Year(object):
 
-    """
-    A :class:`Year` instance is created for each 
-    `blogger_year` directive.
+    """A :class:`Year` instance is created for each `blogger_year`
+    directive.
+
     """
 
     def __init__(self, env):
@@ -112,12 +120,6 @@ class Year(object):
 
 
 """
-docs/conf.py
-docs/blog/index.rst --> contains a main_blogindex directive (hidden toctree)
-docs/blog/2013/index.rst --> contains a blogger_year directive (calendar)
-docs/blog/2013/0107.rst --> a blog entry
-docs/blog/2010/0107.rst
-
 """
 
 
@@ -162,7 +164,6 @@ class MainBlogIndexDirective(InsertInputDirective):
         return text
 
 
-
 class YearBlogIndexDirective(InsertInputDirective):
 
     """
@@ -193,7 +194,7 @@ class YearBlogIndexDirective(InsertInputDirective):
 
         for month in range(1, 13):
 
-            text += """        
+            text += """
             
 .. |M%02d| replace::  **%s**""" % (month, monthname(month, self.language))
 
@@ -207,7 +208,8 @@ class YearBlogIndexDirective(InsertInputDirective):
                 if day.month == month:
                     label = "%02d" % day.day
                     docname = "%02d%02d" % (day.month, day.day)
-                    if blogger_year.year == iso_year and day in blogger_year.days:
+                    # if blogger_year.year == iso_year and day in blogger_year.days:
+                    if day in blogger_year.days:
                         text += " :doc:`%s <%s>` " % (label, docname)
                     elif day > today:
                         text += ' |sp| '
