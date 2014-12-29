@@ -4,9 +4,16 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.10 (not yet released)
+Version 0.0.11 (not yet released)
 =================================
 
+
+Version 0.0.10  (released :blogref:`20141229`)
+==============================================
+
+Fixes a problem for generating the calendar view of a
+:rst:dir:`blogger_year`: the cell for December 29, 2014 was not
+clickable even when a blog entry existed.
 
 Version 0.0.9  (released :blogref:`20141226`)
 =============================================
