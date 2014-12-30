@@ -5,7 +5,9 @@
 The :xfile:`config.py` file
 ---------------------------
 
-.. xfile:: config.py
+.. xfile:: ~/.atelier/config.py
+.. xfile:: ~/_atelier/config.py
+.. xfile:: /etc/atelier/config.py
 
 If you manage more than one project, then you declare them in a
 configuration file, usually named `~/.atelier/config.py`, which
