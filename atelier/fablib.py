@@ -293,6 +293,7 @@ from fabric.api import lcd
 class JarBuilder(object):
     """
     Used by my Java projects :ref:`davlink` and :ref:`eidreader`.
+
     """
     def __init__(self, jarfile, sourcedir):
         self.jarfile = Path(jarfile)

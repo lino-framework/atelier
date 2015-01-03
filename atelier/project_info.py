@@ -34,7 +34,8 @@ It contains
 Programming Language :: Python
 Programming Language :: Python :: 2.6
 Programming Language :: Python :: 2.7
-Development Status :: 4 - Beta
+Framework :: Sphinx :: Extension
+Development Status :: 5 - Production/Stable
 Intended Audience :: Developers
 License :: OSI Approved :: BSD License
 Natural Language :: English
