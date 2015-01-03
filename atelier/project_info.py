@@ -5,11 +5,19 @@
 #~ from `setup.py`, `atelier/__init__.py` and possibly some external
 #~ tools, too.
 
+# Explicitly install `importlib` under Python 2.6. Thanks to
+# http://stackoverflow.com/questions/9418064
+
+install_requires = ['fabric', 'Sphinx', 'Babel', 'unipath', 'python_dateutil']
+try:
+    import importlib
+except ImportError:
+    install_requires.append('importlib')
+
 SETUP_INFO = dict(
     name='atelier',
     version='0.0.10',
-    install_requires=[
-        'fabric', 'Sphinx', 'Babel', 'unipath', 'python_dateutil'],
+    install_requires=install_requires,
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
     license='Free BSD',
