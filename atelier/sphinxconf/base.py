@@ -38,11 +38,7 @@ from sphinx.util.nodes import nested_parse_with_titles
 from sphinx.util.nodes import split_explicit_title
 from sphinx import addnodes
 
-try:
-    from importlib import import_module
-except ImportError:
-    from django.utils.importlib import import_module
-
+from importlib import import_module
 from atelier.utils import i2d
 
 
