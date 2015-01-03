@@ -175,19 +175,16 @@ def srcref(mod):
 
     Examples:
     
-    >>> from atelier.sphinxconf.base import srcref
-    >>> from lino.utils import log
-    >>> print(srcref(log))
-    https://github.com/lsaffre/lino/blob/master/lino/utils/log.py
-
-    >>> from lino import utils
-    >>> print(srcref(utils))
-    https://github.com/lsaffre/lino/blob/master/lino/utils/__init__.py
+    >>> import atelier
+    >>> from atelier import sphinxconf
+    >>> from atelier.sphinxconf import base
+    >>> print(srcref(atelier))
+    https://github.com/lsaffre/atelier/blob/master/atelier/__init__.py
+    >>> print(srcref(sphinxconf))
+    https://github.com/lsaffre/atelier/blob/master/atelier/sphinxconf/__init__.py
+    >>> print(srcref(base))
+    https://github.com/lsaffre/atelier/blob/master/atelier/sphinxconf/base.py
     
-    >>> from lino.modlib.users import fixtures
-    >>> print(srcref(fixtures))
-    None
-
     """
     root_module_name = mod.__name__.split('.')[0]
     root_mod = __import__(root_module_name)
@@ -202,7 +199,9 @@ def srcref(mod):
     if os.stat(srcref).st_size == 0:
         return
     #~ srcref = srcref[len(lino.__file__)-17:]
-    srcref = srcref[len(Path(root_mod.__file__).ancestor(2)) + 1:]
+    root = Path(root_mod.__file__).ancestor(2)
+    if len(root):
+        srcref = srcref[len(root) + 1:]
     srcref = srcref.replace(os.path.sep, '/')
     return srcref_url % srcref
 
