@@ -157,7 +157,7 @@ class MainBlogIndexDirective(InsertInputDirective):
                 return cmp(a.year, b.year)
             years.sort(f)
             for blogger_year in years:
-                text += "\n    %{0}/index".format(blogger_year.year)
+                text += "\n    {0}/index".format(blogger_year.year)
 
         text += "\n"
         #~ print text
