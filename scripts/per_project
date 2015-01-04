@@ -1,8 +1,7 @@
 #!python
-# Copyright 2013-2014 by Luc Saffre.
+# Copyright 2013-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
-"""
-USAGE : per_project cmd1 [cmd2 ...]
+"""USAGE : per_project cmd1 [cmd2 ...]
 
 This will execute `cmd1 [cmd2 ...]` in the root directory of each project,
 stopping upon the first error.
@@ -15,15 +14,8 @@ Examples::
   $ per_project fab sdist
   $ per_project geany tests/__init__.py
 
-Projects are configured in a file `/etc/atelier/config.py` 
-which is expected to define a global variable PROJECTS containing 
-a list of names of python modules to be managed in this atelier.
-For example something like::
-
-  # PROJECTS_HOME = '/home/me/hgwork'
-  PROJECTS = 'p1 p2 p3'.split()
-  
-
+The list of projects is configured in your
+:xfile:`~/.atelier/config.py` file.
 
 """
 import os

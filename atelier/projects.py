@@ -2,7 +2,7 @@
 #~ License: BSD, see LICENSE for more details.
 """A minimalistic command-line project management.
 
-The :xfile:`config.py` file
+The :file:`config.py` file
 ---------------------------
 
 .. xfile:: ~/.atelier/config.py
@@ -15,6 +15,7 @@ contains something like::
 
   add_project('/home/john/myprojects/p1')
   add_project('/home/john/myprojects/second_project', 'p2')
+
 
 """
 
@@ -132,8 +133,13 @@ class Project(object):
             return
 
         self._loaded = True
-        fqname = 'atelier.prj_%s' % self.index
     
+        self.name = self.nickname
+
+        if not self.root_dir.child('fabfile.py').exists():
+            return
+
+        fqname = 'atelier.prj_%s' % self.index
         cwd = Path().absolute()
         self.root_dir.chdir()
         # print("20141027 %s %s " % (self, self.root_dir))
@@ -142,20 +148,18 @@ class Project(object):
         cwd.chdir()
 
         main_package = getattr(m.env, 'main_package', None)
-        if main_package:
-            self.name = main_package
-            # self.name = name
-            # removed 20140116:
-            # self.dist = pkg_resources.get_distribution(name)
-            self.module = import_module(main_package)
-            self.SETUP_INFO = get_setup_info(self.root_dir)
-            self.srcref_url = getattr(self.module, 'srcref_url', None)
-            self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
-            self.intersphinx_urls = getattr(
-                self.module, 'intersphinx_urls', {})
-        else:
-            self.name = self.nickname
-            # print("20141027 %s %s" % (i, root_dir))
+        if main_package is None:
+            return
+        self.name = main_package
+        # self.name = name
+        # removed 20140116:
+        # self.dist = pkg_resources.get_distribution(name)
+        self.module = import_module(main_package)
+        self.SETUP_INFO = get_setup_info(self.root_dir)
+        self.srcref_url = getattr(self.module, 'srcref_url', None)
+        self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
+        self.intersphinx_urls = getattr(
+            self.module, 'intersphinx_urls', {})
 
 
 for fn in config_files:

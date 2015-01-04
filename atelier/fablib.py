@@ -832,7 +832,7 @@ def get_doc_trees():
         docs_dir = env.root_dir.child(rel_doc_tree)
         if not docs_dir.exists():
             msg = "Directory %s does not exist." % docs_dir
-            msg += "\nCheck `doc_trees` in your project's main module."
+            msg += "\nCheck your project's `doc_trees` setting."
             raise Exception(msg)
         yield docs_dir
 

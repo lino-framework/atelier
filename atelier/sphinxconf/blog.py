@@ -141,7 +141,6 @@ class MainBlogIndexDirective(InsertInputDirective):
         blogname, index = env.docname.rsplit('/', 2)
         if index != 'index':
             raise Exception("Allowed only inside index.rst file")
-        #~ blog = Blog.get_or_create(env,blogname,self.arguments[0])
         text = intro
         text += """
 
@@ -149,15 +148,16 @@ class MainBlogIndexDirective(InsertInputDirective):
     :maxdepth: 2
 
 """
-        years = list(env.blog_instances.get(blogname).values())
+        blog_instances = getattr(env, 'blog_instances', dict())
+        blog = blog_instances.get(blogname)
+        if blog is not None:
+            years = list(blog.values())
 
-        def f(a, b):
-            return cmp(a.year, b.year)
-        years.sort(f)
-        for blogger_year in years:
-        #~ for year in blog.years:
-            text += """
-    %d/index""" % blogger_year.year
+            def f(a, b):
+                return cmp(a.year, b.year)
+            years.sort(f)
+            for blogger_year in years:
+                text += "\n    %{0}/index".format(blogger_year.year)
 
         text += "\n"
         #~ print text
@@ -278,5 +278,6 @@ def setup(app):
     #~ app.add_node(blogindex)
     #~ app.add_node(blogindex,html=(visit_blogindex,depart_blogindex))
     #~ app.add_directive('changed', ChangedDirective)
+    # app.add_config_value('blog_instances', dict(), '')
     app.add_directive('blogger_year', YearBlogIndexDirective)
     app.add_directive('blogger_index', MainBlogIndexDirective)
