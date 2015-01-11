@@ -69,8 +69,11 @@ def autodoc_skip_member(app, what, name, obj, skip, options):
     return skip
 
 
-#~ SIDEBAR = """
-#~ (This module's source code is available at :srcref:`/%s`)
+SRCREF_TEMPLATE_AFTER = """
+
+(This module's source code is available at `<%s>`__)
+
+"""
 
 #~ """
 #~ SIDEBAR = """
@@ -97,13 +100,13 @@ def autodoc_add_srcref(app, what, name, obj, options, lines):
     if what == 'module':
         s = srcref(obj)
         if s:
-            #~ srcref = name.replace('.','/')
-            s = (SIDEBAR % s).splitlines()
-            s.reverse()
-            for ln in s:
-                lines.insert(0, ln)
-            #~ lines.insert(0,'')
-            #~ lines.insert(0,'(We also recommend to read the source code at :srcref:`/%s.py`)' % name.replace('.','/'))
+            if True:  # after 20150111
+                lines += (SRCREF_TEMPLATE_AFTER % s).splitlines()
+            else:
+                s = (SIDEBAR % s).splitlines()
+                s.reverse()
+                for ln in s:
+                    lines.insert(0, ln)
 
 
 def get_blog_url(env, today):

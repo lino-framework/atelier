@@ -12,6 +12,7 @@ atelier.utils
       assert_pure
       confirm
       date_offset
+      get_visual_editor
       i2d
       i2t
       iif

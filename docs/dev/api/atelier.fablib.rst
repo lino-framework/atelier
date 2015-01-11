@@ -21,6 +21,7 @@ atelier.fablib
       get_current_date
       get_doc_trees
       get_locale_dir
+      get_visual_editor
       i2d
       init_catalog_code
       lcd
@@ -33,6 +34,7 @@ atelier.fablib
       rmtree_after_confirm
       run_in_demo_databases
       setup_babel_userdocs
+      setup_from_fabfile
       setup_from_project
       show_pypi_status
       show_revision_status
