@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 by Luc Saffre.
+# Copyright 2013-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """A wrapper for Python's doctest.
@@ -8,6 +8,15 @@ Because the command-line interface of `python -m doctest` has no way
 to specify an encoding of a (non-.py) input file.
 
 Code originally copied from Python 2.7 doctest.py
+
+
+About the :message:`ValueError: Attempted relative import in
+non-package` problem: see `Doctest and relative imports
+<http://stackoverflow.com/questions/4047227/doctest-and-relative-imports>`_
+where Jason Scheirer advises:
+
+    I would get rid of the relative imports, many Python style guides
+    strongly discourage them, most forbid them.
 
 """
 
