@@ -201,6 +201,14 @@ used by :mod:`atelier.fablib`.
 
   .. attribute:: sdist_dir
 
+
+  .. attribute:: editor_command
+
+    A string with the command name of a non waiting editor.
+
+    editor_command = "emacsclient -n {0}"
+
+
   .. attribute:: docs_rsync_dest
 
     A Python template string which defines the rsync destination for
@@ -281,7 +289,6 @@ from babel.dates import format_date
 from unipath import Path
 
 from atelier.utils import i2d
-from atelier.utils import get_visual_editor
 from atelier import rstgen
 
 from fabric.api import env, local, task
@@ -402,6 +409,7 @@ def setup_from_fabfile(
     env.setdefault('blog_root', env.root_dir.child('docs'))
 
     env.setdefault('sdist_dir', None)
+    env.setdefault('editor_command', None)
     if env.sdist_dir is not None:
         env.sdist_dir = Path(env.sdist_dir)
     env.main_package = main_package
@@ -878,12 +886,17 @@ def py_clean():
         cleanup_pyc(p)
 
 
+class MissingConfig(Exception):
+    def __init__(self, name):
+        msg = "Must set `env.{0}` in `fabfile.py` or `~/.fabricrc`!"
+        msg = msg.format(name)
+        Exception.__init__(self, msg)
+
 @task(alias='pd')
 def publish():
     """See :cmd:`fab pd`. """
     if not env.docs_rsync_dest:
-        raise Exception(
-            "Must set env.docs_rsync_dest in `fabfile.py` or `~/.fabricrc`")
+        raise MissingConfig("docs_rsync_dest")
 
     for docs_dir in get_doc_trees():
         build_dir = docs_dir.child(env.build_dir_name)
@@ -1143,6 +1156,8 @@ def edit_blog_entry(today=None):
     """
     Edit today's blog entry, create an empty file if it doesn't yet exist.
     """
+    if not env.editor_command:
+        raise MissingConfig("editor_command")
     if today is None:
         today = get_current_date()
     else:
@@ -1168,7 +1183,7 @@ def edit_blog_entry(today=None):
         entry.path.write_file(rstgen.header(1, txt).encode('utf-8'))
         # touch it for Sphinx:
         entry.path.parent.child('index.rst').set_times()
-    args = [get_visual_editor()]
+    args = [env.editor_command]
     args += [entry.path]
     local(' '.join(args))
 
@@ -1225,52 +1240,6 @@ def checkin(today=None):
         local("hg push %s" % env.project_name)
     else:
         local("git push")
-
-
-def unused_write_release_notes():
-    """
-    Generate docs/releases/x.y.z.rst file from setup_info.
-    """
-    v = env.current_project.SETUP_INFO['version']
-    if v.endswith('+'):
-        return
-    notes = Path(env.root_dir, 'docs', 'releases', '%s.rst' % v)
-    if notes.exists():
-        return
-    must_confirm("Create %s" % notes.absolute())
-    #~ context = dict(date=get_current_date().strftime(env.long_date_format))
-    context = dict(date=get_current_date().strftime('%Y%m%d'))
-    context.update(env.current_project.SETUP_INFO)
-    txt = """\
-==========================
-Version %(version)s
-==========================
-
-Release process started :blogref:`%(date)s`
-
-
-List of changes
-===============
-
-New features
-------------
-
-Optimizations
--------------
-
-Bugfixes
---------
-
-Manual tasks after upgrade
---------------------------
-
-
-""" % context
-    notes.write_file(txt)
-    notes.parent.child('index.rst').set_times()
-    args = [get_visual_editor()]
-    args += [notes.absolute()]
-    local(' '.join(args))
 
 
 @task(alias='readme')

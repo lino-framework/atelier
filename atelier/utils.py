@@ -103,7 +103,10 @@ def i2d(i):
     datetime.date(2012, 12, 24)
 
     """
-    d = dateparser.parse(str(i))
+    s = str(i)
+    if len(s) != 8:
+        raise Exception("Invalid date specification {0}.".format(i))
+    d = dateparser.parse(s)
     d = datetime.date(d.year, d.month, d.day)
     # print i, "->", v
     return d
@@ -306,14 +309,14 @@ def date_offset(ref, days=0, **offset):
     return ref
 
 
-def get_visual_editor():
-    """Returns the name of the visual editor, usually stored in the
-    `VISUAL` environment variable.  If `VISUAL` is not set, return the
-    value of `EDITOR`.
+# def get_visual_editor():
+#     """Returns the name of the visual editor, usually stored in the
+#     `VISUAL` environment variable.  If `VISUAL` is not set, return the
+#     value of `EDITOR`.
 
-    https://help.ubuntu.com/community/EnvironmentVariables
+#     https://help.ubuntu.com/community/EnvironmentVariables
 
-    """
-    return os.environ.get('VISUAL') or os.environ.get('EDITOR')
+#     """
+#     return os.environ.get('VISUAL') or os.environ.get('EDITOR')
 
 
