@@ -53,6 +53,9 @@ Documenting
 
 .. command:: fab api
 
+    No longer exists because we now use autosummary instead of
+    sphinx-apidoc.
+
     Generate `.rst` files below `docs/api` by running `sphinx-apidoc
     <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-apidoc>`_.
 
@@ -241,6 +244,9 @@ used by :mod:`atelier.fablib`.
     A list of language codes for which userdocs are being maintained.
 
   .. attribute:: apidoc_exclude_pathnames
+
+    No longer used because we now use autosummary instead of
+    sphinx-apidoc.
 
     a list of filenames (or directory names) to be excluded when you
     run :cmd:`fab api`.
@@ -713,8 +719,7 @@ def summary(*cmdline_args):
     print rstgen.table(headers, [cells(p) for p in load_projects()])
 
 
-@task(alias='api')
-def build_api(*cmdline_args):
+def unused_build_api(*cmdline_args):
     """
     Generate `.rst` files in `docs/api`. See :cmd:`fab api`.
     """

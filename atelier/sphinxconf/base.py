@@ -71,7 +71,7 @@ def autodoc_skip_member(app, what, name, obj, skip, options):
 
 SRCREF_TEMPLATE_AFTER = """
 
-(This module's source code is available at `<%s>`__)
+(This module's source code is available `here <%s>`__.)
 
 """
 
