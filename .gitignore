@@ -15,7 +15,7 @@ dist
 tmp
 */default.db
 docs/dl/*
-docs/_api/
+docs/api/atelier.*
 .build
 htmlcov
 *.egg-info

@@ -24,7 +24,7 @@ Sitemap
 .. toctree::
    :maxdepth: 2
 
-   /dev/api/index
+   /api/index
    /sphinxext
    /changes
 

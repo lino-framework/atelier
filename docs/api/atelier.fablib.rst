@@ -21,7 +21,6 @@ atelier.fablib
       get_current_date
       get_doc_trees
       get_locale_dir
-      get_visual_editor
       i2d
       init_catalog_code
       lcd
@@ -42,7 +41,7 @@ atelier.fablib
       sphinx_clean
       sync_docs_data
       task
-      unused_write_release_notes
+      unused_build_api
       update_catalog_code
    
    
@@ -60,5 +59,11 @@ atelier.fablib
    
 
    
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      MissingConfig
    
    

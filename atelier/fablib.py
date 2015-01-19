@@ -1,11 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 by Luc Saffre.
+# Copyright 2013-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""This module is a library for fabric_ with tasks I use to manage my
-Python projects.
-
-.. _fabric: http://docs.fabfile.org
+"""A library for `fabric <http://docs.fabfile.org>`__ with tasks I use
+to manage my Python projects.
 
 .. contents::
   :local:
@@ -196,9 +194,9 @@ content like this::
 Project settings
 ================
 
-fabric_ works with a global "environment" object named ``env``.  The
-following section documents the possible attributes of this object as
-used by :mod:`atelier.fablib`.
+`fabric <http://docs.fabfile.org>`__ works with a global "environment"
+object named ``env``.  The following section documents the possible
+attributes of this object as used by :mod:`atelier.fablib`.
 
 .. class:: env
 
