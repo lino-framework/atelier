@@ -1,4 +1,4 @@
-#~ Copyright 2011-2014 by Luc Saffre.
+#~ Copyright 2011-2015 by Luc Saffre.
 #~ License: BSD, see LICENSE for more details.
 """A minimalistic command-line project management.
 
