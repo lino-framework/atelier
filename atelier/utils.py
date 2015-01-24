@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 by Luc Saffre.
+# Copyright 2009-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
