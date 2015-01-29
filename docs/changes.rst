@@ -4,11 +4,16 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.11 (not yet released)
+Version 0.0.12 (not yet released)
 =================================
 
 
-Version 0.0.10  (released :blogref:`20141229`)
+Version 0.0.11 (released :blogref:`20150129`)
+==============================================
+
+TODO
+
+Version 0.0.10 (released :blogref:`20141229`)
 ==============================================
 
 Fixes a problem for generating the calendar view of a
