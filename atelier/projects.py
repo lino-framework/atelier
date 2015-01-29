@@ -32,7 +32,6 @@ except ImportError:
 config_files = ['~/.atelier/config.py', '/etc/atelier/config.py',
                 '~/_atelier/config.py']
 
-# PROJECTS = []
 _PROJECT_INFOS = []
 _PROJECTS_DICT = {}
 

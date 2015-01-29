@@ -151,7 +151,7 @@ def ispure(s):
     if type(s) == types.StringType:
         try:
             s.decode('ascii')
-        except UnicodeDecodeError as e:
+        except UnicodeDecodeError:
             return False
         return True
     return False

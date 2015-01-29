@@ -117,14 +117,7 @@ Testing
 
 .. command:: fab initdb
 
-    Run :manage:`initdb_demo` on every demo database of this project
-    (specified in :attr:`env.demo_databases`).
-
-    Demo databases are used by the test suite and the Sphinx
-    documentation.  They are not included in the code repository since
-    they are generated data.  Since initializing these databases can take
-    some time, this is not automatically launched for each test run.
-
+    Run :manage:`initdb_demo` on every :attr:`env.demo_projects`.
 
 .. command:: fab test
 
@@ -176,7 +169,7 @@ configuration settings.  Example content::
   setup_from_fabfile(globals(), "foobar")
   env.languages = "de fr et nl".split()
   env.tolerate_sphinx_warnings = True
-  add_demo_database('foobar.demo.settings')
+  add_demo_project('foobar/demo')
 
 .. xfile:: .fabricrc
 
@@ -259,7 +252,22 @@ attributes of this object as used by :mod:`atelier.fablib`.
 
     **No longer used.** Use :attr:`env.revision_control_system` instead.)
 
-  .. attribute:: demo_databases
+  .. attribute:: demo_projects
+
+    The list of Django demo projects included in this project.
+
+    The specified directory must contain a file :xfile:`manage.py`.
+
+    Django demo projects are used by the test suite and the Sphinx
+    documentation. To initialize them, run :command:`fab initdb`.
+
+    :command:`fab initdb` must be done before running :command:`fab
+    test`. It is not launched automatically because it can take some
+    time and is not always necessary.
+
+
+
+
 
 You may define user-specific default values for some of these settings
 (those who are simple strings) in a :file:`.fabricrc` file.
@@ -368,11 +376,18 @@ class RstFile(object):
             # self.url = url_root + "/" + "/".join(parts) + '.html'
 
 
-def add_demo_database(db):
-    if db in env.demo_databases:
+def add_demo_project(db):
+    """Register the specified directory as being a Django demo project.
+    See also :attr:`env.demo_projects`.
+
+    """
+    p = Path(db)
+    if not p.child('manage.py').exists():
+        raise Exception("No such file: {0}".format(p))
+    if db in env.demo_projects:
         return
-        # raise Exception("Duplicate entry %r in demo_databases." % db)
-    env.demo_databases.append(db)
+        # raise Exception("Duplicate entry %r in demo_projects." % db)
+    env.demo_projects.append(p)
 
 
 def setup_from_fabfile(
@@ -418,8 +433,7 @@ def setup_from_fabfile(
         env.sdist_dir = Path(env.sdist_dir)
     env.main_package = main_package
     env.tolerate_sphinx_warnings = False
-    env.demo_databases = []
-    # env.use_mercurial = True
+    env.demo_projects = []
     env.revision_control_system = None
     env.apidoc_exclude_pathnames = []
     # env.blogger_url = "http://blog.example.com/"
@@ -441,7 +455,7 @@ def setup_from_fabfile(
         from django.conf import settings
         # why was this? settings.SITE.startup()
         env.languages = [lng.name for lng in settings.SITE.languages]
-        env.demo_databases.append(settings_module_name)
+        # env.demo_databases.append(settings_module_name)
         #~ env.userdocs_base_language = settings.SITE.languages[0].name
 
     # The following import will populate the projects
@@ -678,13 +692,13 @@ def compile_catalog():
 @task(alias='mss')
 def makescreenshots():
     """generate screenshot .jpg files to gen/screenshots."""
-    run_in_demo_databases('makescreenshots', '--traceback')
+    run_in_demo_projects('makescreenshots', '--traceback')
 
 
 @task(alias='sss')
 def syncscreenshots():
     """synchronize gen/screenshots to userdocs/gen/screenshots."""
-    run_in_demo_databases('syncscreenshots', '--traceback',
+    run_in_demo_projects('syncscreenshots', '--traceback',
                           'gen/screenshots', 'userdocs/gen/screenshots')
 
 
@@ -866,7 +880,7 @@ def clean(*cmdline_args):
     """See :cmd:`fab clean`. """
     sphinx_clean()
     py_clean()
-    clean_demo_caches()
+    # clean_demo_caches()
 
 
 def sphinx_clean():
@@ -930,31 +944,40 @@ def publish_docs(build_dir, dest_url):
         local(cmd)
 
 
-def run_in_demo_databases(admin_cmd, *more):
-    """Run the given django admin command for each demo database.
+def run_in_demo_projects(admin_cmd, *more):
+    """Run the given shell command in each demo project (see
+    :attr:`env.demo_projects`).
+
     """
-    for db in env.demo_databases:
-        args = ["django-admin.py"]
-        args += [admin_cmd]
-        args += more
-        #~ args += ["--noinput"]
-        args += ["--settings=" + db]
-        #~ args += [" --pythonpath=%s" % p.absolute()]
-        cmd = " ".join(args)
-        local(cmd)
+    for db in env.demo_projects:
+        puts("-" * 80)
+        puts("In demo project {0}:".format(db))
+        with lcd(db):
+            args = ["python"]
+            args += ["manage.py"]
+            args += [admin_cmd]
+            args += more
+            #~ args += ["--noinput"]
+            # args += ["--settings=" + db]
+            #~ args += [" --pythonpath=%s" % p.absolute()]
+            cmd = " ".join(args)
+            local(cmd)
 
 
 def clean_demo_caches():
-    from django.utils.importlib import import_module
-    for db in env.demo_databases:
-        m = import_module(db)
-        p = Path(m.SITE.project_dir).child('media', 'cache')
-        rmtree_after_confirm(p)
+    """Remove the cache directory of every demo project (see
+    :attr:`env.demo_projects`).
+
+    """
+    raise Exception("Needs adaption after 20150129. Currently it would removethe source directories...")
+    for dp in env.demo_projects:
+        # p = dp.child('media', 'cache')
+        rmtree_after_confirm(dp.child('media', 'cache'))
 
 
 @task(alias="initdb")
 def initdb_demo():
-    run_in_demo_databases('initdb_demo', "--noinput", '--traceback')
+    run_in_demo_projects('initdb_demo', "--noinput", '--traceback')
 
 
 @task()
@@ -1082,37 +1105,13 @@ pip install --extra-index file:%(sdist_dir)s %(name)s
 """
 
 
-@task(alias='test_sdist')
-def setup_test_sdist():
-    if len(env.demo_databases) == 0:
-        return
-    ve_path = Path(env.temp_dir, 'test_sdist')
-    #~ if ve_path.exists():
-    ve_path.rmtree()
-    #~ rmtree_after_confirm(ve_path)
-    ve_path.mkdir()
-    script = ve_path.child('tmp.sh')
-
-    context = dict(
-        name=env.current_project.SETUP_INFO['name'],
-        sdist_dir=env.sdist_dir,
-        ve_path=ve_path)
-    #~ file(script,'w').write(TEST_SDIST_TEMPLATE % context)
-    txt = TEST_SDIST_TEMPLATE % context
-    for db in env.demo_databases:
-        txt += "django-admin.py test --settings=%s --traceback\n" % db
-    script.write_file(txt)
-    script.chmod(0o777)
-    with lcd(ve_path):
-        local(script)
-
-
 @task(alias='ddt')
 def double_dump_test():
     """
     Perform a "double dump test" on every demo database.
     TODO: convert this to a Lino management command.
     """
+    raise Exception("Not yet converted after 20150129")
     if len(env.demo_databases) == 0:
         return
     a = Path(env.temp_dir, 'a')

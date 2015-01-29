@@ -10,7 +10,7 @@ atelier.fablib
    .. autosummary::
    
       abort
-      add_demo_database
+      add_demo_project
       clean_demo_caches
       cleanup_pyc
       confirm
@@ -31,7 +31,7 @@ atelier.fablib
       puts
       py_clean
       rmtree_after_confirm
-      run_in_demo_databases
+      run_in_demo_projects
       setup_babel_userdocs
       setup_from_fabfile
       setup_from_project
