@@ -11,7 +11,10 @@ Version 0.0.12 (not yet released)
 Version 0.0.11 (released :blogref:`20150129`)
 ==============================================
 
-TODO
+Users of :mod:`atelier.fablib` who used "demo databases" (which we now
+call "Django demo projects", see
+:attr:`atelier.fablib.env.demo_projects`) must adapt their
+:xfile:`fabfile.py` as described in :blogref:`20150129`.
 
 Version 0.0.10 (released :blogref:`20141229`)
 ==============================================

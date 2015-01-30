@@ -174,7 +174,7 @@ configuration settings.  Example content::
 .. xfile:: .fabricrc
 
 To specify certain default preferences for all your projects, you can
-create a file named :file:`.fabricrc` in your home directory with
+create a file named :xfile:`.fabricrc` in your home directory with
 content like this::
 
     user = luc
@@ -188,8 +188,15 @@ Project settings
 ================
 
 `fabric <http://docs.fabfile.org>`__ works with a global "environment"
-object named ``env``.  The following section documents the possible
-attributes of this object as used by :mod:`atelier.fablib`.
+object named ``env``.
+
+The following section documents the possible attributes of this object
+as used by :mod:`atelier.fablib`.
+
+You usually define these in your :xfile:`fabfile.py`.  For some of
+them (those who are simple strings) you can define user-specific
+default values in a :xfile:`.fabricrc` file.
+
 
 .. class:: env
 
@@ -264,13 +271,6 @@ attributes of this object as used by :mod:`atelier.fablib`.
     :command:`fab initdb` must be done before running :command:`fab
     test`. It is not launched automatically because it can take some
     time and is not always necessary.
-
-
-
-
-
-You may define user-specific default values for some of these settings
-(those who are simple strings) in a :file:`.fabricrc` file.
 
 
 
