@@ -263,14 +263,14 @@ default values in a :xfile:`.fabricrc` file.
 
     The list of Django demo projects included in this project.
 
-    The specified directory must contain a file :xfile:`manage.py`.
-
     Django demo projects are used by the test suite and the Sphinx
-    documentation. To initialize them, run :command:`fab initdb`.
+    documentation.  Before running :command:`fab test` or
+    :command:`fab bd`, they must have been initialized.  To initialize
+    them, run :command:`fab initdb`.
 
-    :command:`fab initdb` must be done before running :command:`fab
-    test`. It is not launched automatically because it can take some
-    time and is not always necessary.
+    It is not launched automatically by :command:`fab test` or
+    :command:`fab bd` because it can take some time and is not always
+    necessary.
 
 
 

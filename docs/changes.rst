@@ -4,8 +4,21 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.12 (not yet released)
+Version 0.0.13 (not yet released)
 =================================
+
+
+Version 0.0.12 (released 2015-02-02)
+====================================
+
+Getting Lino to build on Travis CI.  Once again I changed the whole
+system of declaring demo projects. The parameter to
+:func:`atelier.fablib.add_demo_project` must be a Django settings
+module, it cannot be a path.  And
+:func:`atelier.fablib.run_in_demo_projects` must set the current
+working directory to the :attr:`cache_dir
+<lino.core.site.Site.cache_dir>`, not the :attr:`project_dir
+<lino.core.site.Site.project_dir>`.
 
 
 Version 0.0.11 (released :blogref:`20150129`)
