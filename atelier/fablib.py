@@ -376,15 +376,12 @@ class RstFile(object):
             # self.url = url_root + "/" + "/".join(parts) + '.html'
 
 
-def add_demo_project(db):
-    """Register the specified directory as being a Django demo project.
+def add_demo_project(p):
+    """Register the specified settings module as being a Django demo project.
     See also :attr:`env.demo_projects`.
 
     """
-    p = Path(db)
-    if not p.child('manage.py').exists():
-        raise Exception("No such file: {0}".format(p))
-    if db in env.demo_projects:
+    if p in env.demo_projects:
         return
         # raise Exception("Duplicate entry %r in demo_projects." % db)
     env.demo_projects.append(p)
@@ -949,16 +946,21 @@ def run_in_demo_projects(admin_cmd, *more):
     :attr:`env.demo_projects`).
 
     """
-    for db in env.demo_projects:
+    for mod in env.demo_projects:
         puts("-" * 80)
-        puts("In demo project {0}:".format(db))
-        with lcd(db):
-            args = ["python"]
-            args += ["manage.py"]
+        puts("In demo project {0}:".format(mod))
+
+        from django.utils.importlib import import_module
+        m = import_module(mod)
+        # p = Path(m.__file__).parent.absolute()
+        p = m.SITE.cache_dir
+
+        with lcd(p):
+            args = ["django-admin.py"]
             args += [admin_cmd]
             args += more
             #~ args += ["--noinput"]
-            # args += ["--settings=" + db]
+            args += ["--settings=" + mod]
             #~ args += [" --pythonpath=%s" % p.absolute()]
             cmd = " ".join(args)
             local(cmd)
