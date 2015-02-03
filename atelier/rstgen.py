@@ -60,7 +60,7 @@ A table without headers:
   
   Code <NEXTCELL> Result <NEXTROW>
 
-  >>> print(table(headers,rows,show_headers=False))
+  >>> print(table(headers, rows, show_headers=False))
   ================================ =============== ========
    Belgium                          Eupen           Gerd
    Estonia                          Vigala          Luc

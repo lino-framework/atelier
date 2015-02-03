@@ -7,7 +7,6 @@
 
 # Explicitly install `importlib` under Python 2.6. Thanks to
 # http://stackoverflow.com/questions/9418064
-
 install_requires = ['fabric', 'Sphinx', 'Babel', 'unipath', 'python_dateutil']
 try:
     import importlib
