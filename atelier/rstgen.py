@@ -168,11 +168,10 @@ return a blank line when there are no rows:
 
 """
 
-from __future__ import unicode_literals
-from __future__ import print_function
+from __future__ import unicode_literals, print_function
 
 import sys
-#~ import cStringIO as StringIO
+# import cStringIO as StringIO
 import StringIO
 
 
@@ -192,6 +191,8 @@ class Column(object):
         for ln in s.splitlines():
             if self.width is None or self.width < len(ln):
                 self.width = len(ln)
+        # if self.width > 500:
+        #     raise Exception("width %r more than 500" % s)
 
 
 def write_header(fd, level, s):
@@ -322,6 +323,10 @@ class Table(object):
 
         for row in rows:
             self.adjust_widths(row)
+
+        # for c in self.cols:
+        #     if c.width == 0:
+        #         raise Exception("width %r is 0" % c)
 
         if self.simple:
             self.header1 = ' '.join([('=' * (c.width + 2)) for c in self.cols])
