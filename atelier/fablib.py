@@ -314,6 +314,7 @@ class JarBuilder(object):
     Used by my Java projects :ref:`davlink` and :ref:`eidreader`.
 
     """
+
     def __init__(self, jarfile, sourcedir):
         self.jarfile = Path(jarfile)
         self.sourcedir = Path(sourcedir)
@@ -321,8 +322,8 @@ class JarBuilder(object):
 
         self.jarcontent = [Path('Manifest.txt')]
         self.jarcontent += list(self.sourcedir.listdir('*.class'))
-        self.jarcontent = [
-            Path(x.replace("$", "\\$")) for x in self.jarcontent]
+        # self.jarcontent = [
+        #     Path(x.replace("$", r"\$")) for x in self.jarcontent]
         self.libjars = []
 
     def add_lib(self, pth):
@@ -331,16 +332,21 @@ class JarBuilder(object):
     def build_jar(self, outdir, alias):
         flags = '-storepass "`cat ~/.secret/.keystore_password`"'
         flags += ' -tsa http://timestamp.globalsign.com/scripts/timestamp.dll'
+
+        def run_signer(jarfile):
+            local("jarsigner %s %s %s" % (flags, jarfile, alias))
+            local("jarsigner -verify %s" % jarfile)
+
         outdir = Path(outdir)
         jarfile = outdir.child(self.jarfile)
         if jarfile.needs_update(self.jarcontent):
             local("jar cvfm %s %s" % (jarfile, ' '.join(self.jarcontent)))
-        local("jarsigner %s %s %s" % (flags, jarfile, alias))
+        run_signer(jarfile)
         for libfile in self.libjars:
             jarfile = outdir.child(libfile.name)
-            if libfile.needs_update([jarfile]):
+            if not jarfile.exists() or libfile.needs_update([jarfile]):
                 libfile.copy(jarfile)
-            local("jarsigner %s %s %s" % (flags, jarfile, alias))
+            run_signer(jarfile)
 
     def build_classes(self):
         flags = "-Xlint:unchecked"

@@ -27,4 +27,5 @@ Sitemap
    /api/index
    /sphinxext
    /changes
+   jarbuilder
 
