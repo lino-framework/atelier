@@ -4,8 +4,12 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.13 (not yet released)
-=================================
+Version 0.0.13 (not released)
+=============================
+
+:class:`JarBuilder <atelier.jarbuilder.JarBuilder>` is now in a
+separate module, the usage API is slightly changed. Signing with a
+timestamp is now optional, and the URL of the TSA can be configured.
 
 
 Version 0.0.12 (released 2015-02-02)

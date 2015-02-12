@@ -1,4 +1,4 @@
-#~ Copyright 2011-2014 by Luc Saffre.
+#~ Copyright 2011-2015 by Luc Saffre.
 #~ License: BSD, see LICENSE for more details.
 """
 This is the :mod:`atelier` package.
@@ -7,6 +7,7 @@ This is the :mod:`atelier` package.
    :toctree:
 
    fablib
+   jarbuilder
    projects
    rstgen
    test
