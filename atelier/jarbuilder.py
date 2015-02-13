@@ -2,10 +2,12 @@
 # Copyright 2013-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""
-====================
-Using the JarBuilder
-====================
+"""This is an extension for :mod:`atelier.fablib` for managing Java
+projects.
+
+
+Using the JarBuilder class
+==========================
 
 Usage examples are the :xfile:`fabfile.py` files of `eidreader
 <https://github.com/lsaffre/eidreader/blob/master/fabfile.py>`_ and
@@ -43,8 +45,6 @@ Self-sign the new key::
 This sets mykey to expire in 360 days.  6 months later I'll get a
 warning :message:`The signer certificate will expire within six
 months.` when I run :command:`fab jars` to sign a jar file.
-
-
 
 """
 

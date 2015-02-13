@@ -52,7 +52,6 @@ atelier.fablib
 
    .. autosummary::
    
-      JarBuilder
       Path
       RstFile
    
