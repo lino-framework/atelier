@@ -4,8 +4,11 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.13 (not released)
+Version 0.0.14 (not released)
 =============================
+
+Version 0.0.13 (released 2015-02-02)
+====================================
 
 Fixed a bug in :meth:`atelier.test.TestCase.run_subprocess` which
 could cause a subprocess to deadlock when it generated more output
