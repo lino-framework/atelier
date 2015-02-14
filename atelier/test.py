@@ -40,17 +40,27 @@ class TestCase(unittest.TestCase, SubProcessParent):
         Run a subprocess, wait until it terminates,
         fail if the returncode is not 0.
         """
+        # print ("20150214 run_subprocess %r" % args)
         p = self.open_subprocess(args, **kw)
-        p.wait()
+
+        # wait() will deadlock when using stdout=PIPE and/or
+        # stderr=PIPE and the child process generates enough output to
+        # a pipe such that it blocks waiting for the OS pipe buffer to
+        # accept more data. Use communicate() to avoid that.
+        if False:
+            p.wait()
+        else:
+            out, err = p.communicate()
+        # print ("20150214b run_subprocess")
         rv = p.returncode
         #~ kw.update(stderr=buffer)
         #~ rv = subprocess.call(args,**kw)
         if rv != 0:
             cmd = ' '.join(args)
             #~ self.fail("%s returned %d:-----\n%s\n-----" % (cmd,rv,buffer.getvalue()))
-            (out, err) = p.communicate()
+            # (out, err) = p.communicate()
             msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (cmd, kw, rv, out)
-            print msg
+            # print msg
             self.fail(msg)
 
     def run_simple_doctests(self, filenames, **kw):  # env.simple_doctests

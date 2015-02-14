@@ -7,6 +7,10 @@ Changes in `atelier`
 Version 0.0.13 (not released)
 =============================
 
+Fixed a bug in :meth:`atelier.test.TestCase.run_subprocess` which
+could cause a subprocess to deadlock when it generated more output
+than the OS pipe buffer would swallow.
+
 :class:`JarBuilder <atelier.jarbuilder.JarBuilder>` is now in a
 separate module, the usage API is slightly changed. Signing with a
 timestamp is now optional, and the URL of the TSA can be configured.
