@@ -1,4 +1,4 @@
-# Copyright 2013 by Luc Saffre.
+# Copyright 2013-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 #~ This module has no docstring because it is to be execfile'd
