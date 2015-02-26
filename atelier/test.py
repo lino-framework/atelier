@@ -85,7 +85,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
         """
         run unittest of given file in a subprocess
         """
-        args = ["python"]
+        args = [sys.executable]
         #~ args += ["-Wall"]
         args += ["-m"]
         args += ["unittest"]
