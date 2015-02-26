@@ -40,7 +40,7 @@ Documenting
 
     - Sphinx `.build` files
     - Dangling `.pyc` files which don't have a corresponding `.py` file.
-    - `cache` directories of demo databases
+    - `cache` directories of demo projects
 
 
 .. command:: fab readme
