@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-#~ Copyright 2011-2013 by Luc Saffre.
-#~ License: BSD, see LICENSE for more details.
+# Copyright 2011-2015 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
 
-"""This Sphinx extension defines the 
-:rst:dir:`blogger_year` and 
-:rst:dir:`blogger_index`
-directives.
+"""This Sphinx extension defines the :rst:dir:`blogger_year` and
+:rst:dir:`blogger_index` directives.
 
 Usage: add the following to your `conf.py`::
 

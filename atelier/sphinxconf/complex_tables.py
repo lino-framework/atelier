@@ -1,53 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2014 by Luc Saffre.
+# Copyright 2011-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""Defines the following directives:
-
-- :rst:dir:`textimage`
-- :rst:dir:`complextable`
-
-
-.. rst:directive:: django2rst
-
-Like :rst:dir:`py2rst` but with the Django environment
-initialized.
-
-.. rst:directive:: textimage
-
-Insert a text and an image side by side.
-See :blogref:`20130116` for documentation.
-
-.. rst:directive:: complextable
-
-Create tables with complex cell content
-
-Usage example (imagine that A1...B2 is more complex.
-It can contain other tables, headers, images, code snippets, ...)::
-
-  .. complextable::
-
-    A1
-    <NEXTCELL>
-    A2
-    <NEXTROW>
-    B1
-    <NEXTCELL>
-    B2
-
-
-Result:
-
-.. complextable::
-
-    A1
-    <NEXTCELL>
-    A2
-    <NEXTROW>
-    B1
-    <NEXTCELL>
-    B2
-        
+"""Defines the :rst:dir:`textimage` and :rst:dir:`complextable`
+directives.
 
 
 """
@@ -87,7 +43,6 @@ class TextImageDirective(InsertInputDirective):
 
 
 class ComplexTableDirective(InsertInputDirective):
-
     """Defines the :rst:dir:`complextable` directive."""
 
     required_arguments = 0

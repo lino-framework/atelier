@@ -25,6 +25,7 @@ Sitemap
    :maxdepth: 2
 
    /api/index
-   /sphinxext
+   /sphinxext/index
    /changes
+
 
