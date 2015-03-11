@@ -708,7 +708,7 @@ def unused_build_api(*cmdline_args):
     args += [env.main_package.replace('.', '/')]  # packagedir
     args += env.apidoc_exclude_pathnames
     if False:
-        excluded = ['lino/dd.py']
+        excluded = ['lino.api.dd.py']
         args += excluded  # pathnames to be ignored
     cmd = ' '.join(args)
     #~ puts("%s> %s" % (os.getcwd(), cmd))

@@ -35,10 +35,12 @@ working directory to the :attr:`cache_dir
 Version 0.0.11 (released :blogref:`20150129`)
 ==============================================
 
-Users of :mod:`atelier.fablib` who used "demo databases" (which we now
-call "Django demo projects", see
-:attr:`atelier.fablib.env.demo_projects`) must adapt their
-:xfile:`fabfile.py` as described in :blogref:`20150129`.
+- Users of :mod:`atelier.fablib` who used "demo databases" (which we
+  now call "Django demo projects", see
+  :attr:`atelier.fablib.env.demo_projects`) must adapt their
+  :xfile:`fabfile.py` as described in :blogref:`20150129`.
+
+- New configuration setting :attr:`atelier.fablib.env.editor_command`.
 
 Version 0.0.10 (released :blogref:`20141229`)
 ==============================================
