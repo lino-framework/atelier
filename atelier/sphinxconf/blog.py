@@ -17,7 +17,7 @@ Individual blog entries, including yearly directories and
 `index.rst` files, are automatically created by :cmd:`fab blog`,
 leading to a file structure like this:
     
-- docs/blog/2013/index.rst --> contains a blogger_year directive (calendar)
+- docs/blog/2013/index.rst --> contains a :rst:dir:`blogger_year` directive
 - docs/blog/2013/0107.rst --> a blog entry
 - docs/blog/2010/0107.rst
    
@@ -229,11 +229,12 @@ class YearBlogIndexDirective(InsertInputDirective):
 
         text += """
 
+.. rubric:: {0}
+
 .. toctree::
-    :hidden:
     :maxdepth: 2
     
-"""
+""".format("All entries:")
 
         days = sorted(blogger_year.days)
         for day in days:
