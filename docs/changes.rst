@@ -4,8 +4,11 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.14 (not released)
+Version 0.0.15 (not released)
 =============================
+
+Version 0.0.14 (released 2015-03-15)
+====================================
 
 Importing :mod:`atelier` now automatically adds a codecs writer to
 `sys.stdout`.  As a consequence, :mod:`atelier.doctest_utf8` is no
