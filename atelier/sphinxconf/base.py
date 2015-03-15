@@ -69,7 +69,7 @@ def autodoc_skip_member(app, what, name, obj, skip, options):
     return skip
 
 
-SRCREF_TEMPLATE_AFTER = """
+SRCREF_TEMPLATE = """
 
 (This module's source code is available `here <%s>`__.)
 
@@ -100,10 +100,11 @@ def autodoc_add_srcref(app, what, name, obj, options, lines):
     if what == 'module':
         s = srcref(obj)
         if s:
-            if True:  # after 20150111
-                lines += (SRCREF_TEMPLATE_AFTER % s).splitlines()
+            if False:
+                lines += (SRCREF_TEMPLATE % s).splitlines()
             else:
-                s = (SIDEBAR % s).splitlines()
+                s = (SRCREF_TEMPLATE % s).splitlines()
+                # s = (SIDEBAR % s).splitlines()
                 s.reverse()
                 for ln in s:
                     lines.insert(0, ln)

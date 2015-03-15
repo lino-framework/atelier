@@ -25,3 +25,7 @@ __version__ = SETUP_INFO['version']
 intersphinx_urls = dict(docs="http://atelier.lino-framework.org")
 srcref_url = 'https://github.com/lsaffre/atelier/blob/master/%s'
 
+
+# thanks to http://stackoverflow.com/questions/11741574/how-to-print-utf-8-encoded-text-to-the-console-in-python-3
+import sys, codecs, locale
+sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)

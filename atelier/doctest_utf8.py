@@ -4,6 +4,8 @@
 
 """A wrapper for Python's doctest.
 
+No longer used because now atelier adds a codecs writer to sys.stdout.
+
 Because the command-line interface of `python -m doctest` has no way
 to specify an encoding of a (non-.py) input file.
 
