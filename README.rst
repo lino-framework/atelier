@@ -7,7 +7,7 @@ A collection of tools for software artists
 Description
 -----------
 
-`atelier` is my collection of tools for managing and
+`atelier` is a collection of tools for managing and
 maintaining multiple Python software projects.
 
 It contains
