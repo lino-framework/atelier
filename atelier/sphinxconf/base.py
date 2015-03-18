@@ -97,10 +97,18 @@ SIDEBAR = """
 
 
 def autodoc_add_srcref(app, what, name, obj, options, lines):
+    """Add a reference to the module's source code.
+    This is being added as listener to the
+    `autodoc-process-docstring <http://sphinx-doc.org/ext/autodoc.html#event-autodoc-process-docstring>`_ signal.
+    
+    """
     if what == 'module':
         s = srcref(obj)
         if s:
-            if False:
+            # we must add it *after* the module description (not
+            # before) because also autosummary gets the docstring
+            # processed by this handler.
+            if True:
                 lines += (SRCREF_TEMPLATE % s).splitlines()
             else:
                 s = (SRCREF_TEMPLATE % s).splitlines()
