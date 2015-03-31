@@ -37,6 +37,7 @@ import jinja2
 from babel.dates import format_date
 
 from .insert_input import InsertInputDirective
+from atelier.rstgen import toctree
 
 
 def monthname(n, language):
@@ -73,9 +74,9 @@ JINJA_ENV = jinja2.Environment(
     loader=jinja2.DictLoader(templates))
 
 
-class Year(object):
+class BloggerYear(object):
 
-    """A :class:`Year` instance is created for each `blogger_year`
+    """A :class:`BloggerYear` instance is created for each `blogger_year`
     directive.
 
     """
@@ -90,6 +91,7 @@ class Year(object):
         if index != 'index':
             raise Exception(
                 "Allowed only in /<blogname>/<year>/index.rst files")
+        self.blogname = blogname
         self.year = int(year)
 
         #~ print "20130113 Year.__init__", blogname, self.year
@@ -117,12 +119,37 @@ class Year(object):
         years[self.year] = self
 
 
-"""
-"""
+def docname(y):
+    assert isinstance(y, BloggerYear)
+    return "/" + y.blogname + "/" + str(y.year) + "/index"
+
+
+def navigator(years, current):
+    chunks = []
+    for y in years:
+        if y == current:
+            chunks.append(str(y.year))
+        else:
+            chunks.append(
+                ":doc:`{0} <{1}>`".format(y.year, docname(y)))
+    old = ' '.join(chunks)
+    return "\n\n{0}\n\n".format(old)
+
+
+def get_blogger_years(env, blogname):
+    blog_instances = getattr(env, 'blog_instances', dict())
+    blog = blog_instances.get(blogname)
+    if blog is None:
+        return []
+    years = list(blog.values())
+
+    def f(a, b):
+        return cmp(a.year, b.year)
+    years.sort(f)
+    return years
 
 
 class MainBlogIndexDirective(InsertInputDirective):
-
     """
     Directive to insert a blog master archive page toctree
     """
@@ -133,31 +160,40 @@ class MainBlogIndexDirective(InsertInputDirective):
     def get_rst(self):
         #~ print 'MainBlogIndexDirective.get_rst()'
         env = self.state.document.settings.env
-        intro = '\n'.join(self.content)
-        #~ dn  = os.path.dirname(env.doc2path(env.docname))
-        #~ year = os.path.split(dn)[-1]
         blogname, index = env.docname.rsplit('/', 2)
         if index != 'index':
             raise Exception("Allowed only inside index.rst file")
-        text = intro
-        text += """
+        text = ''
+        years = get_blogger_years(env, blogname)
+    
+        hidden = []
+        visible = []
 
-.. toctree::
-    :maxdepth: 2
+        # for y in years:
+            # text += "\n    {0}/index".format(blogger_year.year)
+            # visible.append(str(blogger_year.year) + "/index")
+        if len(years) > 1:
+            hidden = years[:-1]
+            visible = years[-1:]
+        else:
+            visible = years
 
-"""
-        blog_instances = getattr(env, 'blog_instances', dict())
-        blog = blog_instances.get(blogname)
-        if blog is not None:
-            years = list(blog.values())
+        text += navigator(years, None)
 
-            def f(a, b):
-                return cmp(a.year, b.year)
-            years.sort(f)
-            for blogger_year in years:
-                text += "\n    {0}/index".format(blogger_year.year)
+        text += '\n'.join(self.content)
+        if len(years) == 0:
+            text += "\n\nNo blogger years found.\n"
+        else:
+            children = map(docname, years)
+            text += toctree(*children, hidden=True)
 
-        text += "\n"
+        # if len(hidden):
+        #     children = map(docname, hidden)
+        #     text += toctree(*children, hidden=True)
+        # if len(visible):
+        #     children = map(docname, visible)
+        #     text += toctree(*children, maxdepth=2)
+        # text += "\n"
         #~ print text
         return text
 
@@ -173,23 +209,18 @@ class YearBlogIndexDirective(InsertInputDirective):
 
     def get_rst(self):
 
-        #~ year = self.arguments[0]
         env = self.state.document.settings.env
         today = datetime.date.today()
 
-        #~ dn  = os.path.dirname(env.doc2path(env.docname))
-        #~ year = os.path.split(dn)[-1]
-        blogger_year = Year(env)
-        #~ blog = Blog.get_or_create(env,blogname)
-
+        blogger_year = BloggerYear(env)
+        years = get_blogger_years(env, blogger_year.blogname)
         tpl = JINJA_ENV.get_template('calendar.rst')
 
-        intro = '\n'.join(self.content)
-        cal = calendar.Calendar()
+        intro = navigator(years, blogger_year)
+        intro += '\n'.join(self.content)
+
         text = ''
-
-        # return "20141108 %r" % self.language
-
+        cal = calendar.Calendar()
         for month in range(1, 13):
 
             text += """

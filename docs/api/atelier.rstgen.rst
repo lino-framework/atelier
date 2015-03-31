@@ -13,6 +13,7 @@ atelier.rstgen
       header
       ol
       table
+      toctree
       ul
       write_header
    

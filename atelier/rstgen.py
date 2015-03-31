@@ -81,7 +81,9 @@ def header(level, text):
 
 def write_header(fd, level, text):
     """Write the string `text` to file `fd` as a header of the given
-`level`. See :func:`header`."""
+    `level`. See :func:`header`.
+
+    """
 
     def writeln(text=''):
         fd.write(text + '\n')
@@ -482,6 +484,38 @@ def boldheader(title):
     """Convert the given string into bold string, prefixed and followed by
     newlines."""
     return "\n\n**%s**\n\n" % unicode(title).strip()
+
+
+def toctree(*children, **options):
+    r"""Return a `toctree` directive with specified `options` and
+`children`.
+
+.. rubric:: Usage examples
+
+>>> toctree('a', 'b', 'c', maxdepth=2)
+u'\n\n.. toctree::\n    :maxdepth: 2\n\n    a\n    b\n    c\n'
+
+>>> toctree('a', 'b', 'c', hidden=True)
+u'\n\n.. toctree::\n    :hidden:\n\n    a\n    b\n    c\n'
+
+
+    """
+    text = "\n\n.. toctree::"
+    for k, v in options.items():
+        text += "\n    "
+        text += ":{0}:".format(k)
+        if isinstance(v, basestring):
+            text += " " + v
+        elif v is True:
+            pass
+        else:
+            text += " " + str(v)
+
+    text += "\n"
+    for child in children:
+        text += "\n    " + child
+    text += "\n"
+    return text
 
 
 class stdout_prefix():
