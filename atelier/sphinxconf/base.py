@@ -7,6 +7,17 @@ Basic extension
 
 Sphinx setup used to build the Lino documentation.
 
+
+.. rst:role:: blogref
+
+    Inserts a reference to the blog entry of the specified date.
+
+    Instead of writing ``:doc:`/blog/2011/0406``` it is better to
+    write ``:blogref:`20110406``` because the latter works between
+    Sphinx trees and also supports archived blog entries.
+
+
+
 Thanks to 
 
 - `Creating reStructuredText Directives 
@@ -122,31 +133,24 @@ def get_blog_url(env, today):
     """
     Return the URL to your developer blog entry of that date.
     """
-    if today.year < 2013:  # TODO: make this configurable
-        blogger_project = "lino"
-        url_root = "http://code.google.com/p/%s/source/browse/" % blogger_project
-        parts = ('docs', 'blog', str(today.year), today.strftime("%m%d.rst"))
-        return url_root + "/".join(parts)
+    # if today.year < 2013:  # TODO: make this configurable
+    #     blogger_project = "lino"
+    #     url_root = "http://code.google.com/p/%s/source/browse/" % blogger_project
+    #     parts = ('docs', 'blog', str(today.year), today.strftime("%m%d.rst"))
+    #     return url_root + "/".join(parts)
 
-    fmt = env.settings.get('blogref_format')
+    fmt = env.config.blogref_format
     if not fmt:
-        return "oops"
-        raise Exception(
-            "Please set your `blogref_format` to something "
-            "like 'http://www.example.com/blog/%Y/%m%d.html'")
+        # return "oops"
+        msg = "Please set your `blogref_format` to something "
+        msg = "like 'http://www.example.com/blog/%Y/%m%d.html'."
+        # msg += "\n(settings.keys are %s)" % env.settings.keys()
+        raise Exception(msg)
     url = today.strftime(fmt)
     return url
 
 
 def blogref_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
-    """
-    Inserts a reference to the blog entry of the specified date.
-    
-    Instead of writing ``:doc:`/blog/2011/0406```
-    it is better to write ``:blogref:`20110406```
-    because the latter works between Sphinx trees and also supports archived blog entries.
-    
-    """
     # thanks to http://docutils.sourceforge.net/docs/howto/rst-roles.html
     # this code originally from roles.pep_reference_role
     #~ print 20130315, rawtext, text, utils.unescape(text)
@@ -338,16 +342,4 @@ def setup(app):
 
     app.add_config_value(
         'blogref_format',
-        "http://www.lino-framework.org/blog/%Y/%m%d.html", 'html')
-    # setup2(app)
-
-    # from .dirtables import setup
-    # setup(app)
-
-    #~ app.add_directive('screenshot', ScreenshotDirective)
-    #~ app.add_config_value('screenshots_root', '/screenshots/', 'html')
-
-    #~ from djangosite.utils import doctest
-    #~ doctest.setup(app)
-
-
+        "http://luc.lino-framework.org/blog/%Y/%m%d.html", 'html')
