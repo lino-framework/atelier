@@ -140,10 +140,10 @@ def configure(globals_dict, settings_module_name=None):
     # The following will load the `fabfile.py` of other
     # projects. Possible side effects.
 
-    extlinks = dict(
-        linoticket=(
-            'http://lino-framework.org/tickets/%s.html',
-            'Lino Ticket #'))
+    extlinks = dict()
+        # linoticket=(
+        #     'http://lino-framework.org/tickets/%s.html',
+        #     'Lino Ticket #'))
     intersphinx_mapping = dict()
     for prj in load_projects():
         prj.load_fabfile()
