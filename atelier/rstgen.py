@@ -228,9 +228,9 @@ Here is the data we are going to render into different tables:
 
 >>> headers = ["Country", "City", "Name"]
 >>> rows = []
->>> rows.append(["Belgium","Eupen","Gerd"])
->>> rows.append(["Estonia","Vigala","Luc"])
->>> rows.append(["St. Vincent and the Grenadines","Chateaubelair","Nicole"])
+>>> rows.append(["Belgium", "Eupen", "Gerd"])
+>>> rows.append(["Estonia", "Vigala", "Luc"])
+>>> rows.append(["St. Vincent and the Grenadines", "Chateaubelair", "Nicole"])
 
 
 The simplest case of :func:`table`:
@@ -241,7 +241,7 @@ The simplest case of :func:`table`:
   Code <NEXTCELL> Result <NEXTROW>
 
   >>> from atelier.rstgen import table
-  >>> print(table(headers,rows))
+  >>> print(table(headers, rows))
   ================================ =============== ========
    Country                          City            Name
   -------------------------------- --------------- --------
@@ -534,6 +534,21 @@ class stdout_prefix():
     def __exit__(self, type, value, traceback):
         sys.stdout = self.saved_stdout
         self.writer = None
+
+
+def attrtable(rows, cols):
+    """A shortcut for rendering a table showing the given attributes for
+    each object.
+
+    Arguments:
+        rows: an iterator of objects
+        cols: a string with a space-separated list of attribute names
+
+    """
+    if isinstance(cols, basestring):
+        cols = cols.split()
+    cells = [[unicode(getattr(obj, k)) for k in cols] for obj in rows]
+    return table(cols, cells)
 
 
 def _test():
