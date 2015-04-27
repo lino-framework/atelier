@@ -9,6 +9,7 @@ atelier.rstgen
 
    .. autosummary::
    
+      attrtable
       boldheader
       header
       ol

@@ -20,7 +20,6 @@ atelier.fablib
       get_blog_entry
       get_current_date
       get_doc_trees
-      get_locale_dir
       i2d
       init_catalog_code
       lcd
@@ -42,6 +41,7 @@ atelier.fablib
       sync_docs_data
       task
       unused_build_api
+      unused_get_locale_dir
       update_catalog_code
    
    

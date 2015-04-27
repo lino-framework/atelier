@@ -78,7 +78,7 @@ Internationalization
     ("make messages")
 
     Extracts messages from both code and userdocs, then initializes and
-    updates all catalogs.
+    updates all catalogs. Needs :attr:`env.locale_dir`
 
 Deploy
 ------
@@ -199,6 +199,11 @@ default values in a :xfile:`.fabricrc` file.
 
 
 .. class:: env
+
+  .. attribute:: locale_dir
+
+    The name of the directory where `fab mm` et al should write their
+    catalog files.
 
   .. attribute:: sdist_dir
 
@@ -387,6 +392,7 @@ def setup_from_fabfile(
     if env.sdist_dir is not None:
         env.sdist_dir = Path(env.sdist_dir)
     env.main_package = main_package
+    env.locale_dir = None
     env.tolerate_sphinx_warnings = False
     env.demo_projects = []
     env.revision_control_system = None
@@ -457,7 +463,8 @@ def rmtree_after_confirm(p):
         p.rmtree()
 
 
-def get_locale_dir():
+def unused_get_locale_dir():
+    # replaced by env.locale_dir
     if not env.main_package:
         return None  # abort("No main_package")
     args = env.main_package.split('.')
@@ -499,7 +506,8 @@ def make_messages():
 
 def extract_messages():
     """Extract messages from source files to `django.pot` file"""
-    locale_dir = get_locale_dir()
+    # locale_dir = get_locale_dir()
+    locale_dir = env.locale_dir
     if locale_dir is None:
         return
     args = ["python", "setup.py"]
@@ -582,7 +590,8 @@ def compile_catalog_userdocs():
 def init_catalog_code():
     """Create code .po files if necessary."""
     from lino.core.site import to_locale
-    locale_dir = get_locale_dir()
+    locale_dir = env.locale_dir
+    # locale_dir = get_locale_dir()
     if locale_dir is None:
         return
     for loc in env.languages:
@@ -606,7 +615,8 @@ def init_catalog_code():
 def update_catalog_code():
     """Update .po files from .pot file."""
     from lino.core.site import to_locale
-    locale_dir = get_locale_dir()
+    locale_dir = env.locale_dir
+    # locale_dir = get_locale_dir()
     if locale_dir is None:
         return
     for loc in env.languages:
@@ -626,8 +636,9 @@ def update_catalog_code():
 @task(alias='cm')
 def compile_catalog():
     """Compile .po files to .mo files."""
-    from lino.core.site import to_locale
-    locale_dir = get_locale_dir()
+    from lino.core.site import to_locale 
+    locale_dir = env.locale_dir
+    # locale_dir = get_locale_dir()
     if locale_dir is None:
         return
     for loc in env.languages:
