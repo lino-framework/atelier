@@ -53,7 +53,8 @@ from fabric.api import local
 
 
 class JarBuilder(object):
-    """Used by my Java projects :ref:`davlink` and :ref:`eidreader`.
+    """Holds the information needed for building a Java Archive (`.jar`)
+file.
 
     """
 

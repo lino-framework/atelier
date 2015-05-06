@@ -289,10 +289,6 @@ def command_parse(env, sig, signode):
 
 
 def setup(app):
-    """
-    The Sphinx setup function used for Lino-related documentation trees.
-   
-    """
     def add(**kw):
         skw = dict()
         for k, v in kw.items():

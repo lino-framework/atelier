@@ -10,7 +10,6 @@ atelier.sphinxconf
    .. autosummary::
    
       configure
-      load_projects
       version2rst
    
    
