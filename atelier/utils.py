@@ -7,8 +7,9 @@ Defines a series of utility classes and functions.
 
 """
 
+from __future__ import print_function
 # from __future__ import unicode_literals
-# causes problems on windows where `subprocess.Popen` wants only plain strings
+# causes problems on Windows where `subprocess.Popen` wants only plain strings
 
 import os
 import sys
@@ -29,15 +30,15 @@ class AttrDict(dict):
     >>> a = AttrDict()
     >>> a.define('foo',1)
     >>> a.define('bar','baz',2)
-    >>> print a
+    >>> print(a)
     {'foo': 1, 'bar': {'baz': 2}}
-    >>> print a.foo
+    >>> print(a.foo)
     1
-    >>> print a.bar.baz
+    >>> print(a.bar.baz)
     2
-    >>> print a.resolve('bar.baz')
+    >>> print(a.resolve('bar.baz'))
     2
-    >>> print a.bar
+    >>> print(a.bar)
     {'baz': 2}
     
     """
@@ -78,16 +79,18 @@ class AttrDict(dict):
         return o
 
 
-def iif(condition, true_value, false_value):
+def iif(condition, true_value, false_value=None):
     """
     "Inline If" : an ``if`` statement as a function.
 
     Examples:
 
-    >>> import six
     >>> from atelier.utils import iif
-    >>> six.print_("Hello, %s world!" % iif(1+1==2,"real","imaginary"))
+    >>> print("Hello, %s world!" % iif(1+1==2, "real", "imaginary"))
     Hello, real world!
+    >>> iif(True, "true")
+    'true'
+    >>> iif(False, "true")
 
     """
     if condition:
@@ -108,7 +111,7 @@ def i2d(i):
         raise Exception("Invalid date specification {0}.".format(i))
     d = dateparser.parse(s)
     d = datetime.date(d.year, d.month, d.day)
-    # print i, "->", v
+    # print(i, "->", v)
     return d
 
 
@@ -182,7 +185,7 @@ def confirm(prompt=None):
             return True
         if ln.lower() == 'n':
             return False
-        print "Please anwer Y or N"
+        print("Please anwer Y or N")
 
 
 def indentation(s):
@@ -211,17 +214,17 @@ def unindent(s):
     >>> from atelier.utils import unindent
     >>> unindent('')
     ''
-    >>> print unindent('''
+    >>> print(unindent('''
     ...   foo
     ...     foo
-    ... ''')
+    ... '''))
     <BLANKLINE>
     foo
       foo
-    >>> print unindent('''
+    >>> print(unindent('''
     ... foo
     ...     foo
-    ... ''')
+    ... '''))
     <BLANKLINE>
     foo
         foo

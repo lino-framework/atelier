@@ -512,7 +512,7 @@ def extract_messages():
         return
     args = ["python", "setup.py"]
     args += ["extract_messages"]
-    args += ["-o", locale_dir.child("django.pot")]
+    args += ["-o", Path(locale_dir).child("django.pot")]
     cmd = ' '.join(args)
     #~ must_confirm(cmd)
     local(cmd)
@@ -594,6 +594,7 @@ def init_catalog_code():
     # locale_dir = get_locale_dir()
     if locale_dir is None:
         return
+    locale_dir = Path(locale_dir)
     for loc in env.languages:
         if loc != 'en':
             f = locale_dir.child(loc, 'LC_MESSAGES', 'django.po')
@@ -619,6 +620,7 @@ def update_catalog_code():
     # locale_dir = get_locale_dir()
     if locale_dir is None:
         return
+    locale_dir = Path(locale_dir)
     for loc in env.languages:
         if loc != env.languages[0]:
             args = ["python", "setup.py"]
