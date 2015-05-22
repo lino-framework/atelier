@@ -3,11 +3,15 @@
 # License: BSD, see LICENSE for more details.
 
 """Defines the :class:`InsertInputDirective` class and some
-subclasses, installing the following directives:
+subclasses, installing the :rst:dir:`py2rst` directive.
 
-- :rst:dir:`py2rst`
-- :rst:dir:`django2rst`
+To use it, you must run::
 
+  $ pip install atelier
+
+and then add this module to your :xfile:`conf.py`::
+
+  extensions += ['atelier.sphinxconf.insert_input']
 
 .. rst:directive:: py2rst
 
@@ -28,13 +32,17 @@ then you get:
   url = 'http://planet.python.org/'
   print("`This <%s>`_ is my *favourite* planet." % url)
 
+**Warning**: installing this extension makes your Sphinx instance
+unsecure. That is, you should not use this in an environment where
+arbitrary content can be posted, since that content is actually being
+executed with the permissions of the process that runs the Sphinx
+builder.
+
 Note that when the Sphinx builder is running under Python 2.7, the
 following future imports have been done::
 
   from __future__ import print_function
   from __future__ import unicode_literals
-
-
 
 """
 
