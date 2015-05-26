@@ -88,6 +88,18 @@ Deploy
     Checkin and push to repository, using today's blog entry as commit
     message.
 
+    Asks confirmation before doing so.
+    
+    Does nothing in a project whose
+    :attr:`env.revision_control_system` is `None`.
+
+    In a project whose :attr:`env.revision_control_system` is
+    ``'git'`` it checks whether the repository is dirty (i.e. has
+    uncommitted changes) and returns without asking confirmation if
+    the repo is clean.  Note that unlike ``git status``, this check
+    does currently not (yet) check whether my branch is up-to-date
+    with 'origin/master'.
+
 
 .. command:: fab release
 
