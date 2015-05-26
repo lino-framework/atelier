@@ -1185,6 +1185,13 @@ def checkin(today=None):
     if env.revision_control_system is None:
         return
 
+    if env.revision_control_system == 'git':
+        from git import Repo
+        repo = Repo(env.root_dir)
+        if not repo.is_dirty():
+            puts("No changes to commit in {0}.".format(env.root_dir))
+            return
+
     show_revision_status()
 
     if today is None:
@@ -1193,8 +1200,6 @@ def checkin(today=None):
         today = i2d(today)
 
     entry = get_blog_entry(today)
-    #~ entry = Path(env.root_dir,'..',env.blogger_project,*parts)
-    #~ print env.root_dir.parent.absolute()
     if not entry.path.exists():
         abort("%s does not exist!" % entry.path.absolute())
 

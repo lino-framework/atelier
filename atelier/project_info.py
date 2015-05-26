@@ -7,7 +7,8 @@
 
 # Explicitly install `importlib` under Python 2.6. Thanks to
 # http://stackoverflow.com/questions/9418064
-install_requires = ['fabric', 'Sphinx', 'Babel', 'unipath', 'python_dateutil']
+install_requires = ['fabric', 'Sphinx', 'Babel', 'unipath',
+                    'python_dateutil', 'gitpython']
 try:
     import importlib
 except ImportError:
@@ -25,16 +26,21 @@ SETUP_INFO = dict(
     author_email='luc.saffre@gmail.com',
     url="http://atelier.lino-framework.org",
     long_description="""\
-`atelier` is a collection of tools for managing and
-maintaining multiple Python software projects.
+`atelier` is a collection of tools for managing and maintaining
+Python software projects.
 
 It contains
 
-- some general Python utilities (:mod:`atelier.utils`)
-- a library for generating reStructuredText from Python (:mod:`atelier.rstgen`)
-- some Sphinx extensions (:mod:`atelier.sphinxconf`)
-- a library of fabric commands (:mod:`atelier.fablib`)
-- a minimalistic project management (:mod:`atelier.projects`)
+- some general Python utilities
+  (`atelier.utils <http://atelier.lino-framework.org/api/atelier.utils.html>`_)
+- a library for generating reStructuredText from Python
+  (`atelier.rstgen <http://atelier.lino-framework.org/api/atelier.rstgen.html>`_)
+- some Sphinx extensions
+  (`atelier.sphinxconf <http://atelier.lino-framework.org/api/atelier.sphinxconf.html>`_)
+- a library of fabric commands
+  (`atelier.fablib <http://atelier.lino-framework.org/api/atelier.fablib.html>`_)
+- a minimalistic project management
+  (`atelier.projects <http://atelier.lino-framework.org/api/atelier.projects.html>`_)
 
 """,
     classifiers="""\
