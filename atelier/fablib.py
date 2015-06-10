@@ -129,7 +129,7 @@ Testing
 
 .. command:: fab initdb
 
-    Run :manage:`initdb_demo` on every :attr:`env.demo_projects`.
+    Run :manage:`initdb_demo` on every demo :attr:`env.demo_projects`.
 
 .. command:: fab test
 
@@ -278,7 +278,7 @@ default values in a :xfile:`.fabricrc` file.
 
   .. attribute:: demo_projects
 
-    The list of Django demo projects included in this project.
+    The list of *Django demo projects* included in this project.
 
     Django demo projects are used by the test suite and the Sphinx
     documentation.  Before running :command:`fab test` or
