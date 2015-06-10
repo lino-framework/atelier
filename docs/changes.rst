@@ -4,8 +4,11 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.15 (not released)
+Version 0.0.16 (not released)
 =============================
+
+Version 0.0.15 (released 2015-06-10)
+====================================
 
 New setting :attr:`atelier.fablib.env.locale_dir`. Until now
 :command:`fab mm` always wrote the locale files into a subdirectory of
@@ -13,6 +16,8 @@ the main module. Now a project can specify an arbitrary location. This
 was necessary for Django 1.7 where you cannot have plugins named
 `foo.modlib.bar` if you also have a plugin whose full name is `foo`
 (:blogref:`20150427`)
+
+New function `atelier.rstgen.attrtable`.
 
 Version 0.0.14 (released 2015-03-15)
 ====================================
