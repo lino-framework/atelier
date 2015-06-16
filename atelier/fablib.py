@@ -41,6 +41,7 @@ Documenting
     - Sphinx `.build` files
     - Dangling `.pyc` files which don't have a corresponding `.py` file.
     - `cache` directories of demo projects
+    - additional files specified in :attr:`env.cleanable_files`
 
 
 .. command:: fab readme
@@ -250,6 +251,10 @@ default values in a :xfile:`.fabricrc` file.
     If this project has a main package, then `env.doc_trees` will be
     replaced by `doc_trees` attribute of that module.
 
+  .. attribute:: cleanable_files
+
+    A list of wildcards to be cleaned by :cmd:`fab clean`.
+
   .. attribute:: tolerate_sphinx_warnings
 
     Whether `sphinx-build html` should tolerate warnings.
@@ -312,6 +317,7 @@ TODO
 import os
 import textwrap
 import datetime
+import glob
 
 import sphinx
 from babel.dates import format_date
@@ -414,6 +420,7 @@ def setup_from_fabfile(
     env.setdefault('languages', None)
     env.setdefault('blogger_project', None)
     env.setdefault('blogger_url', None)
+    env.setdefault('cleanable_files', [])
 
     if isinstance(env.languages, basestring):
         env.languages = env.languages.split()
@@ -882,12 +889,22 @@ def py_clean():
     if p.exists():
         cleanup_pyc(p)
 
+    files = []
+    for pat in env.cleanable_files:
+        for p in glob.glob(os.path.join(env.root_dir, pat)):
+            files.append(p)
+    if len(files):
+        must_confirm("Remove {0} cleanable files".format(len(files)))
+        for p in files:
+            os.remove(p)
+
 
 class MissingConfig(Exception):
     def __init__(self, name):
         msg = "Must set `env.{0}` in `fabfile.py` or `~/.fabricrc`!"
         msg = msg.format(name)
         Exception.__init__(self, msg)
+
 
 @task(alias='pd')
 def publish():
