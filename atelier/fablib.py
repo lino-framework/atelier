@@ -1293,6 +1293,8 @@ Read more on %(url)s
 @task(alias='test')
 def run_tests():
     """See :cmd:`fab test`. """
+    if not env.root_dir.child('setup.py').exists():
+        return
     local('python setup.py -q test')
 
 
