@@ -316,8 +316,10 @@ TODO
 """
 import os
 import textwrap
+import time
 import datetime
 import glob
+from datetime import timedelta
 
 import sphinx
 from babel.dates import format_date
@@ -332,17 +334,13 @@ from fabric.contrib.console import confirm
 from fabric.api import lcd
 
 
-def get_current_date():
+def get_current_date(today=None):
     """
-    Useful when a working day lasted longer than midnight,
-    or when you start some work in the evening, knowing that you won't
-    commit it before the next morning.
+    """
 
-    Note that you must specify the date using the YYYYMMDD format.
-    """
-    # if atelier.TODAY is not None:
-    #     return i2d(atelier.TODAY)
-    return datetime.date.today()
+    if today is None:
+        return datetime.date.today()
+    return i2d(today)
 
 
 class RstFile(object):
@@ -716,6 +714,64 @@ def summary(*cmdline_args):
             version)
 
     print rstgen.table(headers, [cells(p) for p in load_projects()])
+
+
+@task(alias='cd')
+def commited_today(today=None):
+    """Print all today's commits to stdout."""
+    from atelier.projects import load_projects
+    from git import Repo
+
+    today = get_current_date(today)
+    headers = ("Time", "Project", "Commit")
+    rows = []
+
+    def load(self):
+
+        self.load_fabfile()
+
+        if env.revision_control_system != 'git':
+            return
+    
+        repo = Repo(env.root_dir)
+
+        kw = dict()
+        ONEDAY = timedelta(days=1)
+        yesterday = today - ONEDAY
+        tomorrow = today + ONEDAY
+        kw.update(after=yesterday.strftime("%Y-%m-%d"),
+                  before=tomorrow.strftime("%Y-%m-%d"))
+        it = list(repo.iter_commits(**kw))
+        if len(it) == 0:
+            return
+
+        def fmtcommit(c):
+
+            url = repo.remotes.origin.url
+            if url.startswith("git@github.com"):
+                url = "https://github.com/" + url[15:-4] \
+                      + "/commit/" + c.hexsha
+            
+            s = "`{0} <{1}>`__".format(c.hexsha[-7:], url)
+            if c.message and not c.message.startswith("http://"):
+                s += " " + c.message
+            return s
+            
+        url = self.SETUP_INFO.get('url', "oops")
+        desc = "`%s <%s>`__" % (self.name, url)
+
+        for c in it:
+            ts = time.strftime("%H:%M", time.gmtime(c.committed_date))
+            rows.append([ts, desc, fmtcommit(c)])
+
+    for p in load_projects():
+        load(p)
+
+    def mycmp(a, b):
+        return cmp(a[0], b[0])
+    rows.sort(mycmp)
+    print rstgen.ul(["{0} : {1}\n{2}".format(*row) for row in rows])
+    # print rstgen.table(headers, rows)
 
 
 def unused_build_api(*cmdline_args):
@@ -1157,15 +1213,21 @@ def get_blog_entry(today):
 
 @task(alias='blog')
 def edit_blog_entry(today=None):
-    """
-    Edit today's blog entry, create an empty file if it doesn't yet exist.
+    """Edit today's blog entry, create an empty file if it doesn't yet exist.
+
+    :today: Useful when a working day lasted longer than midnight, or
+            when you start some work in the evening, knowing that you
+            won't commit it before the next morning.  Note that you
+            must specify the date using the YYYYMMDD format.
+        
+            Usage example::
+        
+                $ fab blog:20150727
+
     """
     if not env.editor_command:
         raise MissingConfig("editor_command")
-    if today is None:
-        today = get_current_date()
-    else:
-        today = i2d(today)
+    today = get_current_date(today)
     entry = get_blog_entry(today)
     if not entry.path.exists():
         if not confirm("Create file %s?" % entry.path):
@@ -1223,10 +1285,7 @@ def checkin(today=None):
 
     show_revision_status()
 
-    if today is None:
-        today = get_current_date()
-    else:
-        today = i2d(today)
+    today = get_current_date(today)
 
     entry = get_blog_entry(today)
     if not entry.path.exists():
