@@ -20,6 +20,10 @@ Documenting
 
     Edit today's blog entry, create an empty file if it doesn't yet exist.
 
+.. command:: fab cd
+
+    Output a reStructuredText formatted list of all commits in all
+    projects today.
 
 .. command:: fab bd
 
@@ -723,7 +727,6 @@ def commited_today(today=None):
     from git import Repo
 
     today = get_current_date(today)
-    headers = ("Time", "Project", "Commit")
     rows = []
 
     def load(self):
