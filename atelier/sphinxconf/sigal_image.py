@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014 by Luc Saffre.
+# Copyright 2014-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :rst:dir:`sigal_image` directive.
@@ -23,6 +23,23 @@ will insert the following rst code::
 Supposing that `sigal_base_url` in your :xfile:`conf.py` is set to
 ``"http://sigal.saffre-rumma.net"``.
 
+The file name can contain formatting instructions inspired by
+`Wikipedia pictures
+<https://en.wikipedia.org/wiki/Wikipedia:Picture_tutorial>`_ which
+uses a variable number of pipe characters. For example:
+
+>>> from __future__ import print_function
+>>> print(line2html("foo.jpg"))
+<a href="http://example.com//foo.jpg" style="padding:4px;"  data-lightbox="image-1" data-title=""/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px" title=""/></a>
+
+>>> print(line2html("foo.jpg|This is a nice picture"))
+<a href="http://example.com//foo.jpg" style="padding:4px;"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px" title="This is a nice picture"/></a>
+
+>>> print(line2html("foo.jpg|thumb|This is a nice picture"))
+<a href="http://example.com//foo.jpg" style="padding:4px; float:right;"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px" title="This is a nice picture"/></a>
+
+>>> print(line2html("foo.jpg|thumb|left|This is a nice picture"))
+<a href="http://example.com//foo.jpg" style="padding:4px; float:left;"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px" title="This is a nice picture"/></a>
 
 
 .. _shotwell2blog: https://github.com/lsaffre/shotwell2blog
@@ -65,9 +82,9 @@ logger = logging.getLogger(__name__)
 
 import os
 
-from docutils.parsers.rst import directives
+# from docutils.parsers.rst import directives
 
-from .insert_input import InsertInputDirective
+from atelier.sphinxconf.insert_input import InsertInputDirective
 
 TEMPLATE1 = """
 
@@ -77,13 +94,87 @@ TEMPLATE1 = """
 
 """
 
-TEMPLATE = """
+TEMPLATE = """<a href="%(target)s" style="%(style)s" %(class)s data-lightbox="image-1" data-title="%(caption)s"/><img src="%(src)s" style="padding:4px" title="%(caption)s"/></a>"""
 
-.. raw:: html
 
-    <a href="%(target)s" style="padding:4px" data-lightbox="image-1" data-title="%(caption)s"/><img src="%(src)s" style="padding:4px" title="%(caption)s"/></a>
+class Format(object):
+    @classmethod
+    def update_context(self, caption, tplkw):
+        tplkw.update(caption=caption)
 
-"""
+
+class Thumb(Format):
+
+    @classmethod
+    def update_context(self, caption, tplkw):
+
+        chunks = caption.split('|')
+        if len(chunks) == 1:
+            tplkw['style'] = "padding:4px; float:right;"
+        elif len(chunks) == 2:
+            align, caption = chunks
+            if not align in ("right", "left", "center"):
+                raise Exception("Invalid alignment '{0}'".format(align))
+            tplkw['style'] = "padding:4px; float:{0};".format(align)
+        else:
+            raise Exception("Impossible")
+
+        tplkw.update(caption=caption)
+
+FORMATS = dict()
+FORMATS[None] = Format()
+FORMATS['thumb'] = Thumb()
+
+
+def buildurl(*parts):
+    return 'http://example.com/' + '/'.join(parts)
+
+
+def line2html(name, buildurl=buildurl):
+    name = name.strip()
+    if not name:
+        return ''
+    kw = dict()  # style="padding:4px")
+    kw['class'] = ''
+    kw['style'] = "padding:4px;"
+    if True:  # new format using only | as separator
+        chunks = name.split('|', 1)
+        if len(chunks) == 1:
+            kw.update(caption='')
+        else:
+            name, caption = chunks
+            chunks = caption.split('|', 1)
+            if len(chunks) == 1:
+                fmt = FORMATS[None]
+            else:
+                fmtname, caption = chunks
+                fmt = FORMATS[fmtname]
+            fmt.update_context(caption, kw)
+        if ' ' in name:
+            raise Exception("Invalid filename. Spaces not allowed.")
+    else:
+        chunks = name.split(None, 1)
+        if len(chunks) == 1:
+            kw.update(caption='')
+        elif len(chunks) == 2:
+            name, caption = chunks
+            chunks = caption.split('|', 1)
+            if len(chunks) == 1:
+                fmt = FORMATS[None]
+            elif len(chunks) == 2:
+                fmtname, caption = chunks
+                fmt = FORMATS[fmtname]
+            else:
+                raise Exception("Impossible")
+            fmt.update_context(caption, kw)
+        else:
+            raise Exception("FILENAME <whitespace> DESC %s" % chunks)
+
+    head, tail = os.path.split(name)
+    kw.update(target=buildurl(head, tail))
+    kw.update(src=buildurl(head, 'thumbnails', tail))
+
+    return TEMPLATE % kw
 
 
 class SigalImage(InsertInputDirective):
@@ -92,8 +183,8 @@ class SigalImage(InsertInputDirective):
     optional_arguments = 0
     final_argument_whitespace = False
     # option_spec = {
-    #     'filter': directives.unchanged,
-    #     'orderby': directives.unchanged,
+    #     'style': directives.unchanged,
+    #     'class': directives.unchanged,
     # }
 
     def get_rst(self):
@@ -105,21 +196,10 @@ class SigalImage(InsertInputDirective):
 
         s = ''
         for name in self.content:
-            if not name:
-                continue
-            kw = dict()
-            chunks = name.split(None, 1)
-            if len(chunks) == 1:
-                kw.update(caption='')
-            elif len(chunks) == 2:
-                name = chunks[0]
-                kw.update(caption=chunks[1])
-            else:
-                raise Exception("FILENAME <whitespace> CAPTION %s" % chunks)
-            head, tail = os.path.split(name)
-            kw.update(target=buildurl(head, tail))
-            kw.update(src=buildurl(head, 'thumbnails', tail))
-            s += TEMPLATE % kw
+            s += line2html(name, buildurl)
+
+        if s:
+            s = "\n\n.. raw:: html\n\n  {0}\n\n".format(s)
 
         return s
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright 2011-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
+
 """
 
 Basic extension
@@ -16,16 +17,10 @@ Sphinx setup used to build the Lino documentation.
     write ``:blogref:`20110406``` because the latter works between
     Sphinx trees and also supports archived blog entries.
 
+Thanks to
 
-
-Thanks to 
-
-- `Creating reStructuredText Directives 
+- `Creating reStructuredText Directives
   <http://docutils.sourceforge.net/docs/howto/rst-directives.html>`_
-
-
-
-
 
 """
 
