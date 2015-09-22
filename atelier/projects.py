@@ -49,7 +49,7 @@ def add_project(root_dir, nickname=None):
 
     """
     i = len(_PROJECT_INFOS)
-    root_dir = Path(root_dir).absolute()
+    root_dir = Path(root_dir).resolve()
     p = Project(i, root_dir, nickname=None)
     _PROJECT_INFOS.append(p)
     _PROJECTS_DICT[root_dir] = p
@@ -61,7 +61,7 @@ def get_project_info(root_dir):
     prj = _PROJECTS_DICT.get(root_dir)
     if prj is None:
         # if no config.py found, add current working directory.
-        p = Path().absolute()
+        p = Path().resolve()
         while p:
             if p.child('fabfile.py').exists():
                 return add_project(p)
@@ -87,7 +87,7 @@ def get_setup_info(root_dir):
     # return getattr(setup_module, 'SETUP_INFO', None)
     g = dict()
     g['__name__'] = 'not_main'
-    cwd = Path().absolute()
+    cwd = Path().resolve()
     root_dir.chdir()
     execfile(root_dir.child('setup.py'), g)
     cwd.chdir()
@@ -139,7 +139,7 @@ class Project(object):
             return
 
         fqname = 'atelier.prj_%s' % self.index
-        cwd = Path().absolute()
+        cwd = Path().resolve()
         self.root_dir.chdir()
         # print("20141027 %s %s " % (self, self.root_dir))
         (fp, pathname, desc) = imp.find_module('fabfile', [self.root_dir])
@@ -168,7 +168,7 @@ for fn in config_files:
 
 # if len(_PROJECT_INFOS) == 0:
 #     # if no config.py found, add current working directory.
-#     p = Path().absolute()
+#     p = Path().resolve()
 #     while p:
 #         if p.child('fabfile.py').exists():
 #             add_project(p)
