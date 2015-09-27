@@ -27,10 +27,12 @@ Documenting
 
 .. command:: fab bd
 
-    Build docs. Build Sphinx HTML docs for this project.
+    Build docs. Build all Sphinx HTML doctrees for this project.
 
-    This run :cmd:`fab readme`, followed by `sphinx build html` in
-    every directory defined in :attr:`env.doc_trees`.
+    This runs :cmd:`fab readme`, followed by `sphinx-build html` in
+    every directory defined in :attr:`env.doc_trees`.  The exact
+    options for `sphinx-build` depend also on
+    :attr:`env.tolerate_sphinx_warnings` and :attr:`env.use_dirhtml`.
 
 
 .. command:: fab pd
@@ -259,9 +261,15 @@ default values in a :xfile:`.fabricrc` file.
 
     A list of wildcards to be cleaned by :cmd:`fab clean`.
 
+  .. attribute:: use_dirhtml
+
+    Whether `sphinx-build
+    <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-build>`__
+    should use ``dirhtml`` instead of the default ``html`` builder.
+
   .. attribute:: tolerate_sphinx_warnings
 
-    Whether `sphinx-build html` should tolerate warnings.
+    Whether `sphinx-build` should tolerate warnings.
 
   .. attribute:: languages
 
@@ -1325,6 +1333,13 @@ def write_readme():
         readme = env.root_dir.child('README.rst')
     else:
         readme = env.root_dir.child('README.txt')
+
+    env.current_project.load_fabfile()
+    # for k in ('name', 'description', 'long_description', 'url'):
+    #     if k not in env.current_project.SETUP_INFO:
+    #         msg = "SETUP_INFO for {0} has no key '{1}'"
+    #         raise Exception(msg.format(env.current_project, k))
+
     txt = """\
 ==========================
 %(name)s README

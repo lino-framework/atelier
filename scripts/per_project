@@ -17,6 +17,13 @@ Examples::
 The list of projects is configured in your
 :xfile:`~/.atelier/config.py` file.
 
+.. command:: pp
+
+We also suggest to define a short alias for this script in your
+:xfile:`~/.bash_aliases`::
+
+    alias pp='per_project'
+
 """
 import os
 import sys

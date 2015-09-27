@@ -10,12 +10,16 @@ The :file:`config.py` file
 .. xfile:: /etc/atelier/config.py
 
 If you manage more than one project, then you declare them in a
-configuration file, usually named `~/.atelier/config.py`, which
+configuration file, usually named :file:`~/.atelier/config.py`, which
 contains something like::
 
   add_project('/home/john/myprojects/p1')
   add_project('/home/john/myprojects/second_project', 'p2')
 
+See the docstring of :func:`add_project` below.  See also `Project
+management using Atelier
+<http://noi.lino-framework.org/team/projects.html>`__ for an
+introduction.
 
 """
 
@@ -119,7 +123,8 @@ class Project(object):
         self._loaded = False
 
     def __repr__(self):
-        return "<%s %s>" % (self.__class__, self.root_dir)
+        return "<%s %s>" % (self.__class__.__name__, self.root_dir)
+
     # def __getattr__(self, k):
     #     if self._loaded:
     #         raise AttributeError(k)
