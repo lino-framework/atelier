@@ -7,6 +7,12 @@ Changes in `atelier`
 Version 0.0.16 (not released)
 =============================
 
+- Fixed :ticket:`533`. :cmd:`fab bd` failed when the repository was in
+  a directory using a symbolic link because Python got hassled when
+  importing the main module. :mod:`atelier.projects` now resolves the
+  `project_dir`.
+
+
 Version 0.0.15 (released 2015-06-10)
 ====================================
 

@@ -228,9 +228,20 @@ autosummary_generate = True
 
 #~ nitpicky = True # use -n in Makefile instead
 
+# my_font_family = "Swiss, Helvetica, Nimbus"
+# my_font_family = "Verdana, 'DejaVu Sans'"
 # http://sphinx.pocoo.org/theming.html
+my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
+html_theme_options = {
+    "font_family": my_font_family,
+    "head_font_family": my_font_family,
+}
+    # font_family: "'goudy old style', 'minion pro', 'bell mt', Georgia, 'Hiragino Mincho Pro', serif")
+
 # html_theme = "default"
-# html_theme_options = dict(collapsiblesidebar=True,externalrefs=True)
+# html_theme_options = dict(
+#     collapsiblesidebar=True,
+#     externalrefs=True)
 
 todo_include_todos = True
 
@@ -238,3 +249,4 @@ todo_include_todos = True
 gettext_compact = True
 
 
+extlinks.update(ticket=('http://bugs.lino-framework.org/tickets/Ticket/%s', '#'))
