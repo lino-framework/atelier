@@ -188,7 +188,7 @@ configuration settings.  Example content::
   setup_from_fabfile(globals(), "foobar")
   env.languages = "de fr et nl".split()
   env.tolerate_sphinx_warnings = True
-  add_demo_project('foobar/demo')
+  add_demo_project('foobar.demo')
 
 .. xfile:: .fabricrc
 
