@@ -131,6 +131,16 @@ def configure(globals_dict, settings_module_name=None):
     globals_dict.update(primary_domain='py')
     globals_dict.update(pygments_style='sphinx')
 
+    globals_dict.update(autodoc_member_order='bysource')
+    globals_dict.update(autodoc_default_flags=['show-inheritance', 'members'])
+
+    my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
+    globals_dict.update(html_theme_options={
+        "font_family": my_font_family,
+        "head_font_family": my_font_family,
+    })
+
+
     # globals_dict.update(
     #     blogref_format="http://www.lino-framework.org/blog/%Y/%m%d.html")
 

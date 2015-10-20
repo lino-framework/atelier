@@ -81,6 +81,13 @@ SRCREF_TEMPLATE = """
 
 """
 
+SRCREF_TEMPLATE_BEFORE = """
+
+.. note:: This module's source code is available
+   `here <%s>`__.
+
+"""
+
 #~ """
 #~ SIDEBAR = """
 #~ (source code: :srcref:`/%s`)
@@ -113,15 +120,21 @@ def autodoc_add_srcref(app, what, name, obj, options, lines):
         if s:
             # we must add it *after* the module description (not
             # before) because also autosummary gets the docstring
-            # processed by this handler.
+            # processed by this handler, and the an overviwe table in
+            # the parent module would show always that same sentence.
+            # I tried whether autosummary is intelligent and removes
+            # admonitions when generating the summary?  Unfortunately
+            # not.
+            # 20151006 app.env.config.html_context.update(source_code_link=s)
             if True:
                 lines += (SRCREF_TEMPLATE % s).splitlines()
             else:
-                s = (SRCREF_TEMPLATE % s).splitlines()
+                s = (SRCREF_TEMPLATE_BEFORE % s).splitlines()
                 # s = (SIDEBAR % s).splitlines()
                 s.reverse()
                 for ln in s:
                     lines.insert(0, ln)
+                # print('\n'.join(lines))
 
 
 def get_blog_url(env, today):
@@ -281,6 +294,26 @@ def command_parse(env, sig, signode):
     signode += addnodes.literal_emphasis(sig, sig)
     # signode += addnodes.literal_strong(sig, sig)  # needs Sphinx >= 1.3
     return sig
+        
+
+def html_page_context(app, pagename, templatename, context, doctree):
+    # experimental. no result yet.
+    # print(20151006, pagename, context.keys())
+    if pagename.startswith('api/') and pagename != "api/index":
+        modname = pagename[4:]
+        from django.utils.importlib import import_module
+        mod = import_module(modname)
+        s = srcref(mod)
+        if s:
+            tpl = """<p align="right"><a href="{0}">[source]</a></p>"""
+            context.update(source_code_link=tpl.format(s))
+    #     else:
+    #         context.update(
+    #             source_code_link="no source code for {0}".format(modname))
+    # else:
+    #     context.update(
+    #         source_code_link="no module in {0}".format(pagename))
+        
 
 
 def setup(app):
@@ -320,10 +353,11 @@ def setup(app):
         indextemplate='pair: %s; model attribute')
     add(directivename='model',
         rolename='model', indextemplate='pair: %s; model')
-    #app.connect('build-finished', handle_finished)
+    # app.connect('build-finished', handle_finished)
 
     app.connect(str('autodoc-skip-member'), autodoc_skip_member)
     app.connect(str('autodoc-process-docstring'), autodoc_add_srcref)
+    app.connect(str('html-page-context'), html_page_context)
 
     app.add_role(str('coderef'), coderef_role)
     app.add_role(str('message'), message_role)
