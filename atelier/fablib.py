@@ -1122,10 +1122,16 @@ def show_pypi_status():
             "This is your first release of %(name)s %(version)s "
             "to PyPI" % info)
     else:
-        lastrel = client.release_urls(name, released_versions[-1])[-1]
-        # dt = lastrel['upload_time']
-        # lastrel['upload_time'] = dt.ISO()
-        puts(LASTREL_INFO % lastrel)
+        urls = client.release_urls(name, released_versions[-1])
+        if len(urls) == 0:
+            msg = "Last release was {0} (no files available)."
+            msg = msg.format(released_versions[-1])
+            puts(msg)
+        else:
+            lastrel = urls[-1]
+            # dt = lastrel['upload_time']
+            # lastrel['upload_time'] = dt.ISO()
+            puts(LASTREL_INFO % lastrel)
         if version in released_versions:
             abort("%(name)s %(version)s has already been released." % info)
 
