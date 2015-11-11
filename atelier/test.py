@@ -51,7 +51,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
             p.wait()
         else:
             out, err = p.communicate()
-        # print ("20150214b run_subprocess")
+        # print("20150214b run_subprocess", out)
         rv = p.returncode
         #~ kw.update(stderr=buffer)
         #~ rv = subprocess.call(args,**kw)
