@@ -108,13 +108,16 @@ def configure(globals_dict, settings_module_name=None):
     globals_dict.update(autodoc_default_flags=['members'])
 
     if settings_module_name is not None:
-        os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
+        from lino import startup
+        startup(settings_module_name)
 
-        # Trigger loading of Djangos model cache in order to avoid
-        # side effects that would occur when this happens later while
-        # importing one of the models modules.
-        from django.conf import settings
-        settings.SITE.startup()
+        # os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
+
+        # # Trigger loading of Djangos model cache in order to avoid
+        # # side effects that would occur when this happens later while
+        # # importing one of the models modules.
+        # from django.conf import settings
+        # settings.SITE.startup()
 
         globals_dict.update(
             template_bridge=str('atelier.sphinxconf.DjangoTemplateBridge'))
