@@ -210,7 +210,10 @@ class Py2rstDirective(InsertInputDirective):
         sys.stdout = buffer
         context = self.get_context()
 
-        exec(code, context)
+        try:
+            exec(code, context)
+        except Exception as err:
+            raise Exception("%s in code:\n%s" % (err, code))
 
         sys.stdout = old
         s = buffer.getvalue()
