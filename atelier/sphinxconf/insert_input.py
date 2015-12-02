@@ -82,6 +82,8 @@ logger = logging.getLogger(__name__)
 
 import sys
 from StringIO import StringIO
+# import inspect
+import traceback
 
 from docutils import nodes
 from docutils import statemachine
@@ -130,7 +132,6 @@ class InsertInputDirective(Directive):
         try:
             output = self.get_rst()
         except Exception as e:
-            import traceback
             traceback.print_exc(e)
             document = self.state.document
             return [document.reporter.warning(str(e), line=self.lineno)]
@@ -210,10 +211,15 @@ class Py2rstDirective(InsertInputDirective):
         sys.stdout = buffer
         context = self.get_context()
 
-        try:
+        if 'debug' in self.options:
             exec(code, context)
-        except Exception as err:
-            raise Exception("%s in code:\n%s" % (err, code))
+        else:
+            try:
+                exec(code, context)
+            except Exception as err:
+                # f = inspect.trace()[1]
+                # traceback.print_stack()
+                raise Exception("%s in code:\n%s" % (err, code))
 
         sys.stdout = old
         s = buffer.getvalue()
