@@ -301,7 +301,7 @@ def html_page_context(app, pagename, templatename, context, doctree):
     # print(20151006, pagename, context.keys())
     if pagename.startswith('api/') and pagename != "api/index":
         modname = pagename[4:]
-        from django.utils.importlib import import_module
+        from importlib import import_module
         mod = import_module(modname)
         s = srcref(mod)
         if s:
