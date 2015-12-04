@@ -14,12 +14,15 @@ This is the :mod:`atelier` package.
    utils
    sphinxconf
 
-
-
 """
 
 import os
-execfile(os.path.join(os.path.dirname(__file__), 'project_info.py'))
+fn = os.path.join(os.path.dirname(__file__), 'setup_info.py')
+exec(compile(open(fn, "rb").read(), fn, 'exec'))
+# above line is equivalent to the line below, except that it works
+# also in Python 3:
+# execfile(fn)
+
 __version__ = SETUP_INFO['version']
 
 intersphinx_urls = dict(docs="http://atelier.lino-framework.org")

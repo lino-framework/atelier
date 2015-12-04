@@ -1017,7 +1017,7 @@ def run_in_demo_projects(admin_cmd, *more):
         puts("-" * 80)
         puts("In demo project {0}:".format(mod))
 
-        from django.utils.importlib import import_module
+        from importlib import import_module
         m = import_module(mod)
         # p = Path(m.__file__).parent.absolute()
         p = m.SITE.cache_dir
