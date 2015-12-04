@@ -2,10 +2,7 @@ from unipath import Path
 
 ROOTDIR = Path(__file__).parent.parent
 
-# load  SETUP_INFO:
-SETUP_INFO = {}
-execfile(ROOTDIR.child('atelier', 'project_info.py'), globals())
-
+from atelier import SETUP_INFO
 from atelier.test import TestCase
 
 

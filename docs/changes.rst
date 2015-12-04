@@ -4,8 +4,15 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.16 (not released)
+Version 0.0.17 (not released)
 =============================
+
+
+Version 0.0.16 (released 2015-12-04)
+====================================
+
+- :mod:`atelier.fablib` no longer tries to import
+  `django.utils.importlib`. (Dropped support for Python 2.6)
 
 - Fixed :ticket:`553`. The :cmd:`fab bd` command failed to call
   :meth:`load_fabfile <atelier.projects.Project.load_fabfile>` when
