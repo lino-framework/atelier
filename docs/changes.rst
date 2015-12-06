@@ -196,7 +196,7 @@ Version 0.0.1 (released :blogref:`20130422`)
 ============================================
 
 - This project was split out of 
-  `djangosite <https://pypi.python.org/pypi/djangosite>` in 
+  `djangosite <https://pypi.python.org/pypi/djangosite>`_ in 
   April 2013.
   See :blogref:`20130410`.
   
