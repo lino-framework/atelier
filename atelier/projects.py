@@ -121,6 +121,7 @@ class Project(object):
         #~ self.root_dir = Path(atelier.PROJECTS_HOME,local_name)
         self.nickname = nickname or self.root_dir.name
         self._loaded = False
+        self._tasks_loaded = False
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.root_dir)
@@ -148,6 +149,40 @@ class Project(object):
         self.root_dir.chdir()
         # print("20141027 %s %s " % (self, self.root_dir))
         (fp, pathname, desc) = imp.find_module('fabfile', [self.root_dir])
+        m = imp.load_module(fqname, fp, pathname, desc)
+        cwd.chdir()
+
+        main_package = getattr(m.env, 'main_package', None)
+        if main_package is None:
+            return
+        self.name = main_package
+        # self.name = name
+        # removed 20140116:
+        # self.dist = pkg_resources.get_distribution(name)
+        self.module = import_module(main_package)
+        self.SETUP_INFO = get_setup_info(self.root_dir)
+        self.srcref_url = getattr(self.module, 'srcref_url', None)
+        self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
+        self.intersphinx_urls = getattr(
+            self.module, 'intersphinx_urls', {})
+
+    def load_tasks(self):
+        """Load the :xfile:`tasks.py` of this project."""
+        if self._tasks_loaded:
+            return
+
+        self._tasks_loaded = True
+    
+        self.name = self.nickname
+
+        if not self.root_dir.child('tasks.py').exists():
+            return
+
+        fqname = 'atelier.prj_tasks_%s' % self.index
+        cwd = Path().resolve()
+        self.root_dir.chdir()
+        # print("20141027 %s %s " % (self, self.root_dir))
+        (fp, pathname, desc) = imp.find_module('tasks', [self.root_dir])
         m = imp.load_module(fqname, fp, pathname, desc)
         cwd.chdir()
 

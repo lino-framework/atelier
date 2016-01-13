@@ -1,3 +1,4 @@
 from atelier.tasks import *
-setup_from_tasks(globals(), "atelier")
+# env = Atelier(globals(), "atelier")
+env.setup_from_tasks(globals(), "atelier")
 env.revision_control_system = 'git'

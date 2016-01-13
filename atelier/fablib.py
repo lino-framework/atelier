@@ -170,7 +170,7 @@ To be used by creating a :file:`fabfile.py` in your project's root
 directory with at least the following two lines::
 
   from atelier.fablib import *
-  setup_from_fabfile(flobals())
+  setup_from_fabfile(globals())
 
 See :func:`setup_from_fabfile` for more information.
 
@@ -305,8 +305,6 @@ default values in a :xfile:`.fabricrc` file.
     It is not launched automatically by :command:`fab test` or
     :command:`fab bd` because it can take some time and is not always
     necessary.
-
-
 
 
 History
