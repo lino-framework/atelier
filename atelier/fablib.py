@@ -324,6 +324,7 @@ TODO
 (The rest of this page is automatically generated stuff.)
 
 """
+import importlib
 import os
 import textwrap
 import time
@@ -1395,13 +1396,14 @@ def run_tests_coverage():
     puts("Running tests for '%s' within coverage..." % env.project_name)
     #~ env.DOCSDIR.chdir()
     source = []
+    env.current_project.load_fabfile()
     for package_name in env.current_project.SETUP_INFO['packages']:
-        m = __import__(package_name)
+        m = importlib.import_module(package_name)
         source.append(os.path.dirname(m.__file__))
     #~ cov = coverage.coverage(source=['djangosite'])
     if not confirm("coverage source=%s" % source):
         abort
-    cov = coverage.coverage(source=source)
+    cov = coverage.coverage(source=source,)
     #~ cov = coverage.coverage()
     cov.start()
 

@@ -185,7 +185,7 @@ def confirm(prompt=None):
             return True
         if ln.lower() == 'n':
             return False
-        print("Please anwer Y or N")
+        print("Please answer Y or N")
 
 
 def indentation(s):
