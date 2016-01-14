@@ -33,6 +33,7 @@ Testing
 
 
 from __future__ import print_function
+import importlib
 
 import os
 from contextlib import contextmanager
@@ -105,7 +106,8 @@ class Atelier(AttrDict):
             tolerate_sphinx_warnings = False,
             demo_projects = [],
             revision_control_system = None,
-            apidoc_exclude_pathnames = [])
+            apidoc_exclude_pathnames = [],
+            project_name = tasks.parent.absolute().name)
 
         env.update(defaults)
 
@@ -320,3 +322,33 @@ def clean(*cmdline_args):
     env.sphinx_clean()
     env.py_clean()
     # clean_demo_caches()
+
+@task(name='cov')
+def run_tests_coverage():
+    """
+    Run all tests, creating coverage report
+    """
+    import coverage
+    #~ clean_sys_path()
+    print("Running tests for '%s' within coverage..." % env.project_name)
+    #~ env.DOCSDIR.chdir()
+    source = []
+    env.current_project.load_fabfile()
+    for package_name in env.current_project.SETUP_INFO['packages']:
+        m = importlib.import_module(package_name)
+        source.append(os.path.dirname(m.__file__))
+    #~ cov = coverage.coverage(source=['djangosite'])
+    if not confirm("coverage source=%s" % source):
+        exit()
+    cov = coverage.coverage(source=source,)
+    #~ cov = coverage.coverage()
+    cov.start()
+
+    # .. call your code ..
+    rv = run_tests()
+
+    cov.stop()
+    cov.save()
+
+    cov.html_report()
+    return rv
