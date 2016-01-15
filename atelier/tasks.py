@@ -333,7 +333,7 @@ def run_tests_coverage():
     print("Running tests for '%s' within coverage..." % env.project_name)
     #~ env.DOCSDIR.chdir()
     source = []
-    env.current_project.load_fabfile()
+    env.current_project.load_tasks()
     for package_name in env.current_project.SETUP_INFO['packages']:
         m = importlib.import_module(package_name)
         source.append(os.path.dirname(m.__file__))
@@ -351,4 +351,5 @@ def run_tests_coverage():
     cov.save()
 
     cov.html_report()
+    local('coverage report')
     return rv
