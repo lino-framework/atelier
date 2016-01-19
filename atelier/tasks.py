@@ -443,27 +443,40 @@ def run_tests_coverage():
     """
     Run all tests, creating coverage report
     """
+    covfile = env.root_dir.child('.coveragerc')
+    if not covfile.exists():
+        return
     import coverage
     # ~ clean_sys_path()
     print("Running tests for '%s' within coverage..." % env.project_name)
     # ~ env.DOCSDIR.chdir()
-    source = []
-    env.current_project.load_tasks()
-    for package_name in env.current_project.SETUP_INFO['packages']:
-        m = importlib.import_module(package_name)
-        source.append(os.path.dirname(m.__file__))
-    # ~ cov = coverage.coverage(source=['djangosite'])
-    if not confirm("coverage source=%s" % source):
-        exit()
-    cov = coverage.coverage(source=source, )
-    # ~ cov = coverage.coverage()
-    cov.start()
+    if False:
+        source = []
+        env.current_project.load_tasks()
+        for package_name in env.current_project.SETUP_INFO['packages']:
+            m = importlib.import_module(package_name)
+            source.append(os.path.dirname(m.__file__))
+        if not confirm("coverage source=%s" % source):
+            exit()
+        cov = coverage.coverage(source=source, )
+        cov.start()
+        # .. call your code ..
+        rv = run_tests()
+        cov.stop()
+        cov.save()
 
-    # .. call your code ..
-    rv = run_tests()
+    else:
+        os.environ['COVERAGE_PROCESS_START'] = covfile
 
-    cov.stop()
-    cov.save()
+        from atelier.test import interpreter_args
+        import subprocess
+        args = interpreter_args()
+        args += ['setup.py', 'test', '-q']
+        cov = coverage.coverage()
+        cov.start()
+        rv = subprocess.check_output(args, env=os.environ)
+        cov.stop()
+        cov.save()
 
     cov.html_report()
     local('coverage report')

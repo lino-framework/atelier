@@ -1401,8 +1401,7 @@ def run_tests_coverage():
         m = importlib.import_module(package_name)
         source.append(os.path.dirname(m.__file__))
     #~ cov = coverage.coverage(source=['djangosite'])
-    if not confirm("coverage source=%s" % source):
-        abort
+    must_confirm("coverage source=%s" % source)
     cov = coverage.coverage(source=source,)
     #~ cov = coverage.coverage()
     cov.start()
@@ -1413,6 +1412,6 @@ def run_tests_coverage():
     cov.stop()
     cov.save()
 
-    cov.html_report()
+    print(cov.html_report())
     return rv
 
