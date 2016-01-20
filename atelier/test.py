@@ -17,8 +17,14 @@ from setuptools import find_packages
 from atelier.utils import SubProcessParent
 
 
-class TestCase(unittest.TestCase, SubProcessParent):
+def interpreter_args():
+    if 'coverage' in sys.modules:
+        # raise Exception('20160119')
+        return ['coverage', 'run']
+    return [sys.executable]
 
+
+class TestCase(unittest.TestCase, SubProcessParent):
     "Deserves a docstring"
     project_root = NotImplementedError
     #~ maxDiff = None
@@ -73,7 +79,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
                 ok = False
                 for fn in glob.glob(ln):
                     ok = True
-                    args = [sys.executable]
+                    args = interpreter_args()
                     args += ["-m"]
                     args += ["doctest"]
                     # args += ["atelier.doctest_utf8"]
@@ -86,7 +92,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
         """
         run unittest of given file in a subprocess
         """
-        args = [sys.executable]
+        args = interpreter_args()
         #~ args += ["-Wall"]
         args += ["-m"]
         args += ["unittest"]
