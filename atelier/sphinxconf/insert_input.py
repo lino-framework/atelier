@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2014 by Luc Saffre.
+# Copyright 2011-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :class:`InsertInputDirective` class and some
@@ -48,6 +48,7 @@ following future imports have been done::
 
 from __future__ import print_function
 from __future__ import unicode_literals
+from builtins import str
 
 """Note: the `import unicode_literals` caused the following::
 
@@ -81,7 +82,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-from StringIO import StringIO
+from io import StringIO
 # import inspect
 import traceback
 

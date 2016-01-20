@@ -1,4 +1,4 @@
-#~ Copyright 2011-2015 by Luc Saffre.
+#~ Copyright 2011-2016 by Luc Saffre.
 #~ License: BSD, see LICENSE for more details.
 """A minimalistic command-line project management.
 
@@ -22,6 +22,8 @@ management using Atelier
 introduction.
 
 """
+from past.builtins import execfile
+from builtins import object
 
 import os
 import imp
@@ -72,6 +74,20 @@ def get_project_info(root_dir):
             p = p.parent
         # raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
     prj.load_fabfile()
+    return prj
+
+def get_project_info_tasks(root_dir):
+    "Find the project info for the given directory."
+    prj = _PROJECTS_DICT.get(root_dir)
+    if prj is None:
+        # if no config.py found, add current working directory.
+        p = Path().resolve()
+        while p:
+            if p.child('tasks.py').exists():
+                return add_project(p)
+            p = p.parent
+        # raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
+    prj.load_tasks()
     return prj
 
 

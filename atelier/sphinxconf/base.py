@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2014 by Luc Saffre.
+# Copyright 2011-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -25,6 +25,7 @@ Thanks to
 """
 
 from __future__ import print_function
+from builtins import str
 # from __future__ import unicode_literals
 # removed 20140604 because it causes:
 # File "/home/luc/repositories/sphinx/sphinx/application.py", line 548, in add_object_type
@@ -319,7 +320,7 @@ def html_page_context(app, pagename, templatename, context, doctree):
 def setup(app):
     def add(**kw):
         skw = dict()
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             skw[str(k)] = str(v)
 
         app.add_object_type(**skw)

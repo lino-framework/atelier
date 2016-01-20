@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 by Luc Saffre.
+# Copyright 2009-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -8,6 +8,12 @@ Defines a series of utility classes and functions.
 """
 
 from __future__ import print_function
+from builtins import str
+from builtins import input
+from builtins import object
+# Python 2 and 3:
+from future.utils import python_2_unicode_compatible
+
 # from __future__ import unicode_literals
 # causes problems on Windows where `subprocess.Popen` wants only plain strings
 
@@ -18,7 +24,7 @@ import datetime
 import subprocess
 from dateutil import parser as dateparser
 
-
+@python_2_unicode_compatible
 class AttrDict(dict):
 
     """
@@ -42,14 +48,13 @@ class AttrDict(dict):
     {'baz': 2}
     
     """
-
     def __getattr__(self, name):
         try:
             return self[name]
         except KeyError:
             raise AttributeError(
                 "AttrDict instance has no key '%s' (keys are %s)" % (
-                    name, ', '.join(self.keys())))
+                    name, ', '.join(list(self.keys()))))
 
     def define2(self, name, value):
         return self.define(*name.split('.') + [value])
@@ -149,9 +154,9 @@ def ispure(s):
     """
     if s is None:
         return True
-    if type(s) == types.UnicodeType:
+    if type(s) == str:
         return True
-    if type(s) == types.StringType:
+    if type(s) == bytes:
         try:
             s.decode('ascii')
         except UnicodeDecodeError:
@@ -167,7 +172,7 @@ def assert_pure(s):
     #~ assert ispure(s), "%r: not pure" % s
     if s is None:
         return
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         return True
     try:
         s.decode('ascii')
@@ -180,7 +185,7 @@ def confirm(prompt=None):
     Ask for user confirmation from the console.
     """
     while True:
-        ln = raw_input(prompt)
+        ln = eval(input(prompt))
         if ln.lower() in ('y', 'j', 'o'):
             return True
         if ln.lower() == 'n':
@@ -232,14 +237,14 @@ def unindent(s):
     lines = s.splitlines()
     if len(lines) == 0:
         return s.lstrip()
-    mini = sys.maxint
+    mini = sys.maxsize
     for ln in lines:
         ln = ln.rstrip()
         if len(ln) > 0:
             mini = min(mini, indentation(ln))
             if mini == 0:
                 break
-    if mini == sys.maxint:
+    if mini == sys.maxsize:
         return s
     return '\n'.join([ln[mini:] for ln in lines])
 
@@ -261,6 +266,7 @@ class SubProcessParent(object):
         env = dict()
         env.update(os.environ)
         env.update(self.default_environ)
+        # env.update(COVERAGE_PROCESS_START="folder/.coveragerc")
         # for k in self.inheritable_envvars:
         #     v = os.environ.get(k, None)
         #     if v is not None:

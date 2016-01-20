@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2015 by Luc Saffre.
+# Copyright 2013-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """This is an extension for :mod:`atelier.fablib` for managing Java
@@ -47,6 +47,7 @@ warning :message:`The signer certificate will expire within six
 months.` when I run :command:`fab jars` to sign a jar file.
 
 """
+from builtins import object
 
 from unipath import Path
 from fabric.api import local

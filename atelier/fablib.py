@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2015 by Luc Saffre.
+# Copyright 2013-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """A library for `fabric <http://docs.fabfile.org>`__ with tasks I use
@@ -324,6 +324,13 @@ TODO
 (The rest of this page is automatically generated stuff.)
 
 """
+from __future__ import print_function
+from past.builtins import cmp
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 import importlib
 import os
 import textwrap
@@ -507,12 +514,9 @@ def cleanup_pyc(p):
     """Thanks to oddthinking on http://stackoverflow.com/questions/2528283
     """
     for root, dirs, files in os.walk(p):
-        pyc_files = filter(
-            lambda filename: filename.endswith(".pyc"), files)
-        py_files = set(filter(
-            lambda filename: filename.endswith(".py"), files))
-        excess_pyc_files = filter(
-            lambda pyc_filename: pyc_filename[:-1] not in py_files, pyc_files)
+        pyc_files = [filename for filename in files if filename.endswith(".pyc")]
+        py_files = set([filename for filename in files if filename.endswith(".py")])
+        excess_pyc_files = [pyc_filename for pyc_filename in pyc_files if pyc_filename[:-1] not in py_files]
         for excess_pyc_file in excess_pyc_files:
             full_path = os.path.join(root, excess_pyc_file)
             must_confirm("Remove excess file %s:" % full_path)
@@ -571,7 +575,7 @@ def extract_messages_userdocs():
 def rename_data_url_friendly():
     data_dir = env.root_dir.child('docs', 'data')
     #~ print list(data_dir.listdir(names_only=True))
-    print list(data_dir.walk())
+    print(list(data_dir.walk()))
 
 
 def setup_babel_userdocs(babelcmd):
@@ -590,7 +594,7 @@ def setup_babel_userdocs(babelcmd):
                                domain)
                 pot_file = Path(locale_dir, '%s.pot' % domain)
                 if babelcmd == 'init_catalog' and po_file.exists():
-                    print "Skip %s because file exists." % po_file
+                    print("Skip %s because file exists." % po_file)
                 #~ elif babelcmd == 'compile_catalog' and not mo_file.needs_update(po_file):
                     #~ print "Skip %s because newer than .po" % mo_file
                 else:
@@ -627,7 +631,7 @@ def init_catalog_code():
         if loc != 'en':
             f = locale_dir.child(loc, 'LC_MESSAGES', 'django.po')
             if f.exists():
-                print "Skip %s because file exists." % f
+                print("Skip %s because file exists." % f)
             else:
                 args = ["python", "setup.py"]
                 args += ["init_catalog"]
@@ -724,7 +728,7 @@ def summary(*cmdline_args):
             # self.dist.version,
             version)
 
-    print rstgen.table(headers, [cells(p) for p in load_projects()])
+    print(rstgen.table(headers, [cells(p) for p in load_projects()]))
 
 
 @task(alias='cd')
@@ -780,7 +784,7 @@ def commited_today(today=None):
     def mycmp(a, b):
         return cmp(a[0], b[0])
     rows.sort(mycmp)
-    print rstgen.ul(["{0} : {1}\n{2}".format(*row) for row in rows])
+    print(rstgen.ul(["{0} : {1}\n{2}".format(*row) for row in rows]))
     # print rstgen.table(headers, rows)
 
 
@@ -1111,10 +1115,10 @@ def show_pypi_status():
     name = info['name']
     
     try:
-        import xmlrpclib
+        import xmlrpc.client
     except ImportError:
         import xmlrpc.client as xmlrpclib
-    client = xmlrpclib.ServerProxy('https://pypi.python.org/pypi')
+    client = xmlrpc.client.ServerProxy('https://pypi.python.org/pypi')
     released_versions = client.package_releases(name)
     if len(released_versions) == 0:
         must_confirm(

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2015 by Luc Saffre.
+# Copyright 2011-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """This Sphinx extension defines the :rst:dir:`blogger_year` and
@@ -27,6 +27,11 @@ Thanks to
   <http://docutils.sourceforge.net/docs/howto/rst-directives.html>`_
 
 """
+from past.builtins import cmp
+from builtins import str
+from builtins import map
+from builtins import range
+from builtins import object
 
 import os
 import calendar
@@ -184,7 +189,7 @@ class MainBlogIndexDirective(InsertInputDirective):
         if len(years) == 0:
             text += "\n\nNo blogger years found.\n"
         else:
-            children = map(docname, years)
+            children = list(map(docname, years))
             text += toctree(*children, hidden=True)
 
         # if len(hidden):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014-2015 by Luc Saffre.
+# Copyright 2014-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :rst:dir:`sigal_image` directive.
@@ -76,6 +76,8 @@ New since 20140729: Requires `lightbox
 
 from __future__ import print_function
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -211,8 +213,8 @@ class SigalImage(InsertInputDirective):
         # text = ''.join([unicode(c) for c in e.title.children])
         # cells.append(":doc:`%s <%s>`" % (text, e.docname))
         cells.append(":doc:`%s`" % e.docname)
-        cells.append(unicode(e.meta.get('author', '')))
-        cells.append(unicode(e.meta.get('date', '')))
+        cells.append(str(e.meta.get('author', '')))
+        cells.append(str(e.meta.get('date', '')))
         return cells
 
 

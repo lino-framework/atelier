@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2015 by Luc Saffre.
+# Copyright 2011-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :rst:dir:`textimage` and :rst:dir:`complextable`
@@ -10,6 +10,7 @@ directives.
 
 from __future__ import print_function
 from __future__ import unicode_literals
+from builtins import str
 
 from docutils.parsers.rst import directives
 
@@ -34,7 +35,7 @@ class TextImageDirective(InsertInputDirective):
         right = ''
         for arg in self.arguments[0].split():
             right += '.. figure:: %s\n' % arg
-            for i in self.options.items():
+            for i in list(self.options.items()):
                 right += "  :%s: %s\n" % i
             right += "\n  %s\n\n" % arg
             #~ right += "\n  \n\n" % arg

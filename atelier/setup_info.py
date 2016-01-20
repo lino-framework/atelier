@@ -1,13 +1,14 @@
-# Copyright 2013-2015 by Luc Saffre.
+from builtins import str
+# Copyright 2013-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-#~ This module has no docstring because it is to be execfile'd
-#~ from `setup.py`, `atelier/__init__.py` and possibly some external
-#~ tools, too.
+# ~ This module has no docstring because it is to be execfile'd
+# ~ from `setup.py`, `atelier/__init__.py` and possibly some external
+# ~ tools, too.
 
 # Explicitly install `importlib` under Python 2.6. Thanks to
 # http://stackoverflow.com/questions/9418064
-install_requires = ['fabric', 'Sphinx', 'Babel', 'unipath',
+install_requires = ['fabric', 'Sphinx', 'invoke', 'future', 'Babel', 'unipath',
                     'python_dateutil', 'gitpython']
 try:
     import importlib
@@ -66,5 +67,6 @@ def add_package_data(package, *patterns):
     l = SETUP_INFO['package_data'].setdefault(package, [])
     l.extend(patterns)
     return l
+
 
 add_package_data('atelier.sphinxconf', '*.html')

@@ -115,6 +115,8 @@ configuration settings.  Example content::
 """
 
 from __future__ import print_function
+from builtins import str
+from builtins import object
 import importlib
 
 import os
@@ -173,12 +175,9 @@ def cleanup_pyc(p):
     """Thanks to oddthinking on http://stackoverflow.com/questions/2528283
     """
     for root, dirs, files in os.walk(p):
-        pyc_files = filter(
-            lambda filename: filename.endswith(".pyc"), files)
-        py_files = set(filter(
-            lambda filename: filename.endswith(".py"), files))
-        excess_pyc_files = filter(
-            lambda pyc_filename: pyc_filename[:-1] not in py_files, pyc_files)
+        pyc_files = [filename for filename in files if filename.endswith(".pyc")]
+        py_files = set([filename for filename in files if filename.endswith(".py")])
+        excess_pyc_files = [pyc_filename for pyc_filename in pyc_files if pyc_filename[:-1] not in py_files]
         for excess_pyc_file in excess_pyc_files:
             full_path = os.path.join(root, excess_pyc_file)
             must_confirm("Remove excess file %s:" % full_path)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2014 by Luc Saffre.
+# Copyright 2011-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -10,6 +10,7 @@
 - `extlinks`
 
 """
+from builtins import str
 
 from atelier.projects import load_projects
 
