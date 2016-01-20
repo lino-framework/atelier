@@ -121,6 +121,7 @@ import os
 from contextlib import contextmanager
 import glob
 import datetime
+from time import sleep
 from atelier.utils import i2d
 from babel.dates import format_date
 
@@ -130,6 +131,8 @@ from unipath import Path
 from invoke import task
 from invoke import run as local
 from atelier.utils import confirm, AttrDict
+import subprocess
+import sys
 
 
 @contextmanager
@@ -373,7 +376,7 @@ def run_tests():
 
 @task(name='readme')
 def write_readme():
-    """See :cmd:`fab readme`. """
+    """See :cmd:`inv readme`. """
     if not env.main_package:
         return
     if len(env.doc_trees) == 0:
@@ -384,7 +387,7 @@ def write_readme():
     else:
         readme = env.root_dir.child('README.txt')
 
-    env.current_project.load_fabfile()
+    env.current_project.load_tasks()
     # for k in ('name', 'description', 'long_description', 'url'):
     #     if k not in env.current_project.SETUP_INFO:
     #         msg = "SETUP_INFO for {0} has no key '{1}'"
@@ -419,7 +422,7 @@ Read more on %(url)s
 
 @task(write_readme, name='bd')
 def build_docs(*cmdline_args):
-    """See :cmd:`fab bd`. """
+    """See :cmd:`inv bd`. """
     # env.write_readme()
     for docs_dir in env.get_doc_trees():
         print("Invoking Sphinx in in directory %s..." % docs_dir)
@@ -432,7 +435,7 @@ def build_docs(*cmdline_args):
 
 @task(name='clean')
 def clean(*cmdline_args):
-    """See :cmd:`fab clean`. """
+    """See :inv:`inv clean`. """
     env.sphinx_clean()
     env.py_clean()
     # clean_demo_caches()
@@ -468,18 +471,21 @@ def run_tests_coverage():
     else:
         os.environ['COVERAGE_PROCESS_START'] = covfile
 
-        from atelier.test import interpreter_args
-        import subprocess
-        args = interpreter_args()
+        args = [sys.executable]
         args += ['setup.py', 'test', '-q']
         cov = coverage.coverage()
         cov.start()
-        rv = subprocess.check_output(args, env=os.environ)
+        with cd(env.root_dir):
+            rv = subprocess.check_output(args, env=os.environ)
+            # Get coverage for project.py
+            env.current_project.load_tasks()
         cov.stop()
         cov.save()
 
-    cov.html_report()
-    local('coverage report')
+
+    # cov.html_report()
+    with cd(env.root_dir):
+        local('coverage report')
     return rv
 
 
@@ -499,7 +505,7 @@ def make_messages():
 
 @task(name='reg')
 def pypi_register():
-    """See :cmd:`fab reg`. """
+    """See :cmd:`inv reg`. """
     args = ["python", "setup.py"]
     args += ["register"]
     # ~ run_setup('setup.py',args)
@@ -508,7 +514,7 @@ def pypi_register():
 
 @task(name='ci')
 def checkin(today=None):
-    """See :cmd:`fab ci`. """
+    """See :cmd:`inv ci`. """
 
     if env.revision_control_system is None:
         return
@@ -589,9 +595,10 @@ def edit_blog_entry(today=None):
     args += [entry.path]
     local(' '.join(args))
 
+
 @task(name='pd')
 def publish():
-    """See :cmd:`fab pd`. """
+    """See :cmd:`inv pd`. """
     if not env.docs_rsync_dest:
         raise MissingConfig("docs_rsync_dest")
 
@@ -602,10 +609,11 @@ def publish():
             dest_url = env.docs_rsync_dest % name
             publish_docs(build_dir, dest_url)
 
-    # build_dir = env.root_dir.child('userdocs', env.build_dir_name)
-    # if build_dir.exists():
-    #     dest_url = env.docs_rsync_dest % (env.project_name + '-userdocs')
-    #     publish_docs(build_dir, dest_url)
+            # build_dir = env.root_dir.child('userdocs', env.build_dir_name)
+            # if build_dir.exists():
+            #     dest_url = env.docs_rsync_dest % (env.project_name + '-userdocs')
+            #     publish_docs(build_dir, dest_url)
+
 
 def get_doc_trees():
     for rel_doc_tree in env.doc_trees:
@@ -615,6 +623,7 @@ def get_doc_trees():
             msg += "\nCheck your project's `doc_trees` setting."
             raise Exception(msg)
         yield docs_dir
+
 
 def publish_docs(build_dir, dest_url):
     with cd(build_dir):
@@ -627,8 +636,8 @@ def publish_docs(build_dir, dest_url):
         args += ['./']  # source
         args += [dest_url]  # dest
         cmd = ' '.join(args)
-        #~ must_confirm("%s> %s" % (build_dir, cmd))
-        #~ confirm("yes")
+        # ~ must_confirm("%s> %s" % (build_dir, cmd))
+        # ~ confirm("yes")
         local(cmd)
 
 
@@ -681,8 +690,7 @@ def init_catalog_code():
         if loc != 'en':
             f = locale_dir.child(loc, 'LC_MESSAGES', 'django.po')
             if f.exists():
-                print
-                "Skip %s because file exists." % f
+                print("Skip %s because file exists." % f)
             else:
                 args = ["python", "setup.py"]
                 args += ["init_catalog"]
