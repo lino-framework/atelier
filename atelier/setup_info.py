@@ -1,4 +1,3 @@
-from builtins import str
 # Copyright 2013-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
@@ -55,7 +54,7 @@ License :: OSI Approved :: BSD License
 Natural Language :: English
 Operating System :: OS Independent""".splitlines())
 
-SETUP_INFO.update(packages=[str(n) for n in """
+SETUP_INFO.update(packages=[n for n in """
 atelier
 atelier.sphinxconf
 """.splitlines() if n])
