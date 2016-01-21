@@ -76,6 +76,7 @@ def get_project_info(root_dir):
     prj.load_fabfile()
     return prj
 
+
 def get_project_info_tasks(root_dir):
     "Find the project info for the given directory."
     prj = _PROJECTS_DICT.get(root_dir)
@@ -197,12 +198,13 @@ class Project(object):
         fqname = 'atelier.prj_tasks_%s' % self.index
         cwd = Path().resolve()
         self.root_dir.chdir()
-        # print("20141027 %s %s " % (self, self.root_dir))
+        print("20160121 pseudo-importing file %s %s/tasks.py " % (
+            self, self.root_dir))
         (fp, pathname, desc) = imp.find_module('tasks', [self.root_dir])
         m = imp.load_module(fqname, fp, pathname, desc)
         cwd.chdir()
 
-        main_package = getattr(m.env, 'main_package', None)
+        main_package = getattr(m, 'main_package', None)
         if main_package is None:
             return
         self.name = main_package
