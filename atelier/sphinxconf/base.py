@@ -25,7 +25,7 @@ Thanks to
 """
 
 from __future__ import print_function
-from builtins import str
+# from builtins import str
 # from __future__ import unicode_literals
 # removed 20140604 because it causes:
 # File "/home/luc/repositories/sphinx/sphinx/application.py", line 548, in add_object_type
@@ -315,7 +315,6 @@ def html_page_context(app, pagename, templatename, context, doctree):
     #     context.update(
     #         source_code_link="no module in {0}".format(pagename))
         
-
 
 def setup(app):
     def add(**kw):
