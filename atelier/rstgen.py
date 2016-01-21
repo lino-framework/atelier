@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2015 by Luc Saffre.
+# Copyright 2011-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 r"""A library of utilities to programmatically generate chunks of
@@ -17,10 +17,16 @@ whether we should join our effords.)
 """
 
 from __future__ import unicode_literals, print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
+from past.builtins import basestring
+from builtins import object
 
 import sys
 # import cStringIO as StringIO
-import StringIO
+import io
 
 
 class Column(object):
@@ -35,7 +41,7 @@ class Column(object):
         """Adjust required width of this column for the given row.
         """
         s = self.table.format_value(row[self.index])
-        s = unicode(s)
+        s = str(s)
         for ln in s.splitlines():
             if self.width is None or self.width < len(ln):
                 self.width = len(ln)
@@ -71,7 +77,7 @@ def header(level, text):
        ~~~~~~~
     
     """
-    result = StringIO.StringIO()
+    result = io.StringIO()
 
     def writeln(s=''):
         result.write(s + '\n')
@@ -123,7 +129,7 @@ class Table(object):
     simple = True
 
     def format_value(self, v):
-        return unicode(v)
+        return str(v)
 
     def __init__(self, headers, show_headers=True):
         self.headers = [self.format_value(h) for h in headers]
@@ -210,7 +216,7 @@ class Table(object):
     def to_rst(self, rows):
         if len(rows) == 0:
             return "\n"
-        fd = StringIO.StringIO()
+        fd = io.StringIO()
         self.write(fd, rows)
         return fd.getvalue()
 
@@ -483,7 +489,7 @@ def ol(items, bullet="#."):
 def boldheader(title):
     """Convert the given string into bold string, prefixed and followed by
     newlines."""
-    return "\n\n**%s**\n\n" % unicode(title).strip()
+    return "\n\n**%s**\n\n" % str(title).strip()
 
 
 def toctree(*children, **options):
@@ -493,7 +499,7 @@ def toctree(*children, **options):
 .. rubric:: Usage examples
 
 >>> toctree('a', 'b', 'c', maxdepth=2)
-u'\n\n.. toctree::\n    :maxdepth: 2\n\n    a\n    b\n    c\n'
+'\n\n.. toctree::\n    :maxdepth: 2\n\n    a\n    b\n    c\n'
 
 >>> toctree('a', 'b', 'c', hidden=True)
 u'\n\n.. toctree::\n    :hidden:\n\n    a\n    b\n    c\n'
@@ -501,7 +507,7 @@ u'\n\n.. toctree::\n    :hidden:\n\n    a\n    b\n    c\n'
 
     """
     text = "\n\n.. toctree::"
-    for k, v in options.items():
+    for k, v in list(options.items()):
         text += "\n    "
         text += ":{0}:".format(k)
         if isinstance(v, basestring):
@@ -518,7 +524,7 @@ u'\n\n.. toctree::\n    :hidden:\n\n    a\n    b\n    c\n'
     return text
 
 
-class stdout_prefix():
+class stdout_prefix(object):
     # experimental
     def __init__(self, prefix):
         self.prefix = '\n' + prefix
@@ -547,7 +553,7 @@ def attrtable(rows, cols):
     """
     if isinstance(cols, basestring):
         cols = cols.split()
-    cells = [[unicode(getattr(obj, k)) for k in cols] for obj in rows]
+    cells = [[str(getattr(obj, k)) for k in cols] for obj in rows]
     return table(cols, cells)
 
 

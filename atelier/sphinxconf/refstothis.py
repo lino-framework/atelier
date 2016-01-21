@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014 by Luc Saffre.
+# Copyright 2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """A Sphinx extension which adds the :rst:dir:`refstothis` directive.
@@ -24,6 +24,7 @@ TODO:
 
 from __future__ import print_function
 from __future__ import unicode_literals
+from past.builtins import cmp
 
 import logging
 logger = logging.getLogger(__name__)

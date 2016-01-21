@@ -1,3 +1,4 @@
+# .coveragerc to control coverage.py
 [run]
-include =
-  atelier
+#branch = True
+cover_pylib = False

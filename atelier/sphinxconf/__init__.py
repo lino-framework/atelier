@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2015 by Luc Saffre.
+# Copyright 2011-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Sphinx setup used to build most of the documentation trees
@@ -26,6 +26,7 @@ mainained by myself.
 
 from __future__ import print_function
 from __future__ import unicode_literals
+from builtins import str
 
 """Note: the `import unicode_literals` caused the following::
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2015 by Luc Saffre.
+# Copyright 2013-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """A wrapper for Python's doctest.
@@ -21,6 +21,7 @@ where Jason Scheirer advises:
     strongly discourage them, most forbid them.
 
 """
+from __future__ import print_function
 
 import os
 import sys

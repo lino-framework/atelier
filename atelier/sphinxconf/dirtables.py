@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014 by Luc Saffre.
+# Copyright 2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :rst:dir:`directory`, :rst:dir:`tickets_table` and
@@ -24,6 +24,10 @@ This doesn't yet work unfortunately.
 
 from __future__ import print_function
 from __future__ import unicode_literals
+from past.builtins import cmp
+from builtins import str
+from builtins import filter
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -117,7 +121,7 @@ class DirectoryTable(InsertInputDirective):
         if expr:
             def func(e):
                 return eval(expr, dict(e=e))
-            entries = filter(func, entries)
+            entries = list(filter(func, entries))
 
         orderby = self.options.get('orderby')
         if orderby:
@@ -141,8 +145,8 @@ class DirectoryTable(InsertInputDirective):
         # text = ''.join([unicode(c) for c in e.title.children])
         # cells.append(":doc:`%s <%s>`" % (text, e.docname))
         cells.append(":doc:`%s`" % e.docname)
-        cells.append(unicode(e.meta.get('author', '')))
-        cells.append(unicode(e.meta.get('date', '')))
+        cells.append(str(e.meta.get('author', '')))
+        cells.append(str(e.meta.get('date', '')))
         return cells
 
 
@@ -157,7 +161,7 @@ class TicketsTable(DirectoryTable):
         cells.append(":doc:`%s`" % e.docname)
         # text = ''.join([unicode(c) for c in e.title.children])
         # cells.append(":doc:`%s <%s>`" % (text, e.docname))
-        cells.append(unicode(e.meta.get('state', '')))
+        cells.append(str(e.meta.get('state', '')))
         # cells.append(unicode(e.meta.get('reporter', '')))
         ref = e.meta.get('module', '')
         if ref:
@@ -165,8 +169,8 @@ class TicketsTable(DirectoryTable):
         else:
             cells.append("(N/A)")
 
-        cells.append(unicode(e.meta.get('since', '')))
-        cells.append(unicode(e.meta.get('for', '')))
+        cells.append(str(e.meta.get('since', '')))
+        cells.append(str(e.meta.get('for', '')))
         return cells
 
 
