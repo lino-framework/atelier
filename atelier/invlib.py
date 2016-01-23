@@ -383,11 +383,8 @@ Read more on %(url)s
 
 
 @task(write_readme, name='bd')
-# @task(name='bd')
 def build_docs(ctx, *cmdline_args):
     """See :cmd:`inv bd`. """
-    # print(20160121, ctx)
-    # write_readme(ctx)
     for docs_dir in get_doc_trees(ctx):
         print("Invoking Sphinx in in directory %s..." % docs_dir)
         builder = 'html'
@@ -490,7 +487,7 @@ def checkin(ctx, today=None):
             print("No changes to commit in {0}.".format(ctx.root_dir))
             return
 
-    show_revision_status()
+    show_revision_status(ctx)
 
     today = get_current_date(today)
 
@@ -579,16 +576,6 @@ def publish(ctx):
             #     publish_docs(build_dir, dest_url)
 
 
-def get_doc_trees(ctx):
-    for rel_doc_tree in ctx.doc_trees:
-        docs_dir = ctx.root_dir.child(rel_doc_tree)
-        if not docs_dir.exists():
-            msg = "Directory %s does not exist." % docs_dir
-            msg += "\nCheck your project's `doc_trees` setting."
-            raise Exception(msg)
-        yield docs_dir
-
-
 def publish_docs(build_dir, dest_url):
     with cd(build_dir):
         args = ['rsync', '-r']
@@ -605,7 +592,7 @@ def publish_docs(build_dir, dest_url):
         local(cmd)
 
 
-def show_revision_status():
+def show_revision_status(ctx):
     if ctx.revision_control_system == 'hg':
         args = ["hg", "st"]
     elif ctx.revision_control_system == 'git':

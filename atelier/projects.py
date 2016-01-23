@@ -198,8 +198,8 @@ class Project(object):
         fqname = 'atelier.prj_tasks_%s' % self.index
         cwd = Path().resolve()
         self.root_dir.chdir()
-        print("20160121 pseudo-importing file %s %s/tasks.py " % (
-            self, self.root_dir))
+        # print("20160121 pseudo-importing file %s %s/tasks.py " % (
+        #     self, self.root_dir))
         (fp, pathname, desc) = imp.find_module('tasks', [self.root_dir])
         m = imp.load_module(fqname, fp, pathname, desc)
         cwd.chdir()
