@@ -28,7 +28,11 @@ atelier.rstgen
    
       Column
       Table
+      basestring
+      object
+      range
       stdout_prefix
+      str
    
    
 

@@ -10,6 +10,7 @@ atelier.sphinxconf.dirtables
    .. autosummary::
    
       abspath
+      cmp
       dirname
       docname_join
       join
@@ -33,6 +34,9 @@ atelier.sphinxconf.dirtables
       FileSystemLoader
       InsertInputDirective
       TicketsTable
+      filter
+      object
+      str
    
    
 

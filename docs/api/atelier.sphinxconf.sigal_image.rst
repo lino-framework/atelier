@@ -9,6 +9,8 @@ atelier.sphinxconf.sigal_image
 
    .. autosummary::
    
+      buildurl
+      line2html
       setup
    
    
@@ -19,8 +21,12 @@ atelier.sphinxconf.sigal_image
 
    .. autosummary::
    
+      Format
       InsertInputDirective
       SigalImage
+      Thumb
+      object
+      str
    
    
 

@@ -22,6 +22,7 @@ atelier.sphinxconf.complex_tables
       ComplexTableDirective
       InsertInputDirective
       TextImageDirective
+      str
    
    
 

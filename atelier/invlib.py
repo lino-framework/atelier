@@ -10,7 +10,7 @@ to manage my Python projects.
 .. _invoke_commands:
 
 ``invoke`` commands
-================
+===================
 
 Documenting
 -----------
