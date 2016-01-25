@@ -185,7 +185,7 @@ def confirm(prompt=None):
     Ask for user confirmation from the console.
     """
     while True:
-        ln = eval(input(prompt))
+        ln = input(prompt)
         if ln.lower() in ('y', 'j', 'o'):
             return True
         if ln.lower() == 'n':

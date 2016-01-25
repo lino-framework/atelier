@@ -16,6 +16,7 @@ atelier.sphinxconf.base
       coderef_role
       command_parse
       get_blog_url
+      html_page_context
       i2d
       import_module
       message_role

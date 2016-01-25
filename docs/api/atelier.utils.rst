@@ -16,7 +16,9 @@ atelier.utils
       i2t
       iif
       indentation
+      input
       ispure
+      python_2_unicode_compatible
       unindent
    
    
@@ -29,6 +31,8 @@ atelier.utils
    
       AttrDict
       SubProcessParent
+      object
+      str
    
    
 

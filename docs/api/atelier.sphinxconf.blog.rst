@@ -9,6 +9,7 @@ atelier.sphinxconf.blog
 
    .. autosummary::
    
+      cmp
       docname
       docname_to_day
       format_date
@@ -30,6 +31,10 @@ atelier.sphinxconf.blog
       InsertInputDirective
       MainBlogIndexDirective
       YearBlogIndexDirective
+      map
+      object
+      range
+      str
    
    
 
