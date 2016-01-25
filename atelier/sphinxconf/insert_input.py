@@ -82,7 +82,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-from io import StringIO
+# from io import StringIO  # see blog 2016/0125.html
+from StringIO import StringIO
 # import inspect
 import traceback
 
