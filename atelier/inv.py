@@ -11,7 +11,7 @@ import os
 from unipath import Path
 from invoke import Collection
 
-import invlib
+from . import invlib
 ns = Collection()
 ns.add_collection(invlib)
 
