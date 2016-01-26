@@ -11,7 +11,7 @@ import os
 from unipath import Path
 from invoke import Collection
 
-from . import invlib
+import invlib
 ns = Collection()
 ns.add_collection(invlib)
 
@@ -61,4 +61,4 @@ def setup_from_tasks(
     #               'doc_trees':prj.doc_trees},)
 
     ns.configure(_globals_dict)
-
+    return _globals_dict
