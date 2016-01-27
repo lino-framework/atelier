@@ -239,10 +239,10 @@ def add_demo_project(ctx, p):
     See also :attr:`ctx.demo_projects`.
 
     """
-    if p in ctx.demo_projects:
+    if p in ctx.get('demo_projects',False):
         return
         # raise Exception("Duplicate entry %r in demo_projects." % db)
-    ctx.demo_projects.append(p)
+    ctx['demo_projects'].append(p)
 
 
 def get_doc_trees(ctx):

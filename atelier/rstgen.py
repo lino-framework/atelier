@@ -17,7 +17,9 @@ whether we should join our effords.)
 """
 
 from __future__ import unicode_literals, print_function
+from builtins import bytes
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import str
 from builtins import range
@@ -31,6 +33,7 @@ import io
 
 class Column(object):
     "A column in a table. "
+
     def __init__(self, table, index, header, width=None):
         self.table = table
         self.header = header
@@ -45,8 +48,8 @@ class Column(object):
         for ln in s.splitlines():
             if self.width is None or self.width < len(ln):
                 self.width = len(ln)
-        # if self.width > 500:
-        #     raise Exception("width %r more than 500" % s)
+                # if self.width > 500:
+                #     raise Exception("width %r more than 500" % s)
 
 
 def header(level, text):
@@ -81,6 +84,7 @@ def header(level, text):
 
     def writeln(s=''):
         result.write(s + '\n')
+
     _write_header(writeln, level, text)
     return result.getvalue()
 
@@ -93,6 +97,7 @@ def write_header(fd, level, text):
 
     def writeln(text=''):
         fd.write(text + '\n')
+
     _write_header(writeln, level, text)
 
 
@@ -122,7 +127,6 @@ def _write_header(writeln, level, s):
 
 
 class Table(object):
-
     """Used to render a table.
     
     """
@@ -146,7 +150,7 @@ class Table(object):
                 self.simple = False
 
     def format_row(self, row):
-        #~ return ' '.join([unicode(row[c.index]).ljust(c.width) for c in self.cols])
+        # ~ return ' '.join([unicode(row[c.index]).ljust(c.width) for c in self.cols])
         lines = [[] for x in self.cols]
         for c in self.cols:
             cell = row[c.index]
@@ -172,8 +176,8 @@ class Table(object):
         rstgen.table(['header1','header2']) no longer raises an exception "No rows in []"
         but renders a table with only headers and no rows.
         """
-        #~ if len(data) == 0:
-            #~ raise Exception("No rows in %r" % data)
+        # ~ if len(data) == 0:
+        # ~ raise Exception("No rows in %r" % data)
         rows = []
         for i, row in enumerate(data):
             assert len(row) == len(self.cols)
@@ -193,9 +197,9 @@ class Table(object):
             self.colsep = ' '
         else:
             self.header1 = '+' + \
-                '+'.join([('-' * (c.width + 2)) for c in self.cols]) + '+'
+                           '+'.join([('-' * (c.width + 2)) for c in self.cols]) + '+'
             self.header2 = '+' + \
-                '+'.join([('=' * (c.width + 2)) for c in self.cols]) + '+'
+                           '+'.join([('=' * (c.width + 2)) for c in self.cols]) + '+'
             self.margin = '|'
             self.colsep = '|'
 
@@ -386,16 +390,16 @@ return a blank line when there are no rows:
     return t.to_rst(rows)
 
 
-#~ def py2rst(v):
-    #~ from django.db import models
-    #~ if issubclass(v,models.Model):
-        #~ headers = ("name","verbose name","type","help text")
-        #~ rows = [
-          #~ (f.name,f.verbose_name,f.__class__.__name__,f.help_text)
-          #~ for f in v._meta.fields
-        #~ ]
-        #~ return table(headers,rows)
-    #~ return unicode(v)
+# ~ def py2rst(v):
+# ~ from django.db import models
+# ~ if issubclass(v,models.Model):
+# ~ headers = ("name","verbose name","type","help text")
+# ~ rows = [
+# ~ (f.name,f.verbose_name,f.__class__.__name__,f.help_text)
+# ~ for f in v._meta.fields
+# ~ ]
+# ~ return table(headers,rows)
+# ~ return unicode(v)
 
 
 def ul(items, bullet="-"):
@@ -536,7 +540,7 @@ class stdout_prefix(object):
     def write(self, s):
         s = self.prefix + self.prefix.join(s.splitlines())
         self.saved_stdout.write(s)
-            
+
     def __exit__(self, type, value, traceback):
         sys.stdout = self.saved_stdout
         self.writer = None
@@ -560,6 +564,7 @@ def attrtable(rows, cols):
 def _test():
     import doctest
     doctest.testmod()
+
 
 if __name__ == "__main__":
     _test()
