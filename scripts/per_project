@@ -1,5 +1,5 @@
 #!python
-# Copyright 2013-2015 by Luc Saffre.
+# Copyright 2013-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """USAGE : per_project cmd1 [cmd2 ...]
 
@@ -47,7 +47,10 @@ def main():
         #~ args = ["fab"]
         #~ args += commands
         rv = subprocess.call(commands,cwd=prj.root_dir)
-        if rv: return rv
+        if rv:
+            print "%s in project %s ended with error %s" % (
+                ' '.join(commands), prj.nickname, rv)
+            return rv
     return 0
         
 if __name__ == '__main__':
