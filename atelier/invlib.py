@@ -239,7 +239,7 @@ def add_demo_project(ctx, p):
     See also :attr:`ctx.demo_projects`.
 
     """
-    if p in ctx.get('demo_projects',False):
+    if p in ctx.get('demo_projects', False):
         return
         # raise Exception("Duplicate entry %r in demo_projects." % db)
     ctx['demo_projects'].append(p)
@@ -273,6 +273,7 @@ def sync_docs_data(ctx, docs_dir):
                 cmd = 'cp %s %s' % (src, target.parent)
                 local(cmd)
 
+
 def sphinx_build(ctx, builder, docs_dir,
                  cmdline_args=[], language=None, build_dir_cmd=None):
     args = ['sphinx-build', '-b', builder]
@@ -302,7 +303,6 @@ def sphinx_build(ctx, builder, docs_dir,
     if build_dir_cmd is not None:
         with cd(build_dir):
             local(build_dir_cmd)
-
 
 
 class RstFile(object):
@@ -675,5 +675,3 @@ def update_catalog_code(ctx):
             cmd = ' '.join(args)
             # ~ must_confirm(cmd)
             local(cmd)
-
-
