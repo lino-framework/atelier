@@ -5,16 +5,18 @@
 """"""
 
 from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import os
 
 from unipath import Path
 from invoke import Collection
-
-import invlib
+from atelier import invlib
 
 ns = Collection()
-ns.add_collection(invlib)
+tasks = ns.from_module(invlib)
+ns.add_collection(tasks)
 
 
 def setup_from_tasks(
