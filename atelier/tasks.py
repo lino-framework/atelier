@@ -12,8 +12,10 @@ from unipath import Path
 from invoke import Collection
 
 import invlib
+
 ns = Collection()
 ns.add_collection(invlib)
+
 
 def setup_from_tasks(
         globals_dict, main_package=None,
@@ -37,7 +39,8 @@ def setup_from_tasks(
         revision_control_system=None,
         apidoc_exclude_pathnames=[],
         project_name=tasks.parent.absolute().name,
-        editor_command=None)
+        editor_command=None,
+        blog_root=root_dir.child('docs'))
 
     if settings_module_name is not None:
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name

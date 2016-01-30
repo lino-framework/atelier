@@ -189,13 +189,12 @@ class Project(object):
             return
 
         self._tasks_loaded = True
-    
         self.name = self.nickname
 
         if not self.root_dir.child('tasks.py').exists():
             return
 
-        fqname = 'atelier.prj_tasks_%s' % self.index
+        fqname = 'atelier.prj_%s' % self.index
         cwd = Path().resolve()
         self.root_dir.chdir()
         # print("20160121 pseudo-importing file %s %s/tasks.py " % (
@@ -204,7 +203,9 @@ class Project(object):
         m = imp.load_module(fqname, fp, pathname, desc)
         cwd.chdir()
 
-        main_package = getattr(m, 'main_package', None)
+        # main_package = getattr(m, 'main_package', None)
+        ctx = getattr(m, 'ctx', None)
+        main_package = ctx.get('main_package', None)
         if main_package is None:
             return
         self.name = main_package
