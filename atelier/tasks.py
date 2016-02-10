@@ -10,14 +10,13 @@ from __future__ import unicode_literals
 
 import os
 
-from unipath import Path
 from invoke import Collection
 from atelier import invlib
+from unipath import Path
 
 ns = Collection()
 tasks = ns.from_module(invlib)
 ns.add_collection(tasks)
-
 
 def setup_from_tasks(
         globals_dict, main_package=None,
@@ -58,12 +57,12 @@ def setup_from_tasks(
     # # The following import will populate the projects
     from atelier.projects import get_project_info_tasks
     prj = get_project_info_tasks(root_dir)
-    # prj.load_tasks()
+    prj.load_tasks()
     _globals_dict.update(
         current_project=prj, doc_trees=prj.doc_trees)
     # print(globals_dict)
-    # ns.configure({'main_package':main_package,
-    #               'doc_trees':prj.doc_trees},)
+    ns.configure({'main_package':main_package,
+                  'doc_trees':prj.doc_trees},)
 
     ns.configure(_globals_dict)
     return _globals_dict

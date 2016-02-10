@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2013-2016 by Luc Saffre & Hamza Khchine.
 # License: BSD, see LICENSE for more details.
+from __future__ import print_function
+from __future__ import unicode_literals
 """A library for `invoke <http://www.pyinvoke.org/>`__ with tasks I use
 to manage my Python projects.
 
@@ -114,28 +116,23 @@ configuration settings.  Example content::
 
 """
 
-from __future__ import print_function
-from builtins import str
-from builtins import object
 import importlib
-
 import os
 from contextlib import contextmanager
 import glob
 import datetime
-from time import sleep
+import subprocess
+import sys
+
+from builtins import str
+from builtins import object
 from atelier.utils import i2d
 from babel.dates import format_date
-
 from atelier import rstgen
-
 from unipath import Path
 from invoke import ctask as task
 from invoke import run as local
-from atelier.utils import confirm, AttrDict
-from invoke.context import Context
-import subprocess
-import sys
+from atelier.utils import confirm
 
 
 @contextmanager

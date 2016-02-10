@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 #~ Copyright 2011-2016 by Luc Saffre.
 #~ License: BSD, see LICENSE for more details.
 """A minimalistic command-line project management.
@@ -22,6 +23,7 @@ management using Atelier
 introduction.
 
 """
+from __future__ import unicode_literals
 from past.builtins import execfile
 from builtins import object
 
@@ -205,19 +207,20 @@ class Project(object):
 
         # main_package = getattr(m, 'main_package', None)
         ctx = getattr(m, 'ctx', None)
-        main_package = ctx.get('main_package', None)
-        if main_package is None:
-            return
-        self.name = main_package
-        # self.name = name
-        # removed 20140116:
-        # self.dist = pkg_resources.get_distribution(name)
-        self.module = import_module(main_package)
-        self.SETUP_INFO = get_setup_info(self.root_dir)
-        self.srcref_url = getattr(self.module, 'srcref_url', None)
-        self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
-        self.intersphinx_urls = getattr(
-            self.module, 'intersphinx_urls', {})
+        if ctx is not None:
+            main_package = ctx.get('main_package', None)
+            if main_package is None:
+                return
+            self.name = main_package
+            # self.name = name
+            # removed 20140116:
+            # self.dist = pkg_resources.get_distribution(name)
+            self.module = import_module(main_package)
+            self.SETUP_INFO = get_setup_info(self.root_dir)
+            self.srcref_url = getattr(self.module, 'srcref_url', None)
+            self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
+            self.intersphinx_urls = getattr(
+                self.module, 'intersphinx_urls', {})
 
 
 for fn in config_files:

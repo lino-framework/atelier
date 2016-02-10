@@ -16,8 +16,11 @@ This is the :mod:`atelier` package.
    sphinxconf
 
 """
+from __future__ import unicode_literals
 
 import os
+from .setup_info import SETUP_INFO
+
 fn = os.path.join(os.path.dirname(__file__), 'setup_info.py')
 exec(compile(open(fn, "rb").read(), fn, 'exec'))
 # above line is equivalent to the line below, except that it works
@@ -31,5 +34,5 @@ srcref_url = 'https://github.com/lsaffre/atelier/blob/master/%s'
 
 
 # thanks to http://stackoverflow.com/questions/11741574/how-to-print-utf-8-encoded-text-to-the-console-in-python-3
-import sys, codecs, locale
-sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
+# import sys, codecs, locale
+# sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
