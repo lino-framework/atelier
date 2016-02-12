@@ -1,8 +1,3 @@
-|Travis|_
-
-.. |Travis| image:: https://api.travis-ci.org/lsaffre/atelier.png?branch=master
-.. _Travis: https://travis-ci.org/lsaffre/atelier
-
 ==========================
 atelier README
 ==========================
@@ -27,6 +22,12 @@ It contains
   (`atelier.fablib <http://atelier.lino-framework.org/api/atelier.fablib.html>`_)
 - a minimalistic project management
   (`atelier.projects <http://atelier.lino-framework.org/api/atelier.projects.html>`_)
+
+.. raw:: html
+
+  <a href="https://travis-ci.org/lsaffre/atelier">
+  <img src="https://api.travis-ci.org/lsaffre/atelier.png?branch=master"/>
+  </a>
 
 
 

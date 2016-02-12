@@ -229,9 +229,15 @@ default values in a :xfile:`.fabricrc` file.
 
   .. attribute:: editor_command
 
-    A string with the command name of a non waiting editor.
+    A string with the command name of your text editor. Example::
 
-    editor_command = "emacsclient -n {0}"
+      editor_command = "emacsclient -n {0}"
+
+    Note that this must be a *non waiting* command, i.e. which
+    launches the editor on the specified file in a new window and then
+    returns control to the command line without waiting for that new
+    window to terminate.
+
 
 
   .. attribute:: docs_rsync_dest

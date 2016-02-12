@@ -42,6 +42,12 @@ It contains
 - a minimalistic project management
   (`atelier.projects <http://atelier.lino-framework.org/api/atelier.projects.html>`_)
 
+.. raw:: html
+
+  <a href="https://travis-ci.org/lsaffre/atelier">
+  <img src="https://api.travis-ci.org/lsaffre/atelier.png?branch=master"/>
+  </a>
+
 """,
     classifiers="""\
 Programming Language :: Python
