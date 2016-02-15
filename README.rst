@@ -10,7 +10,7 @@ Description
 `atelier` is a collection of tools for managing and maintaining
 Python software projects.
 
-It contains
+It contains:
 
 - some general Python utilities
   (`atelier.utils <http://atelier.lino-framework.org/api/atelier.utils.html>`_)

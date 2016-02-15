@@ -16,7 +16,7 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='0.0.16',
+    version='0.0.17',
     install_requires=install_requires,
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
@@ -29,7 +29,7 @@ SETUP_INFO = dict(
 `atelier` is a collection of tools for managing and maintaining
 Python software projects.
 
-It contains
+It contains:
 
 - some general Python utilities
   (`atelier.utils <http://atelier.lino-framework.org/api/atelier.utils.html>`_)
