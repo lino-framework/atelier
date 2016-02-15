@@ -7,6 +7,15 @@ Changes in `atelier`
 Version 0.0.17 (not released)
 =============================
 
+- Subtle change in :attr:`docs_rsync_dest
+  <atelier.fablib.env.docs_rsync_dest>`: until now it was not possible
+  to specify a template without any placeholder (as the one in the
+  example on https://github.com/lsaffre/dblog)
+
+- Started to replace fabric by invoke. This is not finished. For the
+  moment you should continue to use the ``fab`` commands. But soon
+  they will be replaced by ``inv`` commands.
+
 
 Version 0.0.16 (released 2015-12-04)
 ====================================
