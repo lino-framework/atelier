@@ -341,13 +341,6 @@ TODO
 (The rest of this page is automatically generated stuff.)
 
 """
-from __future__ import print_function
-from past.builtins import cmp
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from past.builtins import basestring
-from builtins import object
 import importlib
 import os
 import textwrap

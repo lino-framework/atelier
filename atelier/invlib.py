@@ -3,6 +3,7 @@
 # License: BSD, see LICENSE for more details.
 from __future__ import print_function
 from __future__ import unicode_literals
+
 """A library for `invoke <http://www.pyinvoke.org/>`__ with tasks I use
 to manage my Python projects.
 
@@ -43,6 +44,11 @@ Documenting
     - Dangling `.pyc` files which don't have a corresponding `.py` file.
     - `cache` directories of demo projects
     - additional files specified in :attr:`env.cleanable_files`
+
+.. command:: inv readme
+
+    Generate or update `README.txt` or `README.rst` file from
+    `SETUP_INFO`.
 
 Internationalization
 --------------------
@@ -322,6 +328,7 @@ class MissingConfig(Exception):
 
 @task(name='initdb')
 def initdb_demo(ctx):
+    """Run :manage:`initdb_demo` on every demo :attr:`env.demo_projects`. """
     run_in_demo_projects(ctx, 'initdb_demo', "--noinput", '--traceback')
 
 
@@ -335,7 +342,8 @@ def run_tests(ctx):
 
 @task(name='readme')
 def write_readme(ctx):
-    """See :cmd:`inv readme`. """
+    """Generate or update `README.txt` or `README.rst` file from
+    `SETUP_INFO`. """
     if not ctx.main_package:
         return
     if len(ctx.doc_trees) == 0:
@@ -381,7 +389,7 @@ Read more on %(url)s
 
 @task(write_readme, name='bd')
 def build_docs(ctx, *cmdline_args):
-    """See :cmd:`inv bd`. """
+    """Build docs. Build all Sphinx HTML doctrees for this project. """
     for docs_dir in get_doc_trees(ctx):
         print("Invoking Sphinx in in directory %s..." % docs_dir)
         builder = 'html'
@@ -393,7 +401,7 @@ def build_docs(ctx, *cmdline_args):
 
 @task(name='clean')
 def clean(ctx, *cmdline_args):
-    """See :inv:`inv clean`. """
+    """Remove temporary and generated files: """
     sphinx_clean(ctx)
     py_clean(ctx)
     # clean_demo_caches()
@@ -463,7 +471,7 @@ def make_messages(ctx):
 
 @task(name='reg')
 def pypi_register(ctx):
-    """See :cmd:`inv reg`. """
+    """Register this project (and its current version) to PyPI. """
     args = ["python", "setup.py"]
     args += ["register"]
     # ~ run_setup('setup.py',args)
@@ -472,7 +480,8 @@ def pypi_register(ctx):
 
 @task(name='ci')
 def checkin(ctx, today=None):
-    """See :cmd:`inv ci`. """
+    """Checkin and push to repository, using today's blog entry as commit
+    message."""
 
     if ctx.revision_control_system is None:
         return
@@ -556,15 +565,21 @@ def edit_blog_entry(ctx, today=None):
 
 @task(name='pd')
 def publish(ctx):
-    """See :cmd:`inv pd`. """
+    """Publish docs. Upload docs to public web server. """
     if not ctx.docs_rsync_dest:
         raise MissingConfig("docs_rsync_dest")
 
     for docs_dir in get_doc_trees(ctx):
         build_dir = docs_dir.child(ctx.build_dir_name)
         if build_dir.exists():
-            name = '%s_%s' % (ctx.project_name, docs_dir.name)
-            dest_url = ctx.docs_rsync_dest % name
+            # name = '%s_%s' % (ctx.project_name, docs_dir.name)
+            # dest_url = ctx.docs_rsync_dest % name
+            if "%" in ctx.docs_rsync_dest:
+                name = '%s_%s' % (ctx.project_name, docs_dir.name)
+                dest_url = ctx.docs_rsync_dest % name
+            else:
+                dest_url = ctx.docs_rsync_dest.format(
+                    prj=ctx.project_name, docs=docs_dir.name)
             publish_docs(build_dir, dest_url)
 
             # build_dir = ctx.root_dir.child('userdocs', ctx.build_dir_name)
