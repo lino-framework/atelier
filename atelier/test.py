@@ -81,8 +81,8 @@ class TestCase(unittest.TestCase, SubProcessParent):
                     ok = True
                     args = interpreter_args()
                     args += ["-m"]
-                    args += ["doctest"]
-                    # args += ["atelier.doctest_utf8"]
+                    # args += ["doctest"]
+                    args += ["atelier.doctest_utf8"]
                     args += [fn]
                     self.run_subprocess(args, **kw)
                 if not ok:
