@@ -4,13 +4,10 @@
 
 """A wrapper for Python's doctest.
 
-No longer used because now atelier adds a codecs writer to sys.stdout.
-
 Because the command-line interface of `python -m doctest` has no way
 to specify an encoding of a (non-.py) input file.
 
 Code originally copied from Python 2.7 doctest.py
-
 
 About the :message:`ValueError: Attempted relative import in
 non-package` problem: see `Doctest and relative imports

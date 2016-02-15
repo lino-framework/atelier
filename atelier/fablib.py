@@ -199,6 +199,7 @@ content like this::
     user = luc
     blogger_project = lino
     docs_rsync_dest = luc@example.org:~/public_html/%s
+    docs_rsync_dest = luc@example.org:~/public_html/{prj}_{docs}
     sdist_dir = /home/luc/projects/lino/docs/dl
     temp_dir = /home/luc/tmp
 
@@ -229,9 +230,15 @@ default values in a :xfile:`.fabricrc` file.
 
   .. attribute:: editor_command
 
-    A string with the command name of a non waiting editor.
+    A string with the command name of your text editor. Example::
 
-    editor_command = "emacsclient -n {0}"
+      editor_command = "emacsclient -n {0}"
+
+    Note that this must be a *non waiting* command, i.e. which
+    launches the editor on the specified file in a new window and then
+    returns control to the command line without waiting for that new
+    window to terminate.
+
 
 
   .. attribute:: docs_rsync_dest
@@ -242,11 +249,21 @@ default values in a :xfile:`.fabricrc` file.
 
     Example::
 
+      env.docs_rsync_dest = 'luc@example.org:~/public_html/{prj}_{docs}'
+
+    The ``{prj}`` in this template will be replaced by the internal
+    name of this project, and ``{{docs}}`` by the name of the doctree
+    (taken from :attr:`doc_trees`).
+
+    For backward compatibility the following (deprecated) template is
+    also still allowed::
+
       env.docs_rsync_dest = 'luc@example.org:~/public_html/%s'
 
     The ``%s`` in this template will be replaced by a name `xxx_yyy`,
     where `xxx` is the internal name of this project and `yyy` the
     name of the doctree (taken from :attr:`doc_trees`).
+
 
   .. attribute:: doc_trees
 
@@ -985,8 +1002,13 @@ def publish():
     for docs_dir in get_doc_trees():
         build_dir = docs_dir.child(env.build_dir_name)
         if build_dir.exists():
-            name = '%s_%s' % (env.project_name, docs_dir.name)
-            dest_url = env.docs_rsync_dest % name
+            if "%" in env.docs_rsync_dest:
+                name = '%s_%s' % (env.project_name, docs_dir.name)
+                dest_url = env.docs_rsync_dest % name
+            else:
+                dest_url = env.docs_rsync_dest.format(
+                    prj=env.project_name, docs=docs_dir.name)
+
             publish_docs(build_dir, dest_url)
 
     # build_dir = env.root_dir.child('userdocs', env.build_dir_name)
