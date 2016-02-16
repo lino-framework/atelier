@@ -13,7 +13,6 @@ atelier.fablib
       add_demo_project
       clean_demo_caches
       cleanup_pyc
-      cmp
       confirm
       extract_messages
       extract_messages_userdocs
@@ -55,9 +54,6 @@ atelier.fablib
    
       Path
       RstFile
-      basestring
-      object
-      str
       timedelta
    
    
