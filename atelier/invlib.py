@@ -348,8 +348,7 @@ def run_tests(ctx):
 
 @task(name='readme')
 def write_readme(ctx):
-    """Generate or update `README.txt` or `README.rst` file from
-    `SETUP_INFO`. """
+    """Generate or update `README.txt` or `README.rst` file from `SETUP_INFO`. """
     if not ctx.main_package:
         return
     if len(ctx.doc_trees) == 0:
@@ -416,7 +415,7 @@ def clean(ctx, *cmdline_args):
 @task(name='cov')
 def run_tests_coverage(ctx):
     """
-    Run all tests, creating coverage report
+    Run all tests, creating coverage report.
     """
     covfile = ctx.root_dir.child('.coveragerc')
     if not covfile.exists():
@@ -486,8 +485,7 @@ def pypi_register(ctx):
 
 @task(name='ci')
 def checkin(ctx, today=None):
-    """Checkin and push to repository, using today's blog entry as commit
-    message."""
+    """Checkin and push to repository, using today's blog entry as commit message."""
 
     if ctx.revision_control_system is None:
         return
