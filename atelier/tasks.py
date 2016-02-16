@@ -12,11 +12,23 @@ import os
 
 from invoke import Collection
 from atelier import invlib
+
 from unipath import Path
+from atelier.invlib import (initdb_demo, run_tests, write_readme, clean, run_tests_coverage, make_messages,
+                            pypi_register, checkin, edit_blog_entry, publish)
 
 ns = Collection()
-tasks = ns.from_module(invlib)
-ns.add_collection(tasks)
+ns.add_task(initdb_demo)
+ns.add_task(run_tests)
+ns.add_task(write_readme)
+ns.add_task(clean)
+ns.add_task(run_tests_coverage)
+ns.add_task(make_messages)
+ns.add_task(pypi_register)
+ns.add_task(checkin)
+ns.add_task(edit_blog_entry)
+ns.add_task(publish)
+
 
 def setup_from_tasks(
         globals_dict, main_package=None,
@@ -61,8 +73,8 @@ def setup_from_tasks(
     _globals_dict.update(
         current_project=prj, doc_trees=prj.doc_trees)
     # print(globals_dict)
-    ns.configure({'main_package':main_package,
-                  'doc_trees':prj.doc_trees},)
+    ns.configure({'main_package': main_package,
+                  'doc_trees': prj.doc_trees}, )
 
     ns.configure(_globals_dict)
     return _globals_dict
