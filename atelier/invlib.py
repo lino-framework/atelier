@@ -1,8 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2013-2016 by Luc Saffre & Hamza Khchine.
 # License: BSD, see LICENSE for more details.
-from __future__ import print_function
-from __future__ import unicode_literals
 
 """A library for `invoke <http://www.pyinvoke.org/>`__ with tasks I use
 to manage my Python projects.
@@ -10,19 +8,24 @@ to manage my Python projects.
 .. contents::
   :local:
 
-.. _invoke_commands:
+.. _inv_commands:
 
-``invoke`` commands
-===================
+``inv`` commands
+================
+
+.. command:: inv
+
+The :cmd:`inv` command has been installed with the `invoke
+<http://www.pyinvoke.org/>`_ package.
 
 Documenting
 -----------
 
-.. command:: invoke blog
+.. command:: inv blog
 
     Edit today's blog entry, create an empty file if it doesn't yet exist.
 
-.. command:: invoke bd
+.. command:: inv bd
 
     Build docs. Build all Sphinx HTML doctrees for this project.
 
@@ -31,12 +34,12 @@ Documenting
     options for `sphinx-build` depend also on
     :attr:`env.tolerate_sphinx_warnings` and :attr:`env.use_dirhtml`.
 
-.. command:: invoke pd
+.. command:: inv pd
 
     Publish docs. Upload docs to public web server.
 
 
-.. command:: invoke clean
+.. command:: inv clean
 
     Remove temporary and generated files:
 
@@ -53,7 +56,7 @@ Documenting
 Internationalization
 --------------------
 
-.. command:: invoke mm
+.. command:: inv mm
 
     ("make messages")
 
@@ -63,7 +66,7 @@ Internationalization
 Deploy
 ------
 
-.. command:: invoke ci
+.. command:: inv ci
 
     Checkin and push to repository, using today's blog entry as commit
     message.
@@ -80,18 +83,18 @@ Deploy
     does currently not (yet) check whether my branch is up-to-date
     with 'origin/master'.
 
-.. command:: invoke reg
+.. command:: inv reg
 
     Register this project (and its current version) to PyPI.
 
 Testing
 -------
 
-.. command:: invoke initdb
+.. command:: inv initdb
 
     Run :manage:`initdb_demo` on every demo :attr:`env.demo_projects`.
 
-.. command:: invoke test
+.. command:: inv test
 
     See :func:`run_tests`.
 
@@ -121,6 +124,9 @@ configuration settings.  Example content::
   add_demo_project('foobar.demo')
 
 """
+
+from __future__ import print_function
+from __future__ import unicode_literals
 
 import importlib
 import os
@@ -328,7 +334,7 @@ class MissingConfig(Exception):
 
 @task(name='initdb')
 def initdb_demo(ctx):
-    """Run :manage:`initdb_demo` on every demo :attr:`env.demo_projects`. """
+    """Run `manage.py initdb_demo` on every demo project."""
     run_in_demo_projects(ctx, 'initdb_demo', "--noinput", '--traceback')
 
 
@@ -401,7 +407,7 @@ def build_docs(ctx, *cmdline_args):
 
 @task(name='clean')
 def clean(ctx, *cmdline_args):
-    """Remove temporary and generated files: """
+    """Remove temporary and generated files."""
     sphinx_clean(ctx)
     py_clean(ctx)
     # clean_demo_caches()
