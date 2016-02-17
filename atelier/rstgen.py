@@ -18,6 +18,7 @@ whether we should join our effords.)
 
 from __future__ import unicode_literals, print_function
 from builtins import bytes
+from future.utils import python_2_unicode_compatible
 from future import standard_library
 
 standard_library.install_aliases()
@@ -494,7 +495,6 @@ def boldheader(title):
     newlines."""
     return "\n\n**%s**\n\n" % str(title).strip()
 
-from future.utils import python_2_unicode_compatible
 
 @python_2_unicode_compatible
 def toctree(*children, **options):
