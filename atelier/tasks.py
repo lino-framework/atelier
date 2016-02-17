@@ -71,7 +71,6 @@ def setup_from_tasks(
     prj.load_tasks()
     # ns.configure({
     #     'current_project': prj})
-    print(prj)
     ns.configure({'doc_trees': prj.doc_trees})
     ns.configure({'main_package': main_package,
                   'doc_trees': prj.doc_trees})

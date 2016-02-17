@@ -27,7 +27,6 @@ from past.builtins import basestring
 from builtins import object
 
 import sys
-# import cStringIO as StringIO
 import io
 
 
@@ -495,7 +494,9 @@ def boldheader(title):
     newlines."""
     return "\n\n**%s**\n\n" % str(title).strip()
 
+from future.utils import python_2_unicode_compatible
 
+@python_2_unicode_compatible
 def toctree(*children, **options):
     r"""Return a `toctree` directive with specified `options` and
 `children`.
@@ -506,7 +507,7 @@ def toctree(*children, **options):
 '\n\n.. toctree::\n    :maxdepth: 2\n\n    a\n    b\n    c\n'
 
 >>> toctree('a', 'b', 'c', hidden=True)
-u'\n\n.. toctree::\n    :hidden:\n\n    a\n    b\n    c\n'
+'\n\n.. toctree::\n    :hidden:\n\n    a\n    b\n    c\n'
 
 
     """
@@ -525,7 +526,7 @@ u'\n\n.. toctree::\n    :hidden:\n\n    a\n    b\n    c\n'
     for child in children:
         text += "\n    " + child
     text += "\n"
-    return text
+    return str(text)
 
 
 class stdout_prefix(object):
