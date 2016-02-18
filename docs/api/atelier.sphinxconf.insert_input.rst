@@ -24,6 +24,7 @@ atelier.sphinxconf.insert_input
       InsertInputDirective
       Py2rstDirective
       StringIO
+      str
    
    
 

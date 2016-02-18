@@ -13,6 +13,7 @@ atelier.rstgen
       boldheader
       header
       ol
+      python_2_unicode_compatible
       table
       toctree
       ul
