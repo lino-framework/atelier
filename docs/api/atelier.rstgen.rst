@@ -13,7 +13,6 @@ atelier.rstgen
       boldheader
       header
       ol
-      python_2_unicode_compatible
       table
       toctree
       ul
@@ -29,12 +28,7 @@ atelier.rstgen
    
       Column
       Table
-      basestring
-      bytes
-      object
-      range
       stdout_prefix
-      str
    
    
 

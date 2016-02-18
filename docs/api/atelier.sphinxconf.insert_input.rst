@@ -9,7 +9,6 @@ atelier.sphinxconf.insert_input
 
    .. autosummary::
    
-      nested_parse_with_titles
       setup
    
    
@@ -20,11 +19,8 @@ atelier.sphinxconf.insert_input
 
    .. autosummary::
    
-      Directive
       InsertInputDirective
       Py2rstDirective
-      StringIO
-      str
    
    
 
