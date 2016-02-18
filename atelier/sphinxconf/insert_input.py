@@ -83,7 +83,8 @@ logger = logging.getLogger(__name__)
 
 import sys
 # from io import StringIO  # see blog 2016/0125.html
-from StringIO import StringIO
+# from StringIO import StringIO
+from io import BytesIO
 # import inspect
 import traceback
 
@@ -209,7 +210,7 @@ class Py2rstDirective(InsertInputDirective):
 
     def output_from_exec(self, code):
         old = sys.stdout
-        buffer = StringIO()
+        buffer = BytesIO()
         sys.stdout = buffer
         context = self.get_context()
 
