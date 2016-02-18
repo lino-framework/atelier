@@ -48,7 +48,7 @@ following future imports have been done::
 
 from __future__ import print_function
 from __future__ import unicode_literals
-# from builtins import str
+from builtins import str
 
 """Note: the `import unicode_literals` caused the following::
 
@@ -63,7 +63,7 @@ from __future__ import unicode_literals
         'doc_field_types': doc_field_types})
     TypeError: type() argument 1 must be string, not unicode
     
-I solved this by a manual patch in line 308 of 
+I solved this by a manual patch in line 308 of
 :file:`sphinx/application.py`::
     
     def import_object(self, objname, source=None):
@@ -82,9 +82,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-# from io import StringIO  # see blog 2016/0125.html
-# from StringIO import StringIO
-from io import BytesIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO  # see blog 20160125, 20160218
 # import inspect
 import traceback
 
@@ -210,7 +211,7 @@ class Py2rstDirective(InsertInputDirective):
 
     def output_from_exec(self, code):
         old = sys.stdout
-        buffer = BytesIO()
+        buffer = StringIO()
         sys.stdout = buffer
         context = self.get_context()
 

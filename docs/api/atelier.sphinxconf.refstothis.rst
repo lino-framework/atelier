@@ -9,9 +9,6 @@ atelier.sphinxconf.refstothis
 
    .. autosummary::
    
-      cmp
-      docname_join
-      pprint
       py2rst
       setup
    
@@ -23,7 +20,6 @@ atelier.sphinxconf.refstothis
 
    .. autosummary::
    
-      InsertInputDirective
       RefsToThis
    
    

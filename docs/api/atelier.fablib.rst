@@ -9,25 +9,18 @@ atelier.fablib
 
    .. autosummary::
    
-      abort
       add_demo_project
       clean_demo_caches
       cleanup_pyc
-      confirm
       extract_messages
       extract_messages_userdocs
-      format_date
       get_blog_entry
       get_current_date
       get_doc_trees
-      i2d
       init_catalog_code
-      lcd
-      local
       must_confirm
       must_exist
       publish_docs
-      puts
       py_clean
       rmtree_after_confirm
       run_in_demo_projects
@@ -39,7 +32,6 @@ atelier.fablib
       sphinx_build
       sphinx_clean
       sync_docs_data
-      task
       unused_build_api
       unused_get_locale_dir
       update_catalog_code
@@ -52,9 +44,7 @@ atelier.fablib
 
    .. autosummary::
    
-      Path
       RstFile
-      timedelta
    
    
 

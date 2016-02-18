@@ -28,12 +28,7 @@ atelier.rstgen
    
       Column
       Table
-      basestring
-      bytes
-      object
-      range
       stdout_prefix
-      str
    
    
 
