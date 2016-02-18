@@ -69,8 +69,8 @@ def setup_from_tasks(
     from atelier.projects import get_project_info_tasks
     prj = get_project_info_tasks(root_dir)
     prj.load_tasks()
-    # ns.configure({
-    #     'current_project': prj})
+    ns.configure({
+        'current_project': prj})
     ns.configure({'doc_trees': prj.doc_trees})
     ns.configure({'main_package': main_package,
                   'doc_trees': prj.doc_trees})
