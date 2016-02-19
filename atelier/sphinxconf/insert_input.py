@@ -49,6 +49,7 @@ following future imports have been done::
 from __future__ import print_function
 from __future__ import unicode_literals
 from builtins import str
+from future.utils import PY3
 
 """Note: the `import unicode_literals` caused the following::
 
@@ -82,11 +83,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-try:
+if PY3:
+    from io import BytesIO as StringIO  # see blog 20160125, 20160218
+else:
     from StringIO import StringIO
-except ImportError:
-    from io import StringIO  # see blog 20160125, 20160218
-# import inspect
+
 import traceback
 
 from docutils import nodes
