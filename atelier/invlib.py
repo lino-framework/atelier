@@ -234,13 +234,18 @@ def run_in_demo_projects(ctx, admin_cmd, *more):
         print("-" * 80)
         print("In demo project {0}:".format(mod))
 
-        # m = import_module(mod)
-        args = ["django-admin.py"]
-        args += [admin_cmd]
-        args += more
-        args += ["--settings=" + mod]
-        cmd = " ".join(args)
-        local(cmd)
+        from importlib import import_module
+        m = import_module(mod)
+        p = m.SITE.cache_dir or m.SITE.project_dir
+
+        with cd(p):
+            # m = import_module(mod)
+            args = ["django-admin.py"]
+            args += [admin_cmd]
+            args += more
+            args += ["--settings=" + mod]
+            cmd = " ".join(args)
+            local(cmd)
 
 
 def add_demo_project(ctx, p):
