@@ -1038,7 +1038,7 @@ def run_in_demo_projects(admin_cmd, *more):
         from importlib import import_module
         m = import_module(mod)
         # p = Path(m.__file__).parent.absolute()
-        p = m.SITE.cache_dir
+        p = m.SITE.cache_dir or m.SITE.project_dir
 
         with lcd(p):
             args = ["django-admin.py"]
