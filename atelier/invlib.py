@@ -447,17 +447,25 @@ def run_tests_coverage(ctx):
     else:
         os.environ['COVERAGE_PROCESS_START'] = covfile
 
-        args = [sys.executable]
-        args += ['setup.py', 'test', '-q']
-        cov = coverage.coverage()
+        source = []
+        prj = ctx.current_project
+        prj.load_tasks()
+        packages = prj.SETUP_INFO.get('packages')
+        if not packages:
+            raise Exception("No packages in {0}".format(prj))
+        for package_name in packages:
+            m = importlib.import_module(package_name)
+            source.append(os.path.dirname(m.__file__))
+        cov = coverage.coverage(source=source, )
+        # cov = coverage.coverage()
         cov.start()
         with cd(ctx.root_dir):
-            rv = subprocess.check_output(args, env=os.environ)
             # Get coverage for project.py
-            ctx.current_project.load_tasks()
+            args = [sys.executable]
+            args += ['setup.py', 'test', '-q']
+            rv = subprocess.check_output(args, env=os.environ)
         cov.stop()
         cov.save()
-
 
     # cov.html_report()
     with cd(ctx.root_dir):

@@ -5,6 +5,8 @@
 """
 Defines a series of utility classes and functions.
 
+$ python setup.py test -s tests.BasicTests.test_utils
+
 """
 
 from __future__ import print_function
@@ -23,6 +25,7 @@ import types
 import datetime
 import subprocess
 from dateutil import parser as dateparser
+from dateutil.relativedelta import relativedelta
 
 @python_2_unicode_compatible
 class AttrDict(dict):
@@ -145,6 +148,28 @@ def i2t(s):
     if len(s) <= 2:
         return datetime.time(int(s), 0)
     raise ValueError(s)
+
+
+def last_day_of_month(d):
+    """Return the last day of the month of the given date.
+
+    >>> from atelier.utils import i2d
+    >>> last_day_of_month(i2d(20160212))
+    datetime.date(2016, 2, 29)
+    >>> last_day_of_month(i2d(20161201))
+    datetime.date(2016, 12, 31)
+    >>> last_day_of_month(i2d(20160123))
+    datetime.date(2016, 1, 31)
+    >>> last_day_of_month(i2d(20161123))
+    datetime.date(2016, 11, 30)
+
+    Thanks to `stackoverflow.com
+    <http://stackoverflow.com/questions/42950/get-last-day-of-the-month-in-python>`_.
+
+    """
+    return d + relativedelta(day=31)
+    # d = datetime.date(d.year, d.month + 1, 1)
+    # return relativedelta(d, days=-1)
 
 
 def ispure(s):
