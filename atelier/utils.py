@@ -342,6 +342,12 @@ def date_offset(ref, days=0, **offset):
         return ref + datetime.timedelta(**offset)
     return ref
 
+def dict_py2(old_dict):
+    from future.utils import viewitems
+    new_dict = {}
+    for (key, value) in viewitems(old_dict):
+        new_dict[str(key)] = str(value)
+    return new_dict
 
 # def get_visual_editor():
 #     """Returns the name of the visual editor, usually stored in the
