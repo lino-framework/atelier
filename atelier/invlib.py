@@ -424,53 +424,22 @@ def run_tests_coverage(ctx):
     """
     covfile = ctx.root_dir.child('.coveragerc')
     if not covfile.exists():
-        return
+        raise Exception('.coveragerc file is not present under root directory {0}.'.format(ctx.root_dir))
     import coverage
     # ~ clean_sys_path()
     print("Running tests for '%s' within coverage..." % ctx.project_name)
     # ~ ctx.DOCSDIR.chdir()
-    if False:
-        source = []
-        ctx.current_project.load_tasks()
-        for package_name in ctx.current_project.SETUP_INFO['packages']:
-            m = importlib.import_module(package_name)
-            source.append(os.path.dirname(m.__file__))
-        if not confirm("coverage source=%s" % source):
-            exit()
-        cov = coverage.coverage(source=source, )
-        cov.start()
-        # .. call your code ..
-        rv = run_tests()
-        cov.stop()
-        cov.save()
-
-    else:
-        os.environ['COVERAGE_PROCESS_START'] = covfile
-
-        source = []
-        prj = ctx.current_project
-        prj.load_tasks()
-        packages = prj.SETUP_INFO.get('packages')
-        if not packages:
-            raise Exception("No packages in {0}".format(prj))
-        for package_name in packages:
-            m = importlib.import_module(package_name)
-            source.append(os.path.dirname(m.__file__))
-        cov = coverage.coverage(source=source, )
-        # cov = coverage.coverage()
-        cov.start()
-        with cd(ctx.root_dir):
-            # Get coverage for project.py
-            args = [sys.executable]
-            args += ['setup.py', 'test', '-q']
-            rv = subprocess.check_output(args, env=os.environ)
-        cov.stop()
-        cov.save()
-
-    # cov.html_report()
-    with cd(ctx.root_dir):
-        local('coverage report')
-    return rv
+    os.environ['COVERAGE_PROCESS_START'] = covfile
+    cov = coverage.coverage()
+    cov.start()
+    import unittest
+    tests = unittest.TestLoader().discover(ctx.root_dir)
+    unittest.TextTestRunner(verbosity=1).run(tests)
+    cov.stop()
+    cov.save()
+    cov.combine()
+    cov.report()
+    cov.erase()
 
 
 @task(name='mm')
