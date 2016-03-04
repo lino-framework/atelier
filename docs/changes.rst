@@ -4,10 +4,17 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.17 (not released)
+Version 0.0.19 (not released)
 =============================
 
+Version 0.0.18 (released 2016-03-04)
+====================================
+
 - New function :func:`atelier.utils.last_day_of_month`.
+
+
+Version 0.0.17 (released 2016-02-15)
+====================================
 
 - Subtle change in :attr:`docs_rsync_dest
   <atelier.fablib.env.docs_rsync_dest>`: until now it was not possible
