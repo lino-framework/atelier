@@ -7,6 +7,8 @@ Changes in `atelier`
 Version 0.0.17 (not released)
 =============================
 
+- New function :func:`atelier.utils.last_day_of_month`.
+
 - Subtle change in :attr:`docs_rsync_dest
   <atelier.fablib.env.docs_rsync_dest>`: until now it was not possible
   to specify a template without any placeholder (as the one in the
