@@ -2,3 +2,6 @@
 [run]
 #branch = True
 cover_pylib = False
+parallel = True
+source = atelier/
+omit = *test*.py
