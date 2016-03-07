@@ -346,8 +346,29 @@ def dict_py2(old_dict):
     from future.utils import viewitems
     new_dict = {}
     for (key, value) in viewitems(old_dict):
-        new_dict[str(key)] = str(value)
+        if type(value) == dict:
+            new_dict[str(key)] = dict_py2(value)
+        elif type(value) == list:
+            new_dict[str(key)] = list_py2(value)
+        elif type(value) == tuple:
+            new_dict[str(key)] = tuple_py2(value)
+        else:
+            new_dict[str(key)] = str(value)
     return new_dict
+
+def list_py2(old_list):
+    new_list = []
+    for item in old_list:
+        if type(item) == dict:
+            new_list.append(dict_py2(item))
+        else:
+            new_list.append(str(item))
+    return new_list
+
+def tuple_py2(old_tuple):
+    lst = list(old_tuple)
+    lst = list_py2(lst)
+    return tuple(lst)
 
 # def get_visual_editor():
 #     """Returns the name of the visual editor, usually stored in the
