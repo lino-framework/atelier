@@ -4,8 +4,15 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.19 (not released)
+Version 0.0.20 (not released)
 =============================
+
+Version 0.0.19 (released 2016-03-08)
+====================================
+
+- New functions :func:`atelier.utils.dict_py2`,
+  :func:`atelier.utils.list_py2` and :func:`atelier.utils.tuple_py2` are
+  required for Lino's test suite.
 
 Version 0.0.18 (released 2016-03-04)
 ====================================

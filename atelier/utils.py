@@ -342,7 +342,12 @@ def date_offset(ref, days=0, **offset):
         return ref + datetime.timedelta(**offset)
     return ref
 
+
 def dict_py2(old_dict):
+    """Convert the given `dict` so that it's `repr` is the same for both
+    Python 2 and 3.
+
+    """
     from future.utils import viewitems
     new_dict = {}
     for (key, value) in viewitems(old_dict):
@@ -356,7 +361,12 @@ def dict_py2(old_dict):
             new_dict[str(key)] = str(value)
     return new_dict
 
+
 def list_py2(old_list):
+    """Convert the given `list` so that it's `repr` is the same for both
+    Python 2 and 3.
+
+    """
     new_list = []
     for item in old_list:
         if type(item) == dict:
@@ -365,7 +375,12 @@ def list_py2(old_list):
             new_list.append(str(item))
     return new_list
 
+
 def tuple_py2(old_tuple):
+    """Convert the given `tuple` so that it's `repr` is the same for both
+    Python 2 and 3.
+
+    """
     lst = list(old_tuple)
     lst = list_py2(lst)
     return tuple(lst)
