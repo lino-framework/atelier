@@ -427,14 +427,17 @@ def run_tests_coverage(ctx):
     (overwriting any files without confirmation).
 
     """
-    SETUP_INFO = get_setup_info(ctx.root_dir)
-    if 'test_suite' not in SETUP_INFO:
-        raise Exception("No `test_suite` in your `setup.py`.")
-    test_suite = ctx.root_dir.child(SETUP_INFO['test_suite'])
+    if True:
+        SETUP_INFO = get_setup_info(ctx.root_dir)
+        if 'test_suite' not in SETUP_INFO:
+            raise Exception("No `test_suite` in your `setup.py`.")
+        test_suite = ctx.root_dir.child(SETUP_INFO['test_suite'])
+    else:
+        test_suite = ctx.root_dir
 
     covfile = ctx.root_dir.child('.coveragerc')
     if not covfile.exists():
-        raise Exception('.coveragerc file is not present under root directory {0}.'.format(ctx.root_dir))
+        raise Exception('There is no file {0}'.format(covfile))
     import coverage
     # ~ clean_sys_path()
     # print("Running tests for '%s' within coverage..." % ctx.project_name)
