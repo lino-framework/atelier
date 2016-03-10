@@ -444,20 +444,30 @@ def run_tests_coverage(ctx):
     print("Running tests in '%s' within coverage..." % test_suite)
     # ~ ctx.DOCSDIR.chdir()
     os.environ['COVERAGE_PROCESS_START'] = covfile
-    cov = coverage.coverage()
-    cov.start()
-    import unittest
-    tests = unittest.TestLoader().discover(test_suite)
-    unittest.TextTestRunner(verbosity=1).run(tests)
-    cov.stop()
-    cov.save()
-    cov.combine()
-    cov.report()
+    # cov = coverage.coverage()
+    # cov.start()
+    # import unittest
+    # tests = unittest.TestLoader().discover(test_suite)
+    # unittest.TextTestRunner(verbosity=1).run(tests)
+    # cov.stop()
+    # cov.save()
+    # cov.combine()
+    # cov.report()
+    # htmlcov = ctx.root_dir.child('htmlcov')
+    # if htmlcov.exists():
+    #     print("Writing html report to %s" % htmlcov)
+    #     cov.html_report(include=cov.get_data().measured_files())
+    # cov.erase()
+    local('coverage erase')
+    local('coverage run setup.py test')
+    local('coverage combine')
+    local('coverage report')
     htmlcov = ctx.root_dir.child('htmlcov')
     if htmlcov.exists():
         print("Writing html report to %s" % htmlcov)
-        cov.html_report(include=cov.get_data().measured_files())
-    cov.erase()
+        local('coverage html')
+        print('html report is ready.')
+    local('coverage erase')
 
 
 @task(name='mm')
