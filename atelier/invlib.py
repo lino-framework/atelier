@@ -419,7 +419,7 @@ def clean(ctx, *cmdline_args):
 
 
 @task(name='cov')
-def run_tests_coverage(ctx):
+def run_tests_coverage(ctx, html=False, html_cov_dir='htmlcov'):
     """Run all tests and create a coverage report.
 
     If there a directory named :xfile:`htmlcov` in your project's
@@ -444,20 +444,29 @@ def run_tests_coverage(ctx):
     print("Running tests in '%s' within coverage..." % test_suite)
     # ~ ctx.DOCSDIR.chdir()
     os.environ['COVERAGE_PROCESS_START'] = covfile
-    cov = coverage.coverage()
-    cov.start()
-    import unittest
-    tests = unittest.TestLoader().discover(test_suite)
-    unittest.TextTestRunner(verbosity=1).run(tests)
-    cov.stop()
-    cov.save()
-    cov.combine()
-    cov.report()
-    htmlcov = ctx.root_dir.child('htmlcov')
-    if htmlcov.exists():
-        print("Writing html report to %s" % htmlcov)
-        cov.html_report(include=cov.get_data().measured_files())
-    cov.erase()
+    # cov = coverage.coverage()
+    # cov.start()
+    # import unittest
+    # tests = unittest.TestLoader().discover(test_suite)
+    # unittest.TextTestRunner(verbosity=1).run(tests)
+    # cov.stop()
+    # cov.save()
+    # cov.combine()
+    # cov.report()
+    # htmlcov = ctx.root_dir.child('htmlcov')
+    # if htmlcov.exists():
+    #     print("Writing html report to %s" % htmlcov)
+    #     cov.html_report(include=cov.get_data().measured_files())
+    # cov.erase()
+    local('coverage erase')
+    local('coverage run setup.py test')
+    local('coverage combine')
+    local('coverage report')
+    if html:
+        print("Writing html report to %s" % html_cov_dir)
+        local('coverage html -d {html_cov_dir} && open {html_cov_dir}/index.html'.format(html_cov_dir=html_cov_dir))
+        print('html report is ready.')
+    local('coverage erase')
 
 
 @task(name='mm')
