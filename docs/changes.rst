@@ -7,6 +7,10 @@ Changes in `atelier`
 Version 0.0.20 (not released)
 =============================
 
+- Fixed a bug which caused :message:`TypeError:
+  object.__new__(NotImplementedType) is not safe, use
+  NotImplementedType.__new__()`
+
 Version 0.0.19 (released 2016-03-08)
 ====================================
 

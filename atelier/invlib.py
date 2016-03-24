@@ -144,6 +144,8 @@ from atelier import rstgen
 from unipath import Path
 from invoke import ctask as task
 from invoke import run as local
+
+import atelier
 from atelier.utils import confirm
 from .projects import get_setup_info
 
@@ -207,8 +209,8 @@ def py_clean(ctx):
     """Delete dangling `.pyc` files.
 
     """
-    if ctx.current_project.module is not None:
-        p = Path(ctx.current_project.module.__file__).parent
+    if atelier.current_project.module is not None:
+        p = Path(atelier.current_project.module.__file__).parent
         cleanup_pyc(p)
     p = ctx.root_dir.child('tests')
     if p.exists():
@@ -247,17 +249,6 @@ def run_in_demo_projects(ctx, admin_cmd, *more):
             args += ["--settings=" + mod]
             cmd = " ".join(args)
             local(cmd)
-
-
-def add_demo_project(ctx, p):
-    """Register the specified settings module as being a Django demo project.
-    See also :attr:`ctx.demo_projects`.
-
-    """
-    if p in ctx.get('demo_projects', False):
-        return
-        # raise Exception("Duplicate entry %r in demo_projects." % db)
-    ctx['demo_projects'].append(p)
 
 
 def get_doc_trees(ctx):
@@ -365,7 +356,7 @@ def write_readme(ctx):
     else:
         readme = ctx.root_dir.child('README.txt')
 
-    ctx.current_project.load_tasks()
+    atelier.current_project.load_tasks()
     # for k in ('name', 'description', 'long_description', 'url'):
     #     if k not in env.current_project.SETUP_INFO:
     #         msg = "SETUP_INFO for {0} has no key '{1}'"
@@ -384,7 +375,7 @@ Description
 %(long_description)s
 
 Read more on %(url)s
-""" % ctx.current_project.SETUP_INFO
+""" % atelier.current_project.SETUP_INFO
     txt = txt.encode('utf-8')
     if readme.exists() and readme.read_file() == txt:
         return
@@ -552,7 +543,15 @@ def edit_blog_entry(ctx, today=None):
     today = get_current_date(today)
     entry = get_blog_entry(ctx, today)
     if not entry.path.exists():
-        if not confirm("Create file %s?" % entry.path):
+        if ctx.languages is None:
+            txt = today.strftime(ctx.long_date_format)
+        else:
+            txt = format_date(
+                today, format='full', locale=ctx.languages[0])
+        content = rstgen.header(1, txt)
+        content = ":date: {0}\n\n".format(today) + content
+        msg = "{0}\nCreate file {1}?".format(content, entry.path)
+        if not confirm(msg):
             return
         # for every year we create a new directory.
         yd = entry.path.parent
@@ -563,16 +562,12 @@ def edit_blog_entry(ctx, today=None):
             txt = ".. blogger_year::\n"
             yd.child('index.rst').write_file(txt.encode('utf-8'))
 
-        if ctx.languages is None:
-            txt = today.strftime(ctx.long_date_format)
-        else:
-            txt = format_date(
-                today, format='full', locale=ctx.languages[0])
-        entry.path.write_file(rstgen.header(1, txt).encode('utf-8'))
+        entry.path.write_file(content.encode('utf-8'))
         # touch it for Sphinx:
         entry.path.parent.child('index.rst').set_times()
-    args = [ctx.editor_command]
+    args = [ctx.editor_command.format(entry.path)]
     args += [entry.path]
+    # raise Exception("20160324 %s", args)
     local(' '.join(args))
 
 
@@ -612,7 +607,7 @@ def publish_docs(build_dir, dest_url):
         args += ['./']  # source
         args += [dest_url]  # dest
         cmd = ' '.join(args)
-        # ~ must_confirm("%s> %s" % (build_dir, cmd))
+        # must_confirm("%s> %s" % (build_dir, cmd))
         # ~ confirm("yes")
         local(cmd)
 
@@ -700,3 +695,4 @@ def update_catalog_code(ctx):
             cmd = ' '.join(args)
             # ~ must_confirm(cmd)
             local(cmd)
+

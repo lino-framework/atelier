@@ -13,8 +13,12 @@ import os
 from invoke import Collection
 
 from unipath import Path
-from atelier.invlib import (initdb_demo, run_tests, write_readme, clean, run_tests_coverage, make_messages,
-                            pypi_register, checkin, edit_blog_entry, publish)
+import atelier
+from atelier.invlib import (initdb_demo, run_tests, write_readme,
+                            clean, run_tests_coverage, make_messages,
+                            pypi_register, checkin, edit_blog_entry,
+                            publish, build_docs)
+
 
 ns = Collection()
 ns.add_task(initdb_demo)
@@ -27,7 +31,18 @@ ns.add_task(pypi_register)
 ns.add_task(checkin)
 ns.add_task(edit_blog_entry)
 ns.add_task(publish)
+ns.add_task(build_docs)
 
+
+# def add_demo_project(self, p):
+#     """Register the specified settings module as being a Django demo project.
+#     See also :attr:`ctx.demo_projects`.
+
+#     """
+#     if p in ctx.get('demo_projects', False):
+#         return
+#         # raise Exception("Duplicate entry %r in demo_projects." % db)
+#     ctx['demo_projects'].append(p)
 
 def setup_from_tasks(
         globals_dict, main_package=None,
@@ -47,11 +62,14 @@ def setup_from_tasks(
         'locale_dir': None,
         'tolerate_sphinx_warnings': False,
         'demo_projects': [],
+        'cleanable_files': [],
         'revision_control_system': None,
         'apidoc_exclude_pathnames': [],
         'project_name': tasks.parent.absolute().name,
         'editor_command': None,
-        'blog_root': root_dir.child('docs')
+        'languages': None,
+        'blog_root': root_dir.child('docs'),
+        'long_date_format': "%Y%m%d (%A, %d %B %Y)",
     }
 
     if settings_module_name is not None:
@@ -69,10 +87,18 @@ def setup_from_tasks(
     from atelier.projects import get_project_info_tasks
     prj = get_project_info_tasks(root_dir)
     prj.load_tasks()
-    # ns.configure({
-    #     'current_project': prj})
+
+    # we cannot store current_project using configure() because it
+    # cannot be pickled. And we don't need to store it there, it is
+    # not a configuration value but just a global internal variable.
+    # ns.configure({ 'current_project': prj})
+    atelier.current_project = prj
     ns.configure({'doc_trees': prj.doc_trees})
-    ns.configure({'main_package': main_package,
-                  'doc_trees': prj.doc_trees})
+    ns.configure({
+        # 'main_package': main_package,
+        'doc_trees': prj.doc_trees})
     ns.configure(_globals_dict)
+    ns.main_package = main_package
     return _globals_dict
+
+

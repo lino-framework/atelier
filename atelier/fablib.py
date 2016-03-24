@@ -234,6 +234,8 @@ default values in a :xfile:`.fabricrc` file.
 
       editor_command = "emacsclient -n {0}"
 
+    The ``{0}`` will be replaced by the filename.
+
     Note that this must be a *non waiting* command, i.e. which
     launches the editor on the specified file in a new window and then
     returns control to the command line without waiting for that new
