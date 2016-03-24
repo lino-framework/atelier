@@ -4,9 +4,13 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.20 (not released)
+Version 0.0.21 (not released)
 =============================
 
+Version 0.0.20 (released 2016-03-24)
+====================================
+
+- Most :cmd:`fab` commands now work as :cmd:`inv`.
 - Fixed a bug which caused :message:`TypeError:
   object.__new__(NotImplementedType) is not safe, use
   NotImplementedType.__new__()`
