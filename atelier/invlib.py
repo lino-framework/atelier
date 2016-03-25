@@ -143,11 +143,22 @@ from babel.dates import format_date
 from atelier import rstgen
 from unipath import Path
 from invoke import ctask as task
-from invoke import run as local
+from invoke import run
 
 import atelier
 from atelier.utils import confirm
 from .projects import get_setup_info
+
+
+def local(*args, **kwargs):
+    """Call :func:`invoke.run` in a terminal, i.e. with `pty=True`.
+
+    This is to get colors, and preserve newlines if `inv test` reports
+    failures.
+
+    """
+    kwargs.update(pty=True)
+    run(*args, **kwargs)
 
 
 @contextmanager

@@ -535,7 +535,7 @@ def cleanup_pyc(p):
             os.remove(full_path)
 
 
-@task(alias='mm')
+@task(alias='unused_mm')
 def make_messages():
     "Extract messages, then initialize and update all catalogs."
     extract_messages()
@@ -931,7 +931,7 @@ def get_doc_trees():
         yield docs_dir
 
 
-@task(alias='bd')
+@task(alias='unused_bd')
 def build_docs(*cmdline_args):
     """See :cmd:`fab bd`. """
     write_readme()
@@ -944,7 +944,7 @@ def build_docs(*cmdline_args):
         sync_docs_data(docs_dir)
 
 
-@task(alias='clean')
+@task(alias='unused_clean')
 def clean(*cmdline_args):
     """See :cmd:`fab clean`. """
     sphinx_clean()
@@ -988,7 +988,7 @@ class MissingConfig(Exception):
         Exception.__init__(self, msg)
 
 
-@task(alias='pd')
+@task(alias='unused_pd')
 def publish():
     """See :cmd:`fab pd`. """
     if not env.docs_rsync_dest:
@@ -1248,7 +1248,7 @@ def get_blog_entry(today):
     return RstFile(Path(env.blog_root), env.blogref_url, parts)
 
 
-@task(alias='blog')
+@task(alias='unused_blog')
 def edit_blog_entry(today=None):
     """Edit today's blog entry, create an empty file if it doesn't yet exist.
 
@@ -1306,7 +1306,7 @@ def show_revision_status():
     puts("-" * 80)
 
 
-@task(alias='ci')
+@task(alias='unused_ci')
 def checkin(today=None):
     """See :cmd:`fab ci`. """
 
@@ -1393,7 +1393,7 @@ Read more on %(url)s
     #~ pypi_register()
 
 
-@task(alias='test')
+@task(alias='unused_test')
 def run_tests():
     """See :cmd:`fab test`. """
     if not env.root_dir.child('setup.py').exists():
@@ -1407,7 +1407,7 @@ def run_tests():
     #~ for fn in env.root_dir.child('lino').walk('*.py'):
         #~ print fn
 
-@task(alias='cov')
+@task(alias='unused_cov')
 def run_tests_coverage():
     """
     Run all tests, creating coverage report
