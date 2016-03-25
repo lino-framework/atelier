@@ -11,42 +11,14 @@ from __future__ import unicode_literals
 import os
 
 from invoke import Collection
-
 from unipath import Path
+
 import atelier
-from atelier.invlib import (initdb_demo, run_tests, write_readme,
-                            clean, run_tests_coverage, make_messages,
-                            pypi_register, checkin, edit_blog_entry,
-                            publish, build_docs)
+from . import invlib
 
-
-ns = Collection()
-ns.add_task(initdb_demo)
-ns.add_task(run_tests)
-ns.add_task(write_readme)
-ns.add_task(clean)
-ns.add_task(run_tests_coverage)
-ns.add_task(make_messages)
-ns.add_task(pypi_register)
-ns.add_task(checkin)
-ns.add_task(edit_blog_entry)
-ns.add_task(publish)
-ns.add_task(build_docs)
-
-
-# def add_demo_project(self, p):
-#     """Register the specified settings module as being a Django demo project.
-#     See also :attr:`ctx.demo_projects`.
-
-#     """
-#     if p in ctx.get('demo_projects', False):
-#         return
-#         # raise Exception("Duplicate entry %r in demo_projects." % db)
-#     ctx['demo_projects'].append(p)
 
 def setup_from_tasks(
-        globals_dict, main_package=None,
-        settings_module_name=None):
+        self, globals_dict, main_package=None, settings_module_name=None):
     if '__file__' not in globals_dict:
         raise Exception(
             "No '__file__' in %r. "
@@ -76,7 +48,7 @@ def setup_from_tasks(
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
         from django.conf import settings
         # why was this? settings.SITE.startup()
-        ns.configure({
+        self.configure({
             'languages': [lng.name for lng in settings.SITE.languages]})
 
     _globals_dict.setdefault(
@@ -91,14 +63,30 @@ def setup_from_tasks(
     # we cannot store current_project using configure() because it
     # cannot be pickled. And we don't need to store it there, it is
     # not a configuration value but just a global internal variable.
-    # ns.configure({ 'current_project': prj})
+    # self.configure({ 'current_project': prj})
     atelier.current_project = prj
-    ns.configure({'doc_trees': prj.doc_trees})
-    ns.configure({
+    self.configure({'doc_trees': prj.doc_trees})
+    self.configure({
         # 'main_package': main_package,
         'doc_trees': prj.doc_trees})
-    ns.configure(_globals_dict)
-    ns.main_package = main_package
+    self.configure(_globals_dict)
+    self.main_package = main_package
     return _globals_dict
 
 
+class MyCollection(Collection):
+    
+    def setup_from_tasks(self, *args, **kwargs):
+        return setup_from_tasks(self, *args, **kwargs)
+
+
+ns = MyCollection.from_module(invlib)
+
+# The following hack is to make it work as long as invoke does not yet
+# support subclassing Collection
+# (https://github.com/pyinvoke/invoke/pull/342)
+# 
+
+if ns.__class__ != MyCollection:
+    from functools import partial
+    ns.setup_from_tasks = partial(setup_from_tasks, ns)

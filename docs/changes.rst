@@ -4,8 +4,13 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.21 (not released)
-=============================
+Version 1.0.1 (not released)
+============================
+
+Version 1.0.0 (released 2016-03-25)
+===================================
+
+- First satisfying API and docs for :doc:`/invlib`
 
 Version 0.0.20 (released 2016-03-24)
 ====================================

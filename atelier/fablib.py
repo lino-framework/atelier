@@ -5,6 +5,8 @@
 """A library for `fabric <http://docs.fabfile.org>`__ with tasks I use
 to manage my Python projects.
 
+NOTE: This module is deprecated. Use :mod:`atelier.invlib` instead.
+
 .. contents::
   :local:
 

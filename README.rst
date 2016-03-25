@@ -18,8 +18,8 @@ It contains:
   (`atelier.rstgen <http://atelier.lino-framework.org/api/atelier.rstgen.html>`_)
 - some Sphinx extensions
   (`atelier.sphinxconf <http://atelier.lino-framework.org/api/atelier.sphinxconf.html>`_)
-- a library of fabric commands
-  (`atelier.fablib <http://atelier.lino-framework.org/api/atelier.fablib.html>`_)
+- a library of invoke commands
+  (`atelier.invlib <http://atelier.lino-framework.org/api/atelier.invlib.html>`_)
 - a minimalistic project management
   (`atelier.projects <http://atelier.lino-framework.org/api/atelier.projects.html>`_)
 

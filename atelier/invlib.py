@@ -5,136 +5,18 @@
 """A library for `invoke <http://www.pyinvoke.org/>`__ with tasks I use
 to manage my Python projects.
 
-.. contents::
-  :local:
-
-.. _inv_commands:
-
-``inv`` commands
-================
-
-.. command:: inv
-
-The :cmd:`inv` command has been installed with the `invoke
-<http://www.pyinvoke.org/>`_ package.
-
-Documenting
------------
-
-.. command:: inv blog
-
-    Edit today's blog entry, create an empty file if it doesn't yet exist.
-
-.. command:: inv bd
-
-    Build docs. Build all Sphinx HTML doctrees for this project.
-
-    This runs :cmd:`invoke readme`, followed by `sphinx-build html` in
-    every directory defined in :attr:`env.doc_trees`.  The exact
-    options for `sphinx-build` depend also on
-    :attr:`env.tolerate_sphinx_warnings` and :attr:`env.use_dirhtml`.
-
-.. command:: inv pd
-
-    Publish docs. Upload docs to public web server.
-
-
-.. command:: inv clean
-
-    Remove temporary and generated files:
-
-    - Sphinx `.build` files
-    - Dangling `.pyc` files which don't have a corresponding `.py` file.
-    - `cache` directories of demo projects
-    - additional files specified in :attr:`env.cleanable_files`
-
-.. command:: inv readme
-
-    Generate or update `README.txt` or `README.rst` file from
-    `SETUP_INFO`.
-
-Internationalization
---------------------
-
-.. command:: inv mm
-
-    ("make messages")
-
-    Extracts messages from both code and userdocs, then initializes and
-    updates all catalogs. Needs :attr:`env.locale_dir`
-
-Deploy
-------
-
-.. command:: inv ci
-
-    Checkin and push to repository, using today's blog entry as commit
-    message.
-
-    Asks confirmation before doing so.
-
-    Does nothing in a project whose
-    :attr:`env.revision_control_system` is `None`.
-
-    In a project whose :attr:`env.revision_control_system` is
-    ``'git'`` it checks whether the repository is dirty (i.e. has
-    uncommitted changes) and returns without asking confirmation if
-    the repo is clean.  Note that unlike ``git status``, this check
-    does currently not (yet) check whether my branch is up-to-date
-    with 'origin/master'.
-
-.. command:: inv reg
-
-    Register this project (and its current version) to PyPI.
-
-Testing
--------
-
-.. command:: inv initdb
-
-    Run :manage:`initdb_demo` on every demo :attr:`env.demo_projects`.
-
-.. command:: inv test
-
-    See :func:`run_tests`.
-
-Installation
-============
-
-To be used by creating a :file:`tasks.py` in your project's root
-directory with at least the following two lines::
-
-  from atelier.tasks import *
-  env.setup_from_tasks(globals())
-
-See :func:`setup_from_tasks` for more information.
-
-Configuration files
-===================
-
-.. xfile:: tasks.py
-
-In your :xfile:`tasks.py` file you can specify project-specific
-configuration settings.  Example content::
-
-  from atelier.tasks import *
-  env.setup_from_tasks(globals(), "foobar")
-  env.languages = "de fr et nl".split()
-  env.tolerate_sphinx_warnings = True
-  add_demo_project('foobar.demo')
+See :doc:`/invlib`
 
 """
 
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import importlib
+from importlib import import_module
 import os
 from contextlib import contextmanager
 import glob
 import datetime
-import subprocess
-import sys
 
 from builtins import str
 from builtins import object
@@ -248,7 +130,6 @@ def run_in_demo_projects(ctx, admin_cmd, *more):
         print("-" * 80)
         print("In demo project {0}:".format(mod))
 
-        from importlib import import_module
         m = import_module(mod)
         p = m.SITE.cache_dir or m.SITE.project_dir
 
