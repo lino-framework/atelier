@@ -33,10 +33,10 @@ from .projects import get_setup_info
 
 
 def local(*args, **kwargs):
-    """Call :func:`invoke.run` in a terminal, i.e. with `pty=True`.
+    """Call :func:`invoke.run` with `pty=True
+    <http://www.pyinvoke.org/faq.html#why-is-my-command-behaving-differently-under-invoke-versus-being-run-by-hand>`_.
 
-    This is to get colors, and preserve newlines if `inv test` reports
-    failures.
+    This is usefule e.g. to get colors in a terminal.
 
     """
     kwargs.update(pty=True)
