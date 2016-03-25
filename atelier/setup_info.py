@@ -7,7 +7,7 @@
 
 # Explicitly install `importlib` under Python 2.6. Thanks to
 # http://stackoverflow.com/questions/9418064
-install_requires = ['fabric', 'Sphinx', 'invoke', 'future', 'Babel', 'unipath',
+install_requires = ['Sphinx', 'invoke', 'future', 'Babel', 'unipath',
                     'python_dateutil', 'gitpython']
 try:
     import importlib
@@ -16,7 +16,7 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='0.0.19',
+    version='1.0.0',
     install_requires=install_requires,
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
@@ -37,8 +37,8 @@ It contains:
   (`atelier.rstgen <http://atelier.lino-framework.org/api/atelier.rstgen.html>`_)
 - some Sphinx extensions
   (`atelier.sphinxconf <http://atelier.lino-framework.org/api/atelier.sphinxconf.html>`_)
-- a library of fabric commands
-  (`atelier.fablib <http://atelier.lino-framework.org/api/atelier.fablib.html>`_)
+- a library of invoke commands
+  (`atelier.invlib <http://atelier.lino-framework.org/api/atelier.invlib.html>`_)
 - a minimalistic project management
   (`atelier.projects <http://atelier.lino-framework.org/api/atelier.projects.html>`_)
 
@@ -51,8 +51,8 @@ It contains:
 """,
     classifiers="""\
 Programming Language :: Python
-Programming Language :: Python :: 2.6
 Programming Language :: Python :: 2.7
+Programming Language :: Python :: 3.4
 Framework :: Sphinx :: Extension
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers

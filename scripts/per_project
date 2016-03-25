@@ -25,6 +25,7 @@ We also suggest to define a short alias for this script in your
     alias pp='per_project'
 
 """
+from __future__ import print_function
 import os
 import sys
 import subprocess
@@ -35,21 +36,21 @@ def main():
     commands = sys.argv[1:]
     
     if len(commands) == 0 or '-h' in commands or '--help' in commands:
-        print __doc__ % globals()
+        print(__doc__)
         return -1
         
     for prj in load_projects():
-        print "==== %s ====" % prj.nickname
+        print("==== %s ====" % prj.nickname)
         #~ p = os.path.join(atelier.PROJECTS_HOME,prj)
         #~ os.chdir(p)
-        #~ print prj.root_dir
+        #~ print(prj.root_dir)
         os.chdir(prj.root_dir)
         #~ args = ["fab"]
         #~ args += commands
         rv = subprocess.call(commands,cwd=prj.root_dir)
         if rv:
-            print "%s in project %s ended with error %s" % (
-                ' '.join(commands), prj.nickname, rv)
+            print("%s in project %s ended with error %s" % (
+                ' '.join(commands), prj.nickname, rv))
             return rv
     return 0
         

@@ -4,8 +4,21 @@
 Changes in `atelier`
 =======================
 
-Version 0.0.20 (not released)
-=============================
+Version 1.0.1 (not released)
+============================
+
+Version 1.0.0 (released 2016-03-25)
+===================================
+
+- First satisfying API and docs for :doc:`/invlib`
+
+Version 0.0.20 (released 2016-03-24)
+====================================
+
+- Most :cmd:`fab` commands now work as :cmd:`inv`.
+- Fixed a bug which caused :message:`TypeError:
+  object.__new__(NotImplementedType) is not safe, use
+  NotImplementedType.__new__()`
 
 Version 0.0.19 (released 2016-03-08)
 ====================================

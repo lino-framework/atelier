@@ -5,136 +5,18 @@
 """A library for `invoke <http://www.pyinvoke.org/>`__ with tasks I use
 to manage my Python projects.
 
-.. contents::
-  :local:
-
-.. _inv_commands:
-
-``inv`` commands
-================
-
-.. command:: inv
-
-The :cmd:`inv` command has been installed with the `invoke
-<http://www.pyinvoke.org/>`_ package.
-
-Documenting
------------
-
-.. command:: inv blog
-
-    Edit today's blog entry, create an empty file if it doesn't yet exist.
-
-.. command:: inv bd
-
-    Build docs. Build all Sphinx HTML doctrees for this project.
-
-    This runs :cmd:`invoke readme`, followed by `sphinx-build html` in
-    every directory defined in :attr:`env.doc_trees`.  The exact
-    options for `sphinx-build` depend also on
-    :attr:`env.tolerate_sphinx_warnings` and :attr:`env.use_dirhtml`.
-
-.. command:: inv pd
-
-    Publish docs. Upload docs to public web server.
-
-
-.. command:: inv clean
-
-    Remove temporary and generated files:
-
-    - Sphinx `.build` files
-    - Dangling `.pyc` files which don't have a corresponding `.py` file.
-    - `cache` directories of demo projects
-    - additional files specified in :attr:`env.cleanable_files`
-
-.. command:: inv readme
-
-    Generate or update `README.txt` or `README.rst` file from
-    `SETUP_INFO`.
-
-Internationalization
---------------------
-
-.. command:: inv mm
-
-    ("make messages")
-
-    Extracts messages from both code and userdocs, then initializes and
-    updates all catalogs. Needs :attr:`env.locale_dir`
-
-Deploy
-------
-
-.. command:: inv ci
-
-    Checkin and push to repository, using today's blog entry as commit
-    message.
-
-    Asks confirmation before doing so.
-
-    Does nothing in a project whose
-    :attr:`env.revision_control_system` is `None`.
-
-    In a project whose :attr:`env.revision_control_system` is
-    ``'git'`` it checks whether the repository is dirty (i.e. has
-    uncommitted changes) and returns without asking confirmation if
-    the repo is clean.  Note that unlike ``git status``, this check
-    does currently not (yet) check whether my branch is up-to-date
-    with 'origin/master'.
-
-.. command:: inv reg
-
-    Register this project (and its current version) to PyPI.
-
-Testing
--------
-
-.. command:: inv initdb
-
-    Run :manage:`initdb_demo` on every demo :attr:`env.demo_projects`.
-
-.. command:: inv test
-
-    See :func:`run_tests`.
-
-Installation
-============
-
-To be used by creating a :file:`tasks.py` in your project's root
-directory with at least the following two lines::
-
-  from atelier.tasks import *
-  env.setup_from_tasks(globals())
-
-See :func:`setup_from_tasks` for more information.
-
-Configuration files
-===================
-
-.. xfile:: tasks.py
-
-In your :xfile:`tasks.py` file you can specify project-specific
-configuration settings.  Example content::
-
-  from atelier.tasks import *
-  env.setup_from_tasks(globals(), "foobar")
-  env.languages = "de fr et nl".split()
-  env.tolerate_sphinx_warnings = True
-  add_demo_project('foobar.demo')
+See :doc:`/invlib`
 
 """
 
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import importlib
+from importlib import import_module
 import os
 from contextlib import contextmanager
 import glob
 import datetime
-import subprocess
-import sys
 
 from builtins import str
 from builtins import object
@@ -143,9 +25,22 @@ from babel.dates import format_date
 from atelier import rstgen
 from unipath import Path
 from invoke import ctask as task
-from invoke import run as local
+from invoke import run
+
+import atelier
 from atelier.utils import confirm
 from .projects import get_setup_info
+
+
+def local(*args, **kwargs):
+    """Call :func:`invoke.run` with `pty=True
+    <http://www.pyinvoke.org/faq.html#why-is-my-command-behaving-differently-under-invoke-versus-being-run-by-hand>`_.
+
+    This is usefule e.g. to get colors in a terminal.
+
+    """
+    kwargs.update(pty=True)
+    run(*args, **kwargs)
 
 
 @contextmanager
@@ -207,8 +102,8 @@ def py_clean(ctx):
     """Delete dangling `.pyc` files.
 
     """
-    if ctx.current_project.module is not None:
-        p = Path(ctx.current_project.module.__file__).parent
+    if atelier.current_project.module is not None:
+        p = Path(atelier.current_project.module.__file__).parent
         cleanup_pyc(p)
     p = ctx.root_dir.child('tests')
     if p.exists():
@@ -235,7 +130,6 @@ def run_in_demo_projects(ctx, admin_cmd, *more):
         print("-" * 80)
         print("In demo project {0}:".format(mod))
 
-        from importlib import import_module
         m = import_module(mod)
         p = m.SITE.cache_dir or m.SITE.project_dir
 
@@ -247,17 +141,6 @@ def run_in_demo_projects(ctx, admin_cmd, *more):
             args += ["--settings=" + mod]
             cmd = " ".join(args)
             local(cmd)
-
-
-def add_demo_project(ctx, p):
-    """Register the specified settings module as being a Django demo project.
-    See also :attr:`ctx.demo_projects`.
-
-    """
-    if p in ctx.get('demo_projects', False):
-        return
-        # raise Exception("Duplicate entry %r in demo_projects." % db)
-    ctx['demo_projects'].append(p)
 
 
 def get_doc_trees(ctx):
@@ -365,7 +248,7 @@ def write_readme(ctx):
     else:
         readme = ctx.root_dir.child('README.txt')
 
-    ctx.current_project.load_tasks()
+    atelier.current_project.load_tasks()
     # for k in ('name', 'description', 'long_description', 'url'):
     #     if k not in env.current_project.SETUP_INFO:
     #         msg = "SETUP_INFO for {0} has no key '{1}'"
@@ -384,7 +267,7 @@ Description
 %(long_description)s
 
 Read more on %(url)s
-""" % ctx.current_project.SETUP_INFO
+""" % atelier.current_project.SETUP_INFO
     txt = txt.encode('utf-8')
     if readme.exists() and readme.read_file() == txt:
         return
@@ -552,7 +435,15 @@ def edit_blog_entry(ctx, today=None):
     today = get_current_date(today)
     entry = get_blog_entry(ctx, today)
     if not entry.path.exists():
-        if not confirm("Create file %s?" % entry.path):
+        if ctx.languages is None:
+            txt = today.strftime(ctx.long_date_format)
+        else:
+            txt = format_date(
+                today, format='full', locale=ctx.languages[0])
+        content = rstgen.header(1, txt)
+        content = ":date: {0}\n\n".format(today) + content
+        msg = "{0}\nCreate file {1}?".format(content, entry.path)
+        if not confirm(msg):
             return
         # for every year we create a new directory.
         yd = entry.path.parent
@@ -563,16 +454,12 @@ def edit_blog_entry(ctx, today=None):
             txt = ".. blogger_year::\n"
             yd.child('index.rst').write_file(txt.encode('utf-8'))
 
-        if ctx.languages is None:
-            txt = today.strftime(ctx.long_date_format)
-        else:
-            txt = format_date(
-                today, format='full', locale=ctx.languages[0])
-        entry.path.write_file(rstgen.header(1, txt).encode('utf-8'))
+        entry.path.write_file(content.encode('utf-8'))
         # touch it for Sphinx:
         entry.path.parent.child('index.rst').set_times()
-    args = [ctx.editor_command]
+    args = [ctx.editor_command.format(entry.path)]
     args += [entry.path]
+    # raise Exception("20160324 %s", args)
     local(' '.join(args))
 
 
@@ -612,7 +499,7 @@ def publish_docs(build_dir, dest_url):
         args += ['./']  # source
         args += [dest_url]  # dest
         cmd = ' '.join(args)
-        # ~ must_confirm("%s> %s" % (build_dir, cmd))
+        # must_confirm("%s> %s" % (build_dir, cmd))
         # ~ confirm("yes")
         local(cmd)
 
@@ -700,3 +587,4 @@ def update_catalog_code(ctx):
             cmd = ' '.join(args)
             # ~ must_confirm(cmd)
             local(cmd)
+

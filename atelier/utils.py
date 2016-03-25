@@ -11,16 +11,19 @@ $ python setup.py test -s tests.BasicTests.test_utils
 
 from __future__ import print_function
 from builtins import str
-from builtins import input
+# from builtins import input
 from builtins import object
 # Python 2 and 3:
 from future.utils import python_2_unicode_compatible
+import six
+from six.moves import input
 
 # from __future__ import unicode_literals
 # causes problems on Windows where `subprocess.Popen` wants only plain strings
 
 import os
 import sys
+import locale
 import types
 import datetime
 import subprocess
@@ -205,12 +208,19 @@ def assert_pure(s):
         raise Exception("%r is not pure : %s" % (s, e))
 
 
-def confirm(prompt=None):
+def confirm(prompt=None, default="y"):
     """
     Ask for user confirmation from the console.
     """
+    if six.PY2:
+        prompt = prompt.encode(
+            sys.stdin.encoding or locale.getpreferredencoding(True))
+    # print(20160324, type(prompt))
+    prompt += " [Y,n]?"
     while True:
         ln = input(prompt)
+        if not ln:
+            ln = default
         if ln.lower() in ('y', 'j', 'o'):
             return True
         if ln.lower() == 'n':

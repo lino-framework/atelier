@@ -1,4 +1,4 @@
-# Copyright 2013-2015 by Luc Saffre.
+# Copyright 2013-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -22,9 +22,9 @@ ROOTDIR = Path(__file__).parent.parent
 
 
 def interpreter_args():
-    if 'coverage' in sys.modules:
-        # raise Exception('20160119')
-        return ['coverage', 'run']
+    # if 'coverage' in sys.modules:
+    #     # raise Exception('20160119')
+    #     return ['coverage', 'run']
     return [sys.executable]
 
 
