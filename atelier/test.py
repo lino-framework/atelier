@@ -69,7 +69,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
             cmd = ' '.join(args)
             #~ self.fail("%s returned %d:-----\n%s\n-----" % (cmd,rv,buffer.getvalue()))
             # (out, err) = p.communicate()
-            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (cmd, kw, rv, out)
+            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (cmd, kw, rv, out.decode("utf-8") )
             # print msg
             self.fail(msg)
 
