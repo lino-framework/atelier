@@ -63,13 +63,18 @@ class TestCase(unittest.TestCase, SubProcessParent):
             out, err = p.communicate()
         # print("20150214b run_subprocess", out)
         rv = p.returncode
-        #~ kw.update(stderr=buffer)
-        #~ rv = subprocess.call(args,**kw)
+        # kw.update(stderr=buffer)
+        # rv = subprocess.call(args,**kw)
         if rv != 0:
             cmd = ' '.join(args)
-            #~ self.fail("%s returned %d:-----\n%s\n-----" % (cmd,rv,buffer.getvalue()))
-            # (out, err) = p.communicate()
-            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (cmd, kw, rv, out.decode("utf-8") )
+            if False:
+                # don't know why this was but if a run_simple_doctests
+                # fails on a snippet which contains non-asci chars,
+                # then we cannot paste the error message.  It is too
+                # early to decode here.
+                out = out.decode("utf-8")
+            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
+                cmd, kw, rv, out)
             # print msg
             self.fail(msg)
 
