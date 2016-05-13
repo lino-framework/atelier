@@ -29,34 +29,19 @@ Documenting
 
 .. command:: fab bd
 
-    Build docs. Build all Sphinx HTML doctrees for this project.
-
-    This runs :cmd:`fab readme`, followed by `sphinx-build html` in
-    every directory defined in :attr:`env.doc_trees`.  The exact
-    options for `sphinx-build` depend also on
-    :attr:`env.tolerate_sphinx_warnings` and :attr:`env.use_dirhtml`.
-
+    Converted to :cmd:`inv bd`.
 
 .. command:: fab pd
 
-    Publish docs. Upload docs to public web server.
-
+    Converted to :cmd:`inv pd`.
 
 .. command:: fab clean
 
-    Remove temporary and generated files:
-
-    - Sphinx `.build` files
-    - Dangling `.pyc` files which don't have a corresponding `.py` file.
-    - `cache` directories of demo projects
-    - additional files specified in :attr:`env.cleanable_files`
-
+    Converted to :cmd:`inv clean`.
 
 .. command:: fab readme
 
-    Generate or update `README.txt` or `README.rst` file from
-    `SETUP_INFO`.
-
+    Converted to :cmd:`inv readme`.
 
 .. command:: fab api
 
@@ -72,11 +57,11 @@ Documenting
 
 .. command:: fab docs
 
-    Has been replaced by :cmd:`fab bd`.
+    Has been replaced by :cmd:`inv bd`.
 
 .. command:: fab pub
 
-    Has been replaced by :cmd:`fab pd`.
+    Has been replaced by :cmd:`inv pd`.
 
 
 Internationalization
@@ -84,31 +69,10 @@ Internationalization
 
 .. command:: fab mm
 
-    ("make messages")
-
-    Extracts messages from both code and userdocs, then initializes and
-    updates all catalogs. Needs :attr:`env.locale_dir`
+    Converted to :cmd:`inv mm`.
 
 Deploy
 ------
-
-.. command:: fab ci
-
-    Checkin and push to repository, using today's blog entry as commit
-    message.
-
-    Asks confirmation before doing so.
-    
-    Does nothing in a project whose
-    :attr:`env.revision_control_system` is `None`.
-
-    In a project whose :attr:`env.revision_control_system` is
-    ``'git'`` it checks whether the repository is dirty (i.e. has
-    uncommitted changes) and returns without asking confirmation if
-    the repo is clean.  Note that unlike ``git status``, this check
-    does currently not (yet) check whether my branch is up-to-date
-    with 'origin/master'.
-
 
 .. command:: fab release
 
@@ -121,14 +85,18 @@ Deploy
 
 
 
-.. command:: fab reg
-
-    Register this project (and its current version) to PyPI.
-
 .. command:: fab sdist
 
     Write a source distribution archive to your :attr:`env.sdist_dir`.
 
+
+.. command:: fab ci
+
+    Converted to :cmd:`inv ci`.
+
+.. command:: fab reg
+
+    Converted to :cmd:`inv reg`.
 
 
 
@@ -138,11 +106,11 @@ Testing
 
 .. command:: fab initdb
 
-    Run :manage:`initdb_demo` on every demo :attr:`env.demo_projects`.
+    Converted to :cmd:`inv initdb`.
 
 .. command:: fab test
 
-    Run the test suite of this project.
+    Converted to :cmd:`inv test`.
 
 .. command:: fab test_sdist
 
@@ -164,6 +132,13 @@ Testing
       [global]
       download-cache=/home/luc/.pip/cache
 
+
+Miscellaneous
+-------------
+
+.. command:: fab summary
+
+    Print an overview table of all your projects.
 
 Installation
 ============
