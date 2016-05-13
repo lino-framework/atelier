@@ -720,13 +720,26 @@ def syncscreenshots():
 def summary(*cmdline_args):
     """Print a summary to stdout."""
     from atelier.projects import load_projects
+    # headers = (
+    #     # ~ '#','Location',
+    #     'Project',
+    #     # 'Old version',
+    #     'Version')
+
     headers = (
-        # ~ '#','Location',
         'Project',
-        # 'Old version',
-        'Version')
+        'URL',
+        'Version',
+        'doctrees')
 
     def cells(self):
+        self.load_fabfile()
+        yield self.nickname
+        yield self.SETUP_INFO.get('url', None)
+        yield self.SETUP_INFO.get('version', '')
+        yield ', '.join(self.doc_trees)
+
+    def old_cells(self):
         self.load_fabfile()
         # print 20140116, self.module
         desc = "%s -- " % self.nickname
@@ -742,7 +755,8 @@ def summary(*cmdline_args):
             # self.dist.version,
             version)
 
-    print(rstgen.table(headers, [cells(p) for p in load_projects()]))
+    print(rstgen.table(headers, [
+        list(cells(p)) for p in load_projects()]))
 
 
 @task(alias='cd')
