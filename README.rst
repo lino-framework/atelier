@@ -29,6 +29,10 @@ It contains:
   <img src="https://api.travis-ci.org/lsaffre/atelier.png?branch=master"/>
   </a>
 
+The central project homepage is http://atelier.lino-framework.org
+
+
+
 
 
 Read more on http://atelier.lino-framework.org

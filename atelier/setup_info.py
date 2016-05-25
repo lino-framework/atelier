@@ -48,6 +48,10 @@ It contains:
   <img src="https://api.travis-ci.org/lsaffre/atelier.png?branch=master"/>
   </a>
 
+The central project homepage is http://atelier.lino-framework.org
+
+
+
 """,
     classifiers="""\
 Programming Language :: Python
