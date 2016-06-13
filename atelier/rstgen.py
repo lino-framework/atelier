@@ -12,8 +12,6 @@ Kevin Horn wrote and maintains a comparable library, also called
 `rstgen <https://bitbucket.org/khorn/rstgen/src>`_. (TODO: Check
 whether we should join our effords.)
 
-.. autosummary::
-
 """
 
 from __future__ import unicode_literals, print_function
