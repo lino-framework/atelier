@@ -16,7 +16,10 @@ from importlib import import_module
 import os
 from contextlib import contextmanager
 import glob
+import time
 import datetime
+from datetime import timedelta
+import textwrap
 
 from builtins import str
 from builtins import object
@@ -30,11 +33,24 @@ try:
 except ImportError:
     from invoke import task
 
+from invoke.exceptions import Failure, Exit
 from invoke import run
 
 import atelier
 from atelier.utils import confirm
 from .projects import get_setup_info
+
+
+LASTREL_INFO = "Last release was %(filename)s \
+(%(upload_time)s,  %(downloads)d downloads)."
+
+
+RELEASE_CONFIRM = """
+This is going to officially release %(name)s %(version)s to PyPI.
+It will fail if version %(version)s of %(name)s has previously been released.
+Your `docs/changes.rst` should have a section about this version.
+Your working directory should be clean (otherwise answer 'n' and run `inv ci`).
+Are you sure?"""
 
 
 def local(*args, **kwargs):
@@ -67,7 +83,7 @@ def get_current_date(today=None):
 
 def must_confirm(*args, **kwargs):
     if not confirm(''.join(args)):
-        raise Exception("User failed to confirm.")
+        raise Exit("User failed to confirm.")
 
 
 def must_exist(p):
@@ -306,6 +322,44 @@ def clean(ctx, *cmdline_args):
     # clean_demo_caches()
 
 
+@task(name='sdist')
+def setup_sdist(ctx):
+    "Create a source distribution."
+    dist_dir = Path(ctx.sdist_dir).child(
+        atelier.current_project.SETUP_INFO['name'])
+    args = ["python", "setup.py"]
+    args += ["sdist", "--formats=gztar"]
+    args += ["--dist-dir", dist_dir]
+    local(' '.join(args))
+
+
+@task(name='release')
+def pypi_release(ctx):
+    "Publish a new version to PyPI."
+    info = atelier.current_project.SETUP_INFO
+    version = info['version']
+    dist_dir = Path(ctx.sdist_dir).child(
+        atelier.current_project.SETUP_INFO['name'])
+
+    show_revision_status(ctx)
+    show_pypi_status(ctx)
+
+    must_confirm(RELEASE_CONFIRM % info)
+
+    if ctx.revision_control_system == 'git':
+        args = ["git", "tag"]
+        args += ["-a", version]
+        args += ["-m", "'Release %(name)s %(version)s.'" % info]
+        local(' '.join(args))
+
+    pypi_register(ctx)
+    args = ["python", "setup.py"]
+    args += ["sdist", "--formats=gztar"]
+    args += ["--dist-dir", dist_dir]
+    args += ["upload"]
+    local(' '.join(args))
+
+
 @task(name='cov')
 def run_tests_coverage(ctx, html=False, html_cov_dir='htmlcov'):
     """Run all tests and create a coverage report.
@@ -523,6 +577,39 @@ def show_revision_status(ctx):
     print("-" * 80)
 
 
+def show_pypi_status(ctx):
+
+    info = atelier.current_project.SETUP_INFO
+    version = info['version']
+    name = info['name']
+    
+    try:
+        import xmlrpc.client
+    except ImportError:
+        import xmlrpc.client as xmlrpclib
+    client = xmlrpc.client.ServerProxy('https://pypi.python.org/pypi')
+    released_versions = client.package_releases(name)
+    if len(released_versions) == 0:
+        must_confirm(
+            "This is your first release of %(name)s %(version)s "
+            "to PyPI" % info)
+    else:
+        urls = client.release_urls(name, released_versions[-1])
+        if len(urls) == 0:
+            msg = "Last release was {0} (no files available)."
+            msg = msg.format(released_versions[-1])
+            print(msg)
+        else:
+            lastrel = urls[-1]
+            # dt = lastrel['upload_time']
+            # lastrel['upload_time'] = dt.ISO()
+            print(LASTREL_INFO % lastrel)
+        if version in released_versions:
+            raise Exit(
+                "ABORT: %(name)s %(version)s has already been "
+                "released." % info)
+
+
 def get_blog_entry(ctx, today):
     """Return an RstFile object representing the blog entry for that date
     in the current project.
@@ -592,4 +679,105 @@ def update_catalog_code(ctx):
             cmd = ' '.join(args)
             # ~ must_confirm(cmd)
             local(cmd)
+
+
+@task(name='ls')
+def list_projects(ctx, *cmdline_args):
+    """List your projects."""
+    from atelier.projects import load_projects
+    # headers = (
+    #     # ~ '#','Location',
+    #     'Project',
+    #     # 'Old version',
+    #     'Version')
+
+    headers = (
+        'Project',
+        'URL',
+        'Version',
+        'doctrees')
+
+    def cells(self):
+        self.load_fabfile()
+        yield self.nickname
+        yield self.SETUP_INFO.get('url', None)
+        yield self.SETUP_INFO.get('version', '')
+        yield ', '.join(self.doc_trees)
+
+    def old_cells(self):
+        self.load_fabfile()
+        # print 20140116, self.module
+        desc = "%s -- " % self.nickname
+        desc += "(doc_trees : %s)\n" % ', '.join(self.doc_trees)
+        url = self.SETUP_INFO.get('url', None)
+        version = self.SETUP_INFO.get('version', '')
+        if url:
+            desc += "`%s <%s>`__ -- %s" % (
+                self.name, url,
+                self.SETUP_INFO['description'])
+        return (
+            '\n'.join(textwrap.wrap(desc, 60)),
+            # self.dist.version,
+            version)
+
+    print(rstgen.table(headers, [
+        list(cells(p)) for p in load_projects()]))
+
+
+@task(name='ct')
+def commited_today(ctx, today=None):
+    """Print all today's commits to stdout."""
+    from atelier.projects import load_projects
+    from git import Repo
+
+    today = get_current_date(today)
+    rows = []
+
+    def load(self):
+
+        self.load_fabfile()
+
+        if ctx.revision_control_system != 'git':
+            return
+    
+        repo = Repo(ctx.root_dir)
+
+        kw = dict()
+        ONEDAY = timedelta(days=1)
+        yesterday = today - ONEDAY
+        tomorrow = today + ONEDAY
+        kw.update(after=yesterday.strftime("%Y-%m-%d"),
+                  before=tomorrow.strftime("%Y-%m-%d"))
+        it = list(repo.iter_commits(**kw))
+        if len(it) == 0:
+            return
+
+        def fmtcommit(c):
+
+            url = repo.remotes.origin.url
+            if url.startswith("git@github.com"):
+                url = "https://github.com/" + url[15:-4] \
+                      + "/commit/" + c.hexsha
+            
+            s = "`{0} <{1}>`__".format(c.hexsha[-7:], url)
+            if c.message and not c.message.startswith("http://"):
+                s += " " + c.message
+            return s
+            
+        url = self.SETUP_INFO.get('url', "oops")
+        desc = "`%s <%s>`__" % (self.name, url)
+
+        for c in it:
+            ts = time.strftime("%H:%M", time.gmtime(c.committed_date))
+            rows.append([ts, desc, fmtcommit(c)])
+
+    for p in load_projects():
+        load(p)
+
+    def mycmp(a, b):
+        return cmp(a[0], b[0])
+    rows.sort(mycmp)
+    print(rstgen.ul(["{0} : {1}\n{2}".format(*row) for row in rows]))
+    # print rstgen.table(headers, rows)
+
 

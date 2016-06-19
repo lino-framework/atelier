@@ -27,7 +27,6 @@ atelier.fablib
       setup_babel_userdocs
       setup_from_fabfile
       setup_from_project
-      show_pypi_status
       show_revision_status
       sphinx_build
       sphinx_clean
