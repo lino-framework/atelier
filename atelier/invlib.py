@@ -24,7 +24,12 @@ from atelier.utils import i2d
 from babel.dates import format_date
 from atelier import rstgen
 from unipath import Path
-from invoke import ctask as task
+try:
+    from invoke import ctask as task
+    # before version 0.13 (see http://www.pyinvoke.org/changelog.html)
+except ImportError:
+    from invoke import task
+
 from invoke import run
 
 import atelier
