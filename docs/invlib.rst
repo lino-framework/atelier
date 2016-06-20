@@ -91,6 +91,23 @@ Commands for deployment
 
     Register this project (and its current version) to PyPI.
 
+.. command:: inv release
+
+    Write a source distribution archive to your :attr:`env.sdist_dir`,
+    then upload it to PyPI.  Create a version tag if
+    :attr:`env.revision_control_system` is ``'git'``.
+
+    This command will fail if this project has previously been
+    released with the same version.
+
+
+.. command:: inv sdist
+
+    Write a source distribution archive to your :attr:`env.sdist_dir`.
+
+
+
+
 Commands for testing
 --------------------
 
@@ -107,6 +124,16 @@ Commands for testing
 
     Run all tests and create a `coverage
     <https://pypi.python.org/pypi/coverage>`_ report
+
+
+Commands for project management
+-------------------------------
+
+.. command:: inv ls
+
+    List all your projects.
+
+
 
 
 Configuration
@@ -162,7 +189,7 @@ The following section documents the possible settings used by
 
   .. attribute:: locale_dir
 
-    The name of the directory where `fab mm` et al should write their
+    The name of the directory where `inv mm` et al should write their
     catalog files.
 
   .. attribute:: sdist_dir
@@ -218,7 +245,7 @@ The following section documents the possible settings used by
 
   .. attribute:: cleanable_files
 
-    A list of wildcards to be cleaned by :cmd:`fab clean`.
+    A list of wildcards to be cleaned by :cmd:`inv clean`.
 
   .. attribute:: use_dirhtml
 
@@ -246,7 +273,7 @@ The following section documents the possible settings used by
 
     The revision control system used by your project.
     Allowed values are `'git'`, `'hg'` or `None`.
-    Used by :cmd:`fab ci`.
+    Used by :cmd:`inv ci`.
 
   .. attribute:: use_mercurial
 
@@ -257,12 +284,12 @@ The following section documents the possible settings used by
     The list of *Django demo projects* included in this project.
 
     Django demo projects are used by the test suite and the Sphinx
-    documentation.  Before running :command:`fab test` or
-    :command:`fab bd`, they must have been initialized.  To initialize
-    them, run :command:`fab initdb`.
+    documentation.  Before running :command:`inv test` or
+    :command:`inv bd`, they must have been initialized.  To initialize
+    them, run :command:`inv initdb`.
 
-    It is not launched automatically by :command:`fab test` or
-    :command:`fab bd` because it can take some time and is not always
+    It is not launched automatically by :command:`inv test` or
+    :command:`inv bd` because it can take some time and is not always
     necessary.
 
 

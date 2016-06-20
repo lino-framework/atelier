@@ -4,8 +4,17 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.1 (not released)
+Version 1.0.2 (not released)
 ============================
+
+Version 1.0.1 (released 2016-06-19)
+===================================
+
+- Support the new `pyinvoke <http://www.pyinvoke.org>`__ version 0.13
+  (`released 10 days ago <http://www.pyinvoke.org/changelog.html>`_).
+  :mod:`atelier.invlib` now works with both versions. Thanks to James
+  for reporting problem and solution.
+
 
 Version 1.0.0 (released 2016-03-25)
 ===================================

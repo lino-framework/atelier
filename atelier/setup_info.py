@@ -16,7 +16,7 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='1.0.0',
+    version='1.0.1',
     install_requires=install_requires,
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
@@ -47,6 +47,10 @@ It contains:
   <a href="https://travis-ci.org/lsaffre/atelier">
   <img src="https://api.travis-ci.org/lsaffre/atelier.png?branch=master"/>
   </a>
+
+The central project homepage is http://atelier.lino-framework.org
+
+
 
 """,
     classifiers="""\

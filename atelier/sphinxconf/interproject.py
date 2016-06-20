@@ -26,6 +26,7 @@ def configure(globals_dict):
     intersphinx_mapping = dict()
     for prj in load_projects():
         prj.load_fabfile()
+        prj.load_tasks()
         for doc_tree in prj.doc_trees:
             p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
             if p.exists():

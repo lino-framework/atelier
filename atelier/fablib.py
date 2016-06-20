@@ -29,34 +29,19 @@ Documenting
 
 .. command:: fab bd
 
-    Build docs. Build all Sphinx HTML doctrees for this project.
-
-    This runs :cmd:`fab readme`, followed by `sphinx-build html` in
-    every directory defined in :attr:`env.doc_trees`.  The exact
-    options for `sphinx-build` depend also on
-    :attr:`env.tolerate_sphinx_warnings` and :attr:`env.use_dirhtml`.
-
+    Converted to :cmd:`inv bd`.
 
 .. command:: fab pd
 
-    Publish docs. Upload docs to public web server.
-
+    Converted to :cmd:`inv pd`.
 
 .. command:: fab clean
 
-    Remove temporary and generated files:
-
-    - Sphinx `.build` files
-    - Dangling `.pyc` files which don't have a corresponding `.py` file.
-    - `cache` directories of demo projects
-    - additional files specified in :attr:`env.cleanable_files`
-
+    Converted to :cmd:`inv clean`.
 
 .. command:: fab readme
 
-    Generate or update `README.txt` or `README.rst` file from
-    `SETUP_INFO`.
-
+    Converted to :cmd:`inv readme`.
 
 .. command:: fab api
 
@@ -72,11 +57,11 @@ Documenting
 
 .. command:: fab docs
 
-    Has been replaced by :cmd:`fab bd`.
+    Has been replaced by :cmd:`inv bd`.
 
 .. command:: fab pub
 
-    Has been replaced by :cmd:`fab pd`.
+    Has been replaced by :cmd:`inv pd`.
 
 
 Internationalization
@@ -84,51 +69,26 @@ Internationalization
 
 .. command:: fab mm
 
-    ("make messages")
-
-    Extracts messages from both code and userdocs, then initializes and
-    updates all catalogs. Needs :attr:`env.locale_dir`
+    Converted to :cmd:`inv mm`.
 
 Deploy
 ------
 
-.. command:: fab ci
-
-    Checkin and push to repository, using today's blog entry as commit
-    message.
-
-    Asks confirmation before doing so.
-    
-    Does nothing in a project whose
-    :attr:`env.revision_control_system` is `None`.
-
-    In a project whose :attr:`env.revision_control_system` is
-    ``'git'`` it checks whether the repository is dirty (i.e. has
-    uncommitted changes) and returns without asking confirmation if
-    the repo is clean.  Note that unlike ``git status``, this check
-    does currently not (yet) check whether my branch is up-to-date
-    with 'origin/master'.
-
-
 .. command:: fab release
 
-    Write a source distribution archive to your :attr:`env.sdist_dir`,
-    then upload it to PyPI.  Create a version tag if
-    :attr:`env.revision_control_system` is ``'git'``.
-
-    This command will fail if this project has previously been
-    released with the same version.
-
-
-
-.. command:: fab reg
-
-    Register this project (and its current version) to PyPI.
+    Converted to :cmd:`inv release`.
 
 .. command:: fab sdist
 
-    Write a source distribution archive to your :attr:`env.sdist_dir`.
+    Converted to :cmd:`inv sdist`.
 
+.. command:: fab ci
+
+    Converted to :cmd:`inv ci`.
+
+.. command:: fab reg
+
+    Converted to :cmd:`inv reg`.
 
 
 
@@ -138,13 +98,15 @@ Testing
 
 .. command:: fab initdb
 
-    Run :manage:`initdb_demo` on every demo :attr:`env.demo_projects`.
+    Converted to :cmd:`inv initdb`.
 
 .. command:: fab test
 
-    Run the test suite of this project.
+    Converted to :cmd:`inv test`.
 
 .. command:: fab test_sdist
+
+    (Not used)
 
     Creates a temporay virtualenv, installs your project and runs your
     test suite.
@@ -163,6 +125,14 @@ Testing
     
       [global]
       download-cache=/home/luc/.pip/cache
+
+
+Miscellaneous
+-------------
+
+.. command:: fab summary
+
+    Converted to :cmd:`inv ls`.
 
 
 Installation
@@ -347,11 +317,8 @@ TODO
 """
 import importlib
 import os
-import textwrap
-import time
 import datetime
 import glob
-from datetime import timedelta
 
 import sphinx
 from babel.dates import format_date
@@ -716,92 +683,6 @@ def syncscreenshots():
                           'gen/screenshots', 'userdocs/gen/screenshots')
 
 
-@task(alias='summary')
-def summary(*cmdline_args):
-    """Print a summary to stdout."""
-    from atelier.projects import load_projects
-    headers = (
-        # ~ '#','Location',
-        'Project',
-        # 'Old version',
-        'Version')
-
-    def cells(self):
-        self.load_fabfile()
-        # print 20140116, self.module
-        desc = "%s -- " % self.nickname
-        desc += "(doc_trees : %s)\n" % ', '.join(self.doc_trees)
-        url = self.SETUP_INFO.get('url', None)
-        version = self.SETUP_INFO.get('version', '')
-        if url:
-            desc += "`%s <%s>`__ -- %s" % (
-                self.name, url,
-                self.SETUP_INFO['description'])
-        return (
-            '\n'.join(textwrap.wrap(desc, 60)),
-            # self.dist.version,
-            version)
-
-    print(rstgen.table(headers, [cells(p) for p in load_projects()]))
-
-
-@task(alias='cd')
-def commited_today(today=None):
-    """Print all today's commits to stdout."""
-    from atelier.projects import load_projects
-    from git import Repo
-
-    today = get_current_date(today)
-    rows = []
-
-    def load(self):
-
-        self.load_fabfile()
-
-        if env.revision_control_system != 'git':
-            return
-    
-        repo = Repo(env.root_dir)
-
-        kw = dict()
-        ONEDAY = timedelta(days=1)
-        yesterday = today - ONEDAY
-        tomorrow = today + ONEDAY
-        kw.update(after=yesterday.strftime("%Y-%m-%d"),
-                  before=tomorrow.strftime("%Y-%m-%d"))
-        it = list(repo.iter_commits(**kw))
-        if len(it) == 0:
-            return
-
-        def fmtcommit(c):
-
-            url = repo.remotes.origin.url
-            if url.startswith("git@github.com"):
-                url = "https://github.com/" + url[15:-4] \
-                      + "/commit/" + c.hexsha
-            
-            s = "`{0} <{1}>`__".format(c.hexsha[-7:], url)
-            if c.message and not c.message.startswith("http://"):
-                s += " " + c.message
-            return s
-            
-        url = self.SETUP_INFO.get('url', "oops")
-        desc = "`%s <%s>`__" % (self.name, url)
-
-        for c in it:
-            ts = time.strftime("%H:%M", time.gmtime(c.committed_date))
-            rows.append([ts, desc, fmtcommit(c)])
-
-    for p in load_projects():
-        load(p)
-
-    def mycmp(a, b):
-        return cmp(a[0], b[0])
-    rows.sort(mycmp)
-    print(rstgen.ul(["{0} : {1}\n{2}".format(*row) for row in rows]))
-    # print rstgen.table(headers, rows)
-
-
 def unused_build_api(*cmdline_args):
     """
     Generate `.rst` files in `docs/api`. See :cmd:`fab api`.
@@ -1111,86 +992,6 @@ def unused_run_sphinx_doctest():
 Sphinx doctest failed with exit code %s
 =======================================
 %s""" % (exitcode, output.read_file()))
-
-
-@task(alias='sdist')
-def setup_sdist():
-    """See :cmd:`fab sdist`. """
-    args = ["python", "setup.py"]
-    args += ["sdist", "--formats=gztar"]
-    args += ["--dist-dir", env.sdist_dir.child(
-        env.current_project.SETUP_INFO['name'])]
-    local(' '.join(args))
-
-
-LASTREL_INFO = "Last release was %(filename)s \
-(%(upload_time)s,  %(downloads)d downloads)."
-
-
-def show_pypi_status():
-
-    info = env.current_project.SETUP_INFO
-    version = info['version']
-    name = info['name']
-    
-    try:
-        import xmlrpc.client
-    except ImportError:
-        import xmlrpc.client as xmlrpclib
-    client = xmlrpc.client.ServerProxy('https://pypi.python.org/pypi')
-    released_versions = client.package_releases(name)
-    if len(released_versions) == 0:
-        must_confirm(
-            "This is your first release of %(name)s %(version)s "
-            "to PyPI" % info)
-    else:
-        urls = client.release_urls(name, released_versions[-1])
-        if len(urls) == 0:
-            msg = "Last release was {0} (no files available)."
-            msg = msg.format(released_versions[-1])
-            puts(msg)
-        else:
-            lastrel = urls[-1]
-            # dt = lastrel['upload_time']
-            # lastrel['upload_time'] = dt.ISO()
-            puts(LASTREL_INFO % lastrel)
-        if version in released_versions:
-            abort("%(name)s %(version)s has already been released." % info)
-
-
-RELEASE_CONFIRM = """
-This is going to officially release %(name)s %(version)s to PyPI.
-It will fail if version %(version)s of %(name)s has previously been released.
-Your `docs/changes.rst` should have a section about this version.
-Your working directory should be clean (otherwise answer 'n' and run `fab ci`).
-Are you sure?"""
-
-
-@task(alias='release')
-def pypi_release():
-    """See :cmd:`fab release`. """
-
-    info = env.current_project.SETUP_INFO
-    version = info['version']
-
-    show_revision_status()
-    show_pypi_status()
-
-    must_confirm(RELEASE_CONFIRM % info)
-
-    if env.revision_control_system == 'git':
-        args = ["git", "tag"]
-        args += ["-a", version]
-        args += ["-m", "'Release %(name)s %(version)s.'" % info]
-        local(' '.join(args))
-
-    pypi_register()
-    args = ["python", "setup.py"]
-    args += ["sdist", "--formats=gztar"]
-    args += ["--dist-dir", env.sdist_dir.child(
-        env.current_project.SETUP_INFO['name'])]
-    args += ["upload"]
-    local(' '.join(args))
 
 
 TEST_SDIST_TEMPLATE = """#!/bin/bash
