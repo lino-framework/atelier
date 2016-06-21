@@ -32,6 +32,8 @@ def setup_from_tasks(
         'root_dir': root_dir,
         'main_package': main_package,
         'locale_dir': None,
+        'help_texts_source': None,
+        'help_texts_module': None,
         'tolerate_sphinx_warnings': False,
         'demo_projects': [],
         'cleanable_files': [],

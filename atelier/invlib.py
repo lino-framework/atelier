@@ -619,15 +619,36 @@ def get_blog_entry(ctx, today):
     return RstFile(Path(ctx.blog_root), ctx.blogref_url, parts)
 
 
-def extract_messages(ctx):
-    """Extract messages from source files to `django.pot` file"""
-    # locale_dir = get_locale_dir()
+def get_locale_dir(ctx):
     locale_dir = ctx.locale_dir
     if locale_dir is None:
         return
+    return Path(locale_dir)
+
+
+@task(name='bh')
+def build_help_texts(ctx):
+    """Build help_texts.py file for this project."""
+    if not ctx.help_texts_source:
+        return
+    if not ctx.help_texts_module:
+        return
+    m = import_module(ctx.help_texts_module)
+    dest_dir = Path(m.__file__).parent
+    args = ["sphinx-build", "-b", "help_texts"]
+    args += [ctx.help_texts_source, dest_dir]
+    cmd = ' '.join(args)
+    local(cmd)
+
+
+def extract_messages(ctx):
+    """Extract messages from source files to `django.pot` file"""
+    ld = get_locale_dir(ctx)
+    if not ld:
+        return
     args = ["python", "setup.py"]
     args += ["extract_messages"]
-    args += ["-o", Path(locale_dir).child("django.pot")]
+    args += ["-o", ld.child("django.pot")]
     cmd = ' '.join(args)
     # ~ must_confirm(cmd)
     local(cmd)
@@ -636,14 +657,12 @@ def extract_messages(ctx):
 def init_catalog_code(ctx):
     """Create code .po files if necessary."""
     from lino.core.site import to_locale
-    locale_dir = ctx.locale_dir
-    # locale_dir = get_locale_dir()
-    if locale_dir is None:
+    ld = get_locale_dir(ctx)
+    if not ld:
         return
-    locale_dir = Path(locale_dir)
     for loc in ctx.languages:
         if loc != 'en':
-            f = locale_dir.child(loc, 'LC_MESSAGES', 'django.po')
+            f = ld.child(loc, 'LC_MESSAGES', 'django.po')
             if f.exists():
                 print("Skip %s because file exists." % f)
             else:
@@ -651,9 +670,9 @@ def init_catalog_code(ctx):
                 args += ["init_catalog"]
                 args += ["--domain django"]
                 args += ["-l", to_locale(loc)]
-                args += ["-d", locale_dir]
+                args += ["-d", ld]
                 # ~ args += [ "-o" , f ]
-                args += ["-i", locale_dir.child('django.pot')]
+                args += ["-i", ld.child('django.pot')]
                 cmd = ' '.join(args)
                 must_confirm(cmd)
                 local(cmd)
@@ -662,19 +681,16 @@ def init_catalog_code(ctx):
 def update_catalog_code(ctx):
     """Update .po files from .pot file."""
     from lino.core.site import to_locale
-    locale_dir = ctx.locale_dir
-    # locale_dir = get_locale_dir()
-    if locale_dir is None:
+    ld = get_locale_dir(ctx)
+    if not ld:
         return
-    locale_dir = Path(locale_dir)
     for loc in ctx.languages:
         if loc != ctx.languages[0]:
             args = ["python", "setup.py"]
             args += ["update_catalog"]
             args += ["--domain django"]
-            # ~ args += [ "-d" , locale_dir ]
-            args += ["-o", locale_dir.child(loc, 'LC_MESSAGES', 'django.po')]
-            args += ["-i", locale_dir.child("django.pot")]
+            args += ["-o", ld.child(loc, 'LC_MESSAGES', 'django.po')]
+            args += ["-i", ld.child("django.pot")]
             args += ["-l", to_locale(loc)]
             cmd = ' '.join(args)
             # ~ must_confirm(cmd)
