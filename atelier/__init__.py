@@ -14,6 +14,7 @@ This is the :mod:`atelier` package.
    test
    utils
    sphinxconf
+   sheller
 
 """
 from __future__ import unicode_literals

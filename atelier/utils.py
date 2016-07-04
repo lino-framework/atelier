@@ -24,11 +24,11 @@ from six.moves import input
 import os
 import sys
 import locale
-import types
 import datetime
 import subprocess
 from dateutil import parser as dateparser
 from dateutil.relativedelta import relativedelta
+
 
 @python_2_unicode_compatible
 class AttrDict(dict):
@@ -404,6 +404,5 @@ def tuple_py2(old_tuple):
 
 #     """
 #     return os.environ.get('VISUAL') or os.environ.get('EDITOR')
-
 
 

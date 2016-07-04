@@ -146,3 +146,4 @@ class SphinxTests(BaseTestCase):
     def test_sigal(self):
         self.run_simple_doctests('atelier/sphinxconf/sigal_image.py')
 
+
