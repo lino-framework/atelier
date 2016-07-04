@@ -2,8 +2,37 @@
 # Copyright 2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""
-Defines the :class:`Sheller` class.
+"""Defines the :class:`Sheller` class.
+
+.. to test just this module:
+
+   python -m doctest atelier/sheller.py
+
+Usage example:
+
+>>> import os
+>>> from atelier.sheller import Sheller
+>>> shell = Sheller(os.path.dirname(__file__))
+>>> shell('ls *.py')
+doctest_utf8.py
+fablib.py
+__init__.py
+invlib.py
+jarbuilder.py
+projects.py
+rstgen.py
+setup_info.py
+sheller.py
+tasks.py
+test.py
+utils.py
+
+
+I guess that others have invented similar things before, and I saw
+`doctest2
+<https://pythonhosted.org/doctest2/intro_for_existing.html>`__ but am
+afraid switching to it because it seems not maintained. My solution is
+admittedly less beautiful but much simpler.
 
 """
 

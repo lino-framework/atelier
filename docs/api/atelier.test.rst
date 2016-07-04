@@ -19,10 +19,6 @@ atelier.test
 
    .. autosummary::
    
-      BaseTestCase
-      BasicTests
-      PackagesTests
-      SphinxTests
       TestCase
    
    

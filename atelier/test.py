@@ -18,7 +18,7 @@ from unipath import Path
 from atelier import SETUP_INFO
 from atelier.utils import SubProcessParent
 
-ROOTDIR = Path(__file__).parent.parent
+# ROOTDIR = Path(__file__).parent.parent
 
 
 def interpreter_args():
@@ -115,35 +115,35 @@ class TestCase(unittest.TestCase, SubProcessParent):
             #~ module_relative=False)
 
 
-class BaseTestCase(TestCase):
-    project_root = ROOTDIR
+# class BaseTestCase(TestCase):
+#     project_root = ROOTDIR
     
 
-class BasicTests(BaseTestCase):
+# class BasicTests(BaseTestCase):
 
-    def test_01(self):
-        self.assertEqual(1+1, 2)
+#     def test_01(self):
+#         self.assertEqual(1+1, 2)
 
-    def test_utils(self):
-        self.run_simple_doctests('atelier/utils.py')
+#     def test_utils(self):
+#         self.run_simple_doctests('atelier/utils.py')
 
-    def test_rstgen(self):
-        self.run_simple_doctests('atelier/rstgen.py')
-
-
-class PackagesTests(BaseTestCase):
-    def test_packages(self):
-        self.run_packages_test(SETUP_INFO['packages'])
+#     def test_rstgen(self):
+#         self.run_simple_doctests('atelier/rstgen.py')
 
 
-class SphinxTests(BaseTestCase):
-    def test_sphinxconf(self):
-        self.run_simple_doctests('atelier/sphinxconf/__init__.py')
+# class PackagesTests(BaseTestCase):
+#     def test_packages(self):
+#         self.run_packages_test(SETUP_INFO['packages'])
 
-    def test_base(self):
-        self.run_simple_doctests('atelier/sphinxconf/base.py')
 
-    def test_sigal(self):
-        self.run_simple_doctests('atelier/sphinxconf/sigal_image.py')
+# class SphinxTests(BaseTestCase):
+#     def test_sphinxconf(self):
+#         self.run_simple_doctests('atelier/sphinxconf/__init__.py')
+
+#     def test_base(self):
+#         self.run_simple_doctests('atelier/sphinxconf/base.py')
+
+#     def test_sigal(self):
+#         self.run_simple_doctests('atelier/sphinxconf/sigal_image.py')
 
 
