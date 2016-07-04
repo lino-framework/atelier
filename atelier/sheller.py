@@ -8,26 +8,6 @@
 
    python -m doctest atelier/sheller.py
 
-Usage example:
-
->>> import os
->>> from atelier.sheller import Sheller
->>> shell = Sheller(os.path.dirname(__file__))
->>> shell('ls *.py')
-doctest_utf8.py
-fablib.py
-__init__.py
-invlib.py
-jarbuilder.py
-projects.py
-rstgen.py
-setup_info.py
-sheller.py
-tasks.py
-test.py
-utils.py
-
-
 I guess that others have invented similar things before, and I saw
 `doctest2
 <https://pythonhosted.org/doctest2/intro_for_existing.html>`__ but am
@@ -57,7 +37,29 @@ import subprocess
 
 
 class Sheller(object):
+    """A sheller is a little helper object to be used in tested documents
+for running shell scripts and testing their output.
 
+Usage example:
+
+>>> import os
+>>> from atelier.sheller import Sheller
+>>> shell = Sheller(os.path.dirname(__file__))
+>>> shell('ls *.py')
+doctest_utf8.py
+fablib.py
+__init__.py
+invlib.py
+jarbuilder.py
+projects.py
+rstgen.py
+setup_info.py
+sheller.py
+tasks.py
+test.py
+utils.py
+
+    """
     def __init__(self, cwd=None):
         self.cwd = cwd
 
