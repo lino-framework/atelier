@@ -152,7 +152,8 @@ def run_in_demo_projects(ctx, admin_cmd, *more):
         print("In demo project {0}:".format(mod))
 
         m = import_module(mod)
-        p = m.SITE.cache_dir or m.SITE.project_dir
+        # 20160710 p = m.SITE.cache_dir or m.SITE.project_dir
+        p = m.SITE.project_dir
 
         with cd(p):
             # m = import_module(mod)
