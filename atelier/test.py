@@ -11,6 +11,7 @@ Defines an extended TestCase whith methods to launch a subprocess.
 """
 from __future__ import unicode_literals
 
+import six
 import unittest
 import glob
 import sys
@@ -69,14 +70,20 @@ class TestCase(unittest.TestCase, SubProcessParent):
         # rv = subprocess.call(args,**kw)
         if rv != 0:
             cmd = ' '.join(args)
-            if False:
+            if six.PY2:
                 # don't know why this was but if a run_simple_doctests
                 # fails on a snippet which contains non-asci chars,
                 # then we cannot paste the error message.  It is too
                 # early to decode here.
                 out = out.decode("utf-8")
-            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
-                cmd, kw, rv, out)
+            try:
+                msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
+                    cmd, kw, rv, out)
+            except UnicodeDecodeError:
+                out = repr(out)
+                msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
+                    cmd, kw, rv, out)
+
             # print msg
             self.fail(msg)
 
