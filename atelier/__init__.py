@@ -17,7 +17,7 @@ This is the :mod:`atelier` package.
    sheller
 
 """
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 
 import os
 from .setup_info import SETUP_INFO

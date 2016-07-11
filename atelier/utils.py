@@ -40,10 +40,10 @@ class AttrDict(dict):
     
     >>> from atelier.utils import AttrDict
     >>> a = AttrDict()
-    >>> a.define('foo',1)
-    >>> a.define('bar','baz',2)
-    >>> print(a)
-    {'foo': 1, 'bar': {'baz': 2}}
+    >>> a.define('foo', 1)
+    >>> a.define('bar', 'baz', 2)
+    >>> a == {"bar": {"baz": 2}, "foo": 1}
+    True
     >>> print(a.foo)
     1
     >>> print(a.bar.baz)
@@ -327,6 +327,7 @@ class SubProcessParent(object):
         #~ buffer = StringIO()
         kw.update(stdout=subprocess.PIPE)
         kw.update(stderr=subprocess.STDOUT)
+        kw.update(universal_newlines=True)
         return subprocess.Popen(args, **kw)
 
 

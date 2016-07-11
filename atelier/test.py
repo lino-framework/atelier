@@ -9,13 +9,15 @@ Defines an extended TestCase whith methods to launch a subprocess.
 - :meth:`TestCase.run_simple_doctests`
 
 """
+from __future__ import unicode_literals
+
 import unittest
 import glob
 import sys
 from setuptools import find_packages
-from unipath import Path
+# from unipath import Path
 
-from atelier import SETUP_INFO
+# from atelier import SETUP_INFO
 from atelier.utils import SubProcessParent
 
 # ROOTDIR = Path(__file__).parent.parent
@@ -61,7 +63,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
             p.wait()
         else:
             out, err = p.communicate()
-        # print("20150214b run_subprocess", out)
+        # raise Exception("20160711 run_subprocess", out)
         rv = p.returncode
         # kw.update(stderr=buffer)
         # rv = subprocess.call(args,**kw)

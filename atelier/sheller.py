@@ -84,6 +84,7 @@ utils.py
 
         process = subprocess.Popen(
             cmd, stdout=subprocess.PIPE,
+            universal_newlines=True,
             stderr=subprocess.STDOUT, shell=True, **kwargs)
         output, unused_err = process.communicate()
         retcode = process.poll()
