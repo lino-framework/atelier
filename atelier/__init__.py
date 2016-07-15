@@ -7,6 +7,7 @@ This is the :mod:`atelier` package.
    :toctree:
 
    fablib
+   tasks
    invlib
    jarbuilder
    projects
