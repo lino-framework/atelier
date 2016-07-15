@@ -71,20 +71,24 @@ class TestCase(unittest.TestCase, SubProcessParent):
         if rv != 0:
             cmd = ' '.join(args)
             if six.PY2:
-                # don't know why this was but if a run_simple_doctests
-                # fails on a snippet which contains non-asci chars,
-                # then we cannot paste the error message.  It is too
-                # early to decode here.
+                # if the output contains non-asci chars, then we must
+                # decode here in order to wrap it into our msg. Later
+                # we must re-encode it because exceptions, in Python
+                # 2, don't want unicode strings.
                 out = out.decode("utf-8")
-            try:
-                msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
-                    cmd, kw, rv, out)
-            except UnicodeDecodeError:
-                out = repr(out)
-                msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
-                    cmd, kw, rv, out)
+            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
+                cmd, kw, rv, out)
+            # try:
+            #     msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
+            #         cmd, kw, rv, out)
+            # except UnicodeDecodeError:
+            #     out = repr(out)
+            #     msg = "%s (%s) returned %d:OOPS\n-----\n%s\n-----" % (
+            #         cmd, kw, rv, out)
 
             # print msg
+            if six.PY2:
+                msg = msg.encode('utf-8')
             self.fail(msg)
 
     def run_simple_doctests(self, filenames, **kw):  # env.simple_doctests
