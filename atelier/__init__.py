@@ -7,6 +7,7 @@ This is the :mod:`atelier` package.
    :toctree:
 
    fablib
+   tasks
    invlib
    jarbuilder
    projects
@@ -14,9 +15,10 @@ This is the :mod:`atelier` package.
    test
    utils
    sphinxconf
+   sheller
 
 """
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 
 import os
 from .setup_info import SETUP_INFO

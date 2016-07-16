@@ -42,6 +42,12 @@ Commands for documenting
 
     Publish docs. Upload docs to public web server.
 
+.. command:: inv bh
+
+    Build :xfile:`help_texts.py` file for this project.
+    
+    Needs :attr:`env.help_texts_source` and :attr:`env.help_texts_module`.
+
 
 .. command:: inv clean
 

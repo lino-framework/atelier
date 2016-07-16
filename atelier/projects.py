@@ -1,26 +1,9 @@
 # -*- coding: UTF-8 -*-
-#~ Copyright 2011-2016 by Luc Saffre.
-#~ License: BSD, see LICENSE for more details.
+# Copyright 2011-2016 by Luc Saffre.
+# License: BSD, see LICENSE for more details.
 """A minimalistic command-line project management.
 
-The :file:`config.py` file
----------------------------
-
-.. xfile:: ~/.atelier/config.py
-.. xfile:: ~/_atelier/config.py
-.. xfile:: /etc/atelier/config.py
-
-If you manage more than one project, then you declare them in a
-configuration file, usually named :file:`~/.atelier/config.py`, which
-contains something like::
-
-  add_project('/home/john/myprojects/p1')
-  add_project('/home/john/myprojects/second_project', 'p2')
-
-See the docstring of :func:`add_project` below.  See also `Project
-management using Atelier
-<http://noi.lino-framework.org/team/projects.html>`__ for an
-introduction.
+See :doc:`/usage`.
 
 """
 from __future__ import unicode_literals
@@ -125,7 +108,21 @@ def get_setup_info(root_dir):
 
 
 class Project(object):
-    """Describes a project.
+    """Represents a project.
+
+    .. attribute:: module
+
+        The main module (a Python module object).
+
+    .. attribute:: index
+
+        An integer representing the sequence number of this project in
+        the global projects list.
+
+    .. attribute:: doc_trees
+
+        A list of directories containing Sphinx documentation trees.
+
     """
     module = None
     srcref_url = None

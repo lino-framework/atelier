@@ -18,6 +18,9 @@ class BasicTests(BaseTestCase):
     def test_utils(self):
         self.run_simple_doctests('atelier/utils.py')
 
+    def test_sheller(self):
+        self.run_simple_doctests('atelier/sheller.py')
+
     def test_rstgen(self):
         self.run_simple_doctests('atelier/rstgen.py')
 

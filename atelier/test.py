@@ -9,16 +9,19 @@ Defines an extended TestCase whith methods to launch a subprocess.
 - :meth:`TestCase.run_simple_doctests`
 
 """
+from __future__ import unicode_literals
+
+import six
 import unittest
 import glob
 import sys
 from setuptools import find_packages
-from unipath import Path
+# from unipath import Path
 
-from atelier import SETUP_INFO
+# from atelier import SETUP_INFO
 from atelier.utils import SubProcessParent
 
-ROOTDIR = Path(__file__).parent.parent
+# ROOTDIR = Path(__file__).parent.parent
 
 
 def interpreter_args():
@@ -61,21 +64,31 @@ class TestCase(unittest.TestCase, SubProcessParent):
             p.wait()
         else:
             out, err = p.communicate()
-        # print("20150214b run_subprocess", out)
+        # raise Exception("20160711 run_subprocess", out)
         rv = p.returncode
         # kw.update(stderr=buffer)
         # rv = subprocess.call(args,**kw)
         if rv != 0:
             cmd = ' '.join(args)
-            if False:
-                # don't know why this was but if a run_simple_doctests
-                # fails on a snippet which contains non-asci chars,
-                # then we cannot paste the error message.  It is too
-                # early to decode here.
+            if six.PY2:
+                # if the output contains non-asci chars, then we must
+                # decode here in order to wrap it into our msg. Later
+                # we must re-encode it because exceptions, in Python
+                # 2, don't want unicode strings.
                 out = out.decode("utf-8")
             msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
                 cmd, kw, rv, out)
+            # try:
+            #     msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
+            #         cmd, kw, rv, out)
+            # except UnicodeDecodeError:
+            #     out = repr(out)
+            #     msg = "%s (%s) returned %d:OOPS\n-----\n%s\n-----" % (
+            #         cmd, kw, rv, out)
+
             # print msg
+            if six.PY2:
+                msg = msg.encode('utf-8')
             self.fail(msg)
 
     def run_simple_doctests(self, filenames, **kw):  # env.simple_doctests
@@ -115,34 +128,35 @@ class TestCase(unittest.TestCase, SubProcessParent):
             #~ module_relative=False)
 
 
-class BaseTestCase(TestCase):
-    project_root = ROOTDIR
+# class BaseTestCase(TestCase):
+#     project_root = ROOTDIR
     
 
-class BasicTests(BaseTestCase):
+# class BasicTests(BaseTestCase):
 
-    def test_01(self):
-        self.assertEqual(1+1, 2)
+#     def test_01(self):
+#         self.assertEqual(1+1, 2)
 
-    def test_utils(self):
-        self.run_simple_doctests('atelier/utils.py')
+#     def test_utils(self):
+#         self.run_simple_doctests('atelier/utils.py')
 
-    def test_rstgen(self):
-        self.run_simple_doctests('atelier/rstgen.py')
-
-
-class PackagesTests(BaseTestCase):
-    def test_packages(self):
-        self.run_packages_test(SETUP_INFO['packages'])
+#     def test_rstgen(self):
+#         self.run_simple_doctests('atelier/rstgen.py')
 
 
-class SphinxTests(BaseTestCase):
-    def test_sphinxconf(self):
-        self.run_simple_doctests('atelier/sphinxconf/__init__.py')
+# class PackagesTests(BaseTestCase):
+#     def test_packages(self):
+#         self.run_packages_test(SETUP_INFO['packages'])
 
-    def test_base(self):
-        self.run_simple_doctests('atelier/sphinxconf/base.py')
 
-    def test_sigal(self):
-        self.run_simple_doctests('atelier/sphinxconf/sigal_image.py')
+# class SphinxTests(BaseTestCase):
+#     def test_sphinxconf(self):
+#         self.run_simple_doctests('atelier/sphinxconf/__init__.py')
+
+#     def test_base(self):
+#         self.run_simple_doctests('atelier/sphinxconf/base.py')
+
+#     def test_sigal(self):
+#         self.run_simple_doctests('atelier/sphinxconf/sigal_image.py')
+
 

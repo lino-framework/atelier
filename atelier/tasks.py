@@ -18,7 +18,12 @@ from . import invlib
 
 
 def setup_from_tasks(
-        self, globals_dict, main_package=None, settings_module_name=None):
+        self, globals_dict, main_package=None,
+        settings_module_name=None, **kwargs):
+    """This is the function you must call from your :xfile:`tasks.py` file
+    in order to use atelier. See :doc:`/usage`.
+
+    """
     if '__file__' not in globals_dict:
         raise Exception(
             "No '__file__' in %r. "
@@ -32,6 +37,8 @@ def setup_from_tasks(
         'root_dir': root_dir,
         'main_package': main_package,
         'locale_dir': None,
+        'help_texts_source': None,
+        'help_texts_module': None,
         'tolerate_sphinx_warnings': False,
         'demo_projects': [],
         'cleanable_files': [],
@@ -71,6 +78,8 @@ def setup_from_tasks(
         'doc_trees': prj.doc_trees})
     self.configure(_globals_dict)
     self.main_package = main_package
+    if kwargs:
+        self.configure(kwargs)
     return _globals_dict
 
 
