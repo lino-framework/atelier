@@ -4,8 +4,16 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.2 (not released)
+Version 1.0.3 (not released)
 ============================
+
+Version 1.0.2 (released 2016-07-16)
+===================================
+
+- Fixes :message:`TypeError: setup_from_tasks() got an unexpected
+  keyword argument 'demo_projects'`. Thanks to Grigorij for reporting
+  the problem.
+
 
 Version 1.0.1 (released 2016-06-19)
 ===================================
