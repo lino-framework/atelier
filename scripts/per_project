@@ -45,5 +45,7 @@ Examples::
         os.chdir(prj.root_dir)
         rv = subprocess.call(cmd, cwd=prj.root_dir)
         if rv:
-            print("%s in project %s ended with error %s" % (
-                ' '.join(cmd), prj.nickname, rv))
+            raise CommandError(
+                "%s in project %s ended with error %s" % (
+                    ' '.join(cmd), prj.nickname, rv))
+            
