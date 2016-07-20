@@ -119,12 +119,12 @@ def autodoc_add_srcref(app, what, name, obj, options, lines):
     if what == 'module':
         s = srcref(obj)
         if s:
-            # we must add it *after* the module description (not
+            # We must add it *after* the module description (not
             # before) because also autosummary gets the docstring
-            # processed by this handler, and the an overviwe table in
+            # processed by this handler, and the overview table in
             # the parent module would show always that same sentence.
             # I tried whether autosummary is intelligent and removes
-            # admonitions when generating the summary?  Unfortunately
+            # admonitions when generating the summary: unfortunately
             # not.
             # 20151006 app.env.config.html_context.update(source_code_link=s)
             if True:
