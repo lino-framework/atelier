@@ -53,14 +53,15 @@ Your working directory should be clean (otherwise answer 'n' and run `inv ci`).
 Are you sure?"""
 
 
-def local(*args, **kwargs):
+def local(*args, **kwargs):  # probably no longer used
     """Call :func:`invoke.run` with `pty=True
     <http://www.pyinvoke.org/faq.html#why-is-my-command-behaving-differently-under-invoke-versus-being-run-by-hand>`_.
 
-    This is usefule e.g. to get colors in a terminal.
+    This is useful e.g. to get colors in a terminal.
 
     """
     kwargs.update(pty=True)
+    # kwargs.update(encoding='utf-8')
     run(*args, **kwargs)
 
 
@@ -162,7 +163,7 @@ def run_in_demo_projects(ctx, admin_cmd, *more):
             args += more
             args += ["--settings=" + mod]
             cmd = " ".join(args)
-            local(cmd)
+            ctx.run(cmd, pty=True)
 
 
 def get_doc_trees(ctx):
@@ -183,7 +184,7 @@ def sync_docs_data(ctx, docs_dir):
             target = build_dir.child('dl')
             target.mkdir()
             cmd = 'cp -ur %s %s' % (src, target.parent)
-            local(cmd)
+            ctx.run(cmd, pty=True)
     if False:
         # according to http://mathiasbynens.be/notes/rel-shortcut-icon
         for n in ['favicon.ico']:
@@ -191,7 +192,7 @@ def sync_docs_data(ctx, docs_dir):
             if src.exists():
                 target = build_dir.child(n)
                 cmd = 'cp %s %s' % (src, target.parent)
-                local(cmd)
+                ctx.run(cmd, pty=True)
 
 
 def sphinx_build(ctx, builder, docs_dir,
@@ -219,10 +220,10 @@ def sphinx_build(ctx, builder, docs_dir,
     args += ['.', build_dir]
     cmd = ' '.join(args)
     with cd(docs_dir):
-        local(cmd)
+        ctx.run(cmd, pty=True)
     if build_dir_cmd is not None:
         with cd(build_dir):
-            local(build_dir_cmd)
+            ctx.run(build_dir_cmd, pty=True)
 
 
 class RstFile(object):
@@ -254,7 +255,7 @@ def run_tests(ctx):
     """Run the test suite of this project."""
     if not ctx.root_dir.child('setup.py').exists():
         return
-    local('python setup.py -q test')
+    ctx.run('python setup.py -q test', pty=True)
 
 
 @task(name='readme')
@@ -331,7 +332,7 @@ def setup_sdist(ctx):
     args = ["python", "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", dist_dir]
-    local(' '.join(args))
+    ctx.run(' '.join(args), pty=True)
 
 
 @task(name='release')
@@ -351,14 +352,14 @@ def pypi_release(ctx):
         args = ["git", "tag"]
         args += ["-a", version]
         args += ["-m", "'Release %(name)s %(version)s.'" % info]
-        local(' '.join(args))
+        ctx.run(' '.join(args), pty=True)
 
     pypi_register(ctx)
     args = ["python", "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", dist_dir]
     args += ["upload"]
-    local(' '.join(args))
+    ctx.run(' '.join(args), pty=True)
 
 
 @task(name='cov')
@@ -401,15 +402,15 @@ def run_tests_coverage(ctx, html=False, html_cov_dir='htmlcov'):
     #     print("Writing html report to %s" % htmlcov)
     #     cov.html_report(include=cov.get_data().measured_files())
     # cov.erase()
-    local('coverage erase')
-    local('coverage run setup.py test')
-    local('coverage combine')
-    local('coverage report')
+    ctx.run('coverage erase', pty=True)
+    ctx.run('coverage run setup.py test', pty=True)
+    ctx.run('coverage combine', pty=True)
+    ctx.run('coverage report', pty=True)
     if html:
         print("Writing html report to %s" % html_cov_dir)
-        local('coverage html -d {html_cov_dir} && open {html_cov_dir}/index.html'.format(html_cov_dir=html_cov_dir))
+        ctx.run('coverage html -d {html_cov_dir} && open {html_cov_dir}/index.html'.format(html_cov_dir=html_cov_dir), pty=True)
         print('html report is ready.')
-    local('coverage erase')
+    ctx.run('coverage erase', pty=True)
 
 
 @task(name='mm')
@@ -432,7 +433,7 @@ def pypi_register(ctx):
     args = ["python", "setup.py"]
     args += ["register"]
     # ~ run_setup('setup.py',args)
-    local(' '.join(args))
+    ctx.run(' '.join(args), pty=True)
 
 
 @task(name='ci')
@@ -469,11 +470,11 @@ def checkin(ctx, today=None):
         args = ["git", "commit", "-a"]
     args += ['-m', msg]
     cmd = ' '.join(args)
-    local(cmd)
+    ctx.run(cmd, pty=True)
     if ctx.revision_control_system == 'hg':
-        local("hg push %s" % ctx.project_name)
+        ctx.run("hg push %s" % ctx.project_name, pty=True)
     else:
-        local("git push")
+        ctx.run("git push", pty=True)
 
 
 @task(name='blog')
@@ -520,7 +521,7 @@ def edit_blog_entry(ctx, today=None):
     args = [ctx.editor_command.format(entry.path)]
     args += [entry.path]
     # raise Exception("20160324 %s", args)
-    local(' '.join(args))
+    ctx.run(' '.join(args), pty=True)
 
 
 @task(name='pd')
@@ -540,15 +541,15 @@ def publish(ctx):
             else:
                 dest_url = ctx.docs_rsync_dest.format(
                     prj=ctx.project_name, docs=docs_dir.name)
-            publish_docs(build_dir, dest_url)
+            publish_docs(ctx, build_dir, dest_url)
 
             # build_dir = ctx.root_dir.child('userdocs', ctx.build_dir_name)
             # if build_dir.exists():
             #     dest_url = ctx.docs_rsync_dest % (ctx.project_name + '-userdocs')
-            #     publish_docs(build_dir, dest_url)
+            #     publish_docs(ctx, build_dir, dest_url)
 
 
-def publish_docs(build_dir, dest_url):
+def publish_docs(ctx, build_dir, dest_url):
     with cd(build_dir):
         args = ['rsync', '-r']
         args += ['--verbose']
@@ -561,7 +562,7 @@ def publish_docs(build_dir, dest_url):
         cmd = ' '.join(args)
         # must_confirm("%s> %s" % (build_dir, cmd))
         # ~ confirm("yes")
-        local(cmd)
+        ctx.run(cmd, pty=True)
 
 
 def show_revision_status(ctx):
@@ -574,7 +575,7 @@ def show_revision_status(ctx):
               ctx.revision_control_system)
         return
     print("-" * 80)
-    local(' '.join(args))
+    ctx.run(' '.join(args), pty=True)
     print("-" * 80)
 
 
@@ -639,7 +640,7 @@ def build_help_texts(ctx):
     args = ["sphinx-build", "-b", "help_texts"]
     args += [ctx.help_texts_source, dest_dir]
     cmd = ' '.join(args)
-    local(cmd)
+    ctx.run(cmd, pty=True)
 
 
 def extract_messages(ctx):
@@ -652,7 +653,7 @@ def extract_messages(ctx):
     args += ["-o", ld.child("django.pot")]
     cmd = ' '.join(args)
     # ~ must_confirm(cmd)
-    local(cmd)
+    ctx.run(cmd, pty=True)
 
 
 def init_catalog_code(ctx):
@@ -676,7 +677,7 @@ def init_catalog_code(ctx):
                 args += ["-i", ld.child('django.pot')]
                 cmd = ' '.join(args)
                 must_confirm(cmd)
-                local(cmd)
+                ctx.run(cmd, pty=True)
 
 
 def update_catalog_code(ctx):
@@ -695,7 +696,7 @@ def update_catalog_code(ctx):
             args += ["-l", to_locale(loc)]
             cmd = ' '.join(args)
             # ~ must_confirm(cmd)
-            local(cmd)
+            ctx.run(cmd, pty=True)
 
 
 @task(name='ls')
