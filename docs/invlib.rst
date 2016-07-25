@@ -44,6 +44,8 @@ Commands for documenting
 
 .. command:: inv bh
 
+    No longer exists.
+
     Build :xfile:`help_texts.py` file for this project.
     
     Needs :attr:`env.help_texts_source` and :attr:`env.help_texts_module`.
