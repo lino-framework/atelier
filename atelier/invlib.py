@@ -633,12 +633,15 @@ def build_help_texts(ctx):
     """Build help_texts.py file for this project."""
     if not ctx.help_texts_source:
         return
-    if not ctx.help_texts_module:
-        return
-    m = import_module(ctx.help_texts_module)
-    dest_dir = Path(m.__file__).parent
+    # if not ctx.help_texts_module:
+    #     return
+    # m = import_module(ctx.help_texts_module)
+    # dest_dir = Path(m.__file__).parent
+    # build_dir = Path(ctx.build_dir_name)
+    src_dir = ctx.help_texts_source
+    dest_dir = Path(ctx.build_dir_name)
     args = ["sphinx-build", "-b", "help_texts"]
-    args += [ctx.help_texts_source, dest_dir]
+    args += [src_dir, dest_dir]
     cmd = ' '.join(args)
     ctx.run(cmd, pty=True)
 
