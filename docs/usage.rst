@@ -36,15 +36,44 @@ Atelier <http://noi.lino-framework.org/team/projects.html>`__ for an
 introduction.
 
 
+The :cmd:`per_project` command
+==============================
 
-.. command:: per_project
-.. command:: pp
-
-Installing the :mod:`atelier` package will add a shell command
-:cmd:`per_project`.
-
-We also suggest to define a short alias for this script in your
-:xfile:`~/.bash_aliases`::
+Installing the :mod:`atelier` package will add a script
+:cmd:`per_project`. We recommend to define an alias :cmd:`pp` for this
+script in your :xfile:`~/.bash_aliases`::
 
     alias pp='per_project'
 
+
+.. command:: pp
+.. command:: per_project
+
+Execute a shell command in the root directory of every project,
+stopping upon the first error.
+
+The projects are processed in the order defined in your
+:xfile:`~/.atelier/config.py` file.
+
+The script has two options ``--start`` and ``--until``.
+
+The ``--start`` option is useful e.g. when you have been running the
+test suite on all your projects and one project failed. After
+repairing that failure you want to continue the started loop without
+repeating previous test suites again.
+
+Examples::
+
+  $ pp inv test 
+  $ pp -s noi inv test
+  $ pp git st
+  $ pp inv ci --today
+
+
+The first argument starting with a ``-`` (i.e. which is not an option)
+marks the beginning of the shell command to be executed. Any ``-``
+after this command is considered a part of that command. So the
+following to lines are not equivalent::
+
+  $ pp inv --help
+  $ pp --help inv 

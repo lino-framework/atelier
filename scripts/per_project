@@ -5,12 +5,15 @@
 from __future__ import print_function
 import os
 import subprocess
+import argparse
 
 from atelier.projects import load_projects
 from argh import dispatch_command, arg, CommandError
 
 @dispatch_command
-@arg('cmd', help="The command to run on every project.")
+@arg('cmd', 
+     nargs=argparse.REMAINDER,
+     help="The command to run on every project.")
 @arg('-s', '--start',
      help='Start from that project, skip those before.')
 @arg('-u', '--until',
