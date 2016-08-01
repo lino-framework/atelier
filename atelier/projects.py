@@ -149,7 +149,14 @@ class Project(object):
     #     return getattr(self, k)
 
     def load_fabfile(self):
-        """Load the :xfile:`fabfile.py` of this project."""
+        """Load the :xfile:`fabfile.py` of this project.
+
+        This is currently deactivated (just calls :meth:`load_tasks`)
+        and will probably never be reactivated again.
+        """
+        self.load_tasks()
+        return
+    
         if self._loaded:
             return
 
