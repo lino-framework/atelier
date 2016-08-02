@@ -327,10 +327,18 @@ from unipath import Path
 from atelier.utils import i2d
 from atelier import rstgen
 
-from fabric.api import env, local, task
-from fabric.utils import abort, puts
-from fabric.contrib.console import confirm
-from fabric.api import lcd
+try:
+    from fabric.api import env, local, task
+    from fabric.utils import abort, puts
+    from fabric.contrib.console import confirm
+    from fabric.api import lcd
+except ImportError:
+    def task(**kwargs):
+        def d(f):
+            return f
+        return d
+    # ignore it here so that Sphinx autodoc can import it even
+    # if fabric is not installed.
 
 
 def get_current_date(today=None):
