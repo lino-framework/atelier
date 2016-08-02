@@ -50,7 +50,6 @@ months.` when I run :command:`fab jars` to sign a jar file.
 from builtins import object
 
 from unipath import Path
-from fabric.api import local
 
 
 class JarBuilder(object):
@@ -73,20 +72,20 @@ file.
     def add_lib(self, pth):
         self.libjars.append(Path(pth))
 
-    def build_jar(self, outdir, alias):
+    def build_jar(self, ctx, outdir, alias):
         flags = '-storepass "`cat ~/.secret/.keystore_password`"'
         if self.tsa:
             flags += ' -tsa {0}'.format(self.tsa)
 
         def run_signer(jarfile):
-            local("jarsigner %s %s %s" % (flags, jarfile, alias))
-            local("jarsigner -verify %s" % jarfile)
+            ctx.run("jarsigner %s %s %s" % (flags, jarfile, alias), pty=True)
+            ctx.run("jarsigner -verify %s" % jarfile, pty=True)
 
         outdir = Path(outdir)
         jarfile = outdir.child(self.jarfile)
         if jarfile.needs_update(self.jarcontent):
             jarcontent = [x.replace("$", r"\$") for x in self.jarcontent]
-            local("jar cvfm %s %s" % (jarfile, ' '.join(jarcontent)))
+            ctx.run("jar cvfm %s %s" % (jarfile, ' '.join(jarcontent)), pty=True)
         run_signer(jarfile)
         for libfile in self.libjars:
             jarfile = outdir.child(libfile.name)
@@ -94,12 +93,12 @@ file.
                 libfile.copy(jarfile)
             run_signer(jarfile)
 
-    def build_classes(self):
+    def build_classes(self, ctx):
         flags = "-Xlint:unchecked"
         if len(self.libjars):
             cp = ':'.join(self.libjars)
             flags += " -classpath %s" % cp
         for src in self.sources:
-            local("javac %s %s" % (flags, src))
+            ctx.run("javac %s %s" % (flags, src), pty=True)
 
 

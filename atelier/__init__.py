@@ -6,7 +6,6 @@ This is the :mod:`atelier` package.
 .. autosummary::
    :toctree:
 
-   fablib
    tasks
    invlib
    jarbuilder

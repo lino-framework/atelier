@@ -165,7 +165,7 @@ Version 0.0.9  (released :blogref:`20141226`)
 Version 0.0.8  (released :blogref:`20141226`)
 =============================================
 
-- :ref:`fab_commands` can now be invoked from a subdirectory of the
+- `fab_commands` can now be invoked from a subdirectory of the
   project's root. And :mod:`atelier.projects` now supports to work in
   undeclared projects even if there is a :xfile:`config.py` file.
   (:blogref:`20141226`)
