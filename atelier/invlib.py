@@ -551,7 +551,7 @@ def publish(ctx):
 
 def publish_docs(ctx, build_dir, dest_url):
     with cd(build_dir):
-        args = ['rsync', '-r']
+        args = ['rsync', '-e', 'ssh', '-r']
         args += ['--verbose']
         args += ['--progress']  # show progress
         args += ['--delete']  # delete files in dest
@@ -561,7 +561,6 @@ def publish_docs(ctx, build_dir, dest_url):
         args += [dest_url]  # dest
         cmd = ' '.join(args)
         # must_confirm("%s> %s" % (build_dir, cmd))
-        # ~ confirm("yes")
         ctx.run(cmd, pty=True)
 
 
