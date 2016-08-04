@@ -363,7 +363,7 @@ def pypi_release(ctx):
 
 
 @task(name='cov')
-def run_tests_coverage(ctx, html=False, html_cov_dir='htmlcov'):
+def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     """Run all tests and create a coverage report.
 
     If there a directory named :xfile:`htmlcov` in your project's
