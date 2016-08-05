@@ -14,11 +14,13 @@ from argh import dispatch_command, arg, CommandError
 @arg('cmd', 
      nargs=argparse.REMAINDER,
      help="The command to run on every project.")
+@arg('-v', '--voice',
+     help='Speak the result when terminated.')
 @arg('-s', '--start',
      help='Start from that project, skip those before.')
 @arg('-u', '--until',
      help='Only until that project, skip those after.')
-def main(start=None, until=None, *cmd):
+def main(voice=False, start=None, until=None, *cmd):
     """Execute a shell command in the root directory of each project,
 stopping upon the first error.
 
@@ -36,6 +38,12 @@ Examples::
     if len(cmd) == 0:
         raise CommandError("You must specify a command!")
 
+    def saymsg(msg):
+        if voice:
+            msg = msg.replace("'", "\'")
+            cmd = ("espeak", "'{}'".format(msg))
+            subprocess.call(cmd)
+
     skipping = start is not None
     for prj in load_projects():
         if start and prj.nickname == start:
@@ -48,7 +56,11 @@ Examples::
         os.chdir(prj.root_dir)
         rv = subprocess.call(cmd, cwd=prj.root_dir)
         if rv:
-            raise CommandError(
-                "%s in project %s ended with error %s" % (
-                    ' '.join(cmd), prj.nickname, rv))
-            
+            msg = "%s ended with error %s in project %s" % (
+                ' '.join(cmd), rv, prj.nickname)
+            saymsg(msg)
+            raise CommandError(msg)
+
+    msg = "Successfully terminated {} for all projects"
+    msg = msg.format(cmd)
+    saymsg(msg)
