@@ -1,3 +1,5 @@
+.. _atelier.usage:
+
 =====
 Usage
 =====
