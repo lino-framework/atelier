@@ -696,47 +696,9 @@ def update_catalog_code(ctx):
             ctx.run(cmd, pty=True)
 
 
-@task(name='ls')
-def list_projects(ctx, *cmdline_args):
-    """List your projects."""
-    from atelier.projects import load_projects
-    # headers = (
-    #     # ~ '#','Location',
-    #     'Project',
-    #     # 'Old version',
-    #     'Version')
-
-    headers = (
-        'Project',
-        'URL',
-        'Version',
-        'doctrees')
-
-    def cells(self):
-        self.load_fabfile()
-        yield self.nickname
-        yield self.SETUP_INFO.get('url', None)
-        yield self.SETUP_INFO.get('version', '')
-        yield ', '.join(self.doc_trees)
-
-    def old_cells(self):
-        self.load_fabfile()
-        # print 20140116, self.module
-        desc = "%s -- " % self.nickname
-        desc += "(doc_trees : %s)\n" % ', '.join(self.doc_trees)
-        url = self.SETUP_INFO.get('url', None)
-        version = self.SETUP_INFO.get('version', '')
-        if url:
-            desc += "`%s <%s>`__ -- %s" % (
-                self.name, url,
-                self.SETUP_INFO['description'])
-        return (
-            '\n'.join(textwrap.wrap(desc, 60)),
-            # self.dist.version,
-            version)
-
-    print(rstgen.table(headers, [
-        list(cells(p)) for p in load_projects()]))
+# @task(name='ls')
+# def list_projects(ctx, *cmdline_args):
+#     """List your projects."""
 
 
 @task(name='ct')

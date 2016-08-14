@@ -139,7 +139,8 @@ Commands for project management
 
 .. command:: inv ls
 
-    List all your projects.
+    List all your projects. This function has been moved to
+    :cmd:`per_project`.
 
 
 
