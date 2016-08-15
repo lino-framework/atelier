@@ -44,6 +44,7 @@ def setup_from_tasks(
         'apidoc_exclude_pathnames': [],
         'project_name': tasks.parent.absolute().name,
         'editor_command': None,
+        'coverage_command': 'setup.py test',
         'languages': None,
         'blog_root': root_dir.child('docs'),
         'long_date_format': "%Y%m%d (%A, %d %B %Y)",

@@ -60,6 +60,9 @@ Commands for documenting
     - `cache` directories of demo projects
     - additional files specified in :attr:`env.cleanable_files`
 
+    Unless option ``--batch`` is specified, ask for an interactive
+    user confirmation before removing these files.
+
 .. command:: inv readme
 
     Generate or update `README.txt` or `README.rst` file from
@@ -130,7 +133,7 @@ Commands for testing
 
 .. command:: inv cov
 
-    Run all tests and create a `coverage
+    Run :attr:`inv.coverage_command` and create a `coverage
     <https://pypi.python.org/pypi/coverage>`_ report
 
 
@@ -164,8 +167,8 @@ You can specify project-specific configuration settings directly in
 your :xfile:`tasks.py` file. Example content::
 
     from atelier.tasks import ns
-    ns.setup_from_tasks(globals(), "lino")
-    ns.configure(dict(languages="en de fr et nl".split()))
+    ns.setup_from_tasks(globals(), "lino", 
+        languages="en de fr et nl".split())
 
 
 .. xfile:: invoke.yaml
@@ -204,6 +207,10 @@ The following section documents the possible settings used by
   .. attribute:: sdist_dir
 
 
+  .. attribute:: coverage_command
+
+    The command to run for measuring coverage by :cmd:`inv cov`.
+    
   .. attribute:: editor_command
 
     A string with the command name of your text editor. Example::

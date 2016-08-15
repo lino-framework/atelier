@@ -92,14 +92,15 @@ def must_exist(p):
         raise Exception("No such file: %s" % p.absolute())
 
 
-def rmtree_after_confirm(p):
+def rmtree_after_confirm(p, batch=False):
     if not p.exists():
         return
-    if confirm("OK to remove %s and everything under it?" % p.absolute()):
+    if batch or confirm(
+            "OK to remove %s and everything under it?" % p.absolute()):
         p.rmtree()
 
 
-def cleanup_pyc(p):
+def cleanup_pyc(p, batch=False):
     """Thanks to oddthinking on http://stackoverflow.com/questions/2528283
     """
     for root, dirs, files in os.walk(p):
@@ -108,37 +109,38 @@ def cleanup_pyc(p):
         excess_pyc_files = [pyc_filename for pyc_filename in pyc_files if pyc_filename[:-1] not in py_files]
         for excess_pyc_file in excess_pyc_files:
             full_path = os.path.join(root, excess_pyc_file)
-            must_confirm("Remove excess file %s:" % full_path)
-            os.remove(full_path)
+            if batch or confirm("Remove excess file %s:" % full_path):
+                os.remove(full_path)
 
 
-def sphinx_clean(ctx):
+def sphinx_clean(ctx, batch=False):
     """Delete all generated Sphinx files.
 
     """
     for docs_dir in get_doc_trees(ctx):
-        rmtree_after_confirm(docs_dir.child(ctx.build_dir_name))
+        rmtree_after_confirm(docs_dir.child(ctx.build_dir_name), batch)
 
 
-def py_clean(ctx):
+def py_clean(ctx, batch=False):
     """Delete dangling `.pyc` files.
 
     """
     if atelier.current_project.module is not None:
         p = Path(atelier.current_project.module.__file__).parent
-        cleanup_pyc(p)
+        cleanup_pyc(p, batch)
     p = ctx.root_dir.child('tests')
     if p.exists():
-        cleanup_pyc(p)
+        cleanup_pyc(p, batch)
 
     files = []
     for pat in ctx.cleanable_files:
         for p in glob.glob(os.path.join(ctx.root_dir, pat)):
             files.append(p)
     if len(files):
-        must_confirm("Remove {0} cleanable files".format(len(files)))
-        for p in files:
-            os.remove(p)
+        if batch or confirm(
+                "Remove {0} cleanable files".format(len(files))):
+            for p in files:
+                os.remove(p)
 
 
 def run_in_demo_projects(ctx, admin_cmd, *more):
@@ -253,6 +255,7 @@ def initdb_demo(ctx):
 @task(name='test')
 def run_tests(ctx):
     """Run the test suite of this project."""
+    # assert os.environ['COVERAGE_PROCESS_START']
     if not ctx.root_dir.child('setup.py').exists():
         return
     ctx.run('python setup.py -q test', pty=True)
@@ -317,10 +320,11 @@ def build_docs(ctx, *cmdline_args):
 
 
 @task(name='clean')
-def clean(ctx, *cmdline_args):
+def clean(ctx, batch=False):
+# def clean(ctx, *cmdline_args):
     """Remove temporary and generated files."""
-    sphinx_clean(ctx)
-    py_clean(ctx)
+    sphinx_clean(ctx, batch)
+    py_clean(ctx, batch)
     # clean_demo_caches()
 
 
@@ -371,44 +375,21 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     (overwriting any files without confirmation).
 
     """
-    if True:
-        SETUP_INFO = get_setup_info(ctx.root_dir)
-        if 'test_suite' not in SETUP_INFO:
-            raise Exception("No `test_suite` in your `setup.py`.")
-        test_suite = ctx.root_dir.child(SETUP_INFO['test_suite'])
-    else:
-        test_suite = ctx.root_dir
-
     covfile = ctx.root_dir.child('.coveragerc')
     if not covfile.exists():
-        raise Exception('There is no file {0}'.format(covfile))
-    import coverage
-    # ~ clean_sys_path()
-    # print("Running tests for '%s' within coverage..." % ctx.project_name)
-    print("Running tests in '%s' within coverage..." % test_suite)
-    # ~ ctx.DOCSDIR.chdir()
+        print('No .coveragerc file in {0}'.format(ctx.project_name))
+        return
+    print("Running {0} in {1} within coverage...".format(
+        ctx.coverage_command, ctx.project_name))
     os.environ['COVERAGE_PROCESS_START'] = covfile
-    # cov = coverage.coverage()
-    # cov.start()
-    # import unittest
-    # tests = unittest.TestLoader().discover(test_suite)
-    # unittest.TextTestRunner(verbosity=1).run(tests)
-    # cov.stop()
-    # cov.save()
-    # cov.combine()
-    # cov.report()
-    # htmlcov = ctx.root_dir.child('htmlcov')
-    # if htmlcov.exists():
-    #     print("Writing html report to %s" % htmlcov)
-    #     cov.html_report(include=cov.get_data().measured_files())
-    # cov.erase()
     ctx.run('coverage erase', pty=True)
-    ctx.run('coverage run setup.py test', pty=True)
+    ctx.run('coverage run {}'.format(ctx.coverage_command), pty=True)
     ctx.run('coverage combine', pty=True)
     ctx.run('coverage report', pty=True)
     if html:
         print("Writing html report to %s" % html_cov_dir)
-        ctx.run('coverage html -d {html_cov_dir} && open {html_cov_dir}/index.html'.format(html_cov_dir=html_cov_dir), pty=True)
+        ctx.run('coverage html -d {0} && open {0}/index.html'.format(
+            html_cov_dir), pty=True)
         print('html report is ready.')
     ctx.run('coverage erase', pty=True)
 
