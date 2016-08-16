@@ -47,21 +47,6 @@ def add_project(root_dir, nickname=None):
     return p
 
 
-def unused_get_project_info(root_dir):
-    "Find the project info for the given directory."
-    prj = _PROJECTS_DICT.get(root_dir)
-    if prj is None:
-        # if no config.py found, add current working directory.
-        p = Path().resolve()
-        while p:
-            if p.child('fabfile.py').exists():
-                return add_project(p)
-            p = p.parent
-        # raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
-    prj.load_fabfile()
-    return prj
-
-
 def get_project_info_tasks(root_dir):
     "Find the project info for the given directory."
     prj = _PROJECTS_DICT.get(root_dir)
