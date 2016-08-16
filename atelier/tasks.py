@@ -53,7 +53,6 @@ def setup_from_tasks(
     if settings_module_name is not None:
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
         from django.conf import settings
-        # why was this? settings.SITE.startup()
         self.configure({
             'languages': [lng.name for lng in settings.SITE.languages]})
 
@@ -71,6 +70,7 @@ def setup_from_tasks(
     # not a configuration value but just a global internal variable.
     # self.configure({ 'current_project': prj})
     atelier.current_project = prj
+    
     self.configure({'doc_trees': prj.doc_trees})
     self.configure({
         # 'main_package': main_package,

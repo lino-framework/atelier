@@ -78,6 +78,7 @@ def get_current_date(today=None):
     """
 
     if today is None:
+        # return datetime.datetime.utcnow()
         return datetime.date.today()
     return i2d(today)
 
@@ -691,14 +692,20 @@ def commited_today(ctx, today=None):
     today = get_current_date(today)
     rows = []
 
-    def load(self):
+    def load(prj):
 
-        self.load_fabfile()
+        # prj.load_fabfile()
+        prj.load_tasks()
 
-        if ctx.revision_control_system != 'git':
+        # tsk, cfg = prj.ns.task_with_config('ci')
+        cfg = prj.ns.configuration()
+
+        if cfg['revision_control_system'] != 'git':
+        # if cfg.revision_control_system != 'git':
+            # print("20160816 {}".format(cfg))
             return
     
-        repo = Repo(ctx.root_dir)
+        repo = Repo(cfg['root_dir'])
 
         kw = dict()
         ONEDAY = timedelta(days=1)
@@ -708,6 +715,7 @@ def commited_today(ctx, today=None):
                   before=tomorrow.strftime("%Y-%m-%d"))
         it = list(repo.iter_commits(**kw))
         if len(it) == 0:
+            # print("20160816 no commits in {}".format(prj.nickname))
             return
 
         def fmtcommit(c):
@@ -722,11 +730,12 @@ def commited_today(ctx, today=None):
                 s += " " + c.message
             return s
             
-        url = self.SETUP_INFO.get('url', "oops")
-        desc = "`%s <%s>`__" % (self.name, url)
+        url = prj.SETUP_INFO.get('url', "oops")
+        desc = "`%s <%s>`__" % (prj.name, url)
 
         for c in it:
-            ts = time.strftime("%H:%M", time.gmtime(c.committed_date))
+            # ts = time.strftime("%H:%M", time.gmtime(c.committed_date))
+            ts = time.strftime("%Y-%m-%d %H:%M", time.localtime(c.committed_date))
             rows.append([ts, desc, fmtcommit(c)])
 
     for p in load_projects():
