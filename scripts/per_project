@@ -20,7 +20,9 @@ from argh import dispatch_command, arg, CommandError
      help='Start from that project, skip those before.')
 @arg('-u', '--until',
      help='Only until that project, skip those after.')
-def main(voice=False, start=None, until=None, *cmd):
+@arg('-l', '--list', default=False, dest='showlist',
+     help='Show list of projects.')
+def main(voice=False, start=None, until=None, showlist=False, *cmd):
     """Execute a shell command in the root directory of each project,
 stopping upon the first error.
 
@@ -35,6 +37,26 @@ Examples::
   $ per_project inv ci
 
     """
+    from atelier.projects import load_projects
+    if showlist:
+        from atelier import rstgen
+        headers = (
+            'Project',
+            'URL',
+            'Version',
+            'doctrees')
+
+        def cells(self):
+            self.load_fabfile()
+            yield self.nickname
+            yield self.SETUP_INFO.get('url', None)
+            yield self.SETUP_INFO.get('version', '')
+            yield ', '.join(self.doc_trees)
+
+        print(rstgen.table(headers, [
+            tuple(cells(p)) for p in load_projects()]))
+        return
+            
     if len(cmd) == 0:
         raise CommandError("You must specify a command!")
 

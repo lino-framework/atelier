@@ -47,21 +47,6 @@ def add_project(root_dir, nickname=None):
     return p
 
 
-def get_project_info(root_dir):
-    "Find the project info for the given directory."
-    prj = _PROJECTS_DICT.get(root_dir)
-    if prj is None:
-        # if no config.py found, add current working directory.
-        p = Path().resolve()
-        while p:
-            if p.child('fabfile.py').exists():
-                return add_project(p)
-            p = p.parent
-        # raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
-    prj.load_fabfile()
-    return prj
-
-
 def get_project_info_tasks(root_dir):
     "Find the project info for the given directory."
     prj = _PROJECTS_DICT.get(root_dir)
@@ -70,7 +55,8 @@ def get_project_info_tasks(root_dir):
         p = Path().resolve()
         while p:
             if p.child('tasks.py').exists():
-                return add_project(p)
+                prj = add_project(p)
+                break
             p = p.parent
         # raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
     prj.load_tasks()
@@ -129,6 +115,7 @@ class Project(object):
     intersphinx_urls = {}
     SETUP_INFO = {}
     doc_trees = ['docs']
+    ns = None
 
     def __init__(self, i, root_dir, nickname=None):
         self.index = i
@@ -141,53 +128,6 @@ class Project(object):
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.root_dir)
-
-    # def __getattr__(self, k):
-    #     if self._loaded:
-    #         raise AttributeError(k)
-    #     self.load_fabfile()
-    #     return getattr(self, k)
-
-    def load_fabfile(self):
-        """Load the :xfile:`fabfile.py` of this project.
-
-        This is currently deactivated (just calls :meth:`load_tasks`)
-        and will probably never be reactivated again.
-        """
-        self.load_tasks()
-        return
-    
-        if self._loaded:
-            return
-
-        self._loaded = True
-    
-        self.name = self.nickname
-
-        if not self.root_dir.child('fabfile.py').exists():
-            return
-
-        fqname = 'atelier.prj_%s' % self.index
-        cwd = Path().resolve()
-        self.root_dir.chdir()
-        # print("20141027 %s %s " % (self, self.root_dir))
-        (fp, pathname, desc) = imp.find_module('fabfile', [self.root_dir])
-        m = imp.load_module(fqname, fp, pathname, desc)
-        cwd.chdir()
-
-        main_package = getattr(m.env, 'main_package', None)
-        if main_package is None:
-            return
-        self.name = main_package
-        # self.name = name
-        # removed 20140116:
-        # self.dist = pkg_resources.get_distribution(name)
-        self.module = import_module(main_package)
-        self.SETUP_INFO = get_setup_info(self.root_dir)
-        self.srcref_url = getattr(self.module, 'srcref_url', None)
-        self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
-        self.intersphinx_urls = getattr(
-            self.module, 'intersphinx_urls', {})
 
     def load_tasks(self):
         """Load the :xfile:`tasks.py` of this project."""
@@ -211,6 +151,7 @@ class Project(object):
 
         assert hasattr(m, 'ns')
         main_package = m.ns.main_package
+        self.ns = m.ns
 
         if main_package is None:
             return
@@ -230,13 +171,4 @@ for fn in config_files:
     fn = os.path.expanduser(fn)
     if os.path.exists(fn):
         execfile(fn)  # supposed to call add_project
-
-# if len(_PROJECT_INFOS) == 0:
-#     # if no config.py found, add current working directory.
-#     p = Path().resolve()
-#     while p:
-#         if p.child('fabfile.py').exists():
-#             add_project(p)
-#             break
-#         p = p.parent
 
