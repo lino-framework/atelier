@@ -724,6 +724,9 @@ def commited_today(ctx, today=None):
             if url.startswith("git@github.com"):
                 url = "https://github.com/" + url[15:-4] \
                       + "/commit/" + c.hexsha
+            elif url.startswith("git+ssh://git@github.com"):
+                url = "https://github.com/" + url[25:-4] \
+                      + "/commit/" + c.hexsha
             
             s = "`{0} <{1}>`__".format(c.hexsha[-7:], url)
             if c.message and not c.message.startswith("http://"):
