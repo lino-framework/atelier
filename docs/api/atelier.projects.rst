@@ -10,7 +10,6 @@ atelier.projects
    .. autosummary::
    
       add_project
-      get_project_info
       get_project_info_tasks
       get_setup_info
       load_projects

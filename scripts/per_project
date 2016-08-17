@@ -47,7 +47,7 @@ Examples::
             'doctrees')
 
         def cells(self):
-            self.load_fabfile()
+            self.load_tasks()
             yield self.nickname
             yield self.SETUP_INFO.get('url', None)
             yield self.SETUP_INFO.get('version', '')
