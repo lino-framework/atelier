@@ -345,8 +345,7 @@ def pypi_release(ctx):
     "Publish a new version to PyPI."
     info = atelier.current_project.SETUP_INFO
     version = info['version']
-    dist_dir = Path(ctx.sdist_dir).child(
-        atelier.current_project.SETUP_INFO['name'])
+    dist_dir = Path(ctx.sdist_dir).child(info['name'])
 
     show_revision_status(ctx)
     show_pypi_status(ctx)
