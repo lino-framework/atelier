@@ -2,8 +2,8 @@
 # Copyright 2013-2016 by Luc Saffre & Hamza Khchine.
 # License: BSD, see LICENSE for more details.
 
-"""A library for `invoke <http://www.pyinvoke.org/>`__ with tasks I use
-to manage my Python projects.
+"""A library for `invoke <http://www.pyinvoke.org/>`__ with tasks we
+use for managing our Python projects.
 
 See :doc:`/invlib`
 
