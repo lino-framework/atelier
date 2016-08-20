@@ -48,6 +48,7 @@ def setup_from_tasks(
         'languages': None,
         'blog_root': root_dir.child('docs'),
         'long_date_format': "%Y%m%d (%A, %d %B %Y)",
+        'sdist_dir': root_dir.child('dist'),
     }
 
     if settings_module_name is not None:
