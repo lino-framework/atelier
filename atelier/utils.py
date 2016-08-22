@@ -382,6 +382,8 @@ def list_py2(old_list):
     for item in old_list:
         if type(item) == dict:
             new_list.append(dict_py2(item))
+        elif type(item) == tuple:
+            new_list.append(tuple_py2(item))
         else:
             new_list.append(str(item))
     return new_list
