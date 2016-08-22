@@ -57,15 +57,22 @@ stopping upon the first error.
 The projects are processed in the order defined in your
 :xfile:`~/.atelier/config.py` file.
 
-The script has two options ``--start`` and ``--until``.
+The script has the following options:
 
-The ``--start`` option is useful e.g. when you have been running the
-test suite on all your projects and one project failed. After
-repairing that failure you want to continue the started loop without
-repeating previous test suites again.
+- ``--start PRJNAME`` is useful e.g. when you have been running the
+  test suite on all your projects and one project failed. After
+  repairing that failure you want to continue the started loop without
+  repeating previous test suites again.
+
+- ``--until PRJNAME`` is the opposite of ``--start``.
+
+- ``--list`` or ``-l`` does not run any command but outputs a list of all
+  projects to stdout.
+  
 
 Examples::
 
+  $ pp -l
   $ pp inv test 
   $ pp -s noi inv test
   $ pp git st

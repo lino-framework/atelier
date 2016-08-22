@@ -7,6 +7,10 @@ Changes in `atelier`
 Version 1.0.3 (not released)
 ============================
 
+- Removed the :cmd:`inv ls` command and added a ``--list`` option to
+  :cmd:`per_project`.  (:blogref:`20160814`)
+
+
 Version 1.0.2 (released 2016-07-16)
 ===================================
 
