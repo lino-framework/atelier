@@ -51,24 +51,25 @@ script in your :xfile:`~/.bash_aliases`::
 .. command:: pp
 .. command:: per_project
 
-Execute a shell command in the root directory of every project,
-stopping upon the first error.
+Loop over all projects, executing the given shell command in the root
+directory of each project.
 
 The projects are processed in the order defined in your
 :xfile:`~/.atelier/config.py` file.
 
 The script has the following options:
 
-- ``--start PRJNAME`` is useful e.g. when you have been running the
-  test suite on all your projects and one project failed. After
-  repairing that failure you want to continue the started loop without
-  repeating previous test suites again.
-
-- ``--until PRJNAME`` is the opposite of ``--start``.
-
-- ``--list`` or ``-l`` does not run any command but outputs a list of all
-  projects to stdout.
+- ``--list`` or ``-l`` : print a list of all projects to stdout. Does
+  not run any command.
   
+- ``--start PRJNAME`` : start at project PRJNAME. This is useful
+  e.g. when you have been running the test suite on all your projects
+  and one project failed. After repairing that failure you want to
+  continue the started loop without repeating previous test suites
+  again.
+
+- ``--until PRJNAME`` : stop after project PRJNAME.
+
 
 Examples::
 
@@ -79,10 +80,10 @@ Examples::
   $ pp inv ci --today
 
 
-The first argument starting with a ``-`` (i.e. which is not an option)
-marks the beginning of the shell command to be executed. Any ``-``
-after this command is considered a part of that command. So the
-following to lines are not equivalent::
+The first argument which is not an option (i.e. not starting with a
+``-``) marks the beginning of the shell command to be executed. Any
+``-`` after that is considered a part of the command. So the following
+to lines are not equivalent::
 
   $ pp inv --help
   $ pp --help inv 
