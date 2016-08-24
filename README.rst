@@ -1,11 +1,8 @@
-==========================
-atelier README
-==========================
+=======================
+The ``atelier`` package
+=======================
 
-A collection of tools for software artists
 
-Description
------------
 
 `atelier` is a collection of tools for managing and maintaining
 Python software projects.
@@ -34,5 +31,3 @@ The central project homepage is http://atelier.lino-framework.org
 
 
 
-
-Read more on http://atelier.lino-framework.org

@@ -267,34 +267,30 @@ def write_readme(ctx):
     """Generate or update `README.txt` or `README.rst` file from `SETUP_INFO`. """
     if not ctx.main_package:
         return
-    if len(ctx.doc_trees) == 0:
-        # when there are no docs, then the README file is manually maintained
+    atelier.current_project.load_tasks()
+    info = atelier.current_project.SETUP_INFO
+    if not info.get('long_description'):
         return
+    # if len(ctx.doc_trees) == 0:
+    #     # when there are no docs, then the README file is manually maintained
+    #     return
     if ctx.revision_control_system == 'git':
         readme = ctx.root_dir.child('README.rst')
     else:
         readme = ctx.root_dir.child('README.txt')
 
-    atelier.current_project.load_tasks()
     # for k in ('name', 'description', 'long_description', 'url'):
     #     if k not in env.current_project.SETUP_INFO:
     #         msg = "SETUP_INFO for {0} has no key '{1}'"
     #         raise Exception(msg.format(env.current_project, k))
 
+    title = rstgen.header(1, "The ``{}`` package".format(info['name']))
+
     txt = """\
-==========================
-%(name)s README
-==========================
+{title}
 
-%(description)s
-
-Description
------------
-
-%(long_description)s
-
-Read more on %(url)s
-""" % atelier.current_project.SETUP_INFO
+{long_description}
+""".format(title=title, **info)
     txt = txt.encode('utf-8')
     if readme.exists() and readme.read_file() == txt:
         return
