@@ -367,7 +367,7 @@ def pypi_release(ctx):
 
 
 @task(name='cov')
-def run_tests_coverage(ctx, html=False, html_cov_dir='htmlcov'):
+def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     """Run all tests and create a coverage report.
 
     If there a directory named :xfile:`htmlcov` in your project's
@@ -383,7 +383,11 @@ def run_tests_coverage(ctx, html=False, html_cov_dir='htmlcov'):
         ctx.coverage_command, ctx.project_name))
     os.environ['COVERAGE_PROCESS_START'] = covfile
     ctx.run('coverage erase', pty=True)
-    ctx.run('{}'.format(ctx.coverage_command), pty=True)
+    if ctx.root_dir.child('pytest.ini').exists():
+        ctx.run('pytest --cov=lino', pty=True)
+        html = False
+    else:
+        ctx.run('coverage run {}'.format(ctx.coverage_command), pty=True)
     ctx.run('coverage combine', pty=True)
     ctx.run('coverage report', pty=True)
     if html:
