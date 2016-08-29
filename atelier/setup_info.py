@@ -7,9 +7,9 @@
 
 # Explicitly install `importlib` under Python 2.6. Thanks to
 # http://stackoverflow.com/questions/9418064
-install_requires = ['Sphinx', 'invoke', 'argh', 
+install_requires = ['Sphinx', 'invoke', 'argh',
                     'future', 'Babel', 'unipath',
-                    'python_dateutil', 'gitpython']
+                    'python_dateutil', 'gitpython', 'pytest-cov']
 try:
     import importlib
 except ImportError:

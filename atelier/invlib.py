@@ -19,7 +19,6 @@ import glob
 import time
 import datetime
 from datetime import timedelta
-import textwrap
 
 from builtins import str
 from builtins import object
@@ -33,12 +32,11 @@ try:
 except ImportError:
     from invoke import task
 
-from invoke.exceptions import Failure, Exit
+from invoke.exceptions import Exit
 from invoke import run
 
 import atelier
 from atelier.utils import confirm
-from .projects import get_setup_info
 
 
 LASTREL_INFO = "Last release was %(filename)s \
@@ -259,7 +257,11 @@ def run_tests(ctx):
     # assert os.environ['COVERAGE_PROCESS_START']
     if not ctx.root_dir.child('setup.py').exists():
         return
-    ctx.run('python setup.py -q test', pty=True)
+    if ctx.root_dir.child('pytest.ini').exists():
+        ctx.run('pytest', pty=True)
+    else:
+        ctx.run('python setup.py -q test', pty=True)
+
 
 
 @task(name='readme')
@@ -365,7 +367,7 @@ def pypi_release(ctx):
 
 
 @task(name='cov')
-def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
+def run_tests_coverage(ctx, html=False, html_cov_dir='htmlcov'):
     """Run all tests and create a coverage report.
 
     If there a directory named :xfile:`htmlcov` in your project's
@@ -381,7 +383,7 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
         ctx.coverage_command, ctx.project_name))
     os.environ['COVERAGE_PROCESS_START'] = covfile
     ctx.run('coverage erase', pty=True)
-    ctx.run('coverage run {}'.format(ctx.coverage_command), pty=True)
+    ctx.run('{}'.format(ctx.coverage_command), pty=True)
     ctx.run('coverage combine', pty=True)
     ctx.run('coverage report', pty=True)
     if html:
