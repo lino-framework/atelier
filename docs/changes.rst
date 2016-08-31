@@ -4,11 +4,14 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.3 (not released)
+Version 1.0.4 (not released)
 ============================
 
-- Removed the :cmd:`inv ls` command and added a ``--list`` option to
-  :cmd:`per_project`.  (:blogref:`20160814`)
+Version 1.0.3 (released 2016-08-31)
+===================================
+
+- The :cmd:`inv ls` command has been replaced by a ``--list`` option
+  to :cmd:`per_project`.  (:blogref:`20160814`)
 
 - :cmd:`inv sdist` now creates the archive file directly in
   `sdist_dir` and no longer in a subdir thereof (using the project
