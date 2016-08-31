@@ -10,6 +10,12 @@ Version 1.0.3 (not released)
 - Removed the :cmd:`inv ls` command and added a ``--list`` option to
   :cmd:`per_project`.  (:blogref:`20160814`)
 
+- :cmd:`inv sdist` now creates the archive file directly in
+  `sdist_dir` and no longer in a subdir thereof (using the project
+  name).
+
+- Worked on :cmd:`inv cov`.
+
 
 Version 1.0.2 (released 2016-07-16)
 ===================================
