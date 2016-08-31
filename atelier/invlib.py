@@ -26,11 +26,12 @@ from atelier.utils import i2d
 from babel.dates import format_date
 from atelier import rstgen
 from unipath import Path
+
 try:
-    from invoke import ctask as task
+    from invoke import ctask as task, tasks
     # before version 0.13 (see http://www.pyinvoke.org/changelog.html)
 except ImportError:
-    from invoke import task
+    from invoke import task, tasks
 
 from invoke.exceptions import Exit
 from invoke import run
@@ -38,10 +39,8 @@ from invoke import run
 import atelier
 from atelier.utils import confirm
 
-
 LASTREL_INFO = "Last release was %(filename)s \
 (%(upload_time)s,  %(downloads)d downloads)."
-
 
 RELEASE_CONFIRM = """
 This is going to officially release %(name)s %(version)s to PyPI.
@@ -95,7 +94,7 @@ def rmtree_after_confirm(p, batch=False):
     if not p.exists():
         return
     if batch or confirm(
-            "OK to remove %s and everything under it?" % p.absolute()):
+                    "OK to remove %s and everything under it?" % p.absolute()):
         p.rmtree()
 
 
@@ -142,11 +141,12 @@ def py_clean(ctx, batch=False):
                 os.remove(p)
 
 
-def run_in_demo_projects(ctx, admin_cmd, *more):
+def run_in_demo_projects(ctx, admin_cmd, *more, **args):
     """Run the given shell command in each demo project (see
     :attr:`ctx.demo_projects`).
 
     """
+    cov = args.pop('cov', False)
     for mod in ctx.demo_projects:
         # puts("-" * 80)
         # puts("In demo project {0}:".format(mod))
@@ -156,10 +156,18 @@ def run_in_demo_projects(ctx, admin_cmd, *more):
         m = import_module(mod)
         # 20160710 p = m.SITE.cache_dir or m.SITE.project_dir
         p = m.SITE.project_dir
-
         with cd(p):
             # m = import_module(mod)
-            args = ["django-admin.py"]
+            if cov:
+                args = ["coverage"]
+                args += ["run -a"]
+                args += ["`which django-admin.py`"]
+                datacovfile = ctx.root_dir.child('.coverage')
+                if not datacovfile.exists():
+                    print('No .coverage file in {0}'.format(ctx.project_name))
+                os.environ['COVERAGE_FILE'] = datacovfile
+            else:
+                args = ["django-admin.py"]
             args += [admin_cmd]
             args += more
             args += ["--settings=" + mod]
@@ -246,9 +254,18 @@ class MissingConfig(Exception):
 
 
 @task(name='initdb')
-def initdb_demo(ctx):
+def initdb_demo(ctx, cov=False):
     """Run `manage.py initdb_demo` on every demo project."""
-    run_in_demo_projects(ctx, 'initdb_demo', "--noinput", '--traceback')
+    if cov:
+        # covfile = ctx.root_dir.child('.coveragerc')
+        # if not covfile.exists():
+        #     print('No .coveragerc file in {0}'.format(ctx.project_name))
+        #     return
+        # os.environ['COVERAGE_PROCESS_START'] = covfile
+        ctx.run('coverage erase', pty=True)
+        run_in_demo_projects(ctx, 'initdb_demo', "--noinput", '--traceback', "--noreload", cov=cov)
+    else:
+        run_in_demo_projects(ctx, 'initdb_demo', "--noinput", '--traceback', cov=cov)
 
 
 @task(name='test')
@@ -261,7 +278,6 @@ def run_tests(ctx):
         ctx.run('pytest', pty=True)
     else:
         ctx.run('python setup.py -q test', pty=True)
-
 
 
 @task(name='readme')
@@ -320,7 +336,7 @@ def build_docs(ctx, *cmdline_args):
 
 @task(name='clean')
 def clean(ctx, batch=False):
-# def clean(ctx, *cmdline_args):
+    # def clean(ctx, *cmdline_args):
     """Remove temporary and generated files."""
     sphinx_clean(ctx, batch)
     py_clean(ctx, batch)
@@ -366,7 +382,7 @@ def pypi_release(ctx):
     ctx.run(' '.join(args), pty=True)
 
 
-@task(name='cov')
+@task(name='cov', pre=[tasks.call(initdb_demo, cov=True)])
 def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     """Run all tests and create a coverage report.
 
@@ -379,14 +395,18 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     if not covfile.exists():
         print('No .coveragerc file in {0}'.format(ctx.project_name))
         return
-    print("Running {0} in {1} within coverage...".format(
-        ctx.coverage_command, ctx.project_name))
-    os.environ['COVERAGE_PROCESS_START'] = covfile
-    ctx.run('coverage erase', pty=True)
     if ctx.root_dir.child('pytest.ini').exists():
-        ctx.run('pytest --cov=lino', pty=True)
+        ctx.run('coverage combine', pty=True)
+        print("Running pytest in {1} within coverage...".format(
+            ctx.coverage_command, ctx.project_name))
+        with cd(ctx.root_dir):
+            ctx.run('pytest --cov=lino --cov-append', pty=True)
         html = False
     else:
+        os.environ['COVERAGE_PROCESS_START'] = covfile
+        ctx.run('coverage erase', pty=True)
+        print("Running {0} in {1} within coverage...".format(
+            ctx.coverage_command, ctx.project_name))
         ctx.run('coverage run {}'.format(ctx.coverage_command), pty=True)
     ctx.run('coverage combine', pty=True)
     ctx.run('coverage report', pty=True)
@@ -564,11 +584,10 @@ def show_revision_status(ctx):
 
 
 def show_pypi_status(ctx):
-
     info = atelier.current_project.SETUP_INFO
     version = info['version']
     name = info['name']
-    
+
     try:
         import xmlrpc.client
     except ImportError:
@@ -704,10 +723,10 @@ def commited_today(ctx, today=None):
         cfg = prj.ns.configuration()
 
         if cfg['revision_control_system'] != 'git':
-        # if cfg.revision_control_system != 'git':
+            # if cfg.revision_control_system != 'git':
             # print("20160816 {}".format(cfg))
             return
-    
+
         repo = Repo(cfg['root_dir'])
 
         kw = dict()
@@ -730,12 +749,12 @@ def commited_today(ctx, today=None):
             elif url.startswith("git+ssh://git@github.com"):
                 url = "https://github.com/" + url[25:-4] \
                       + "/commit/" + c.hexsha
-            
+
             s = "`{0} <{1}>`__".format(c.hexsha[-7:], url)
             if c.message and not c.message.startswith("http://"):
                 s += " " + c.message
             return s
-            
+
         url = prj.SETUP_INFO.get('url', "oops")
         desc = "`%s <%s>`__" % (prj.name, url)
 
@@ -749,8 +768,7 @@ def commited_today(ctx, today=None):
 
     def mycmp(a, b):
         return cmp(a[0], b[0])
+
     rows.sort(mycmp)
     print(rstgen.ul(["{0} : {1}\n{2}".format(*row) for row in rows]))
     # print rstgen.table(headers, rows)
-
-
