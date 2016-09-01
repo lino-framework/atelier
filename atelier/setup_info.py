@@ -17,7 +17,7 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='1.0.3',
+    version='1.0.4',
     install_requires=install_requires,
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
