@@ -39,7 +39,7 @@ from invoke import run
 import atelier
 from atelier.utils import confirm
 
-LASTREL_INFO = "Last release was %(filename)s \
+LASTREL_INFO = "Last PyPI release was %(filename)s \
 (%(upload_time)s,  %(downloads)d downloads)."
 
 RELEASE_CONFIRM = """
@@ -317,9 +317,6 @@ def write_readme(ctx):
     docs_index = ctx.root_dir.child('docs', 'index.rst')
     if docs_index.exists():
         docs_index.set_times()
-        # cmd = "touch " + ctx.DOCSDIR.child('index.rst')
-        # local(cmd)
-        # pypi_register()
 
 
 @task(write_readme, name='bd')
@@ -346,6 +343,9 @@ def clean(ctx, batch=False):
 @task(name='sdist')
 def setup_sdist(ctx):
     "Create a source distribution."
+    if not atelier.current_project.SETUP_INFO.get('version'):
+        return
+    show_pypi_status(ctx)
     # dist_dir = Path(ctx.sdist_dir).child(
     #     atelier.current_project.SETUP_INFO['name'])
     dist_dir = ctx.sdist_dir
@@ -359,6 +359,8 @@ def setup_sdist(ctx):
 def pypi_release(ctx):
     "Publish a new version to PyPI."
     info = atelier.current_project.SETUP_INFO
+    if not info.get('version'):
+        return
     version = info['version']
     # dist_dir = Path(ctx.sdist_dir).child(info['name'])
     dist_dir = ctx.sdist_dir
@@ -418,6 +420,25 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     ctx.run('coverage erase', pty=True)
 
 
+@task(name='test_sdist')
+def test_sdist(ctx):
+    """Install a previously created sdist into a temporary virtualenv and run test suite.
+
+    """
+    info = atelier.current_project.SETUP_INFO
+    if not info.get('version'):
+        return
+    with cd(ctx.root_dir):
+        ctx.run("rm -Rf tmp/tmp", pty=True)
+        ctx.run("virtualenv tmp/tmp", pty=True)
+        ctx.run(". tmp/tmp/bin/activate", pty=True)
+
+        cmd = ". tmp/tmp/bin/activate ; pip install -f {0} {1}".format(
+            ctx.sdist_dir, info['name'])
+        ctx.run(cmd, pty=True)
+        ctx.run(". tmp/tmp/bin/activate ; python setup.py test", pty=True)
+
+
 @task(name='mm')
 def make_messages(ctx):
     "Extract messages, then initialize and update all catalogs."
@@ -432,12 +453,11 @@ def make_messages(ctx):
     # setup_babel_userdocs('update_catalog')
 
 
-@task(name='reg')
+@task(name='register')
 def pypi_register(ctx):
     """Register this project (and its current version) to PyPI. """
     args = ["python", "setup.py"]
     args += ["register"]
-    # ~ run_setup('setup.py',args)
     ctx.run(' '.join(args), pty=True)
 
 
@@ -584,24 +604,25 @@ def show_revision_status(ctx):
 
 
 def show_pypi_status(ctx):
+    """Show project status on PyPI before doing a release.
+    """
     info = atelier.current_project.SETUP_INFO
     version = info['version']
     name = info['name']
 
-    try:
-        import xmlrpc.client
-    except ImportError:
-        import xmlrpc.client as xmlrpclib
-    client = xmlrpc.client.ServerProxy('https://pypi.python.org/pypi')
+    assert name and version
+
+    from xmlrpc.client import ServerProxy
+    client = ServerProxy('https://pypi.python.org/pypi')
     released_versions = client.package_releases(name)
     if len(released_versions) == 0:
         must_confirm(
-            "This is your first release of %(name)s %(version)s "
+            "This is your first PyPI release of %(name)s %(version)s "
             "to PyPI" % info)
     else:
         urls = client.release_urls(name, released_versions[-1])
         if len(urls) == 0:
-            msg = "Last release was {0} (no files available)."
+            msg = "Last PyPI release was {0} (no files available)."
             msg = msg.format(released_versions[-1])
             print(msg)
         else:

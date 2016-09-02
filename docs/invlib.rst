@@ -118,7 +118,6 @@ Commands for deployment
 
 
 
-
 Commands for testing
 --------------------
 
@@ -136,6 +135,19 @@ Commands for testing
     Run :attr:`inv.coverage_command` and create a `coverage
     <https://pypi.python.org/pypi/coverage>`_ report
 
+.. command:: inv test_sdist
+
+    Creates and activates a temporay virtualenv, installs your project
+    and runs your test suite.
+        
+    - creates and activates a temporay virtualenv,
+    - calls ``pip install --no-index -f <env.sdist_dir> <prjname>``
+    - runs ``python setup.py test``
+    - removes temporary files.
+    
+    Assumes that you previously did :cmd:`inv sdist` of all your
+    projects related to this project.
+    
 
 Commands for project management
 -------------------------------

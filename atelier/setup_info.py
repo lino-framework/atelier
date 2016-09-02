@@ -7,7 +7,7 @@
 
 # Explicitly install `importlib` under Python 2.6. Thanks to
 # http://stackoverflow.com/questions/9418064
-install_requires = ['Sphinx', 'invoke', 'argh',
+install_requires = ['Sphinx', 'invoke', 'argh', 'six',
                     'future', 'Babel', 'unipath',
                     'python_dateutil', 'gitpython', 'pytest-cov']
 try:
@@ -17,7 +17,7 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='1.0.2',
+    version='1.0.4',
     install_requires=install_requires,
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
