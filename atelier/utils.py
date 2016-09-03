@@ -369,7 +369,10 @@ def dict_py2(old_dict):
         elif type(value) == tuple:
             new_dict[str(key)] = tuple_py2(value)
         else:
-            new_dict[str(key)] = str(value)
+            if isinstance(value, bool):
+                new_dict[str(key)] = value
+            else:
+                new_dict[str(key)] = str(value)
     return new_dict
 
 
