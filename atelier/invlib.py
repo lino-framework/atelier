@@ -275,7 +275,7 @@ def run_tests(ctx):
     if not ctx.root_dir.child('setup.py').exists():
         return
     if ctx.root_dir.child('pytest.ini').exists():
-        ctx.run('pytest', pty=True)
+        ctx.run('py.test', pty=True)
     else:
         ctx.run('python setup.py -q test', pty=True)
 
@@ -402,7 +402,7 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
         print("Running pytest in {1} within coverage...".format(
             ctx.coverage_command, ctx.project_name))
         with cd(ctx.root_dir):
-            ctx.run('pytest --cov=lino --cov-append', pty=True)
+            ctx.run('py.test --cov=lino --cov-append', pty=True)
         html = False
     else:
         os.environ['COVERAGE_PROCESS_START'] = covfile
