@@ -422,7 +422,8 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
 
 @task(name='test_sdist')
 def test_sdist(ctx):
-    """Install a previously created sdist into a temporary virtualenv and run test suite.
+    """Install a previously created sdist into a temporary virtualenv and
+    run test suite.
 
     """
     info = atelier.current_project.SETUP_INFO
@@ -433,10 +434,12 @@ def test_sdist(ctx):
         ctx.run("virtualenv tmp/tmp", pty=True)
         ctx.run(". tmp/tmp/bin/activate", pty=True)
 
+        # cmd = ". tmp/tmp/bin/activate ; pip install --no-index -f {0} --extra-index-url https://pypi.python.org/simple {1}".format(
+        #     ctx.sdist_dir, info['name'])
         cmd = ". tmp/tmp/bin/activate ; pip install -f {0} {1}".format(
             ctx.sdist_dir, info['name'])
         ctx.run(cmd, pty=True)
-        ctx.run(". tmp/tmp/bin/activate ; python setup.py test", pty=True)
+        ctx.run(". tmp/tmp/bin/activate ; inv test", pty=True)
 
 
 @task(name='mm')
@@ -616,9 +619,7 @@ def show_pypi_status(ctx):
     client = ServerProxy('https://pypi.python.org/pypi')
     released_versions = client.package_releases(name)
     if len(released_versions) == 0:
-        must_confirm(
-            "This is your first PyPI release of %(name)s %(version)s "
-            "to PyPI" % info)
+        print("This is your first PyPI release of %(name)s." % info)
     else:
         urls = client.release_urls(name, released_versions[-1])
         if len(urls) == 0:
