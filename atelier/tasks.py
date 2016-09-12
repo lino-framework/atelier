@@ -49,6 +49,7 @@ def setup_from_tasks(
         'blog_root': root_dir.child('docs'),
         'long_date_format': "%Y%m%d (%A, %d %B %Y)",
         'sdist_dir': root_dir.child('dist'),
+        'pypi_dir': root_dir.child('.pypi_cache'),
     }
 
     if settings_module_name is not None:
