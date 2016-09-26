@@ -128,7 +128,12 @@ Commands for testing
 
 .. command:: inv test
 
-    See :func:`run_tests`.
+    Run the test suite of this project.
+
+    This is a shortcut for either ``python setup.py test`` or
+    ``py.test`` (depending on whether your project has a
+    :xfile:`pytest.ini` file or not.
+    
 
 .. command:: inv cov
 
@@ -217,6 +222,8 @@ The following section documents the possible settings used by
     catalog files.
 
   .. attribute:: sdist_dir
+
+  .. attribute:: pypi_dir
 
 
   .. attribute:: coverage_command

@@ -432,14 +432,23 @@ def test_sdist(ctx):
     with cd(ctx.root_dir):
         ctx.run("rm -Rf tmp/tmp", pty=True)
         ctx.run("virtualenv tmp/tmp", pty=True)
-        ctx.run(". tmp/tmp/bin/activate", pty=True)
+        activate = ". tmp/tmp/bin/activate"
+        
+        def vrun(cmd):
+            cmd = activate + ';' + cmd
+            ctx.run(cmd, pty=True)
+            
+        vrun("pip install --download {0} {1}".format(ctx.pypi_dir, info['name']))
+        # DEPRECATION: pip install --download has been deprecated and will be removed in the future. Pip now has a download command that should be used instead.
 
-        # cmd = ". tmp/tmp/bin/activate ; pip install --no-index -f {0} --extra-index-url https://pypi.python.org/simple {1}".format(
-        #     ctx.sdist_dir, info['name'])
-        cmd = ". tmp/tmp/bin/activate ; pip install -f {0} {1}".format(
-            ctx.sdist_dir, info['name'])
-        ctx.run(cmd, pty=True)
-        ctx.run(". tmp/tmp/bin/activate ; inv test", pty=True)
+
+        # vrun("pip download {0}".format(info['name']))        
+        
+        vrun("pip install --no-allow-external --no-index --no-cache-dir -f {} -f {} {}".format(
+            ctx.sdist_dir, ctx.pypi_dir, info['name']))
+        # vrun("pip install -f {0} {1}".format(ctx.sdist_dir, info['name'])
+             
+        vrun("inv test")
 
 
 @task(name='mm')
