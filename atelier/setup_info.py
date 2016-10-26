@@ -68,6 +68,7 @@ Operating System :: OS Independent""".splitlines())
 SETUP_INFO.update(packages=[n for n in """
 atelier
 atelier.sphinxconf
+atelier.invlib
 """.splitlines() if n])
 
 SETUP_INFO.update(package_data=dict())

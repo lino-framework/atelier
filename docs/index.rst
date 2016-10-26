@@ -28,8 +28,11 @@ Sitemap
 
    usage
    api/index
-   invlib
    sphinxext/index
    changes
 
 
+.. toctree::
+   :hidden:
+
+   invlib

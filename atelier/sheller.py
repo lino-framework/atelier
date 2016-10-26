@@ -49,13 +49,11 @@ Usage example:
 doctest_utf8.py
 fablib.py
 __init__.py
-invlib.py
 jarbuilder.py
 projects.py
 rstgen.py
 setup_info.py
 sheller.py
-tasks.py
 test.py
 utils.py
 
