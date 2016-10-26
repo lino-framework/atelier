@@ -4,8 +4,15 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.4 (not released)
+Version 1.0.5 (not released)
 ============================
+
+Version 1.0.4 (released 2016-10-26)
+===================================
+
+- A minor but backwards-incompatible optimization of the modules below
+  :mod:`atelier.invlib` requires changes in the :xfile:`tasks.py` file
+  of every project which uses Atelier.
 
 Version 1.0.3 (released 2016-08-31)
 ===================================
