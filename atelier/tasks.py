@@ -31,7 +31,7 @@ def setup_from_tasks(
     if not tasks.exists():
         raise Exception("No such file: %s" % tasks)
     root_dir = tasks.parent.absolute()
-    _globals_dict = {
+    configs = {
         'root_dir': root_dir,
         'main_package': main_package,
         'locale_dir': None,
@@ -58,9 +58,9 @@ def setup_from_tasks(
         self.configure({
             'languages': [lng.name for lng in settings.SITE.languages]})
 
-    _globals_dict.setdefault(
+    configs.setdefault(
         'build_dir_name', '.build')  # but ablog needs '_build'
-    _globals_dict.setdefault('use_dirhtml', False)
+    configs.setdefault('use_dirhtml', False)
 
     # # The following import will populate the projects
     from atelier.projects import get_project_info_tasks
@@ -70,18 +70,17 @@ def setup_from_tasks(
     # we cannot store current_project using configure() because it
     # cannot be pickled. And we don't need to store it there, it is
     # not a configuration value but just a global internal variable.
-    # self.configure({ 'current_project': prj})
     atelier.current_project = prj
     
     self.configure({'doc_trees': prj.doc_trees})
     self.configure({
         # 'main_package': main_package,
         'doc_trees': prj.doc_trees})
-    self.configure(_globals_dict)
+    self.configure(configs)
     self.main_package = main_package
     if kwargs:
         self.configure(kwargs)
-    return _globals_dict
+    # return _globals_dict
 
 
 class MyCollection(Collection):
@@ -89,14 +88,20 @@ class MyCollection(Collection):
     def setup_from_tasks(self, *args, **kwargs):
         return setup_from_tasks(self, *args, **kwargs)
 
+    @classmethod
+    def from_module(cls, *args, **kwargs):
+        """
+        A hack needed to make it work as long as invoke does not yet
+        support subclassing Collection
+        (https://github.com/pyinvoke/invoke/pull/342)
+        """
+        
+        ns = super(MyCollection, cls).from_module(*args, **kwargs)
+
+        if ns.__class__ != cls:
+            from functools import partial
+            ns.setup_from_tasks = partial(setup_from_tasks, ns)
+        return ns
 
 ns = MyCollection.from_module(invlib)
 
-# The following hack is to make it work as long as invoke does not yet
-# support subclassing Collection
-# (https://github.com/pyinvoke/invoke/pull/342)
-# 
-
-if ns.__class__ != MyCollection:
-    from functools import partial
-    ns.setup_from_tasks = partial(setup_from_tasks, ns)

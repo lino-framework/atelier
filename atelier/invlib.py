@@ -429,6 +429,9 @@ def test_sdist(ctx):
     info = atelier.current_project.SETUP_INFO
     if not info.get('version'):
         return
+    # from atelier.projects import load_projects
+    # projects = [p for p in load_projects() if p.SETUP_INFO.get('version') and p['name'] != info['name']]
+
     with cd(ctx.root_dir):
         ctx.run("rm -Rf tmp/tmp", pty=True)
         ctx.run("virtualenv tmp/tmp", pty=True)
