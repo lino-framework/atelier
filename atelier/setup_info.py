@@ -27,6 +27,18 @@ SETUP_INFO = dict(
     author_email='luc.saffre@gmail.com',
     url="http://atelier.lino-framework.org",
     long_description="""\
+
+.. image:: https://readthedocs.org/projects/atelier/badge/?version=latest
+   :target: http://atelier.readthedocs.io/en/latest/?badge=latest
+.. image:: https://coveralls.io/repos/github/lino-framework/atelier/badge.svg?branch=master
+   :target: https://coveralls.io/github/lino-framework/atelier?branch=master
+.. image:: https://travis-ci.org/lino-framework/atelier.svg?branch=master
+   :target: https://travis-ci.org/lino-framework/atelier?branch=master
+.. image:: https://img.shields.io/pypi/v/atelier.svg
+   :target: https://pypi.python.org/pypi/atelier/
+.. image:: https://img.shields.io/pypi/l/atelier.svg
+   :target: https://pypi.python.org/pypi/atelier/
+
 `atelier` is a collection of tools for managing and maintaining
 Python software projects.
 
@@ -43,21 +55,14 @@ It contains:
 - a minimalistic project management
   (`atelier.projects <http://atelier.lino-framework.org/api/atelier.projects.html>`_)
 
-.. raw:: html
-
-  <a href="https://travis-ci.org/lsaffre/atelier">
-  <img src="https://api.travis-ci.org/lsaffre/atelier.png?branch=master"/>
-  </a>
-
 The central project homepage is http://atelier.lino-framework.org
-
-
 
 """,
     classifiers="""\
 Programming Language :: Python
 Programming Language :: Python :: 2.7
 Programming Language :: Python :: 3.4
+Programming Language :: Python :: 3.5
 Framework :: Sphinx :: Extension
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers

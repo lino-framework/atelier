@@ -2,7 +2,10 @@ language: python
 python:
   - "2.7"
   - "3.4"
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install .
-# command to run tests, e.g. python setup.py test
-script:  python setup.py test
+  - "3.5"
+install:
+  - pip install .
+script:
+  - py.test --cov=atelier
+after_script:
+  - coveralls
