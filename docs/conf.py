@@ -250,3 +250,5 @@ gettext_compact = True
 
 
 extlinks.update(ticket=('http://bugs.lino-framework.org/tickets/Ticket/%s', '#'))
+
+suppress_warnings = ['image.nonlocal_uri']
