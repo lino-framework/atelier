@@ -11,7 +11,7 @@ from .ns import ns
 
 from invoke import task
 
-@task(name='initdb')
+@task(name='prep')
 def initdb_demo(ctx, *args, **kwargs):
     """Does nothing. """
 
