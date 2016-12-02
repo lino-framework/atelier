@@ -28,7 +28,7 @@ import doctest
 def _test():
 
     testfiles = [arg for arg in sys.argv[1:] if arg and arg[0] != '-']
-    if not testfiles:
+    if len(testfiles) == 0:
         name = os.path.basename(sys.argv[0])
         if '__loader__' in globals():          # python -m
             name, _ = os.path.splitext(name)

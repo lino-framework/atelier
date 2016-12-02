@@ -15,15 +15,17 @@ whether we should join our effords.)
 """
 
 from __future__ import unicode_literals, print_function
-from builtins import bytes
-from future.utils import python_2_unicode_compatible
-from future import standard_library
+import six
 
-standard_library.install_aliases()
+# from builtins import bytes
+# from future.utils import python_2_unicode_compatible
+# from future import standard_library
+# standard_library.install_aliases()
+
 from builtins import str
-from builtins import range
-from past.builtins import basestring
-from builtins import object
+# from builtins import range
+# from past.builtins import basestring
+# from builtins import object
 
 import sys
 import io
@@ -494,7 +496,7 @@ def boldheader(title):
     return "\n\n**%s**\n\n" % str(title).strip()
 
 
-@python_2_unicode_compatible
+# @python_2_unicode_compatible
 def toctree(*children, **options):
     r"""Return a `toctree` directive with specified `options` and
 `children`.
@@ -513,7 +515,7 @@ def toctree(*children, **options):
     for k, v in list(options.items()):
         text += "\n    "
         text += ":{0}:".format(k)
-        if isinstance(v, basestring):
+        if isinstance(v, six.string_types):
             text += " " + v
         elif v is True:
             pass
@@ -554,7 +556,7 @@ def attrtable(rows, cols):
         cols: a string with a space-separated list of attribute names
 
     """
-    if isinstance(cols, basestring):
+    if isinstance(cols, six.string_types):
         cols = cols.split()
     cells = [[str(getattr(obj, k)) for k in cols] for obj in rows]
     return table(cols, cells)
