@@ -24,6 +24,7 @@ atelier.sphinxconf.sigal_image
       Format
       SigalImage
       Thumb
+      Wide
    
    
 
