@@ -19,8 +19,6 @@ import time
 import datetime
 from datetime import timedelta
 
-from builtins import str
-from builtins import object
 from atelier.utils import i2d
 from babel.dates import format_date
 from atelier import rstgen
