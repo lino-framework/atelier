@@ -70,8 +70,9 @@ def load_projects():
 
 def get_setup_info(root_dir):
     if not root_dir.child('setup.py').exists():
-        raise RuntimeError(
-            "You must call 'fab' from a project's root directory.")
+        return {}
+        # raise RuntimeError(
+        #     "You must call 'inv' from a project's root directory.")
     # sys.path.insert(0, root_dir)
     # setup_module = __import__('setup')
     # print 20140610, root_dir
@@ -153,14 +154,16 @@ class Project(object):
         main_package = m.ns.main_package
         self.ns = m.ns
 
+        self.SETUP_INFO = get_setup_info(self.root_dir)
+        
         if main_package is None:
+            # print("20161229 no main_package in {}".format(self))
             return
         self.name = main_package
         # self.name = name
         # removed 20140116:
         # self.dist = pkg_resources.get_distribution(name)
         self.module = import_module(main_package)
-        self.SETUP_INFO = get_setup_info(self.root_dir)
         self.srcref_url = getattr(self.module, 'srcref_url', None)
         self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
         self.intersphinx_urls = getattr(
