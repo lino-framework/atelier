@@ -84,7 +84,7 @@ def configure(globals_dict, settings_module_name=None):
 
 
     """
-    filename = globals_dict.get('__file__')
+    filename = globals_dict['__file__']
     sys.path.append(Path(filename).parent.absolute())
 
     globals_dict.update(extensions=[

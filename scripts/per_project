@@ -1,5 +1,5 @@
 #!python
-# Copyright 2013-2016 by Luc Saffre.
+# Copyright 2013-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 from __future__ import print_function
@@ -18,11 +18,13 @@ from argh import dispatch_command, arg, CommandError
      help='Show list of projects.')
 @arg('-s', '--start',
      help='Start from that project, skip those before.')
+@arg('-a', '--after',
+     help='Start after that project, skip those before.')
 @arg('-u', '--until',
      help='Only until that project, skip those after.')
 @arg('-v', '--voice',
      help='Speak the result through speakers when terminated.')
-def main(voice=False, start=None, until=None, showlist=False, *cmd):
+def main(voice=False, start=None, after=None, until=None, showlist=False, *cmd):
     """Loop over all projects, executing the given shell command in the
 root directory of each project.  See
 http://atelier.lino-framework.org/usage.html
@@ -58,10 +60,13 @@ http://atelier.lino-framework.org/usage.html
             cmd = ("espeak", "'{}'".format(msg))
             subprocess.call(cmd)
 
-    skipping = start is not None
+    skipping = start is not None or after is not None
     for prj in load_projects():
         if start and prj.nickname == start:
             skipping = False
+        if after and prj.nickname == after:
+            skipping = False
+            continue
         if skipping:
             continue
         if until and prj.nickname == until:
