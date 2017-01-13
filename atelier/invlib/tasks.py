@@ -698,8 +698,8 @@ def commited_today(ctx, today=None):
                       + "/commit/" + c.hexsha
 
             s = "`{0} <{1}>`__".format(c.hexsha[-7:], url)
-            if c.message and not c.message.startswith("http://"):
-                s += " " + c.message
+            # if c.message and not c.message.startswith("http://"):
+            s += "\n({})".format(c.message.strip())
             return s
 
         url = prj.SETUP_INFO.get('url', "oops")
@@ -713,11 +713,8 @@ def commited_today(ctx, today=None):
     for p in load_projects():
         load(p)
 
-    def mycmp(a, b):
-        return cmp(a[0], b[0])
-
-    rows.sort(mycmp)
-    print(rstgen.ul(["{0} : {1}\n{2}".format(*row) for row in rows]))
+    rows.sort(key=lambda a: a[0])
+    print(rstgen.ul(["{0} in {1}:\n{2}".format(*row) for row in rows]))
     # print rstgen.table(headers, rows)
 
 
