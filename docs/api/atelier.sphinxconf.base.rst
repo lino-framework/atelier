@@ -18,6 +18,7 @@ atelier.sphinxconf.base
       get_blog_url
       html_page_context
       message_role
+      process_signature
       setup
       srcref
       unused_srcref_role
