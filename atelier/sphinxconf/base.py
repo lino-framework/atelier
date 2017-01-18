@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2016 by Luc Saffre.
+# Copyright 2011-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -109,6 +109,31 @@ SIDEBAR = """
 
 #~ """
 
+
+def process_signature(app, what, name, obj, options, signature,
+                      return_annotation):
+    # experimental. not yet used.
+    # trying to get source links à la django doc.
+    # test it in atelier with `$ inv clean -b bd`
+    # currently this gives
+    # Exception occurred:
+    #   File ".../atelier/setup.py", line 3, in <module>
+    #     exec(compile(open(fn, "rb").read(), fn, 'exec'))
+    # IOError: [Errno 2] No such file or directory: 'atelier/setup_info.py'
+
+    # if signature or return_annotation:
+    #     raise Exception(
+    #         "20170118 {!r} {!r} {!r} {!r} {!r} {!r}".format(
+    #             what, name, obj, options, signature,
+    #             return_annotation))
+    if what == 'module':
+        assert not signature
+        s = srcref(obj)
+        if s:
+            signature = " [{}]".format(s)
+        # signature = " [foo]"
+        print(20170118, signature)
+    return (signature, return_annotation)
 
 def autodoc_add_srcref(app, what, name, obj, options, lines):
     """Add a reference to the module's source code.
@@ -357,6 +382,7 @@ def setup(app):
 
     app.connect(str('autodoc-skip-member'), autodoc_skip_member)
     app.connect(str('autodoc-process-docstring'), autodoc_add_srcref)
+    # app.connect(str('autodoc-process-signature'), process_signature)
     app.connect(str('html-page-context'), html_page_context)
 
     app.add_role(str('coderef'), coderef_role)
