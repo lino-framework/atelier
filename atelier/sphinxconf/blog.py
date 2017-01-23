@@ -148,9 +148,7 @@ def get_blogger_years(env, blogname):
         return []
     years = list(blog.values())
 
-    def f(a, b):
-        return cmp(a.year, b.year)
-    years.sort(f)
+    years.sort(key=lambda f: f.year)
     return years
 
 

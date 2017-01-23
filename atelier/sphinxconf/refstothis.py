@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2016 by Luc Saffre.
+# Copyright 2016-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """A Sphinx extension which adds the :rst:dir:`refstothis` directive.
@@ -24,7 +24,6 @@ TODO:
 
 from __future__ import print_function
 from __future__ import unicode_literals
-from past.builtins import cmp
 
 import logging
 logger = logging.getLogger(__name__)
@@ -108,9 +107,9 @@ class RefsToThis(InsertInputDirective):
             mtime = path.getmtime(env.doc2path(refdoc))
             entries.append((mtime, refdoc))
     
-        def f(a, b):
-            return cmp(a[0], b[0])
-        entries.sort(f)
+        def f(a):
+            return a[0]
+        entries.sort(key=f)
         entries.reverse()
     
         import time
