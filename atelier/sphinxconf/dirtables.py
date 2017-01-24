@@ -24,7 +24,6 @@ This doesn't yet work unfortunately.
 
 from __future__ import print_function
 from __future__ import unicode_literals
-from past.builtins import cmp
 from builtins import str
 from builtins import filter
 from builtins import object
@@ -125,11 +124,9 @@ class DirectoryTable(InsertInputDirective):
 
         orderby = self.options.get('orderby')
         if orderby:
-            def func(a, b):
-                va = getattr(a, orderby, '')
-                vb = getattr(b, orderby, '')
-                return cmp(va, vb)
-            entries = sorted(entries, func)
+            def func(a):
+                return getattr(a, orderby, '')
+            entries = sorted(entries, key=func)
 
         headers = self.get_headers()
         rows = []

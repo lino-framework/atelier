@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 by Luc Saffre.
+# Copyright 2011-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """A minimalistic command-line project management.
 
@@ -7,7 +7,7 @@ See :doc:`/usage`.
 
 """
 from __future__ import unicode_literals
-from past.builtins import execfile
+from six.moves.builtins import execfile
 from builtins import object
 
 import os
