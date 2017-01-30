@@ -28,6 +28,7 @@ import datetime
 import subprocess
 from dateutil import parser as dateparser
 from dateutil.relativedelta import relativedelta
+from contextlib import contextmanager
 
 
 @python_2_unicode_compatible
@@ -410,5 +411,13 @@ def tuple_py2(old_tuple):
 
 #     """
 #     return os.environ.get('VISUAL') or os.environ.get('EDITOR')
+
+
+@contextmanager
+def cd(path):
+    old_dir = os.getcwd()
+    os.chdir(path)
+    yield
+    os.chdir(old_dir)
 
 

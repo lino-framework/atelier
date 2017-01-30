@@ -10,6 +10,7 @@ atelier.utils
    .. autosummary::
    
       assert_pure
+      cd
       confirm
       date_offset
       dict_py2

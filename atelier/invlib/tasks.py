@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2016 by Luc Saffre & Hamza Khchine.
+# Copyright 2013-2017 by Luc Saffre & Hamza Khchine.
 # License: BSD, see LICENSE for more details.
 
 """A library for `invoke <http://www.pyinvoke.org/>`__ with tasks we
@@ -13,7 +13,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import os
-from contextlib import contextmanager
 import glob
 import time
 import datetime
@@ -34,7 +33,9 @@ from invoke.exceptions import Exit
 from invoke import run
 
 import atelier
-from atelier.utils import confirm
+from atelier.utils import confirm, cd
+
+from .utils import get_doc_trees
 
 LASTREL_INFO = "Last PyPI release was %(filename)s \
 (%(upload_time)s,  %(downloads)d downloads)."
@@ -57,14 +58,6 @@ def local(*args, **kwargs):  # probably no longer used
     kwargs.update(pty=True)
     # kwargs.update(encoding='utf-8')
     run(*args, **kwargs)
-
-
-@contextmanager
-def cd(path):
-    old_dir = os.getcwd()
-    os.chdir(path)
-    yield
-    os.chdir(old_dir)
 
 
 def get_current_date(today=None):
@@ -112,8 +105,8 @@ def sphinx_clean(ctx, batch=False):
     """Delete all generated Sphinx files.
 
     """
-    for docs_dir in get_doc_trees(ctx):
-        rmtree_after_confirm(docs_dir.child(ctx.build_dir_name), batch)
+    for b in get_doc_trees(ctx):
+        rmtree_after_confirm(b.out_path, batch)
 
 
 def py_clean(ctx, batch=False):
@@ -136,67 +129,6 @@ def py_clean(ctx, batch=False):
                 "Remove {0} cleanable files".format(len(files))):
             for p in files:
                 os.remove(p)
-
-
-
-def get_doc_trees(ctx):
-    for rel_doc_tree in ctx.doc_trees:
-        docs_dir = ctx.root_dir.child(rel_doc_tree)
-        if not docs_dir.exists():
-            msg = "Directory %s does not exist." % docs_dir
-            msg += "\nCheck your project's `doc_trees` setting."
-            raise Exception(msg)
-        yield docs_dir
-
-
-def sync_docs_data(ctx, docs_dir):
-    build_dir = docs_dir.child(ctx.build_dir_name)
-    for data in ('dl', 'data'):
-        src = docs_dir.child(data).absolute()
-        if src.isdir():
-            target = build_dir.child('dl')
-            target.mkdir()
-            cmd = 'cp -ur %s %s' % (src, target.parent)
-            ctx.run(cmd, pty=True)
-    if False:
-        # according to http://mathiasbynens.be/notes/rel-shortcut-icon
-        for n in ['favicon.ico']:
-            src = docs_dir.child(n).absolute()
-            if src.exists():
-                target = build_dir.child(n)
-                cmd = 'cp %s %s' % (src, target.parent)
-                ctx.run(cmd, pty=True)
-
-
-def sphinx_build(ctx, builder, docs_dir,
-                 cmdline_args=[], language=None, build_dir_cmd=None):
-    args = ['sphinx-build', '-b', builder]
-    args += cmdline_args
-    # ~ args += ['-a'] # all files, not only outdated
-    # ~ args += ['-P'] # no postmortem
-    # ~ args += ['-Q'] # no output
-    # build_dir = docs_dir.child(ctx.build_dir_name)
-    build_dir = Path(ctx.build_dir_name)
-    if language is not None:
-        args += ['-D', 'language=' + language]
-        # needed in select_lang.html template
-        args += ['-A', 'language=' + language]
-        if language != ctx.languages[0]:
-            build_dir = build_dir.child(language)
-            # print 20130726, build_dir
-    if ctx.tolerate_sphinx_warnings:
-        args += ['-w', 'warnings_%s.txt' % builder]
-    else:
-        args += ['-W']  # consider warnings as errors
-        # args += ['-vvv']  # increase verbosity
-    # args += ['-w'+Path(ctx.root_dir,'sphinx_doctest_warnings.txt')]
-    args += ['.', build_dir]
-    cmd = ' '.join(args)
-    with cd(docs_dir):
-        ctx.run(cmd, pty=True)
-    if build_dir_cmd is not None:
-        with cd(build_dir):
-            ctx.run(build_dir_cmd, pty=True)
 
 
 class RstFile(object):
@@ -271,13 +203,8 @@ def write_readme(ctx):
 @task(write_readme, name='bd')
 def build_docs(ctx, *cmdline_args):
     """Build docs. Build all Sphinx HTML doctrees for this project. """
-    for docs_dir in get_doc_trees(ctx):
-        print("Invoking Sphinx in in directory %s..." % docs_dir)
-        builder = 'html'
-        if ctx.use_dirhtml:
-            builder = 'dirhtml'
-        sphinx_build(ctx, builder, docs_dir, cmdline_args)
-        sync_docs_data(ctx, docs_dir)
+    for tree in get_doc_trees(ctx):
+        tree.build_docs(*cmdline_args)
 
 
 @task(name='clean')
@@ -483,39 +410,8 @@ def publish(ctx):
     if not ctx.docs_rsync_dest:
         raise MissingConfig("docs_rsync_dest")
 
-    for docs_dir in get_doc_trees(ctx):
-        build_dir = docs_dir.child(ctx.build_dir_name)
-        if build_dir.exists():
-            # name = '%s_%s' % (ctx.project_name, docs_dir.name)
-            # dest_url = ctx.docs_rsync_dest % name
-            if "%" in ctx.docs_rsync_dest:
-                name = '%s_%s' % (ctx.project_name, docs_dir.name)
-                dest_url = ctx.docs_rsync_dest % name
-            else:
-                dest_url = ctx.docs_rsync_dest.format(
-                    prj=ctx.project_name, docs=docs_dir.name)
-            publish_docs(ctx, build_dir, dest_url)
-
-            # build_dir = ctx.root_dir.child('userdocs', ctx.build_dir_name)
-            # if build_dir.exists():
-            #     dest_url = ctx.docs_rsync_dest % (ctx.project_name + '-userdocs')
-            #     publish_docs(ctx, build_dir, dest_url)
-
-
-def publish_docs(ctx, build_dir, dest_url):
-    with cd(build_dir):
-        args = ['rsync', '-e', 'ssh', '-r']
-        args += ['--verbose']
-        args += ['--progress']  # show progress
-        args += ['--delete']  # delete files in dest
-        args += ['--times']  # preserve timestamps
-        args += ['--exclude', '.doctrees']
-        args += ['./']  # source
-        args += [dest_url]  # dest
-        cmd = ' '.join(args)
-        # must_confirm("%s> %s" % (build_dir, cmd))
-        ctx.run(cmd, pty=True)
-
+    for tree in get_doc_trees(ctx):
+        tree.publish_docs()
 
 def show_revision_status(ctx):
     if ctx.revision_control_system == 'hg':

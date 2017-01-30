@@ -7,6 +7,8 @@ This is the :mod:`atelier` package.
    :toctree:
 
    invlib
+   invlib.utils
+   invlib.tasks
    jarbuilder
    projects
    rstgen
