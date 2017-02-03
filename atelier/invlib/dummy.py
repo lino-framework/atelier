@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 by Luc Saffre & Hamza Khchine.
+# Copyright 2016-2017 by Luc Saffre & Hamza Khchine.
 # License: BSD, see LICENSE for more details.
 """A little hack because otherwise commands like :cmd:`pp inv initdb`
 would fail on non-Lino projects like e.g. atelier because they
@@ -12,7 +12,7 @@ from .ns import ns
 from invoke import task
 
 @task(name='prep')
-def initdb_demo(ctx, *args, **kwargs):
+def prep(ctx, *args, **kwargs):
     """Does nothing. """
 
-ns.add_task(initdb_demo)
+ns.add_task(prep)
