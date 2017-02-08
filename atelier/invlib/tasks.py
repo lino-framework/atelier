@@ -377,10 +377,12 @@ def edit_blog_entry(ctx, today=None):
     entry = get_blog_entry(ctx, today)
     if not entry.path.exists():
         if ctx.languages is None:
-            txt = today.strftime(ctx.long_date_format)
+            # txt = today.strftime(ctx.long_date_format)
+            lng = 'en'
         else:
-            txt = format_date(
-                today, format='full', locale=ctx.languages[0])
+            lng = ctx.languages[0]
+        txt = format_date(today, format='full', locale=lng)
+        txt = txt[0].upper() + txt[1:]  # estonian weekdays
         content = rstgen.header(1, txt)
         content = ":date: {0}\n\n".format(today) + content
         msg = "{0}\nCreate file {1}?".format(content, entry.path)
