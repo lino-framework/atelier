@@ -62,8 +62,7 @@ import sys
 
 from unipath import Path
 
-
-def configure(globals_dict, settings_module_name=None):
+def configure(globals_dict):
     """Adds to your `conf.py` an arbitrary series of things that all my
     Sphinx docs configuration files have in common.
 
@@ -107,21 +106,6 @@ def configure(globals_dict, settings_module_name=None):
     # default config for autosummary:
     globals_dict.update(autosummary_generate=True)
     globals_dict.update(autodoc_default_flags=['members'])
-
-    if settings_module_name is not None:
-        from lino import startup
-        startup(settings_module_name)
-
-        # os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
-
-        # # Trigger loading of Djangos model cache in order to avoid
-        # # side effects that would occur when this happens later while
-        # # importing one of the models modules.
-        # from django.conf import settings
-        # settings.SITE.startup()
-
-        globals_dict.update(
-            template_bridge=str('atelier.sphinxconf.DjangoTemplateBridge'))
 
     mydir = Path(__file__).parent.absolute()
     globals_dict.update(templates_path=['.templates', mydir])
