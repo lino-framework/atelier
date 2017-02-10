@@ -270,7 +270,7 @@ def unindent(s):
     foo
         foo
     """
-    # s = s.strip()
+    s = s.rstrip()
     lines = s.splitlines()
     if len(lines) == 0:
         return s.strip()
