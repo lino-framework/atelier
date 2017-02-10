@@ -16,7 +16,7 @@ from atelier.projects import load_projects
 
 
 def configure(globals_dict):
-    # The following will load the `fabfile.py` of other
+    # The following will load the `tasks.py` of other
     # projects. Possible side effects.
 
     extlinks = dict()
