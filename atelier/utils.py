@@ -270,9 +270,10 @@ def unindent(s):
     foo
         foo
     """
+    s = s.rstrip()
     lines = s.splitlines()
     if len(lines) == 0:
-        return s.lstrip()
+        return s.strip()
     mini = sys.maxsize
     for ln in lines:
         ln = ln.rstrip()
@@ -282,7 +283,7 @@ def unindent(s):
                 break
     if mini == sys.maxsize:
         return s
-    return '\n'.join([ln[mini:] for ln in lines])
+    return '\n'.join([i[mini:] for i in lines])
 
 
 class SubProcessParent(object):
