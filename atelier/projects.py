@@ -7,7 +7,7 @@ See :doc:`/usage`.
 
 """
 from __future__ import unicode_literals
-from six.moves.builtins import execfile
+#from six.moves.builtins import exec
 from builtins import object
 
 import os
@@ -82,7 +82,9 @@ def get_setup_info(root_dir):
     g['__name__'] = 'not_main'
     cwd = Path().resolve()
     root_dir.chdir()
-    execfile(root_dir.child('setup.py'), g)
+    with open("setup.py") as f:
+        code = compile(f.read(), "setup.py", 'exec')
+        exec(code, g)
     cwd.chdir()
     return g.get('SETUP_INFO')
 
@@ -90,7 +92,11 @@ def get_setup_info(root_dir):
     # # Note that main_package may be "sphinxcontrib.dailyblog"
     # args = env.main_package.split('.')
     # args.append('project_info.py')
-    # execfile(env.ROOTDIR.child(*args), globals())
+    # file =env.ROOTDIR.child(*args)
+    # with open(file) as f:
+    #    code = compile(f.read(), file, 'exec')
+    #    exec(code, globals())
+    # #execfile(env.ROOTDIR.child(*args), globals())
     # env.SETUP_INFO = SETUP_INFO
 
 
@@ -173,5 +179,7 @@ class Project(object):
 for fn in config_files:
     fn = os.path.expanduser(fn)
     if os.path.exists(fn):
-        execfile(fn)  # supposed to call add_project
+        with open(fn) as f:
+            code = compile(f.read(), fn, 'exec')
+            exec(code)
 
