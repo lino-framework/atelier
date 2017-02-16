@@ -7,11 +7,9 @@ See :doc:`/usage`.
 
 """
 from __future__ import unicode_literals
-#from six.moves.builtins import exec
 from builtins import object
 
 import os
-import imp
 
 # import pkg_resources
 from unipath import Path
@@ -152,13 +150,20 @@ class Project(object):
         self.root_dir.chdir()
         # print("20160121 pseudo-importing file %s %s/tasks.py " % (
         #     self, self.root_dir))
-        (fp, pathname, desc) = imp.find_module('tasks', [self.root_dir])
-        m = imp.load_module(fqname, fp, pathname, desc)
+
+        # http://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
+        # http://stackoverflow.com/questions/19009932/import-arbitrary-python-source-file-python-3-3
+        fp = os.path.join(self.root_dir, "tasks.py")
+        m = dict()
+        m["__file__"] = fp
+        with open(fp) as f:
+            exec(f.read(), m)
+
         cwd.chdir()
 
-        assert hasattr(m, 'ns')
-        main_package = m.ns.main_package
-        self.ns = m.ns
+        assert 'ns' in m
+        main_package = m['ns'].main_package
+        self.ns = m['ns']
 
         self.SETUP_INFO = get_setup_info(self.root_dir)
         
