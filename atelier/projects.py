@@ -128,6 +128,7 @@ class Project(object):
         #~ self.local_name = local_name
         #~ self.root_dir = Path(atelier.PROJECTS_HOME,local_name)
         self.nickname = nickname or self.root_dir.name
+        self.name = self.nickname  # might change in load_tasks()
         self._loaded = False
         self._tasks_loaded = False
 
@@ -140,7 +141,6 @@ class Project(object):
             return
 
         self._tasks_loaded = True
-        self.name = self.nickname
 
         if not self.root_dir.child('tasks.py').exists():
             return

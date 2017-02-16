@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2016 by Luc Saffre.
+# Copyright 2011-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -11,13 +11,27 @@
 
 """
 from builtins import str
+import six
 
 from atelier.projects import load_projects
 
 
-def configure(globals_dict):
+def configure(globals_dict, prjspec=None):
+    """Install doctrees of all projects (or only some) into
+    `intersphinx_mapping`.
+
+    If `prjspec` is None, then all projects are added. Otherwise
+    `prjspec` must be a set of project names to add (or a string with
+    a space-separated list thereof).
+
+    """
+    
     # The following will load the `tasks.py` of other
     # projects. Possible side effects.
+
+    if prjspec is not None:
+        if isinstance(prjspec, six.string_types):
+            prjspec = set(prjspec.split())
 
     extlinks = dict()
         # linoticket=(
@@ -25,6 +39,8 @@ def configure(globals_dict):
         #     'Lino Ticket #'))
     intersphinx_mapping = dict()
     for prj in load_projects():
+        if prjspec is not None and not prj.name in prjspec:
+            continue
         # prj.load_fabfile()
         prj.load_tasks()
         for doc_tree in prj.doc_trees:

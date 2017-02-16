@@ -73,7 +73,7 @@ class DocTree(object):
             args += ['./']  # source
             args += [dest_url]  # dest
             cmd = ' '.join(args)
-            must_confirm("%s> %s" % (build_dir, cmd))
+            # must_confirm("%s> %s" % (build_dir, cmd))
             self.ctx.run(cmd, pty=True)
 
 
