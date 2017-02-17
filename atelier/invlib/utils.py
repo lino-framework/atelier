@@ -12,7 +12,21 @@ from __future__ import unicode_literals
 import six
 from importlib import import_module
 from unipath import Path
-from atelier.utils import cd
+from invoke.exceptions import Exit
+
+from atelier.utils import confirm, cd
+
+
+def must_confirm(*args, **kwargs):
+    if not confirm(''.join(args)):
+        raise Exit("User failed to confirm.")
+
+
+def must_exist(p):
+    if not p.exists():
+        raise Exception("No such file: %s" % p.absolute())
+
+
 
 
 class DocTree(object):

@@ -35,7 +35,7 @@ from invoke import run
 import atelier
 from atelier.utils import confirm, cd
 
-from .utils import get_doc_trees
+from .utils import get_doc_trees, must_confirm
 
 LASTREL_INFO = "Last PyPI release was %(filename)s \
 (%(upload_time)s,  %(downloads)d downloads)."
@@ -68,16 +68,6 @@ def get_current_date(today=None):
         # return datetime.datetime.utcnow()
         return datetime.date.today()
     return i2d(today)
-
-
-def must_confirm(*args, **kwargs):
-    if not confirm(''.join(args)):
-        raise Exit("User failed to confirm.")
-
-
-def must_exist(p):
-    if not p.exists():
-        raise Exception("No such file: %s" % p.absolute())
 
 
 def rmtree_after_confirm(p, batch=False):

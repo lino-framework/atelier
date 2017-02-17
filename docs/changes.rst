@@ -4,8 +4,13 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.5 (not released)
+Version 1.0.6 (not released)
 ============================
+
+Version 1.0.5 (released 2017-02-16)
+===================================
+
+- Fixes some Python 3 issues.
 
 Version 1.0.4 (released 2016-10-26)
 ===================================
