@@ -249,6 +249,6 @@ todo_include_todos = True
 gettext_compact = True
 
 
-extlinks.update(ticket=('http://bugs.lino-framework.org/tickets/Ticket/%s', '#'))
+extlinks.update(ticket=('http://bugs.saffre-rumma.net/tickets/Ticket/%s', '#'))
 
 suppress_warnings = ['image.nonlocal_uri']
