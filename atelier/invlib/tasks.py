@@ -104,8 +104,17 @@ def py_clean(ctx, batch=False):
 
     """
     if atelier.current_project.module is not None:
-        p = Path(atelier.current_project.module.__file__).parent
-        cleanup_pyc(p, batch)
+        try:
+            p = Path(atelier.current_project.module.__file__).parent
+            cleanup_pyc(p, batch)
+        except AttributeError:
+            # happened 20170310 in namespace package:
+            # $ pywhich commondata
+            # Traceback (most recent call last):
+            #   File "<string>", line 1, in <module>
+            # AttributeError: 'module' object has no attribute '__file__'
+            pass
+        
     p = ctx.root_dir.child('tests')
     if p.exists():
         cleanup_pyc(p, batch)
