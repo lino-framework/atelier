@@ -5,7 +5,7 @@
 """A library for `invoke <http://www.pyinvoke.org/>`__ with tasks we
 use for managing our Python projects.
 
-See :doc:`/invlib`
+See docstring of :mod:`atelier.invlib`
 
 """
 
@@ -599,8 +599,9 @@ def commited_today(ctx, today=None):
             s += "\n({})".format(c.message.strip())
             return s
 
-        url = prj.SETUP_INFO.get('url', "oops")
-        desc = "`%s <%s>`__" % (prj.name, url)
+        # url = prj.SETUP_INFO.get('url', "oops")
+        # desc = "`%s <%s>`__" % (prj.name, url)
+        desc = "*{}*".format(prj.name)
 
         for c in it:
             # ts = time.strftime("%H:%M", time.gmtime(c.committed_date))
