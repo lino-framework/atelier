@@ -555,7 +555,18 @@ def commited_today(ctx, today=None):
     from atelier.projects import load_projects
     from git import Repo
 
-    today = get_current_date(today)
+    list_options = dict()
+    if True:
+        today = get_current_date(today)
+        ONEDAY = timedelta(days=1)
+        yesterday = today - ONEDAY
+        tomorrow = today + ONEDAY
+        list_options.update(
+            after=yesterday.strftime("%Y-%m-%d"),
+            before=tomorrow.strftime("%Y-%m-%d"))
+    if False:
+        list_options.update(max_count=5)
+        
     rows = []
 
     def load(prj):
@@ -564,7 +575,8 @@ def commited_today(ctx, today=None):
         prj.load_tasks()
 
         # tsk, cfg = prj.ns.task_with_config('ci')
-        cfg = prj.ns.configuration()
+        # cfg = prj.ns.configuration()
+        cfg = prj.config
 
         if cfg['revision_control_system'] != 'git':
             # if cfg.revision_control_system != 'git':
@@ -573,13 +585,7 @@ def commited_today(ctx, today=None):
 
         repo = Repo(cfg['root_dir'])
 
-        kw = dict()
-        ONEDAY = timedelta(days=1)
-        yesterday = today - ONEDAY
-        tomorrow = today + ONEDAY
-        kw.update(after=yesterday.strftime("%Y-%m-%d"),
-                  before=tomorrow.strftime("%Y-%m-%d"))
-        it = list(repo.iter_commits(**kw))
+        it = list(repo.iter_commits(**list_options))
         if len(it) == 0:
             # print("20160816 no commits in {}".format(prj.nickname))
             return

@@ -120,7 +120,8 @@ class Project(object):
     intersphinx_urls = {}
     SETUP_INFO = {}
     doc_trees = ['docs']
-    ns = None
+    # ns = None
+    config = None
 
     def __init__(self, i, root_dir, nickname=None):
         self.index = i
@@ -145,7 +146,7 @@ class Project(object):
         if not self.root_dir.child('tasks.py').exists():
             return
 
-        fqname = 'atelier.prj_%s' % self.index
+        # fqname = 'atelier.prj_%s' % self.index
         cwd = Path().resolve()
         self.root_dir.chdir()
         # print("20160121 pseudo-importing file %s %s/tasks.py " % (
@@ -163,7 +164,12 @@ class Project(object):
 
         assert 'ns' in m
         main_package = m['ns'].main_package
-        self.ns = m['ns']
+        # every project uses the ns object, so we don't want to store
+        # it here because anyway it points to the namesapace of the
+        # last loaded project.
+        
+        # self.ns = m['ns']
+        self.config = m['ns'].configuration()
 
         self.SETUP_INFO = get_setup_info(self.root_dir)
         
