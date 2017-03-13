@@ -5,7 +5,7 @@
 """A library for `invoke <http://www.pyinvoke.org/>`__ with tasks we
 use for managing our Python projects.
 
-See :doc:`/invlib`
+See docstring of :mod:`atelier.invlib`
 
 """
 
@@ -104,8 +104,17 @@ def py_clean(ctx, batch=False):
 
     """
     if atelier.current_project.module is not None:
-        p = Path(atelier.current_project.module.__file__).parent
-        cleanup_pyc(p, batch)
+        try:
+            p = Path(atelier.current_project.module.__file__).parent
+            cleanup_pyc(p, batch)
+        except AttributeError:
+            # happened 20170310 in namespace package:
+            # $ pywhich commondata
+            # Traceback (most recent call last):
+            #   File "<string>", line 1, in <module>
+            # AttributeError: 'module' object has no attribute '__file__'
+            pass
+        
     p = ctx.root_dir.child('tests')
     if p.exists():
         cleanup_pyc(p, batch)
@@ -546,7 +555,18 @@ def commited_today(ctx, today=None):
     from atelier.projects import load_projects
     from git import Repo
 
-    today = get_current_date(today)
+    list_options = dict()
+    if True:
+        today = get_current_date(today)
+        ONEDAY = timedelta(days=1)
+        yesterday = today - ONEDAY
+        tomorrow = today + ONEDAY
+        list_options.update(
+            after=yesterday.strftime("%Y-%m-%d"),
+            before=tomorrow.strftime("%Y-%m-%d"))
+    if False:
+        list_options.update(max_count=5)
+        
     rows = []
 
     def load(prj):
@@ -555,7 +575,8 @@ def commited_today(ctx, today=None):
         prj.load_tasks()
 
         # tsk, cfg = prj.ns.task_with_config('ci')
-        cfg = prj.ns.configuration()
+        # cfg = prj.ns.configuration()
+        cfg = prj.config
 
         if cfg['revision_control_system'] != 'git':
             # if cfg.revision_control_system != 'git':
@@ -564,13 +585,7 @@ def commited_today(ctx, today=None):
 
         repo = Repo(cfg['root_dir'])
 
-        kw = dict()
-        ONEDAY = timedelta(days=1)
-        yesterday = today - ONEDAY
-        tomorrow = today + ONEDAY
-        kw.update(after=yesterday.strftime("%Y-%m-%d"),
-                  before=tomorrow.strftime("%Y-%m-%d"))
-        it = list(repo.iter_commits(**kw))
+        it = list(repo.iter_commits(**list_options))
         if len(it) == 0:
             # print("20160816 no commits in {}".format(prj.nickname))
             return
@@ -590,8 +605,9 @@ def commited_today(ctx, today=None):
             s += "\n({})".format(c.message.strip())
             return s
 
-        url = prj.SETUP_INFO.get('url', "oops")
-        desc = "`%s <%s>`__" % (prj.name, url)
+        # url = prj.SETUP_INFO.get('url', "oops")
+        # desc = "`%s <%s>`__" % (prj.name, url)
+        desc = "*{}*".format(prj.name)
 
         for c in it:
             # ts = time.strftime("%H:%M", time.gmtime(c.committed_date))

@@ -136,6 +136,15 @@ Commands for testing
     projects related to this project.
 
 
+Miscellaneous commands 
+----------------------
+
+.. command:: inv ct
+
+    Display a list of commits in all projects during the last 24
+    hours.
+
+
 Usage
 =====
 
