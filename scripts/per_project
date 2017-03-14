@@ -34,15 +34,17 @@ http://atelier.lino-framework.org/usage.html
     if showlist:
         headers = (
             'Project',
+            # 'Version',
+            'Status',
             'URL',
-            'Version',
             'doctrees')
 
         def cells(self):
             self.load_tasks()
             yield self.nickname
+            # yield self.SETUP_INFO.get('version', '')
+            yield self.get_status()
             yield self.SETUP_INFO.get('url', None)
-            yield self.SETUP_INFO.get('version', '')
             yield ', '.join(self.doc_trees)
 
         print(rstgen.table(headers, [

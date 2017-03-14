@@ -7,7 +7,7 @@ See :doc:`/usage`.
 
 """
 from __future__ import unicode_literals
-from builtins import object
+from builtins import object, str
 
 import os
 
@@ -179,6 +179,17 @@ class Project(object):
         self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
         self.intersphinx_urls = getattr(
             self.module, 'intersphinx_urls', {})
+
+    def get_status(self):
+        if self.config['revision_control_system'] != 'git':
+            return ''
+        from git import Repo
+        repo = Repo(self.root_dir)
+        s = str(repo.active_branch)
+        if repo.is_dirty():
+            s += "!"
+        return s
+        
 
 
 for fn in config_files:
