@@ -21,6 +21,7 @@ from datetime import timedelta
 from atelier.utils import i2d
 from babel.dates import format_date
 from atelier import rstgen
+from atelier.projects import load_projects
 from unipath import Path
 
 try:
@@ -548,11 +549,17 @@ def update_catalog_code(ctx):
 # def list_projects(ctx, *cmdline_args):
 #     """List your projects."""
 
+def git_projects():
+    for prj in load_projects():
+        prj.load_tasks()
+        if prj.config['revision_control_system'] == 'git':
+            yield prj
+
+
 
 @task(name='ct')
 def commited_today(ctx, today=None):
     """Print all today's commits to stdout."""
-    from atelier.projects import load_projects
     from git import Repo
 
     list_options = dict()
@@ -571,19 +578,8 @@ def commited_today(ctx, today=None):
 
     def load(prj):
 
-        # prj.load_fabfile()
-        prj.load_tasks()
-
-        # tsk, cfg = prj.ns.task_with_config('ci')
-        # cfg = prj.ns.configuration()
-        cfg = prj.config
-
-        if cfg['revision_control_system'] != 'git':
-            # if cfg.revision_control_system != 'git':
-            # print("20160816 {}".format(cfg))
-            return
-
-        repo = Repo(cfg['root_dir'])
+        #repo = Repo(cfg['root_dir'])
+        repo = Repo(prj.root_dir)
 
         it = list(repo.iter_commits(**list_options))
         if len(it) == 0:
@@ -613,12 +609,20 @@ def commited_today(ctx, today=None):
             # ts = time.strftime("%H:%M", time.gmtime(c.committed_date))
             ts = time.strftime("%Y-%m-%d %H:%M", time.localtime(c.committed_date))
             rows.append([ts, desc, fmtcommit(c)])
-
-    for p in load_projects():
+            
+    for p in git_projects():
         load(p)
 
     rows.sort(key=lambda a: a[0])
     print(rstgen.ul(["{0} in {1}:\n{2}".format(*row) for row in rows]))
     # print rstgen.table(headers, rows)
 
+
+# @task(name='pull')
+# def git_pull(ctx):
+#     """Run git pull if it is a git project."""
+#     from git import Repo
+#     for p in git_projects():
+#         with cd(p.root_dir):
+            
 

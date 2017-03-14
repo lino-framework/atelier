@@ -162,15 +162,9 @@ class Project(object):
 
         cwd.chdir()
 
-        assert 'ns' in m
-        main_package = m['ns'].main_package
-        # every project uses the ns object, so we don't want to store
-        # it here because anyway it points to the namesapace of the
-        # last loaded project.
-        
-        # self.ns = m['ns']
-        self.config = m['ns'].configuration()
-
+        ns = m['ns']
+        main_package = ns.main_package
+        self.config = ns.configuration()
         self.SETUP_INFO = get_setup_info(self.root_dir)
         
         if main_package is None:
