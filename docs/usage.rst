@@ -62,13 +62,19 @@ script:
 
 .. command:: per_project
 
-    Loop over all projects, executing the given shell command in the root
-    directory of each project.
+    Usage : per_project [options] CMD ...
 
+    Loop over all projects, executing the given shell command CMD in
+    the root directory of each project.
+
+    Special case: When CMD starts with the word ``git``, then skip all
+    projects which don't have their :envvar:`revision_control_system`
+    set to ``'git'``.
+      
     The projects are processed in the order defined in your
     :xfile:`~/.atelier/config.py` file.
 
-    The script has the following options:
+    Options:
 
     - ``--list`` or ``-l`` : print a list of all projects to stdout. Does
       not run any command.
@@ -79,7 +85,13 @@ script:
       continue the started loop without repeating previous test suites
       again.
 
+    - ``--after PRJNAME`` : start after project PRJNAME (like
+      `--start`, but without the named project).
+
     - ``--until PRJNAME`` : stop after project PRJNAME.
+
+    - ``--voice`` : Speak the result through speakers when terminated.
+
 
 .. command:: pp
              
@@ -103,7 +115,7 @@ Usage examples::
   $ pp git st
 
 See the `Project management
-<http://www.lino-framework.org/team/projects.html>`__ page of the Lino
+<http://www.lino-framework.org/dev/projects.html>`__ page of the Lino
 project for more usage examples.
 
 
