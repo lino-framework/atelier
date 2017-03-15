@@ -7,6 +7,7 @@ import os
 import subprocess
 import argparse
 
+from atelier import rstgen
 from atelier.projects import load_projects
 from argh import dispatch_command, arg, CommandError
 
@@ -30,20 +31,20 @@ root directory of each project.  See
 http://atelier.lino-framework.org/usage.html
 
     """
-    from atelier.projects import load_projects
     if showlist:
-        from atelier import rstgen
         headers = (
             'Project',
+            # 'Version',
+            'Status',
             'URL',
-            'Version',
             'doctrees')
 
         def cells(self):
             self.load_tasks()
             yield self.nickname
+            # yield self.SETUP_INFO.get('version', '')
+            yield self.get_status()
             yield self.SETUP_INFO.get('url', None)
-            yield self.SETUP_INFO.get('version', '')
             yield ', '.join(self.doc_trees)
 
         print(rstgen.table(headers, [
@@ -62,6 +63,10 @@ http://atelier.lino-framework.org/usage.html
 
     skipping = start is not None or after is not None
     for prj in load_projects():
+        if cmd[0] == 'git':
+            prj.load_tasks()
+            if prj.config['revision_control_system'] != 'git':
+                continue
         if start and prj.nickname == start:
             skipping = False
         if after and prj.nickname == after:
@@ -83,3 +88,4 @@ http://atelier.lino-framework.org/usage.html
     msg = "Successfully terminated {} for all projects"
     msg = msg.format(cmd)
     saymsg(msg)
+    print(msg)

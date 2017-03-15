@@ -163,7 +163,7 @@ html_use_opensearch = 'http://lino.saffre-rumma.net'
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'django-site'
+htmlhelp_basename = 'atelier'
 
 
 # Options for LaTeX output

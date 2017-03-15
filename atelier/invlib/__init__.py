@@ -297,9 +297,9 @@ uses :mod:`atelier.invlib`.
 
 .. envvar:: revision_control_system
 
-    The revision control system used by your project.
-    Allowed values are `'git'`, `'hg'` or `None`.
-    Used by :cmd:`inv ci`.
+    The revision control system used by your project.  Allowed values
+    are `'git'`, `'hg'` or `None`.  Used by :cmd:`inv ci`, :cmd:`inv
+    release`, :cmd:`per_project`.
 
 .. envvar:: use_mercurial
 
