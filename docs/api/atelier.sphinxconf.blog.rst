@@ -9,12 +9,15 @@ atelier.sphinxconf.blog
 
    .. autosummary::
    
+      cmp
       docname
       docname_to_day
+      format_date
       get_blogger_years
       monthname
       navigator
       setup
+      toctree
    
    
 
@@ -25,8 +28,13 @@ atelier.sphinxconf.blog
    .. autosummary::
    
       BloggerYear
+      InsertInputDirective
       MainBlogIndexDirective
       YearBlogIndexDirective
+      map
+      object
+      range
+      str
    
    
 

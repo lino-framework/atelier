@@ -85,7 +85,7 @@ http://atelier.lino-framework.org/usage.html
             saymsg(msg)
             raise CommandError(msg)
 
-    msg = "Successfully terminated {} for all projects"
-    msg = msg.format(cmd)
+    msg = "Successfully terminated `{}` for all projects"
+    msg = msg.format(' '.join(cmd))
     saymsg(msg)
     print(msg)

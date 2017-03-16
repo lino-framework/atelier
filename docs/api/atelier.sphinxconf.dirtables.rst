@@ -9,6 +9,11 @@ atelier.sphinxconf.dirtables
 
    .. autosummary::
    
+      abspath
+      dirname
+      docname_join
+      join
+      patfilter
       rel_docname
       render_entry
       setup
@@ -24,10 +29,22 @@ atelier.sphinxconf.dirtables
       DirectoryTable
       Entry
       EntryIntro
+      Environment
+      FileSystemLoader
+      InsertInputDirective
       TicketsTable
+      filter
+      object
+      str
    
    
 
    
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      TemplateNotFound
    
    
