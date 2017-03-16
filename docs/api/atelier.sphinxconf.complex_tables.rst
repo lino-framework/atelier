@@ -20,7 +20,9 @@ atelier.sphinxconf.complex_tables
    .. autosummary::
    
       ComplexTableDirective
+      InsertInputDirective
       TextImageDirective
+      str
    
    
 

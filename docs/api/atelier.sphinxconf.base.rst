@@ -17,15 +17,26 @@ atelier.sphinxconf.base
       command_parse
       get_blog_url
       html_page_context
+      i2d
+      import_module
       message_role
+      nested_parse_with_titles
       process_signature
       setup
+      split_explicit_title
       srcref
       unused_srcref_role
    
    
 
    
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Directive
+      Path
    
    
 
