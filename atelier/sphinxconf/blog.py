@@ -101,7 +101,8 @@ class BloggerYear(object):
 
         #~ print "20130113 Year.__init__", blogname, self.year
         #~ self.blogname = blogname
-        self.days = set()
+        self.days = []
+        self.dates = set()
         #~ self.years = set()
         #~ self.starting_year = int(starting_year)
         top = os.path.dirname(env.doc2path(env.docname))
@@ -111,11 +112,19 @@ class BloggerYear(object):
             #~ unused, year = dirpath.rsplit(os.path.sep,2)
             #~ year = int(year)
             #~ assert year in self.years
-            for fn in filenames:
-                if len(fn) == 8 and fn.endswith('.rst'):
-                    d = docname_to_day(self.year, fn[:-4])
-                    self.days.add(d)
-                    #~ self.years.add(s)
+            d = None
+            for fn in sorted(filenames):
+                if fn.endswith('.rst'):
+                    docname = fn[:-4]
+                    if docname == "index":
+                        continue
+                    if len(fn) == 8:
+                        d = docname_to_day(self.year, docname)
+                        self.days.append(d)
+                        self.dates.add(d.date)
+                        #~ self.years.add(s)
+                    elif d is not None:
+                        d.docnames.append(docname)
 
         #~ self.years = sorted(self.years)
         if not hasattr(env, 'blog_instances'):
@@ -241,7 +250,7 @@ class YearBlogIndexDirective(InsertInputDirective):
                     label = "%02d" % day.day
                     docname = "%02d%02d" % (day.month, day.day)
                     # if blogger_year.year == iso_year and day in blogger_year.days:
-                    if day in blogger_year.days:
+                    if day in blogger_year.dates:
                         text += " :doc:`%s <%s>` " % (label, docname)
                     elif day > today:
                         text += ' |sp| '
@@ -270,23 +279,28 @@ class YearBlogIndexDirective(InsertInputDirective):
     
 """.format("All entries:")
 
-        days = sorted(blogger_year.days)
-        for day in days:
-            text += """
-    %02d%02d""" % (day.month, day.day)
+        for day in blogger_year.days:
+            for docname in day.docnames:
+                text += ("\n    " + docname)
+    #         text += """
+    # %02d%02d""" % (day.month, day.day)
 
         return tpl.render(
             calendar=text,
             intro=intro,
-            year=blogger_year.year,
-            days=blogger_year.days)
+            year=blogger_year.year)
+            # days=blogger_year.days)
 
+class BloggerDay(object):
+    def __init__(self, docname, *args, **kwargs):
+        self.docnames = [docname]
+        self.date = datetime.date(*args, **kwargs)
 
 def docname_to_day(year, s):
     #~ print fn
     month = int(s[:2])
     day = int(s[2:])
-    return datetime.date(year, month, day)
+    return BloggerDay(s, year, month, day)
 
 
 #~ class ChangedDirective(InsertInputDirective):
