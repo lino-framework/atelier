@@ -27,6 +27,7 @@ atelier.sphinxconf.blog
 
    .. autosummary::
    
+      BloggerDay
       BloggerYear
       InsertInputDirective
       MainBlogIndexDirective
