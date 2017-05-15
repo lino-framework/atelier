@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 by Luc Saffre.
+# Copyright 2009-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -10,7 +10,9 @@ $ python setup.py test -s tests.BasicTests.test_utils
 """
 
 from __future__ import print_function
+import six
 from builtins import str
+from future.types import newstr
 # from builtins import input
 from builtins import object
 # Python 2 and 3:
@@ -183,7 +185,7 @@ def ispure(s):
     """
     if s is None:
         return True
-    if type(s) == str:
+    if isinstance(s, (six.text_type, newstr)):
         return True
     if type(s) == bytes:
         try:
