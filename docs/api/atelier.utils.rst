@@ -37,6 +37,7 @@ atelier.utils
    
       AttrDict
       SubProcessParent
+      newstr
       object
       relativedelta
       str
