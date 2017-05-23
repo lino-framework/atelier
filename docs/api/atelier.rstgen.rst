@@ -1,5 +1,5 @@
-atelier.rstgen
-==============
+atelier\.rstgen
+===============
 
 .. automodule:: atelier.rstgen
 
@@ -29,7 +29,6 @@ atelier.rstgen
       Column
       Table
       stdout_prefix
-      str
    
    
 

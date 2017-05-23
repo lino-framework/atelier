@@ -1,5 +1,5 @@
-atelier.sphinxconf.sigal_image
-==============================
+atelier\.sphinxconf\.sigal\_image
+=================================
 
 .. automodule:: atelier.sphinxconf.sigal_image
 
@@ -22,12 +22,9 @@ atelier.sphinxconf.sigal_image
    .. autosummary::
    
       Format
-      InsertInputDirective
       SigalImage
       Thumb
       Wide
-      object
-      str
    
    
 
