@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2016 by Luc Saffre.
+# Copyright 2011-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :class:`InsertInputDirective` class and some
@@ -224,7 +224,9 @@ class Py2rstDirective(InsertInputDirective):
             except Exception as err:
                 # f = inspect.trace()[1]
                 # traceback.print_stack()
-                raise Exception("%s in code:\n%s" % (err, code))
+                # code = code.replace("%", "\%")
+                # raise Exception("%s in code:\n%s" % (err, code))
+                raise Exception("{} in code:\n{}".format(err, code))
 
         sys.stdout = old
         s = buffer.getvalue()
