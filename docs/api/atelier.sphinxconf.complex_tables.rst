@@ -1,5 +1,5 @@
-atelier.sphinxconf.complex_tables
-=================================
+atelier\.sphinxconf\.complex\_tables
+====================================
 
 .. automodule:: atelier.sphinxconf.complex_tables
 
@@ -20,9 +20,7 @@ atelier.sphinxconf.complex_tables
    .. autosummary::
    
       ComplexTableDirective
-      InsertInputDirective
       TextImageDirective
-      str
    
    
 

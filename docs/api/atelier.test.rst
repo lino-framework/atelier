@@ -1,5 +1,5 @@
-atelier.test
-============
+atelier\.test
+=============
 
 .. automodule:: atelier.test
 
@@ -19,7 +19,6 @@ atelier.test
 
    .. autosummary::
    
-      SubProcessParent
       TestCase
    
    

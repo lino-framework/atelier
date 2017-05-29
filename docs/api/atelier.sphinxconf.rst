@@ -1,5 +1,5 @@
-atelier.sphinxconf
-==================
+atelier\.sphinxconf
+===================
 
 .. automodule:: atelier.sphinxconf
 
@@ -20,9 +20,7 @@ atelier.sphinxconf
 
    .. autosummary::
    
-      BuiltinTemplateLoader
       DjangoTemplateBridge
-      Path
    
    
 
