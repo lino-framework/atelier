@@ -11,14 +11,11 @@ $ python setup.py test -s tests.BasicTests.test_utils
 
 from __future__ import print_function
 import six
-from builtins import str
-from future.types import newstr
-# from builtins import input
-from builtins import object
-# Python 2 and 3:
-from future.utils import python_2_unicode_compatible
-import six
 from six.moves import input
+from builtins import str
+from builtins import object
+from future.types import newstr
+from future.utils import python_2_unicode_compatible
 
 # from __future__ import unicode_literals
 # causes problems on Windows where `subprocess.Popen` wants only plain strings
@@ -178,10 +175,25 @@ def last_day_of_month(d):
     # return relativedelta(d, days=-1)
 
 
-def ispure(s):
+def isiterable(x):
+    "Returns `True` if the specified object is iterable."
+    try:
+        iter(x)
+    except TypeError:
+        return False
+    return True
+
+
+def is_string(s):
+    """Return True if the specified value is a string.
     """
-    Returns `True` if the specified string `s` is either a unicode 
-    string or contains only ASCII characters.
+    return isinstance(s, six.string_types) or isinstance(s, newstr)
+   
+def ispure(s):
+    """Returns `True` if the specified string `s` is either None, or
+    contains only ASCII characters, or is a validly encoded unicode
+    string.
+
     """
     if s is None:
         return True
