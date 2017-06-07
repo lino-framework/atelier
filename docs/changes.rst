@@ -4,8 +4,15 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.6 (not released)
+Version 1.0.7 (not released)
 ============================
+
+Version 1.0.6 (released 2017-06-07)
+===================================
+
+New functions :func:`atelier.utils.isiterable` and
+:func:`atelier.utils.is_string`.
+      
 
 Version 1.0.5 (released 2017-02-16)
 ===================================
