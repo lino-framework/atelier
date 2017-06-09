@@ -417,6 +417,13 @@ def tuple_py2(old_tuple):
     lst = list_py2(lst)
     return tuple(lst)
 
+def remove_u(x):
+    if isinstance(x, (list, tuple, dict)):
+        return x.__class__([remove_u(y) for y in x])
+    if isinstance(x, unicode):
+        return str(x)
+    return x
+
 # def get_visual_editor():
 #     """Returns the name of the visual editor, usually stored in the
 #     `VISUAL` environment variable.  If `VISUAL` is not set, return the
