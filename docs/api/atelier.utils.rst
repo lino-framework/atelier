@@ -18,6 +18,8 @@ atelier\.utils
       i2t
       iif
       indentation
+      is_string
+      isiterable
       ispure
       last_day_of_month
       list_py2
