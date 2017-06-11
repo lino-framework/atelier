@@ -23,6 +23,7 @@ atelier\.utils
       ispure
       last_day_of_month
       list_py2
+      rmu
       tuple_py2
       unindent
    
