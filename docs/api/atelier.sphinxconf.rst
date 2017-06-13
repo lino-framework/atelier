@@ -20,7 +20,9 @@ atelier\.sphinxconf
 
    .. autosummary::
    
+      BuiltinTemplateLoader
       DjangoTemplateBridge
+      Path
    
    
 

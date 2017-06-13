@@ -22,9 +22,12 @@ atelier\.sphinxconf\.sigal\_image
    .. autosummary::
    
       Format
+      InsertInputDirective
       SigalImage
       Thumb
       Wide
+      object
+      str
    
    
 

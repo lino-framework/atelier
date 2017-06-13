@@ -29,6 +29,7 @@ atelier\.rstgen
       Column
       Table
       stdout_prefix
+      str
    
    
 
