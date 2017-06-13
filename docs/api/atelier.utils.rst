@@ -12,17 +12,21 @@ atelier\.utils
       assert_pure
       cd
       confirm
+      contextmanager
       date_offset
       dict_py2
       i2d
       i2t
       iif
       indentation
+      input
       is_string
       isiterable
       ispure
       last_day_of_month
       list_py2
+      python_2_unicode_compatible
+      rmu
       tuple_py2
       unindent
    
@@ -36,6 +40,10 @@ atelier\.utils
    
       AttrDict
       SubProcessParent
+      newstr
+      object
+      relativedelta
+      str
    
    
 

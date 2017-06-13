@@ -19,6 +19,7 @@ atelier\.test
 
    .. autosummary::
    
+      SubProcessParent
       TestCase
    
    

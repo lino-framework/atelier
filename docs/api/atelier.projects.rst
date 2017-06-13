@@ -12,6 +12,7 @@ atelier\.projects
       add_project
       get_project_info_tasks
       get_setup_info
+      import_module
       load_projects
    
    
@@ -22,7 +23,10 @@ atelier\.projects
 
    .. autosummary::
    
+      Path
       Project
+      object
+      str
    
    
 

@@ -10,6 +10,7 @@ $ python setup.py test -s tests.BasicTests.test_utils
 """
 
 from __future__ import print_function
+
 import six
 from six.moves import input
 from builtins import str
@@ -374,6 +375,7 @@ def dict_py2(old_dict):
     """Convert the given `dict` so that it's `repr` is the same for both
     Python 2 and 3.
 
+    Deprecated. Use :func:`rmu` instead.
     """
     from future.utils import viewitems
     new_dict = {}
@@ -396,6 +398,8 @@ def list_py2(old_list):
     """Convert the given `list` so that it's `repr` is the same for both
     Python 2 and 3.
 
+    Deprecated. Use :func:`rmu` instead.
+
     """
     new_list = []
     for item in old_list:
@@ -412,15 +416,34 @@ def tuple_py2(old_tuple):
     """Convert the given `tuple` so that it's `repr` is the same for both
     Python 2 and 3.
 
+    Deprecated. Use :func:`rmu` instead.
+
     """
     lst = list(old_tuple)
     lst = list_py2(lst)
     return tuple(lst)
 
-def remove_u(x):
-    if isinstance(x, (list, tuple, dict)):
-        return x.__class__([remove_u(y) for y in x])
-    if isinstance(x, unicode):
+def rmu(x):
+    ur"""Remove the 'u' prefix from unicode strings under Python 2 in order
+    to produce Python 3 compatible output in a doctested code snippet.
+
+    >>> lst = [123, "123", u"Äöü"]
+    >>> rmu(lst)
+    [123, '123', '\xc4\xf6\xfc']
+    >>> rmu(tuple(lst))
+    (123, '123', '\xc4\xf6\xfc')
+    >>> dct = {i: i for i in lst}
+    >>> rmu(dct)
+    {123: 123, '\xc4\xf6\xfc': '\xc4\xf6\xfc', '123': '123'}
+
+    """
+    if isinstance(x, list):
+        return [rmu(i) for i in x]
+    if isinstance(x, tuple):
+        return tuple([rmu(i) for i in x])
+    if isinstance(x, dict):
+        return {rmu(k):rmu(v) for k,v in x.items()}
+    if isinstance(x, six.string_types):
         return str(x)
     return x
 
