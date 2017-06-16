@@ -423,18 +423,19 @@ def tuple_py2(old_tuple):
     lst = list_py2(lst)
     return tuple(lst)
 
+
 def rmu(x):
-    ur"""Remove the 'u' prefix from unicode strings under Python 2 in order
+    u"""Remove the 'u' prefix from unicode strings under Python 2 in order
     to produce Python 3 compatible output in a doctested code snippet.
 
     >>> lst = [123, "123", u"Äöü"]
-    >>> rmu(lst)
-    [123, '123', '\xc4\xf6\xfc']
-    >>> rmu(tuple(lst))
-    (123, '123', '\xc4\xf6\xfc')
+    >>> print(rmu(lst))
+    [123, '123', '\\xc4\\xf6\\xfc']
+    >>> print(rmu(tuple(lst)))
+    (123, '123', '\\xc4\\xf6\\xfc')
     >>> dct = {i: i for i in lst}
-    >>> rmu(dct)
-    {123: 123, '\xc4\xf6\xfc': '\xc4\xf6\xfc', '123': '123'}
+    >>> print(rmu(dct)) #doctest: +ELLIPSIS
+    {...'\\xc4\\xf6\\xfc': '\\xc4\\xf6\\xfc'...}
 
     """
     if isinstance(x, list):
