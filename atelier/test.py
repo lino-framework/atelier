@@ -34,7 +34,7 @@ def interpreter_args():
 class TestCase(unittest.TestCase, SubProcessParent):
     "Deserves a docstring"
     project_root = NotImplementedError
-    #~ maxDiff = None
+    # maxDiff = None
 
     def run_packages_test(self, declared_packages):
         """
