@@ -188,7 +188,9 @@ def isiterable(x):
 def is_string(s):
     """Return True if the specified value is a string.
     """
-    return isinstance(s, six.string_types) or isinstance(s, newstr)
+    if six.PY2:
+        return isinstance(s, six.string_types) or isinstance(s, newstr)
+    return isinstance(s, six.string_types)
    
 def ispure(s):
     """Returns `True` if the specified string `s` is either None, or
