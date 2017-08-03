@@ -93,7 +93,8 @@ import traceback
 from docutils import nodes
 from docutils import statemachine
 from docutils.parsers.rst import directives
-from sphinx.util.compat import Directive
+from docutils.parsers.rst import Directive
+#from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 
 #~ class ScreenshotDirective(directives.images.Image):
