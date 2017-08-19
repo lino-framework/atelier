@@ -40,7 +40,8 @@ from unipath import Path
 from docutils import nodes, utils
 from docutils.parsers.rst import directives
 from docutils.parsers.rst import roles
-from sphinx.util.compat import Directive
+# from docutils.parsers.rst import Directive
+#from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 from sphinx.util.nodes import split_explicit_title
 from sphinx import addnodes
