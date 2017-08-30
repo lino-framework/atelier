@@ -12,16 +12,20 @@ Defines an extended TestCase whith methods to launch a subprocess.
 from __future__ import unicode_literals
 
 import six
+import os
+from os.path import join
 import unittest
 import glob
 import sys
 from setuptools import find_packages
 # from unipath import Path
+import subprocess
 
 # from atelier import SETUP_INFO
 from atelier.utils import SubProcessParent
 
 # ROOTDIR = Path(__file__).parent.parent
+DOCTEST_CMD = "atelier.doctest_utf8"
 
 
 def interpreter_args():
@@ -29,6 +33,57 @@ def interpreter_args():
     #     # raise Exception('20160119')
     #     return ['coverage', 'run']
     return [sys.executable]
+
+
+class DocTestCase(unittest.FunctionTestCase):
+    def __init__(self, filename):
+        # print(os.path.join(root, file))
+        # kw = dict()
+        def func():
+            args = [sys.executable]
+            args += ["-m"]
+            args += [DOCTEST_CMD]
+            args += [filename]
+            # self.run_subprocess(args, **kw)
+            if False:
+                subprocess.check_output(args)
+            else:
+                p = open_subprocess(args)
+                out, err = p.communicate()
+                # raise Exception("20160711 run_subprocess", out)
+                rv = p.returncode
+                if rv != 0:
+                    cmd = ' '.join(args)
+                    msg = "%s returned %d:\n-----\n%s\n-----" % (
+                        cmd, rv, out)
+                    raise Exception(msg)
+                
+            # # run_simple_doctests(fn)
+        func.__name__ = filename
+        super(DocTestCase, self).__init__(func)
+    
+def open_subprocess(args, **kw):
+    kw.update(stdout=subprocess.PIPE)
+    kw.update(stderr=subprocess.STDOUT)
+    kw.update(universal_newlines=True)
+    return subprocess.Popen(args, **kw)
+
+
+def make_docs_suite(docs_root, endswith=".rst"):
+    """Discover the doc files in specified directory docs_root and below
+    and return a test suite which tests them all, each one in a
+    separate subprocess.
+
+    """
+    suite = unittest.TestSuite()
+    for root, dirs, files in os.walk(docs_root):
+        for file in files:
+            if file.endswith(endswith):
+                fn = join(root, file)
+                suite.addTest(DocTestCase(fn))
+    return suite
+
+
 
 
 class TestCase(unittest.TestCase, SubProcessParent):
