@@ -349,6 +349,49 @@ class SubProcessParent(object):
         kw.update(universal_newlines=True)
         return subprocess.Popen(args, **kw)
 
+    def run_subprocess(self, args, **kw):
+        """
+        Run a subprocess, wait until it terminates,
+        fail if the returncode is not 0.
+        """
+        # print ("20150214 run_subprocess %r" % args)
+        p = self.open_subprocess(args, **kw)
+
+        # wait() will deadlock when using stdout=PIPE and/or
+        # stderr=PIPE and the child process generates enough output to
+        # a pipe such that it blocks waiting for the OS pipe buffer to
+        # accept more data. Use communicate() to avoid that.
+        if False:
+            p.wait()
+        else:
+            out, err = p.communicate()
+        # raise Exception("20160711 run_subprocess", out)
+        rv = p.returncode
+        # kw.update(stderr=buffer)
+        # rv = subprocess.call(args,**kw)
+        if rv != 0:
+            cmd = ' '.join(args)
+            if six.PY2:
+                # if the output contains non-asci chars, then we must
+                # decode here in order to wrap it into our msg. Later
+                # we must re-encode it because exceptions, in Python
+                # 2, don't want unicode strings.
+                out = out.decode("utf-8")
+            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
+                cmd, kw, rv, out)
+            # try:
+            #     msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
+            #         cmd, kw, rv, out)
+            # except UnicodeDecodeError:
+            #     out = repr(out)
+            #     msg = "%s (%s) returned %d:OOPS\n-----\n%s\n-----" % (
+            #         cmd, kw, rv, out)
+
+            # print msg
+            if six.PY2:
+                msg = msg.encode('utf-8')
+            self.fail(msg)
+
 
 def date_offset(ref, days=0, **offset):
     """
