@@ -4,10 +4,6 @@
 """
 Defines an extended TestCase whith methods to launch a subprocess.
 
-- :meth:`TestCase.run_packages_test`
-- :meth:`TestCase.run_subprocess`
-- :meth:`TestCase.run_simple_doctests`
-
 """
 from __future__ import unicode_literals
 
