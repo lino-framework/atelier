@@ -1,27 +1,28 @@
-# Copyright 2013-2016 by Luc Saffre.
+# Copyright 2013-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
 Defines an extended TestCase whith methods to launch a subprocess.
 
-- :meth:`TestCase.run_packages_test`
-- :meth:`TestCase.run_subprocess`
-- :meth:`TestCase.run_simple_doctests`
-
 """
 from __future__ import unicode_literals
 
 import six
+import os
+from os.path import join
 import unittest
 import glob
+from fnmatch import fnmatch
 import sys
 from setuptools import find_packages
 # from unipath import Path
+import subprocess
 
 # from atelier import SETUP_INFO
 from atelier.utils import SubProcessParent
 
 # ROOTDIR = Path(__file__).parent.parent
+DOCTEST_CMD = "atelier.doctest_utf8"
 
 
 def interpreter_args():
@@ -29,6 +30,44 @@ def interpreter_args():
     #     # raise Exception('20160119')
     #     return ['coverage', 'run']
     return [sys.executable]
+
+
+class DocTestCase(unittest.FunctionTestCase, SubProcessParent):
+    # internally used by make_docs_suite
+    def __init__(self, filename):
+        def func():
+            args = [sys.executable]
+            args += ["-m"]
+            args += [DOCTEST_CMD]
+            args += [filename]
+            self.run_subprocess(args)
+        func.__name__ = filename
+        super(DocTestCase, self).__init__(func)
+    
+
+def make_docs_suite(docs_root, include="*.rst", exclude=None):
+    """Discover the doc files in specified directory docs_root and below
+    and return a test suite which tests them all, each one in a
+    separate subprocess.
+
+    `include` is a filename pattern of the files to include. Default
+    is `'*.rst'`.
+
+    `exclude` is an optional filename pattern of the files to
+    exclude. Default is None.
+
+    """
+    suite = unittest.TestSuite()
+    for root, dirs, files in os.walk(docs_root):
+        for file in files:
+            fn = join(root, file)
+            if fnmatch(fn, include):
+                if exclude and fnmatch(fn, exclude):
+                    continue
+                suite.addTest(DocTestCase(fn))
+    return suite
+
+
 
 
 class TestCase(unittest.TestCase, SubProcessParent):
@@ -47,49 +86,6 @@ class TestCase(unittest.TestCase, SubProcessParent):
         found_packages.sort()
         declared_packages.sort()
         self.assertEqual(found_packages, declared_packages)
-
-    def run_subprocess(self, args, **kw):
-        """
-        Run a subprocess, wait until it terminates,
-        fail if the returncode is not 0.
-        """
-        # print ("20150214 run_subprocess %r" % args)
-        p = self.open_subprocess(args, **kw)
-
-        # wait() will deadlock when using stdout=PIPE and/or
-        # stderr=PIPE and the child process generates enough output to
-        # a pipe such that it blocks waiting for the OS pipe buffer to
-        # accept more data. Use communicate() to avoid that.
-        if False:
-            p.wait()
-        else:
-            out, err = p.communicate()
-        # raise Exception("20160711 run_subprocess", out)
-        rv = p.returncode
-        # kw.update(stderr=buffer)
-        # rv = subprocess.call(args,**kw)
-        if rv != 0:
-            cmd = ' '.join(args)
-            if six.PY2:
-                # if the output contains non-asci chars, then we must
-                # decode here in order to wrap it into our msg. Later
-                # we must re-encode it because exceptions, in Python
-                # 2, don't want unicode strings.
-                out = out.decode("utf-8")
-            msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
-                cmd, kw, rv, out)
-            # try:
-            #     msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
-            #         cmd, kw, rv, out)
-            # except UnicodeDecodeError:
-            #     out = repr(out)
-            #     msg = "%s (%s) returned %d:OOPS\n-----\n%s\n-----" % (
-            #         cmd, kw, rv, out)
-
-            # print msg
-            if six.PY2:
-                msg = msg.encode('utf-8')
-            self.fail(msg)
 
     def run_simple_doctests(self, filenames, **kw):  # env.simple_doctests
         """

@@ -22,4 +22,5 @@ htmlcov
 .DS_Store
 .idea
 .coverage
+.coverage.*
 htmlcov
