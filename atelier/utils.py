@@ -319,7 +319,6 @@ class SubProcessParent(object):
         """
         env = dict()
         env.update(os.environ)
-        env.pop('PYTHONPATH', None)  # fixes #1296
         env.update(self.default_environ)
         # env.update(COVERAGE_PROCESS_START="folder/.coveragerc")
         # for k in self.inheritable_envvars:

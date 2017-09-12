@@ -34,6 +34,12 @@ def interpreter_args():
 
 class DocTestCase(unittest.FunctionTestCase, SubProcessParent):
     # internally used by make_docs_suite
+    
+    def build_environment(self):
+        env = super(DocTestCase, self).build_environment()
+        env.pop('PYTHONPATH', None)  # fixes #1296
+        return env
+    
     def __init__(self, filename):
         def func():
             args = [sys.executable]
