@@ -246,18 +246,24 @@ def pypi_release(ctx):
 
     must_confirm(RELEASE_CONFIRM % info)
 
-    if ctx.revision_control_system == 'git':
-        args = ["git", "tag"]
-        args += ["-a", version]
-        args += ["-m", "'Release %(name)s %(version)s.'" % info]
-        ctx.run(' '.join(args), pty=True)
-
-    pypi_register(ctx)
     args = ["python", "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", dist_dir]
     args += ["upload"]
-    ctx.run(' '.join(args), pty=True)
+    sdist_cmd = ' '.join(args)
+    
+    if ctx.revision_control_system == 'git':
+        args = ["git", "tag"]
+        args += ["-a", version]
+        args += ["-m", "'Release %(name)s %(version)s.'" % info]
+        res = ctx.run(' '.join(args), pty=True, warn=True)
+        if res.exited:
+            print("You might want to ignore this and "
+                  "manually run:\n{}".format(sdist_cmd))
+            return
+
+    pypi_register(ctx)
+    ctx.run(sdist_cmd, pty=True)
 
 
 @task(name='test_sdist')
