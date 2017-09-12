@@ -319,6 +319,7 @@ class SubProcessParent(object):
         """
         env = dict()
         env.update(os.environ)
+        env.pop('PYTHONPATH', None)  # fixes #1296
         env.update(self.default_environ)
         # env.update(COVERAGE_PROCESS_START="folder/.coveragerc")
         # for k in self.inheritable_envvars:
@@ -340,6 +341,7 @@ class SubProcessParent(object):
 
         """
         env = self.build_environment()
+        # raise Exception("20170912 {}".format(env.keys()))
         kw.update(env=env)
         #~ subprocess.check_output(args,**kw)
         #~ from StringIO import StringIO
