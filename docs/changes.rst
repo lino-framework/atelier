@@ -4,8 +4,14 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.7 (not released)
+Version 1.0.8 (not released)
 ============================
+
+Version 1.0.7 (released 2017-09-12)
+===================================
+
+DocTestCase removes PYTHONPATH from environment. Fixes #1296.
+
 
 Version 1.0.6 (released 2017-06-07)
 ===================================

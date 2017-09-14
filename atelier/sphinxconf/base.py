@@ -243,8 +243,12 @@ def srcref(mod):
     srcref = mod.__file__
     if srcref.endswith('.pyc'):
         srcref = srcref[:-1]
-    if os.stat(srcref).st_size == 0:
-        return
+    if True:
+        # failed on readthedocs.org because there was a dangling pyc
+        # file on my machine which caused autodoc to create an entry
+        # in docs/api.
+        if os.stat(srcref).st_size == 0:
+            return
     #~ srcref = srcref[len(lino.__file__)-17:]
     root = Path(root_mod.__file__).ancestor(2)
     if len(root):
