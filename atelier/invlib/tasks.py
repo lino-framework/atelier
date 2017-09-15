@@ -2,13 +2,6 @@
 # Copyright 2013-2017 by Luc Saffre & Hamza Khchine.
 # License: BSD, see LICENSE for more details.
 
-"""A library for `invoke <http://www.pyinvoke.org/>`__ with tasks we
-use for managing our Python projects.
-
-See docstring of :mod:`atelier.invlib`
-
-"""
-
 from __future__ import print_function
 from __future__ import unicode_literals
 
