@@ -79,12 +79,10 @@ def setup_from_tasks(
     # not a configuration value but just a global internal variable.
     atelier.current_project = prj
     
-    self.configure({'doc_trees': prj.doc_trees})
-    self.configure({
-        # 'main_package': main_package,
-        'doc_trees': prj.doc_trees})
-    self.configure(configs)
     self.main_package = main_package
+    
+    self.configure({'doc_trees': prj.doc_trees})
+    self.configure(configs)
     if kwargs:
         self.configure(kwargs)
     # return _globals_dict

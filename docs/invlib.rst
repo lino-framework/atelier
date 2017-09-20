@@ -304,3 +304,7 @@ uses :mod:`atelier.invlib`.
     :manage:`initdb` in every demo project directory.
 
 
+.. envvar:: prep_command
+
+    The shell command to be run in every :envvar:`demo_projects` when
+    :cmd:`inv prep` is invoked.

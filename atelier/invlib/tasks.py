@@ -630,37 +630,35 @@ def commited_today(ctx, today=None):
 
 from importlib import import_module
 
-def run_in_demo_projects(ctx, admin_cmd, *more, **kwargs):
+def run_in_demo_projects(ctx, shell_cmd, **kwargs):
     """Run the given shell command in each demo project (see
     :attr:`ctx.demo_projects`).
 
     """
     cov = kwargs.pop('cov', False)
-    for mod in ctx.demo_projects:
+    for p in ctx.demo_projects:
         # print("-" * 80)
         # print("In demo project {0}:".format(mod))
-        m = import_module(mod)
+        # m = import_module(mod)
         # 20160710 p = m.SITE.cache_dir or m.SITE.project_dir
-        p = m.SITE.project_dir
+        # p = m.SITE.project_dir
         with cd(p):
             # m = import_module(mod)
             if cov:
-                args = ["coverage"]
-                args += ["run --append"]
-                args += ["`which django-admin.py`"]
+                shell_cmd = "coverage run --append " + shell_cmd
                 datacovfile = ctx.root_dir.child('.coverage')
                 if not datacovfile.exists():
                     print('No .coverage file in {0}'.format(ctx.project_name))
                 os.environ['COVERAGE_FILE'] = datacovfile
-            else:
-                args = ["django-admin.py"]
-            args += [admin_cmd]
-            args += more
-            args += ["--settings=" + mod]
-            cmd = " ".join(args)
+            # else:
+            #     args = ["django-admin.py"]
+            # args += [admin_cmd]
+            # args += more
+            # args += ["--settings=" + mod]
+            # cmd = " ".join(args)
             print("-" * 80)
-            print("Run in demo project {0}\n$ {1} :".format(p, cmd))
-            ctx.run(cmd, pty=True)
+            print("Run in demo project {0}\n$ {1} :".format(p, shell_cmd))
+            ctx.run(shell_cmd, pty=True)
 
 
 @task(name='prep')
@@ -673,8 +671,9 @@ def prep(ctx, cov=False):
                 ctx.project_name))
         # os.environ['COVERAGE_PROCESS_START'] = covfile
         ctx.run('coverage erase', pty=True)
-        
-    run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', cov=cov)
+
+    cmd = ctx.prep_command
+    run_in_demo_projects(ctx, cmd, cov=cov)
 
 
 @task(name='cov', pre=[tasks.call(prep, cov=True)])
