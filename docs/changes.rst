@@ -4,8 +4,16 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.8 (not released)
+Version 1.0.9 (not released)
 ============================
+
+Version 1.0.8 (released 2017-09-20)
+===================================
+
+Changed configuration API for demo_projects: I moved the definition of
+:envvar:`demo_projects` from Lino to :mod:`atelier.invlib` and changed
+the syntax: the itema of :envvar:`demo_projects` must now be directory
+names (and no longer names of Django settings modules).
 
 Version 1.0.7 (released 2017-09-12)
 ===================================
