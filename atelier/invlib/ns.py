@@ -6,4 +6,6 @@ from atelier.invlib import MyCollection
 from . import tasks
 
 ns = MyCollection.from_module(tasks)
+configs = dict(demo_projects=[])
+ns.configure(configs)
 

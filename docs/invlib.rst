@@ -128,6 +128,16 @@ Commands for deployment
 Commands for testing
 --------------------
 
+.. command:: inv prep
+
+    Prepare a test run. This runs :manage:`prep` on every demo project
+    defined by :envvar:`demo_projects`.
+
+    It is not launched automatically by :cmd:`inv test` or :cmd:`inv
+    bd` because it can take some time and is not always necessary.
+
+    
+
 .. command:: inv test
 
     Run the test suite of this project.
@@ -284,5 +294,13 @@ uses :mod:`atelier.invlib`.
     **No longer used.** Use :envvar:`revision_control_system` instead.)
 
 
+.. envvar:: demo_projects
+
+    The list of *Django demo projects* included in this project.
+
+    Django demo projects are used by the test suite and the Sphinx
+    documentation.  Before running :cmd:`inv test` or :cmd:`inv bd`,
+    they must have been initialized.  To initialize them, run
+    :manage:`initdb` in every demo project directory.
 
 

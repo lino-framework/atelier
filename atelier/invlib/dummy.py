@@ -11,10 +11,10 @@ means.
 
 from .ns import ns
 
-from invoke import task
+# from invoke import task
 
-@task(name='prep')
-def prep(ctx, *args, **kwargs):
-    """Does nothing. """
+# @task(name='prep')
+# def prep(ctx, *args, **kwargs):
+#     """Does nothing. """
 
-ns.add_task(prep)
+# ns.add_task(prep)
