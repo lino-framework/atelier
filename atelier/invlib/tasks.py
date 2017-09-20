@@ -9,6 +9,7 @@ import os
 import glob
 import time
 import datetime
+import six
 from datetime import timedelta
 
 from atelier.utils import i2d
@@ -396,7 +397,9 @@ def edit_blog_entry(ctx, today=None):
             txt = ".. blogger_year::\n"
             yd.child('index.rst').write_file(txt.encode('utf-8'))
 
-        entry.path.write_file(content.encode('utf-8'))
+        if six.PY2:
+            content = content.encode('utf-8')
+        entry.path.write_file(content)
         # touch it for Sphinx:
         entry.path.parent.child('index.rst').set_times()
     args = [ctx.editor_command.format(entry.path)]
