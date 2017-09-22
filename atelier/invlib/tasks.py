@@ -6,6 +6,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import os
+import sys
 import glob
 import time
 import datetime
@@ -152,7 +153,7 @@ def run_tests(ctx):
     if ctx.root_dir.child('pytest.ini').exists():
         ctx.run('py.test', pty=True)
     else:
-        ctx.run('python setup.py -q test', pty=True)
+        ctx.run(sys.executable + ' setup.py -q test', pty=True)
 
 
 @task(name='readme')
@@ -219,7 +220,7 @@ def setup_sdist(ctx):
     # dist_dir = Path(ctx.sdist_dir).child(
     #     atelier.current_project.SETUP_INFO['name'])
     dist_dir = ctx.sdist_dir
-    args = ["python", "setup.py"]
+    args = [sys.executable, "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", dist_dir]
     ctx.run(' '.join(args), pty=True)
@@ -240,7 +241,7 @@ def pypi_release(ctx):
 
     must_confirm(RELEASE_CONFIRM % info)
 
-    args = ["python", "setup.py"]
+    args = [sys.executable, "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", dist_dir]
     args += ["upload"]
@@ -311,7 +312,7 @@ def make_messages(ctx):
 @task(name='register')
 def pypi_register(ctx):
     """Register this project (and its current version) to PyPI. """
-    args = ["python", "setup.py"]
+    args = [sys.executable, "setup.py"]
     args += ["register"]
     ctx.run(' '.join(args), pty=True)
 
@@ -496,7 +497,7 @@ def extract_messages(ctx):
     ld = get_locale_dir(ctx)
     if not ld:
         return
-    args = ["python", "setup.py"]
+    args = [sys.executable, "setup.py"]
     args += ["extract_messages"]
     args += ["-o", ld.child("django.pot")]
     cmd = ' '.join(args)
@@ -516,7 +517,7 @@ def init_catalog_code(ctx):
             if f.exists():
                 print("Skip %s because file exists." % f)
             else:
-                args = ["python", "setup.py"]
+                args = [sys.executable, "setup.py"]
                 args += ["init_catalog"]
                 args += ["--domain django"]
                 args += ["-l", to_locale(loc)]
@@ -536,7 +537,7 @@ def update_catalog_code(ctx):
         return
     for loc in ctx.languages:
         if loc != ctx.languages[0]:
-            args = ["python", "setup.py"]
+            args = [sys.executable, "setup.py"]
             args += ["update_catalog"]
             args += ["--domain django"]
             args += ["-o", ld.child(loc, 'LC_MESSAGES', 'django.po')]

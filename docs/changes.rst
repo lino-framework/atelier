@@ -4,8 +4,15 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.9 (not released)
+Version 1.0.10 (not released)
 ============================
+
+Version 1.0.9 (released 2017-09-22)
+===================================
+
+Several tasks in :mod:`atelier.invlib` used to call hard-coded
+`python`, but on certain CI environments the Python executable has
+another name. Replaced by `sys.executable`.
 
 Version 1.0.8 (released 2017-09-20)
 ===================================
