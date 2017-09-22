@@ -4,15 +4,21 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.10 (not released)
+Version 1.0.11 (not released)
 =============================
+
+Version 1.0.10 (released 2017-09-22)
+====================================
+
+Version 1.0.9 wasn't enough: the default value for
+:envvar:`prep_command` also needs to use :attr:`sys.executable`.
 
 Version 1.0.9 (released 2017-09-22)
 ===================================
 
 Several tasks in :mod:`atelier.invlib` used to call hard-coded
 `python`, but on certain CI environments the Python executable has
-another name. Replaced by `sys.executable`.
+another name. Replaced by :attr:`sys.executable`.
 
 Version 1.0.8 (released 2017-09-20)
 ===================================
