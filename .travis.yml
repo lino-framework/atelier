@@ -5,6 +5,6 @@ python:
 install:
   - pip install .
 script:
-  - py.test --cov=atelier
+  - inv cov
 after_script:
   - coveralls

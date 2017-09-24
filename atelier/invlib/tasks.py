@@ -632,7 +632,7 @@ def commited_today(ctx, today=None):
 # from importlib import import_module
 
 def run_in_demo_projects(ctx, py_cmd, cov=False):
-    """Run the given Python command line py_cmd in each demo project.
+    """Run the given Python command line `py_cmd` in each demo project.
 
     See also :attr:`ctx.demo_projects`.
 
@@ -680,19 +680,11 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     if not covfile.exists():
         print('No .coveragerc file in {0}'.format(ctx.project_name))
         return
-    if ctx.root_dir.child('pytest.ini').exists():
-        ctx.run('coverage combine', pty=True)
-        print("Running pytest in {1} within coverage...".format(
-            ctx.coverage_command, ctx.project_name))
-        with cd(ctx.root_dir):
-            ctx.run('py.test --cov=lino --cov-append', pty=True)
-        html = False
-    else:
-        os.environ['COVERAGE_PROCESS_START'] = covfile
-        ctx.run('coverage erase', pty=True)
-        print("Running {0} in {1} within coverage...".format(
-            ctx.coverage_command, ctx.project_name))
-        ctx.run('coverage run {}'.format(ctx.coverage_command), pty=True)
+    os.environ['COVERAGE_PROCESS_START'] = covfile
+    ctx.run('coverage erase', pty=True)
+    print("Running {0} in {1} within coverage...".format(
+        ctx.coverage_command, ctx.project_name))
+    ctx.run('coverage run {}'.format(ctx.coverage_command), pty=True)
     ctx.run('coverage combine', pty=True)
     ctx.run('coverage report', pty=True)
     if html:
@@ -701,7 +693,7 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
         ctx.run('coverage html -d {}'.format(pth), pty=True)
         if False:
             ctx.run('open {}/index.html'.format(pth), pty=True)
-        print('html report is ready.')
+        print('{}/index.html has been generated.'.format(pth))
     ctx.run('coverage erase', pty=True)
 
 

@@ -5,8 +5,3 @@ from atelier.invlib import MyCollection
 from . import tasks
 
 ns = MyCollection.from_module(tasks)
-configs = dict(
-    demo_projects=[],
-    prep_command="manage.py prep --noinput --traceback")
-ns.configure(configs)
-
