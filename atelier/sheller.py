@@ -47,7 +47,6 @@ Usage example:
 >>> shell = Sheller(os.path.dirname(__file__))
 >>> shell('ls *.py')
 doctest_utf8.py
-fablib.py
 __init__.py
 jarbuilder.py
 projects.py
