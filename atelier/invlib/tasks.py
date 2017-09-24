@@ -2,20 +2,15 @@
 # Copyright 2013-2017 by Luc Saffre & Hamza Khchine.
 # License: BSD, see LICENSE for more details.
 
-"""A library for `invoke <http://www.pyinvoke.org/>`__ with tasks we
-use for managing our Python projects.
-
-See docstring of :mod:`atelier.invlib`
-
-"""
-
 from __future__ import print_function
 from __future__ import unicode_literals
 
 import os
+import sys
 import glob
 import time
 import datetime
+import six
 from datetime import timedelta
 
 from atelier.utils import i2d
@@ -158,7 +153,7 @@ def run_tests(ctx):
     if ctx.root_dir.child('pytest.ini').exists():
         ctx.run('py.test', pty=True)
     else:
-        ctx.run('python setup.py -q test', pty=True)
+        ctx.run(sys.executable + ' setup.py -q test', pty=True)
 
 
 @task(name='readme')
@@ -225,7 +220,7 @@ def setup_sdist(ctx):
     # dist_dir = Path(ctx.sdist_dir).child(
     #     atelier.current_project.SETUP_INFO['name'])
     dist_dir = ctx.sdist_dir
-    args = ["python", "setup.py"]
+    args = [sys.executable, "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", dist_dir]
     ctx.run(' '.join(args), pty=True)
@@ -246,7 +241,7 @@ def pypi_release(ctx):
 
     must_confirm(RELEASE_CONFIRM % info)
 
-    args = ["python", "setup.py"]
+    args = [sys.executable, "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", dist_dir]
     args += ["upload"]
@@ -317,7 +312,7 @@ def make_messages(ctx):
 @task(name='register')
 def pypi_register(ctx):
     """Register this project (and its current version) to PyPI. """
-    args = ["python", "setup.py"]
+    args = [sys.executable, "setup.py"]
     args += ["register"]
     ctx.run(' '.join(args), pty=True)
 
@@ -403,7 +398,9 @@ def edit_blog_entry(ctx, today=None):
             txt = ".. blogger_year::\n"
             yd.child('index.rst').write_file(txt.encode('utf-8'))
 
-        entry.path.write_file(content.encode('utf-8'))
+        if six.PY2:
+            content = content.encode('utf-8')
+        entry.path.write_file(content)
         # touch it for Sphinx:
         entry.path.parent.child('index.rst').set_times()
     args = [ctx.editor_command.format(entry.path)]
@@ -500,7 +497,7 @@ def extract_messages(ctx):
     ld = get_locale_dir(ctx)
     if not ld:
         return
-    args = ["python", "setup.py"]
+    args = [sys.executable, "setup.py"]
     args += ["extract_messages"]
     args += ["-o", ld.child("django.pot")]
     cmd = ' '.join(args)
@@ -520,7 +517,7 @@ def init_catalog_code(ctx):
             if f.exists():
                 print("Skip %s because file exists." % f)
             else:
-                args = ["python", "setup.py"]
+                args = [sys.executable, "setup.py"]
                 args += ["init_catalog"]
                 args += ["--domain django"]
                 args += ["-l", to_locale(loc)]
@@ -540,7 +537,7 @@ def update_catalog_code(ctx):
         return
     for loc in ctx.languages:
         if loc != ctx.languages[0]:
-            args = ["python", "setup.py"]
+            args = [sys.executable, "setup.py"]
             args += ["update_catalog"]
             args += ["--domain django"]
             args += ["-o", ld.child(loc, 'LC_MESSAGES', 'django.po')]
@@ -631,4 +628,90 @@ def commited_today(ctx, today=None):
 #     for p in git_projects():
 #         with cd(p.root_dir):
             
+
+from importlib import import_module
+
+def run_in_demo_projects(ctx, shell_cmd, **kwargs):
+    """Run the given shell command in each demo project (see
+    :attr:`ctx.demo_projects`).
+
+    """
+    cov = kwargs.pop('cov', False)
+    for p in ctx.demo_projects:
+        # print("-" * 80)
+        # print("In demo project {0}:".format(mod))
+        # m = import_module(mod)
+        # 20160710 p = m.SITE.cache_dir or m.SITE.project_dir
+        # p = m.SITE.project_dir
+        with cd(p):
+            # m = import_module(mod)
+            if cov:
+                shell_cmd = "coverage run --append " + shell_cmd
+                datacovfile = ctx.root_dir.child('.coverage')
+                if not datacovfile.exists():
+                    print('No .coverage file in {0}'.format(ctx.project_name))
+                os.environ['COVERAGE_FILE'] = datacovfile
+            # else:
+            #     args = ["django-admin.py"]
+            # args += [admin_cmd]
+            # args += more
+            # args += ["--settings=" + mod]
+            # cmd = " ".join(args)
+            print("-" * 80)
+            print("Run in demo project {0}\n$ {1} :".format(p, shell_cmd))
+            ctx.run(shell_cmd, pty=True)
+
+
+@task(name='prep')
+def prep(ctx, cov=False):
+    """Run `manage.py prep` on every demo project."""
+    if cov:
+        covfile = ctx.root_dir.child('.coveragerc')
+        if not covfile.exists():
+            raise Exception('No .coveragerc file in {0}'.format(
+                ctx.project_name))
+        # os.environ['COVERAGE_PROCESS_START'] = covfile
+        ctx.run('coverage erase', pty=True)
+
+    cmd = ctx.prep_command
+    run_in_demo_projects(ctx, cmd, cov=cov)
+
+
+@task(name='cov', pre=[tasks.call(prep, cov=True)])
+def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
+    """Run all tests and create a coverage report.
+
+    If there a directory named :xfile:`htmlcov` in your project's
+    `root_dir`, then it will write a html report into this directory
+    (overwriting any files without confirmation).
+
+    """
+    covfile = ctx.root_dir.child('.coveragerc')
+    if not covfile.exists():
+        print('No .coveragerc file in {0}'.format(ctx.project_name))
+        return
+    if ctx.root_dir.child('pytest.ini').exists():
+        ctx.run('coverage combine', pty=True)
+        print("Running pytest in {1} within coverage...".format(
+            ctx.coverage_command, ctx.project_name))
+        with cd(ctx.root_dir):
+            ctx.run('py.test --cov=lino --cov-append', pty=True)
+        html = False
+    else:
+        os.environ['COVERAGE_PROCESS_START'] = covfile
+        ctx.run('coverage erase', pty=True)
+        print("Running {0} in {1} within coverage...".format(
+            ctx.coverage_command, ctx.project_name))
+        ctx.run('coverage run {}'.format(ctx.coverage_command), pty=True)
+    ctx.run('coverage combine', pty=True)
+    ctx.run('coverage report', pty=True)
+    if html:
+        pth = ctx.root_dir.child(html_cov_dir)
+        print("Writing html report to {}".format(pth))
+        ctx.run('coverage html -d {}'.format(pth), pty=True)
+        if False:
+            ctx.run('open {}/index.html'.format(pth), pty=True)
+        print('html report is ready.')
+    ctx.run('coverage erase', pty=True)
+
 
