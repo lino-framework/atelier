@@ -150,10 +150,11 @@ def run_tests(ctx):
     # assert os.environ['COVERAGE_PROCESS_START']
     if not ctx.root_dir.child('setup.py').exists():
         return
-    if ctx.root_dir.child('pytest.ini').exists():
-        ctx.run('py.test', pty=True)
-    else:
-        ctx.run(sys.executable + ' setup.py -q test', pty=True)
+    # if ctx.root_dir.child('pytest.ini').exists():
+    #     ctx.run('py.test', pty=True)
+    # else:
+    #     ctx.run(sys.executable + ' setup.py -q test', pty=True)
+    ctx.run(sys.executable + ' setup.py -q test', pty=True)
 
 
 @task(name='readme')
