@@ -186,7 +186,7 @@ def write_readme(ctx):
 
 {long_description}
 """.format(title=title, **info)
-    if six.PY:
+    if six.PY2:
         txt = txt.encode('utf-8')
     if readme.exists() and readme.read_file() == txt:
         return
