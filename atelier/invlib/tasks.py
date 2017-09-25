@@ -647,7 +647,7 @@ def run_in_demo_projects(ctx, py_cmd, cov=False):
                     print('No .coverage file in {0}'.format(ctx.project_name))
                 os.environ['COVERAGE_FILE'] = datacovfile
             else:
-                cmd = sys.executable + py_cmd
+                cmd = sys.executable + ' ' + py_cmd
             print("-" * 80)
             print("Run in demo project {0}\n$ {1} :".format(p, cmd))
             ctx.run(cmd, pty=True)
