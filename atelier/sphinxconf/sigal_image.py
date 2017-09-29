@@ -30,16 +30,16 @@ uses a variable number of pipe characters. For example:
 
 >>> from __future__ import print_function
 >>> print(line2html("foo.jpg"))
-<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title=""/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px;" title=""/></a>
+<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="foo.jpg"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; width:280px;" title="foo.jpg"/></a>
 
 >>> print(line2html("foo.jpg|This is a nice picture"))
-<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px;" title="This is a nice picture"/></a>
+<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; width:280px;" title="This is a nice picture"/></a>
 
 >>> print(line2html("foo.jpg|thumb|This is a nice picture"))
-<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; float:right;" title="This is a nice picture"/></a>
+<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; float:right; width:280px;" title="This is a nice picture"/></a>
 
 >>> print(line2html("foo.jpg|thumb|left|This is a nice picture"))
-<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; float:left;" title="This is a nice picture"/></a>
+<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; float:left;; width:280px;" title="This is a nice picture"/></a>
 
 
 .. _shotwell2blog: https://github.com/lsaffre/shotwell2blog
