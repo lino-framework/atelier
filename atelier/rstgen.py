@@ -39,6 +39,9 @@ class Column(object):
         self.width = width
         self.index = index
 
+    def __str__(self):
+        return "{}[{}]:{}".format(self.table, self.index, self.header)
+
     def adjust_width(self, row):
         """Adjust required width of this column for the given row.
         """
@@ -185,9 +188,10 @@ class Table(object):
         for row in rows:
             self.adjust_widths(row)
 
-        # for c in self.cols:
-        #     if c.width == 0:
-        #         raise Exception("width %r is 0" % c)
+        for c in self.cols:
+            if c.width is None:
+                c.width = 1
+                # raise Exception("width {} is None".format(c))
 
         if self.simple:
             self.header1 = ' '.join([('=' * (c.width + 2)) for c in self.cols])
