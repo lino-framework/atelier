@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2016 by Luc Saffre.
+# Copyright 2011-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """This Sphinx extension defines the :rst:dir:`blogger_year` and
@@ -14,7 +14,7 @@ And usually this file structure:
 - docs/blog/index.rst --> contains a main_blogindex directive (hidden toctree)
     
 Individual blog entries, including yearly directories and
-`index.rst` files, are automatically created by :cmd:`fab blog`,
+`index.rst` files, are automatically created by :cmd:`inv blog`,
 leading to a file structure like this:
     
 - docs/blog/2013/index.rst --> contains a :rst:dir:`blogger_year` directive
@@ -27,11 +27,11 @@ Thanks to
   <http://docutils.sourceforge.net/docs/howto/rst-directives.html>`_
 
 """
-from past.builtins import cmp
+# from past.builtins import cmp
 from builtins import str
-from builtins import map
-from builtins import range
-from builtins import object
+# from builtins import map
+# from builtins import range
+# from builtins import object
 
 import os
 import calendar

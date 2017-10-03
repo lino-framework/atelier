@@ -48,43 +48,14 @@ following future imports have been done::
 
 from __future__ import print_function
 from __future__ import unicode_literals
+import six
 from builtins import str
 from future.utils import PY3
 
-"""Note: the `import unicode_literals` caused the following::
-
-    Traceback (most recent call last):
-      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/cmdline.py", line 245, in main
-        warningiserror, tags, verbosity, parallel)
-      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/application.py", line 122, in __init__
-        self.config.setup(self)
-      File "/home/luc/hgwork/atelier/atelier/sphinxconf/__init__.py", line 654, in setup
-        indextemplate='pair: %s; management command')
-      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/application.py", line 503, in add_object_type
-        'doc_field_types': doc_field_types})
-    TypeError: type() argument 1 must be string, not unicode
-    
-I solved this by a manual patch in line 308 of
-:file:`sphinx/application.py`::
-    
-    def import_object(self, objname, source=None):
-        objname = str(objname)  # LS 20140108 accept unicode strings
-        # needed when calling from Python 2.7 with
-        # `from __future__ import unicode_literals`
-        try:
-            module, name = objname.rsplit('.', 1)
-        except ValueError, err:
-    
-
-"""
-
-
-import logging
-logger = logging.getLogger(__name__)
-
 import sys
 if PY3:
-    from io import BytesIO as StringIO  # see blog 20160125, 20160218
+    # from io import BytesIO as StringIO  # see blog 20160125, 20160218
+    from io import StringIO
 else:
     from StringIO import StringIO
 
@@ -138,7 +109,7 @@ class InsertInputDirective(Directive):
         try:
             output = self.get_rst()
         except Exception as e:
-            traceback.print_exc(e)
+            traceback.print_exc()
             document = self.state.document
             return [document.reporter.warning(str(e), line=self.lineno)]
 
@@ -207,8 +178,10 @@ class Py2rstDirective(InsertInputDirective):
                     self.block_text, self.block_text), line=self.lineno)
             return [warning]
 
-        #~ raise Exception("20130331 %r" % self.content)
+        # raise Exception("20130331 %r" % self.content)
         code = '\n'.join(self.content)
+        # if PY3:
+        #     code = code.decode('utf-8')
         return self.output_from_exec(code)
 
     def output_from_exec(self, code):
@@ -217,17 +190,27 @@ class Py2rstDirective(InsertInputDirective):
         sys.stdout = buffer
         context = self.get_context()
 
-        if 'debug' in self.options:
-            exec(code, context)
+        # if PY3:
+        #     code = code.encode()
+            
+        code = six.text_type(code)
+        # raise Exception("20170925 Gonna exec {!r}".format(code))
+        # print("20170925 Gonna exec {!r}".format(code))
+
+        if PY3:
+            code = compile(code, '<string>', 'exec')
+            
+        if True:  # 'debug' in self.options:
+            six.exec_(code, context)
         else:
             try:
-                exec(code, context)
+                six.exec_(code, context)
             except Exception as err:
                 # f = inspect.trace()[1]
                 # traceback.print_stack()
                 # code = code.replace("%", "\%")
                 # raise Exception("%s in code:\n%s" % (err, code))
-                raise Exception("{} in code:\n{}".format(err, code))
+                raise Exception("{} in code:\n{!r}".format(err, code))
 
         sys.stdout = old
         s = buffer.getvalue()
@@ -263,6 +246,8 @@ class Py2rstDirective(InsertInputDirective):
         import subprocess
         print("    $ " + ' '.join(cmd))
         for ln in subprocess.check_output(cmd).splitlines():
+            if PY3:
+                ln = ln.decode()
             print("    " + ln)
 
 

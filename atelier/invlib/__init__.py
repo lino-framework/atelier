@@ -39,6 +39,7 @@ def setup_from_tasks(
     if not tasks.exists():
         raise Exception("No such file: %s" % tasks)
     root_dir = tasks.parent.absolute()
+    # pp = os.environ.get('VIRTUAL_ENV') + '/bin/per_project'
     configs = {
         'root_dir': root_dir,
         'main_package': main_package,
@@ -51,7 +52,10 @@ def setup_from_tasks(
         'apidoc_exclude_pathnames': [],
         'project_name': tasks.parent.absolute().name,
         'editor_command': None,
-        'coverage_command': 'setup.py test',
+        'demo_projects': [],
+        'prep_command': "manage.py prep --noinput --traceback",
+        # 'coverage_command': '{} inv prep test clean --batch bd'.format(pp),
+        'coverage_command': '`which invoke` prep test clean --batch bd',
         'languages': None,
         'blog_root': root_dir.child('docs'),
         'long_date_format': "%Y%m%d (%A, %d %B %Y)",

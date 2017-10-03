@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014-2016 by Luc Saffre.
+# Copyright 2014-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :rst:dir:`sigal_image` directive.
@@ -30,16 +30,16 @@ uses a variable number of pipe characters. For example:
 
 >>> from __future__ import print_function
 >>> print(line2html("foo.jpg"))
-<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title=""/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px;" title=""/></a>
+<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="foo.jpg"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; width:280px;" title="foo.jpg"/></a>
 
 >>> print(line2html("foo.jpg|This is a nice picture"))
-<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px;" title="This is a nice picture"/></a>
+<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; width:280px;" title="This is a nice picture"/></a>
 
 >>> print(line2html("foo.jpg|thumb|This is a nice picture"))
-<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; float:right;" title="This is a nice picture"/></a>
+<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; float:right; width:280px;" title="This is a nice picture"/></a>
 
 >>> print(line2html("foo.jpg|thumb|left|This is a nice picture"))
-<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; float:left;" title="This is a nice picture"/></a>
+<a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; float:left;; width:280px;" title="This is a nice picture"/></a>
 
 
 .. _shotwell2blog: https://github.com/lsaffre/shotwell2blog
@@ -105,6 +105,7 @@ class Format(object):
     @classmethod
     def update_context(self, caption, tplkw):
         tplkw.update(caption=caption)
+        tplkw.update(style="padding:4px; width:280px;")
 
 
 class Thumb(Format):
@@ -114,12 +115,12 @@ class Thumb(Format):
 
         chunks = caption.split('|')
         if len(chunks) == 1:
-            tplkw['style'] = "padding:4px; float:right;"
+            tplkw['style'] = "padding:4px; float:right; width:280px;"
         elif len(chunks) == 2:
             align, caption = chunks
             if not align in ("right", "left", "center"):
                 raise Exception("Invalid alignment '{0}'".format(align))
-            tplkw['style'] = "padding:4px; float:{0};".format(align)
+            tplkw['style'] = "padding:4px; float:{0};; width:280px;".format(align)
         else:
             raise Exception("Impossible")
 
@@ -154,20 +155,18 @@ def line2html(name, buildurl=buildurl):
         return ''
     kw = dict()  # style="padding:4px")
     kw['class'] = ''
-    kw['style'] = "padding:4px;"
+    kw['style'] = "padding:4px; width:280px;"
     if True:  # new format using only | as separator
+        caption = name
+        fmt = FORMATS[None]
         chunks = name.split('|', 1)
-        if len(chunks) == 1:
-            kw.update(caption='')
-        else:
+        if len(chunks) == 2:
             name, caption = chunks
             chunks = caption.split('|', 1)
-            if len(chunks) == 1:
-                fmt = FORMATS[None]
-            else:
+            if len(chunks) == 2:
                 fmtname, caption = chunks
                 fmt = FORMATS[fmtname]
-            fmt.update_context(caption, kw)
+        fmt.update_context(caption, kw)
         if ' ' in name:
             raise Exception("Invalid filename. Spaces not allowed.")
     else:

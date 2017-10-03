@@ -4,8 +4,13 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.11 (not released)
+Version 1.0.12 (not released)
 =============================
+
+Version 1.0.11 (released 2017-09-26)
+====================================
+
+Better Python 3 support and increased test coverage.
 
 Version 1.0.10 (released 2017-09-22)
 ====================================

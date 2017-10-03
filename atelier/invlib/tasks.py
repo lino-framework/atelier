@@ -150,10 +150,11 @@ def run_tests(ctx):
     # assert os.environ['COVERAGE_PROCESS_START']
     if not ctx.root_dir.child('setup.py').exists():
         return
-    if ctx.root_dir.child('pytest.ini').exists():
-        ctx.run('py.test', pty=True)
-    else:
-        ctx.run(sys.executable + ' setup.py -q test', pty=True)
+    # if ctx.root_dir.child('pytest.ini').exists():
+    #     ctx.run('py.test', pty=True)
+    # else:
+    #     ctx.run(sys.executable + ' setup.py -q test', pty=True)
+    ctx.run(sys.executable + ' setup.py -q test', pty=True)
 
 
 @task(name='readme')
@@ -185,7 +186,8 @@ def write_readme(ctx):
 
 {long_description}
 """.format(title=title, **info)
-    txt = txt.encode('utf-8')
+    if six.PY2:
+        txt = txt.encode('utf-8')
     if readme.exists() and readme.read_file() == txt:
         return
     must_confirm("Overwrite %s" % readme.absolute())
@@ -629,37 +631,27 @@ def commited_today(ctx, today=None):
 #         with cd(p.root_dir):
             
 
-from importlib import import_module
+# from importlib import import_module
 
-def run_in_demo_projects(ctx, shell_cmd, **kwargs):
-    """Run the given shell command in each demo project (see
-    :attr:`ctx.demo_projects`).
+def run_in_demo_projects(ctx, py_cmd, cov=False):
+    """Run the given Python command line `py_cmd` in each demo project.
+
+    See also :attr:`ctx.demo_projects`.
 
     """
-    cov = kwargs.pop('cov', False)
     for p in ctx.demo_projects:
-        # print("-" * 80)
-        # print("In demo project {0}:".format(mod))
-        # m = import_module(mod)
-        # 20160710 p = m.SITE.cache_dir or m.SITE.project_dir
-        # p = m.SITE.project_dir
         with cd(p):
-            # m = import_module(mod)
             if cov:
-                shell_cmd = "coverage run --append " + shell_cmd
+                cmd = "coverage run --append " + py_cmd
                 datacovfile = ctx.root_dir.child('.coverage')
                 if not datacovfile.exists():
                     print('No .coverage file in {0}'.format(ctx.project_name))
                 os.environ['COVERAGE_FILE'] = datacovfile
-            # else:
-            #     args = ["django-admin.py"]
-            # args += [admin_cmd]
-            # args += more
-            # args += ["--settings=" + mod]
-            # cmd = " ".join(args)
+            else:
+                cmd = sys.executable + ' ' + py_cmd
             print("-" * 80)
-            print("Run in demo project {0}\n$ {1} :".format(p, shell_cmd))
-            ctx.run(shell_cmd, pty=True)
+            print("Run in demo project {0}\n$ {1} :".format(p, cmd))
+            ctx.run(cmd, pty=True)
 
 
 @task(name='prep')
@@ -690,19 +682,11 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     if not covfile.exists():
         print('No .coveragerc file in {0}'.format(ctx.project_name))
         return
-    if ctx.root_dir.child('pytest.ini').exists():
-        ctx.run('coverage combine', pty=True)
-        print("Running pytest in {1} within coverage...".format(
-            ctx.coverage_command, ctx.project_name))
-        with cd(ctx.root_dir):
-            ctx.run('py.test --cov=lino --cov-append', pty=True)
-        html = False
-    else:
-        os.environ['COVERAGE_PROCESS_START'] = covfile
-        ctx.run('coverage erase', pty=True)
-        print("Running {0} in {1} within coverage...".format(
-            ctx.coverage_command, ctx.project_name))
-        ctx.run('coverage run {}'.format(ctx.coverage_command), pty=True)
+    os.environ['COVERAGE_PROCESS_START'] = covfile
+    ctx.run('coverage erase', pty=True)
+    print("Running {0} in {1} within coverage...".format(
+        ctx.coverage_command, ctx.project_name))
+    ctx.run('coverage run {}'.format(ctx.coverage_command), pty=True)
     ctx.run('coverage combine', pty=True)
     ctx.run('coverage report', pty=True)
     if html:
@@ -711,7 +695,7 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
         ctx.run('coverage html -d {}'.format(pth), pty=True)
         if False:
             ctx.run('open {}/index.html'.format(pth), pty=True)
-        print('html report is ready.')
+        print('{}/index.html has been generated.'.format(pth))
     ctx.run('coverage erase', pty=True)
 
 
