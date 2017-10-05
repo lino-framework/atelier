@@ -259,7 +259,7 @@ def pypi_release(ctx):
                   "manually run:\n{}".format(sdist_cmd))
             return
 
-    pypi_register(ctx)
+    # pypi_register(ctx)
     ctx.run(sdist_cmd, pty=True)
 
 
