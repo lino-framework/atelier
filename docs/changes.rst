@@ -4,8 +4,14 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.12 (not released)
+Version 1.0.13 (not released)
 =============================
+
+Version 1.0.12 (released 2017-10-11)
+====================================
+
+New optional parameter addenv for
+:func:`atelier.test.make_docs_suite`.
 
 Version 1.0.11 (released 2017-09-26)
 ====================================

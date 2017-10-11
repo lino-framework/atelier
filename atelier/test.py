@@ -38,9 +38,12 @@ class DocTestCase(unittest.FunctionTestCase, SubProcessParent):
     def build_environment(self):
         env = super(DocTestCase, self).build_environment()
         env.pop('PYTHONPATH', None)  # fixes #1296
+        if self.addenv is not None:
+            env.update(self.addenv)
         return env
     
-    def __init__(self, filename):
+    def __init__(self, filename, addenv=None):
+        self.addenv = addenv
         def func():
             args = [sys.executable]
             args += ["-m"]
@@ -51,7 +54,7 @@ class DocTestCase(unittest.FunctionTestCase, SubProcessParent):
         super(DocTestCase, self).__init__(func)
     
 
-def make_docs_suite(docs_root, include="*.rst", exclude=None):
+def make_docs_suite(docs_root, include="*.rst", exclude=None, addenv=None):
     """Discover the doc files in specified directory docs_root and below
     and return a test suite which tests them all, each one in a
     separate subprocess.
@@ -62,6 +65,9 @@ def make_docs_suite(docs_root, include="*.rst", exclude=None):
     `exclude` is an optional filename pattern of the files to
     exclude. Default is None.
 
+    `addenv` is an optional dictionary with environment variables to
+    be set in the subprocess. Default is None.
+
     """
     suite = unittest.TestSuite()
     for root, dirs, files in os.walk(docs_root):
@@ -70,7 +76,7 @@ def make_docs_suite(docs_root, include="*.rst", exclude=None):
             if fnmatch(fn, include):
                 if exclude and fnmatch(fn, exclude):
                     continue
-                suite.addTest(DocTestCase(fn))
+                suite.addTest(DocTestCase(fn, addenv))
     return suite
 
 
