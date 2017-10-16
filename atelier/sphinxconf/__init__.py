@@ -68,7 +68,7 @@ def configure(globals_dict):
 
     To be called from inside the Sphinx `conf.py` as follows::
 
-      from djangosite.utils.sphinxconf import configure
+      from atelier.sphinxconf import configure
       configure(globals())
 
     Incomplete list of `conf.py` settings that will be set:
@@ -122,11 +122,15 @@ def configure(globals_dict):
     globals_dict.update(autodoc_member_order='bysource')
     globals_dict.update(autodoc_default_flags=['show-inheritance', 'members'])
 
-    my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
-    globals_dict.update(html_theme_options={
-        "font_family": my_font_family,
-        "head_font_family": my_font_family,
-    })
+    if False:
+        globals_dict.update(html_theme="bizstyle")
+    else:
+        # use default html_theme ("alabaster")
+        my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
+        globals_dict.update(html_theme_options={
+            "font_family": my_font_family,
+            "head_font_family": my_font_family,
+        })
 
 
     # globals_dict.update(
