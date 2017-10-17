@@ -7,6 +7,9 @@ Changes in `atelier`
 Version 1.0.13 (not released)
 =============================
 
+- :cmd:`inv bd` now builds using '-T' option (show full traceback on
+  exception)
+
 Version 1.0.12 (released 2017-10-11)
 ====================================
 
