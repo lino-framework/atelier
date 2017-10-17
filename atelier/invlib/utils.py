@@ -100,6 +100,7 @@ class SphinxTree(DocTree):
                      cmdline_args=[], language=None, build_dir_cmd=None):
         ctx = self.ctx
         args = ['sphinx-build', '-b', builder]
+        args += ['-T'] # show full traceback on exception
         args += cmdline_args
         # ~ args += ['-a'] # all files, not only outdated
         # ~ args += ['-P'] # no postmortem
