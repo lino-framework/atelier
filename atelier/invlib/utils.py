@@ -11,7 +11,6 @@ from __future__ import unicode_literals
 
 import six
 from importlib import import_module
-from unipath import Path
 from invoke.exceptions import Exit
 
 from atelier.utils import confirm, cd
@@ -30,6 +29,11 @@ def must_exist(p):
 
 
 class DocTree(object):
+    """Base class for a doctree descriptor.  Atelier currently supports
+    `Sphinx <http://www.sphinx-doc.org/en/stable/>`__ and `Nikola
+    <https://getnikola.com/>`__ docs.
+
+    """
     src_path = None
     out_path = None
     
@@ -81,7 +85,16 @@ class DocTree(object):
 
 class SphinxTree(DocTree):
     """
-    Requires Sphinx.
+    The default docs builder using Sphinx.
+
+    :cmd:`sphinx-build`
+
+    .. command:: sphinx-build
+
+        http://www.sphinx-doc.org/en/stable/invocation.html#invocation-of-sphinx-build
+
+    
+    
     """
     def __init__(self, ctx, src_path):
         super(SphinxTree, self).__init__(ctx, src_path)

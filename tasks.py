@@ -1,4 +1,4 @@
-from atelier.invlib.dummy import ns
+from atelier.invlib.ns import ns
 ns.setup_from_tasks(
     globals(), "atelier",
     blogref_url="http://luc.lino-framework.org",
