@@ -1,13 +1,15 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2016-2017 by Luc Saffre & Hamza Khchine.
 # License: BSD, see LICENSE for more details.
-"""An extensible library of `invoke
-<http://docs.pyinvoke.org/en/latest/index.html>`__ tasks.
-See :doc:`/invlib`.
+"""A library of `invoke
+<http://docs.pyinvoke.org/en/latest/index.html>`__ tasks.  See
+:doc:`/invlib`.
 
 .. autosummary::
    :toctree:
 
+   tasks
+   utils
    dummy
 
 """
