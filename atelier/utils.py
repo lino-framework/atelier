@@ -26,9 +26,12 @@ import sys
 import locale
 import datetime
 import subprocess
+# import collections
 from dateutil import parser as dateparser
 from dateutil.relativedelta import relativedelta
 from contextlib import contextmanager
+from unipath import Path
+from pprint import pprint
 
 
 @python_2_unicode_compatible
@@ -484,6 +487,10 @@ def rmu(x):
     {...'\\xc4\\xf6\\xfc': '\\xc4\\xf6\\xfc'...}
 
     """
+    if isinstance(x, Path):
+        return x
+    # if isinstance(x, collections.namedtuple):
+    #     return x
     if isinstance(x, list):
         return [rmu(i) for i in x]
     if isinstance(x, tuple):
@@ -493,6 +500,14 @@ def rmu(x):
     if isinstance(x, six.string_types):
         return str(x)
     return x
+
+def sixprint(*args):
+    """Like print, but simulating PY3 output under PY2."""
+    for x in args:
+        if six.PY2 and isinstance(x, set):
+            print("{%s}" % ', '.join([str(rmu(i)) for i in x]))
+        else:
+            pprint(rmu(x))
 
 # def get_visual_editor():
 #     """Returns the name of the visual editor, usually stored in the
