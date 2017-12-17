@@ -4,11 +4,18 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.13 (not released)
+Version 1.0.14 (not released)
 =============================
 
-- :cmd:`inv bd` now builds using '-T' option (show full traceback on
-  exception)
+Version 1.0.13 (released 2017-12-17)
+====================================
+
+Better support for Python 2-3 compatible doctests:
+
+- Added a new function :func:`atelier.utils.sixprint`.
+- :func:`atelier.utils.rmu` now honors Mike Orr's :class:`unipath.Path`
+  objects which happen to print differently under Python 3.
+
 
 Version 1.0.12 (released 2017-10-11)
 ====================================

@@ -17,14 +17,14 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='1.0.12',
+    version='1.0.13',
     install_requires=install_requires,
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
     license='Free BSD',
     test_suite='tests',
     author='Luc Saffre',
-    author_email='luc.saffre@gmail.com',
+    author_email='luc@lino-framework.org',
     url="http://atelier.lino-framework.org",
     long_description="""\
 
