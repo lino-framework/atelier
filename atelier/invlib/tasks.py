@@ -669,7 +669,8 @@ def prep(ctx, cov=False):
     run_in_demo_projects(ctx, cmd, cov=cov)
 
 
-@task(name='cov', pre=[tasks.call(prep, cov=True)])
+# @task(name='cov', pre=[tasks.call(prep, cov=True)])
+@task(name='cov')
 def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     """Run all tests and create a coverage report.
 
@@ -686,7 +687,8 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     ctx.run('coverage erase', pty=True)
     print("Running {0} in {1} within coverage...".format(
         ctx.coverage_command, ctx.project_name))
-    ctx.run('coverage run {}'.format(ctx.coverage_command), pty=True)
+    ctx.run('coverage run --parallel-mode {}'.format(
+        ctx.coverage_command), pty=True)
     ctx.run('coverage combine', pty=True)
     ctx.run('coverage report', pty=True)
     if html:
