@@ -120,7 +120,13 @@ def configure(globals_dict):
     globals_dict.update(pygments_style='sphinx')
 
     globals_dict.update(autodoc_member_order='bysource')
-    globals_dict.update(autodoc_default_flags=['show-inheritance', 'members'])
+    globals_dict.update(autodoc_default_flags=[
+        'show-inheritance', 'members'])
+
+    globals_dict.update(
+        autodoc_inherit_docstrings=False)
+    
+
 
     if False:
         globals_dict.update(html_theme="bizstyle")
