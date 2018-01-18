@@ -10,8 +10,8 @@ See also
 
 - :mod:`atelier.projects`
 
-The :file:`config.py` file
-==========================
+The ``config.py`` file
+======================
 
 .. xfile:: ~/.atelier/config.py
 .. xfile:: ~/_atelier/config.py
@@ -36,8 +36,8 @@ It is allowed but not recommended to have several projects with a same
 nickname.
 
 
-Your projects' :file:`setup.py` files
-=====================================
+Your projects' ``setup.py`` files
+=================================
 
 If a project has a :file:`setup.py` file, then atelier uses it.
 
