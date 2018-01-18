@@ -67,7 +67,13 @@ def load_projects():
 
 
 def get_setup_info(root_dir):
-    if not root_dir.child('setup.py').exists():
+    """
+    Return `SETUP_INFO` defined in the :xfile:`setup.py` file of the
+    specified `root_dir`.
+    """
+    setup_file = root_dir.child('setup.py')
+    if not setup_file.exists():
+        print("20180118 no setup.py file in {}".format(root_dir.absolute()))
         return {}
         # raise RuntimeError(
         #     "You must call 'inv' from a project's root directory.")
@@ -82,9 +88,22 @@ def get_setup_info(root_dir):
     root_dir.chdir()
     with open("setup.py") as f:
         code = compile(f.read(), "setup.py", 'exec')
-        exec(code, g)
+        try:
+            exec(code, g)
+        except SystemExit:
+            cwd.chdir()
+            raise Exception(
+                "Oops, {} called sys.exit().\n"
+                "Atelier requires the setup() call to be in a "
+                "\"if __name__ == '__main__':\" condition.".format(
+                    setup_file))
     cwd.chdir()
-    return g.get('SETUP_INFO')
+    info = g.get('SETUP_INFO')
+    if info is None:
+        raise Exception(
+            "Oops, {} doesn't define a name SETUP_INFO.".format(
+                setup_file))
+    return info
 
     # # Expected to define global SETUP_INFO.
     # # Note that main_package may be "sphinxcontrib.dailyblog"
