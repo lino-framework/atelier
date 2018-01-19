@@ -73,7 +73,7 @@ def get_setup_info(root_dir):
     """
     setup_file = root_dir.child('setup.py')
     if not setup_file.exists():
-        print("20180118 no setup.py file in {}".format(root_dir.absolute()))
+        # print("20180118 no setup.py file in {}".format(root_dir.absolute()))
         return {}
         # raise RuntimeError(
         #     "You must call 'inv' from a project's root directory.")
