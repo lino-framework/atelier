@@ -375,8 +375,8 @@ def setup(app):
         indextemplate='pair: %s; file')
     add(directivename='setting', rolename='setting',
         indextemplate='pair: %s; setting')
-    add(directivename='actorattr', rolename='aa',
-        indextemplate='pair: %s; actor attribute')
+    # add(directivename='actorattr', rolename='aa',
+    #     indextemplate='pair: %s; actor attribute')
     add(directivename='screenshot', rolename='screen',
         indextemplate='pair: %s; screenshot')
     add(directivename='modattr', rolename='modattr',

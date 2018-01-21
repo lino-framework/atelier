@@ -112,6 +112,7 @@ class SphinxTree(DocTree):
     def sphinx_build(self, builder, docs_dir,
                      cmdline_args=[], language=None, build_dir_cmd=None):
         ctx = self.ctx
+        # args = ['sphinx-build', builder]
         args = ['sphinx-build', '-b', builder]
         args += ['-T'] # show full traceback on exception
         args += cmdline_args
@@ -136,6 +137,7 @@ class SphinxTree(DocTree):
         # args += ['-w'+Path(ctx.root_dir,'sphinx_doctest_warnings.txt')]
         args += ['.', build_dir]
         cmd = ' '.join(args)
+        print("Invoke {}".format(cmd))
         with cd(docs_dir):
             ctx.run(cmd, pty=True)
         if build_dir_cmd is not None:

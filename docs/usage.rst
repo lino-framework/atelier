@@ -10,8 +10,8 @@ See also
 
 - :mod:`atelier.projects`
 
-The :file:`config.py` file
-==========================
+The ``config.py`` file
+======================
 
 .. xfile:: ~/.atelier/config.py
 .. xfile:: ~/_atelier/config.py
@@ -34,6 +34,58 @@ directory.
 
 It is allowed but not recommended to have several projects with a same
 nickname.
+
+
+Your projects' ``setup.py`` files
+=================================
+
+If a project has a :file:`setup.py` file, then atelier uses it.
+
+.. envvar:: SETUP_INFO
+.. xfile:: setup.py
+           
+The :xfile:`setup.py` file of a Python project can be as simple as
+this:
+
+.. literalinclude:: p1/setup.py
+  
+But for atelier there are two additional required conventions:
+
+- The :xfile:`setup.py` file must define a name :envvar:`SETUP_INFO`
+  which is a dict containing all those keyword arguments passed to the
+  :func:`setup` function.
+  
+- The :xfile:`setup.py` file should actualy call the :func:`setup`
+  function *only if* invoked from a command line, i.e. only `if
+  __name__ == '__main__'`.
+  
+So the above minimal :xfile:`setup.py` file becomes:
+
+.. literalinclude:: p2/setup.py
+                    
+Atelier tries to verify these conditions and raises an exception if
+the :xfile:`setup.py` doesn't comply:
+
+>>> from atelier.projects import get_setup_info
+>>> from unipath import Path
+>>> get_setup_info(Path('docs/p1'))
+Traceback (most recent call last):
+...
+Exception: Oops, docs/p1/setup.py called sys.exit().
+Atelier requires the setup() call to be in a "if __name__ == '__main__':" condition.
+
+>>> get_setup_info(Path('docs/p3'))
+Traceback (most recent call last):
+...
+Exception: Oops, docs/p3/setup.py doesn't define a name SETUP_INFO.
+   
+>>> d = get_setup_info(Path('docs/p2'))
+>>> d == {'version': '1.0.0', 'name': 'foo'}
+True
+>>> d == dict(name="foo", version="1.0.0")
+True
+
+
 
 
 Defining shell aliases
