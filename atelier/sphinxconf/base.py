@@ -35,6 +35,7 @@ from __future__ import print_function
 
 import os
 import inspect
+import imp
 from unipath import Path
 
 from docutils import nodes, utils
@@ -110,6 +111,99 @@ SIDEBAR = """
 
 #~ """
 
+
+def srcref(mod):
+    """
+    Return the `source file name` for usage by Sphinx's ``srcref``
+    role.  Returns None if the source file is empty (which happens
+    e.g. for :file:`__init__.py` files whose only purpose is to mark a
+    package).
+
+    Examples:
+    
+    >>> import atelier
+    >>> from atelier import sphinxconf
+    >>> from atelier.sphinxconf import base
+    >>> print(srcref(atelier))
+    https://github.com/lsaffre/atelier/blob/master/atelier/__init__.py
+    >>> print(srcref(sphinxconf))
+    https://github.com/lsaffre/atelier/blob/master/atelier/sphinxconf/__init__.py
+    >>> print(srcref(base))
+    https://github.com/lsaffre/atelier/blob/master/atelier/sphinxconf/base.py
+    """
+    root_module_name = mod.__name__.split('.')[0]
+    root_mod = __import__(root_module_name)
+    srcref_url = getattr(root_mod, 'srcref_url', None)
+    if srcref_url is None:
+        print(20180126, root_module_name, root_mod, srcref_url)
+        return
+    #~ if not mod.__name__.startswith('lino.'):
+        #~ return
+    srcref = mod.__file__
+    if srcref.endswith('.pyc'):
+        srcref = srcref[:-1]
+    if True:
+        # failed on readthedocs.org because there was a dangling pyc
+        # file on my machine which caused autodoc to create an entry
+        # in docs/api.
+        if os.stat(srcref).st_size == 0:
+            return
+    #~ srcref = srcref[len(lino.__file__)-17:]
+    root = Path(root_mod.__file__).ancestor(2)
+    if len(root):
+        srcref = srcref[len(root) + 1:]
+    srcref = srcref.replace(os.path.sep, '/')
+    return srcref_url % srcref
+
+
+def import_from_dotted_path(dotted_names, path=None):
+    """
+    Thanks to Chase Seibert,
+    https://chase-seibert.github.io/blog/2014/04/23/python-imp-examples.html
+    """
+    
+    s = dotted_names.split('.', 1)
+    if len(s) == 2:
+        first, remaining = s
+    else:
+        first, remaining = dotted_names, None
+    fp, pathname, description = imp.find_module(first, path)
+    module = imp.load_module(first, fp, pathname, description)
+    if not remaining:
+        return (module, None)
+    if hasattr(module, remaining):
+        return (module, getattr(module, remaining))
+    return import_from_dotted_path(remaining, path=module.__path__)
+
+
+def py2url_txt(s):
+    """
+    Return a tuple `(url, txt)` where `url` is the URL which links to
+    the source code of the specified Python object and `txt` is the
+    suggested short text to use in a hyperlink.
+    """
+    args = s.split(None, 1)
+    if len(args) == 1:
+        txt = s
+    else:
+        s = args[0]
+        txt = args[1]
+
+    if False:
+        try:
+            mod, obj = import_from_dotted_path(s)
+            return (srcref(mod), txt)
+        except Exception as e:
+            return ("Error in Python code ({})".format(e), txt)
+    parts = s.split('.')
+    try:
+        obj = import_module(parts[0])
+        for p in parts[1:]:
+            obj = getattr(obj, p)
+        mod = inspect.getmodule(obj)
+        return (srcref(mod), txt)
+    except Exception as e:
+        return ("Error in Python code ({})".format(e), txt)
 
 def process_signature(app, what, name, obj, options, signature,
                       return_annotation):
@@ -212,49 +306,6 @@ def blogref_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
     return [nodes.reference(rawtext, title,
                             refuri=get_blog_url(env, date),
                             **options)], []
-
-
-def srcref(mod):
-    """Return the `source file name` for usage by Sphinx's ``srcref``
-    role.  Returns None if the source file is empty (which happens
-    e.g. for :file:`__init__.py` files whose only purpose is to mark a
-    package).
-
-    Examples:
-    
-    >>> import atelier
-    >>> from atelier import sphinxconf
-    >>> from atelier.sphinxconf import base
-    >>> print(srcref(atelier))
-    https://github.com/lsaffre/atelier/blob/master/atelier/__init__.py
-    >>> print(srcref(sphinxconf))
-    https://github.com/lsaffre/atelier/blob/master/atelier/sphinxconf/__init__.py
-    >>> print(srcref(base))
-    https://github.com/lsaffre/atelier/blob/master/atelier/sphinxconf/base.py
-    
-    """
-    root_module_name = mod.__name__.split('.')[0]
-    root_mod = __import__(root_module_name)
-    srcref_url = getattr(root_mod, 'srcref_url', None)
-    if srcref_url is None:
-        return
-    #~ if not mod.__name__.startswith('lino.'):
-        #~ return
-    srcref = mod.__file__
-    if srcref.endswith('.pyc'):
-        srcref = srcref[:-1]
-    if True:
-        # failed on readthedocs.org because there was a dangling pyc
-        # file on my machine which caused autodoc to create an entry
-        # in docs/api.
-        if os.stat(srcref).st_size == 0:
-            return
-    #~ srcref = srcref[len(lino.__file__)-17:]
-    root = Path(root_mod.__file__).ancestor(2)
-    if len(root):
-        srcref = srcref[len(root) + 1:]
-    srcref = srcref.replace(os.path.sep, '/')
-    return srcref_url % srcref
 
 
 def message_role(typ, rawtext, text, lineno, inliner, options={}, content=[]):
