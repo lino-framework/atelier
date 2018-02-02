@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2017 by Luc Saffre.
+# Copyright 2011-2018 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -17,12 +17,13 @@ from atelier.projects import load_projects
 
 
 def configure(globals_dict, prjspec=None):
-    """Install doctrees of all projects (or only some) into
+    """
+    Install doctrees of all projects (or only some) into
     `intersphinx_mapping`.
 
     If `prjspec` is None, then all projects are added. Otherwise
-    `prjspec` must be a set of project names to add (or a string with
-    a space-separated list thereof).
+    `prjspec` must be a set of project nicknames to add (or a string
+    with a space-separated list thereof).
 
     """
     
