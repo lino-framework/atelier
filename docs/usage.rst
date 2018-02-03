@@ -10,6 +10,8 @@ See also
 
 - :mod:`atelier.projects`
 
+.. _atelier.config:
+
 The ``config.py`` file
 ======================
 

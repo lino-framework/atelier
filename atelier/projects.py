@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2017 by Luc Saffre.
+# Copyright 2011-2018 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """A minimalistic command-line project management.
 
@@ -26,7 +26,8 @@ _PROJECTS_DICT = {}
 
 
 def add_project(root_dir, nickname=None):
-    """To be called from your :xfile:`config.py` file.
+    """
+    To be called from your :xfile:`config.py` file.
 
     `root_dir` is the name of a directory which is expected to contain
     a :xfile:`fabfile.py`.
@@ -35,7 +36,6 @@ def add_project(root_dir, nickname=None):
     of that directory.
 
     Returns a :class:`Project` instance describing the project.
-
     """
     i = len(_PROJECT_INFOS)
     root_dir = Path(root_dir).resolve()
@@ -45,7 +45,11 @@ def add_project(root_dir, nickname=None):
     return p
 
 
-def get_project_info_tasks(root_dir):
+def get_project_info_from_mod(modname):
+    m = import_module(modname)
+    return add_project(Path(m.__file__).parent.parent)
+    
+def get_project_info_from_path(root_dir):
     "Find the project info for the given directory."
     prj = _PROJECTS_DICT.get(root_dir)
     if prj is None:
@@ -194,10 +198,14 @@ class Project(object):
         # removed 20140116:
         # self.dist = pkg_resources.get_distribution(name)
         self.module = import_module(main_package)
-        self.srcref_url = getattr(self.module, 'srcref_url', None)
-        self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
-        self.intersphinx_urls = getattr(
-            self.module, 'intersphinx_urls', {})
+        for k in ('srcref_url', 'doc_trees', 'intersphinx_urls'):
+            v = getattr(self.module, k, None)
+            if v is not None:
+                setattr(self, k, v)
+        # self.srcref_url = getattr(self.module, 'srcref_url', None)
+        # self.doc_trees = getattr(self.module, 'doc_trees', self.doc_trees)
+        # self.intersphinx_urls = getattr(
+        #     self.module, 'intersphinx_urls', {})
 
     def get_status(self):
         if self.config['revision_control_system'] != 'git':

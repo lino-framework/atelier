@@ -75,9 +75,9 @@ def setup_from_tasks(
         'build_dir_name', '.build')  # but ablog needs '_build'
     configs.setdefault('use_dirhtml', False)
 
-    # # The following import will populate the projects
-    from atelier.projects import get_project_info_tasks
-    prj = get_project_info_tasks(root_dir)
+    # The following import will populate the projects
+    from atelier.projects import get_project_info_from_path
+    prj = get_project_info_from_path(root_dir)
     prj.load_tasks()
 
     # we cannot store current_project using configure() because it

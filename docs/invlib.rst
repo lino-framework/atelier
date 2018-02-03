@@ -248,14 +248,33 @@ uses :mod:`atelier.invlib`.
     name of the doctree (taken from :envvar:`doc_trees`).
 
 
+.. envvar:: srcref_url
+            
+    The URL template to use for `srcref`.
+    
+    If the project has a main package which has an attribute
+    :envvar:`srcref_url`,
+    then this value will be used.
+    
+.. envvar:: intersphinx_urls
+            
+    A dict which maps doctree names to the URL where they are published.
+    This is used when this project's documentation is added to a
+    doctree using :mod:`atelier.sphinxconf.interproject`.
+    
+    If the project has a main package which has an attribute
+    :envvar:`intersphinx_urls`,
+    then this value will be used.
+
 .. envvar:: doc_trees
 
     A list of directory names (relative to your project directory)
     containing Sphinx document trees.
     Default value is ``['docs']``
 
-    If this project has a main package, then `env.doc_trees` will be
-    replaced by `doc_trees` attribute of that module.
+    If the project has a main package which has an attribute
+    :envvar:`doc_trees`,
+    then this value will be used.
 
 .. envvar:: cleanable_files
 
