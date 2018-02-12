@@ -135,7 +135,7 @@ def srcref(mod):
     root_mod = __import__(root_module_name)
     srcref_url = getattr(root_mod, 'srcref_url', None)
     if srcref_url is None:
-        print(20180126, root_module_name, root_mod, srcref_url)
+        # print(20180126, root_module_name, root_mod, srcref_url)
         return
     #~ if not mod.__name__.startswith('lino.'):
         #~ return
