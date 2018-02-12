@@ -81,7 +81,7 @@ def configure(globals_dict, prjspec=None):
 
     globals_dict.update(intersphinx_mapping=intersphinx_mapping)
 
-    print(20180203, intersphinx_mapping)
+    # print(20180203, intersphinx_mapping)
 
     if False:  # no longer used
         globals_dict.update(extlinks=extlinks)
