@@ -13,14 +13,14 @@ Usage examples are the :xfile:`fabfile.py` files of `eidreader
 <https://github.com/lsaffre/eidreader/blob/master/fabfile.py>`_ and
 `davlink <https://github.com/lsaffre/davlink/blob/master/fabfile.py>`_.
 
-The :command:`fab jars` command is used to build and sign all jar files of
+The :command:`inv jars` command is used to build and sign all jar files of
 a project.
 
-.. command:: fab jars
+.. command:: inv jars
 
     Build the .jar file.
 
-.. command:: fab classes
+.. command:: inv classes
 
     Compile the .java files to .class files.
 
