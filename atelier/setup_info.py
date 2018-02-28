@@ -1,4 +1,4 @@
-# Copyright 2013-2017 by Luc Saffre.
+# Copyright 2013-2018 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 # ~ This module has no docstring because it is to be execfile'd
@@ -7,7 +7,7 @@
 
 # Explicitly install `importlib` under Python 2.6. Thanks to
 # http://stackoverflow.com/questions/9418064
-install_requires = ['Sphinx', 'invoke', 'argh', 'six',
+install_requires = ['Sphinx<1.7.1', 'invoke', 'argh', 'six',
                     'future', 'Babel', 'unipath',
                     'python_dateutil', 'gitpython', 'pytest-cov']
 try:
