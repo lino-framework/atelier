@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 by Luc Saffre.
+# Copyright 2009-2018 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -17,6 +17,7 @@ from builtins import str
 from builtins import object
 from future.types import newstr
 from future.utils import python_2_unicode_compatible
+import re
 
 # from __future__ import unicode_literals
 # causes problems on Windows where `subprocess.Popen` wants only plain strings
@@ -195,6 +196,15 @@ def is_string(s):
         return isinstance(s, six.string_types) or isinstance(s, newstr)
     return isinstance(s, six.string_types)
    
+def isidentifier(s):
+    """
+    Check whether the given string can be used as a Python identifier.
+    """
+    if six.PY2:
+        return re.match("[_A-Za-z][_a-zA-Z0-9]*$", s)
+    return s.isidentifier()
+
+
 def ispure(s):
     """Returns `True` if the specified string `s` is either None, or
     contains only ASCII characters, or is a validly encoded unicode
