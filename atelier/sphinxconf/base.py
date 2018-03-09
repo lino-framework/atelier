@@ -54,8 +54,12 @@ from atelier.utils import i2d
 def autodoc_skip_member(app, what, name, obj, skip, options):
     defmod = getattr(obj, '__module__', None)
     if defmod is not None:
-        if defmod.startswith('django.'):
-            return True
+        try:
+            if defmod.startswith('django.'):
+                return True
+        except AttributeError as e:
+            # raise Exception("{!r} : {}".format(obj, e))
+            pass
     if name == 'Q':
         print(20141219, app, what, name, obj, skip, options)
     if name != '__builtins__':
