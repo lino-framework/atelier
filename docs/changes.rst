@@ -4,8 +4,14 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.14 (not released)
+Version 1.0.15 (not released)
 =============================
+
+Version 1.0.14 (released 2018-03-15)
+====================================
+
+- New function :func:`atelier.utils.isidentifier`
+
 
 Version 1.0.13 (released 2017-12-17)
 ====================================
