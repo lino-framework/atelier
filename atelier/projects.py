@@ -88,6 +88,7 @@ def get_setup_info(root_dir):
     # return getattr(setup_module, 'SETUP_INFO', None)
     g = dict()
     g['__name__'] = 'not_main'
+    # g['__file__'] = setup_file
     cwd = Path().resolve()
     root_dir.chdir()
     with open("setup.py") as f:

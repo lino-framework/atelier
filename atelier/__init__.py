@@ -20,11 +20,11 @@ This is the :mod:`atelier` package.
 """
 # from __future__ import unicode_literals
 
-import os
+# import os
 from .setup_info import SETUP_INFO
 
-fn = os.path.join(os.path.dirname(__file__), 'setup_info.py')
-exec(compile(open(fn, "rb").read(), fn, 'exec'))
+# fn = os.path.join(os.path.dirname(__file__), 'setup_info.py')
+# exec(compile(open(fn, "rb").read(), fn, 'exec'))
 # above line is equivalent to the line below, except that it works
 # also in Python 3:
 # execfile(fn)

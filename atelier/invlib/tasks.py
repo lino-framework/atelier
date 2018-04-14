@@ -634,13 +634,15 @@ def commited_today(ctx, today=None):
 # from importlib import import_module
 
 def run_in_demo_projects(ctx, py_cmd, cov=False):
-    """Run the given Python command line `py_cmd` in each demo project.
+    """
+    Run the given Python command line `py_cmd` in each demo project.
 
     See also :attr:`ctx.demo_projects`.
-
     """
     for p in ctx.demo_projects:
-        with cd(p):
+        # join each demo project to root_dir to avoid failure when
+        # `inv prep` is invoked from a subdir of root.
+        with cd(os.path.join(ctx.root_dir, p)):
             if cov:
                 cmd = "coverage run --append " + py_cmd
                 datacovfile = ctx.root_dir.child('.coverage')
