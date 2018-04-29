@@ -4,8 +4,24 @@
 Changes in `atelier`
 =======================
 
-Version 1.0.15 (not released)
+Version 1.1.1 (not released)
 =============================
+
+Version 1.1.0 (released 2018-04-29)
+====================================
+
+Backwards-incompatible new syntax for :xfile:`tasks.py` files.
+
+Before::
+
+    from atelier.invlib.ns import ns
+    ns.setup_from_tasks(globals(), ...)
+
+After::
+
+    from atelier.invlib import setup_from_tasks
+    ns = setup_from_tasks(globals(), ...)
+
 
 Version 1.0.14 (released 2018-03-15)
 ====================================
