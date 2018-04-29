@@ -163,7 +163,7 @@ class Project(object):
     """
     main_package = None
     srcref_url = None
-    intersphinx_urls = {}
+    # intersphinx_urls = {}
     SETUP_INFO = None
     # doc_trees = None
     # doc_trees = []

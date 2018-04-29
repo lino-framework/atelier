@@ -86,7 +86,7 @@ def configure(globals_dict, prjspec=None):
             #     k = prj.nickname
             # else:
             #     k = prj.nickname + doc_tree.replace('_', '')
-            url = prj.intersphinx_urls.get(doc_tree.rel_path)
+            url = prj.main_package.intersphinx_urls.get(doc_tree.rel_path)
             if url:
                 intersphinx_mapping[k] = (url, p)
             elif p:
@@ -97,8 +97,10 @@ def configure(globals_dict, prjspec=None):
                 #     "Loading intersphinx info for {} from {}".format(
                 #         k, p or url))
             else:
-                logger.warning("No objects.inv for {} of {}".format(
-                    doc_tree.rel_path, prj.nickname))
+                logger.warning(
+                    "No objects.inv for {} of {} ({})".format(
+                        doc_tree.rel_path, prj.nickname,
+                        prj.main_package.intersphinx_urls))
 
         # if prj.srcref_url:
         #     k = '%s_srcref' % prj.nickname
