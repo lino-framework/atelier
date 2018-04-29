@@ -216,6 +216,7 @@ def clean(ctx, batch=False):
 @task(name='sdist')
 def setup_sdist(ctx):
     "Create a source distribution."
+    atelier.current_project.load_info()
     if not atelier.current_project.SETUP_INFO.get('version'):
         return
     show_pypi_status(ctx)
@@ -231,6 +232,7 @@ def setup_sdist(ctx):
 @task(name='release')
 def pypi_release(ctx):
     "Publish a new version to PyPI."
+    atelier.current_project.load_info()
     info = atelier.current_project.SETUP_INFO
     if not info.get('version'):
         return
