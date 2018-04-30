@@ -5,11 +5,12 @@
 # ~ from `setup.py`, `atelier/__init__.py` and possibly some external
 # ~ tools, too.
 
-# Explicitly install `importlib` under Python 2.6. Thanks to
-# http://stackoverflow.com/questions/9418064
-install_requires = ['Sphinx<1.7.1', 'invoke', 'argh', 'six',
+install_requires = ['Sphinx', 'invoke', 'argh', 'six',
                     'future', 'Babel', 'unipath',
                     'python_dateutil', 'gitpython', 'pytest-cov']
+
+# Explicitly install `importlib` under Python 2.6. Thanks to
+# http://stackoverflow.com/questions/9418064
 try:
     import importlib
 except ImportError:
