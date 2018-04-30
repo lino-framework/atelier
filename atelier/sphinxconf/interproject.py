@@ -78,12 +78,13 @@ def configure(globals_dict, prjspec=None):
         for doc_tree in prj.get_doc_trees():
             if not doc_tree.has_intersphinx:
                 continue
-            if this_conf_file == doc_tree.src_path.child('conf.py'):
-                break
             p = None
             if USE_LOCAL_BUILDS:
+                src_path = doc_tree.src_path
+                if src_path and this_conf_file == src_path.child('conf.py'):
+                    break
                 # p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
-                p = doc_tree.src_path.child('.build', 'objects.inv')
+                p = src_path.child('.build', 'objects.inv')
                 if not p.exists():
                     p = None
                 

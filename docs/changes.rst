@@ -7,10 +7,13 @@ Changes in `atelier`
 Work in progress
 ================
 
-Version 1.1.4 (released 2018-04-30)
+Version 1.1.5 (released 2018-04-30)
 ====================================
 
-Backwards-incompatible new syntax for :xfile:`tasks.py` files.
+Fixes some bugs that caused failures when building docs on Travis.
+Versions 1.1.0 through 1.1.4 were beta previews for this.
+
+Backwards-incompatible new syntax for :xfile:`tasks.py` files:
 
 Before::
 
@@ -24,7 +27,6 @@ After::
 
 
 
-Note: versions 1.1.0 through 1.1.3 were beta previews for 1.1.4
 
 
 Version 1.0.14 (released 2018-03-15)
