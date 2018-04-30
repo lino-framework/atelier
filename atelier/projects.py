@@ -31,9 +31,11 @@ _PROJECTS_DICT = {}
 def load_inv_namespace(root_dir):
     """Load the :xfile:`tasks.py` file of this project."""
     # self._tasks_loaded = True
-
-    if not root_dir.child('tasks.py').exists():
-        raise Exception("20180428")
+    
+    tasks_file = root_dir.child('tasks.py')
+    if not tasks_file.exists():
+        return None
+        # raise Exception("No tasks.py file in {}".format(root_dir))
         # return
 
     # print("20180428 load tasks.py from {}".format(root_dir))
@@ -42,17 +44,17 @@ def load_inv_namespace(root_dir):
     # fqname = 'atelier.prj_%s' % self.index
     cwd = Path().resolve()
     root_dir.chdir()
-    fp = os.path.join(root_dir, "tasks.py")
     m = dict()
-    m["__file__"] = fp
-    with open(fp) as f:
+    m["__file__"] = str(tasks_file)
+    with open(tasks_file) as f:
         exec(f.read(), m)
     cwd.chdir()
     return m['ns']
 
 
 
-def add_project(root_dir, nickname=None, inv_namespace=None):
+def add_project(root_dir, nickname=None, inv_namespace=None,
+                main_package=None):
     """
     To be called from your :xfile:`config.py` file.
 
@@ -66,7 +68,8 @@ def add_project(root_dir, nickname=None, inv_namespace=None):
     """
     i = len(_PROJECT_INFOS)
     root_dir = Path(root_dir).resolve()
-    p = Project(i, root_dir, nickname=None, inv_namespace=inv_namespace)
+    p = Project(i, root_dir, nickname=None, inv_namespace=inv_namespace,
+                main_package=main_package)
     _PROJECT_INFOS.append(p)
     _PROJECTS_DICT[root_dir] = p
     return p
@@ -74,7 +77,9 @@ def add_project(root_dir, nickname=None, inv_namespace=None):
 
 def get_project_info_from_mod(modname):
     m = import_module(modname)
-    return add_project(Path(m.__file__).parent.parent)
+    root_dir = Path(m.__file__).parent.parent
+    prj = add_project(root_dir, main_package=m)
+    return prj
     
 def get_project_info_from_path(root_dir, inv_namespace=None):
     "Find the project info for the given directory."
@@ -162,7 +167,7 @@ class Project(object):
 
     """
     main_package = None
-    srcref_url = None
+    # srcref_url = None
     # intersphinx_urls = {}
     SETUP_INFO = None
     # doc_trees = None
@@ -170,38 +175,46 @@ class Project(object):
     # doc_trees = ['docs']
     # ns = None
     config = None
-    inv_namespace = None
+    # inv_namespace = None
 
-    def __init__(self, i, root_dir, nickname=None, inv_namespace=None):
+    def __init__(self, i, root_dir, nickname=None, inv_namespace=None,
+                 main_package=None):
 
         self.index = i
         self.root_dir = root_dir
         #~ self.local_name = local_name
         #~ self.root_dir = Path(atelier.PROJECTS_HOME,local_name)
         self.nickname = nickname or self.root_dir.name
-        self.name = self.nickname  # might change in load_info()
+        # self.name = self.nickname  # might change in load_info()
         # self._loaded = False
         # self._tasks_loaded = False
         # print("20180428 Project {} initialized".format(self.nickname))
+        self.main_package = main_package
         self.inv_namespace = inv_namespace
+        self.config = {}
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.root_dir)
 
     def load_info(self):
-        if self.inv_namespace is None:
-            self.inv_namespace = load_inv_namespace(self.root_dir)
 
+        inv_namespace = self.inv_namespace or load_inv_namespace(
+            self.root_dir)
+            
+        if inv_namespace:
+            self.config = inv_namespace.configuration()
+            
         if self.SETUP_INFO is None:
             self.SETUP_INFO = get_setup_info(self.root_dir)
             # name = self.SETUP_INFO.get('name', None)
-            name = self.inv_namespace.configuration().get(
-                'main_package', None)
+
+        if self.main_package is None:
+            name = self.config.get('main_package', None)
             # if inv_name != name:
             #     raise Exception("20180428 {} != {}".format(inv_name, name))
             if name:
                 # self.doc_trees = None
-                self.name = name
+                # self.name = name
                 self.main_package = import_module(name)
 
                 # for k in ('srcref_url', 'doc_trees', 'intersphinx_urls'):
@@ -211,8 +224,8 @@ class Project(object):
         
     def get_status(self):
         # if self.config['revision_control_system'] != 'git':
-        config = self.inv_namespace.configuration()
-        if config['revision_control_system'] != 'git':
+        # config = self.inv_namespace.configuration()
+        if self.config['revision_control_system'] != 'git':
             return ''
         from git import Repo
         repo = Repo(self.root_dir)
@@ -232,9 +245,9 @@ class Project(object):
         #     return
         # msg = "20180428 get_doc_tree({})"
         # print(msg.format(ctx))
-        cfg = self.inv_namespace.configuration()
+        cfg = self.config
         if self.main_package:
-            if 'doc_trees' in cfg:
+            if 'doc_trees' in self.config:
                 msg = "{} configures both doc_trees and main_package. "
                 msg += "If you have a main_package then you must set "
                 msg += "doc_trees there."

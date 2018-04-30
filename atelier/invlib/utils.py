@@ -100,7 +100,7 @@ class SphinxTree(DocTree):
     
     def __init__(self, prj, src_path):
         super(SphinxTree, self).__init__(prj, src_path)
-        cfg = prj.inv_namespace.configuration()
+        cfg = prj.config
         self.out_path = self.src_path.child(cfg['build_dir_name'])
         
     def build_docs(self, ctx, *cmdline_args):

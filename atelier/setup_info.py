@@ -1,4 +1,4 @@
-# Copyright 2013-2018 by Luc Saffre.
+# Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 # ~ This module has no docstring because it is to be execfile'd
@@ -17,7 +17,7 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='1.1.1',
+    version='1.1.2',
     install_requires=install_requires,
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
