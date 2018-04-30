@@ -7,7 +7,7 @@ Changes in `atelier`
 Work in progress
 ================
 
-Version 1.1.3 (released 2018-04-30)
+Version 1.1.4 (released 2018-04-30)
 ====================================
 
 Backwards-incompatible new syntax for :xfile:`tasks.py` files.
@@ -24,10 +24,7 @@ After::
 
 
 
-Version 1.1.0 (released 2018-04-29)
-====================================
-
-Versions 1.1.0 through 1.1.2 were beta previews for 1.1.3
+Note: versions 1.1.0 through 1.1.3 were beta previews for 1.1.4
 
 
 Version 1.0.14 (released 2018-03-15)
