@@ -25,6 +25,12 @@ from invoke import Context
 # import atelier
 from atelier.projects import load_projects, get_project_info_from_mod
 
+
+USE_LOCAL_BUILDS = False
+# Whether to use objects.inv files from other local doctrees if they
+# exist.  E.g. on Travis no other projects are installed from source:
+
+
 def configure(globals_dict, prjspec=None):
     """
     Install doctrees of all projects (or only some) into
@@ -74,19 +80,23 @@ def configure(globals_dict, prjspec=None):
                 continue
             if this_conf_file == doc_tree.src_path.child('conf.py'):
                 break
-            # p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
-            p = doc_tree.src_path.child('.build', 'objects.inv')
-            if not p.exists():
-                p = None
-            # if True: simulate situation on travis where no other
-            # projects are installed from source.
-            #     p = None
+            p = None
+            if USE_LOCAL_BUILDS:
+                # p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
+                p = doc_tree.src_path.child('.build', 'objects.inv')
+                if not p.exists():
+                    p = None
+                
+            
+            # The unique identifier can be used to prefix cross-reference targets
+            # http://www.sphinx-doc.org/en/master/ext/intersphinx.html#confval-intersphinx_mapping
             k = prj.nickname + doc_tree.rel_path.replace('_', '')
             # if doc_tree == 'docs':
             #     k = prj.nickname
             # else:
             #     k = prj.nickname + doc_tree.replace('_', '')
-            url = prj.main_package.intersphinx_urls.get(doc_tree.rel_path)
+            urls = getattr(prj.main_package, 'intersphinx_urls', {})
+            url = urls.get(doc_tree.rel_path)
             if url:
                 intersphinx_mapping[k] = (url, p)
             elif p:
@@ -98,9 +108,8 @@ def configure(globals_dict, prjspec=None):
                 #         k, p or url))
             else:
                 logger.warning(
-                    "No objects.inv for {} of {} ({})".format(
-                        doc_tree.rel_path, prj.nickname,
-                        prj.main_package.intersphinx_urls))
+                    "No intersphinx mapping for {} of {} ({})".format(
+                        doc_tree.rel_path, prj.nickname, urls))
 
         # if prj.srcref_url:
         #     k = '%s_srcref' % prj.nickname
@@ -111,5 +120,5 @@ def configure(globals_dict, prjspec=None):
 
     # print(20180203, intersphinx_mapping)
 
-    if False:  # no longer used
-        globals_dict.update(extlinks=extlinks)
+    # if False:  # no longer used
+    #     globals_dict.update(extlinks=extlinks)
