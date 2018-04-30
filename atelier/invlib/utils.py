@@ -41,9 +41,12 @@ class DocTree(object):
             src_path = prj.root_dir
         else:
             src_path = prj.root_dir.child(rel_doc_tree)
-        if not src_path.exists():
-            msg = "Directory %s does not exist." % src_path
-            raise Exception(msg)
+        # The src_path does not exist if this is on a Project which
+        # has been created from a normally installed main_package
+        # (because there is has no source code).
+        # if not src_path.exists():
+        #     msg = "Directory %s does not exist." % src_path
+        #     raise Exception(msg)
         self.src_path = src_path
         self.rel_path = rel_doc_tree
         self.prj = prj
@@ -80,8 +83,6 @@ class DocTree(object):
             # must_confirm("%s> %s" % (build_dir, cmd))
             ctx.run(cmd, pty=True)
 
-
-            
 
 class SphinxTree(DocTree):
     """

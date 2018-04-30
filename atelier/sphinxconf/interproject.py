@@ -101,13 +101,8 @@ def configure(globals_dict, prjspec=None):
                 intersphinx_mapping[k] = (url, p)
             elif p:
                 intersphinx_mapping[k] = p
-            if p or url:
-                pass
-                # logger.info(
-                #     "Loading intersphinx info for {} from {}".format(
-                #         k, p or url))
             else:
-                logger.warning(
+                logger.info(
                     "No intersphinx mapping for {} of {} ({})".format(
                         doc_tree.rel_path, prj.nickname, urls))
 
