@@ -35,13 +35,6 @@ def interpreter_args():
 class DocTestCase(unittest.FunctionTestCase, SubProcessParent):
     # internally used by make_docs_suite
     
-    def build_environment(self):
-        env = super(DocTestCase, self).build_environment()
-        env.pop('PYTHONPATH', None)  # fixes #1296
-        if self.addenv is not None:
-            env.update(self.addenv)
-        return env
-    
     def __init__(self, filename, addenv=None):
         self.addenv = addenv
         def func():
@@ -53,9 +46,18 @@ class DocTestCase(unittest.FunctionTestCase, SubProcessParent):
         func.__name__ = filename
         super(DocTestCase, self).__init__(func)
     
+    def build_environment(self):
+        env = super(DocTestCase, self).build_environment()
+        env.pop('PYTHONPATH', None)  # fixes #1296
+        if self.addenv is not None:
+            env.update(self.addenv)
+        return env
+    
 
-def make_docs_suite(docs_root, include="*.rst", exclude=None, addenv=None):
-    """Discover the doc files in specified directory docs_root and below
+def make_docs_suite(docs_root, include="*.rst", exclude=None,
+                    addenv=None):
+    """
+    Discover the doc files in specified directory docs_root and below
     and return a test suite which tests them all, each one in a
     separate subprocess.
 
@@ -65,18 +67,24 @@ def make_docs_suite(docs_root, include="*.rst", exclude=None, addenv=None):
     `exclude` is an optional filename pattern of the files to
     exclude. Default is None.
 
-    `addenv` is an optional dictionary with environment variables to
-    be set in the subprocess. Default is None.
+    `addenv` is an optional dictionary with additional environment
+    variables to be set in the subprocess. Default is None.
 
+    The tests are sorted alphabeticallly in order to avoid surprises
+    when some doctest inadvertantly modifies the database.
     """
     suite = unittest.TestSuite()
+    count = 0
     for root, dirs, files in os.walk(docs_root):
-        for file in files:
+        dirs.sort()
+        for file in sorted(files):
             fn = join(root, file)
             if fnmatch(fn, include):
                 if exclude and fnmatch(fn, exclude):
                     continue
                 suite.addTest(DocTestCase(fn, addenv))
+                count += 1
+    print("Loaded {} doctests from {}".format(count, docs_root))
     return suite
 
 

@@ -191,7 +191,34 @@ class Project(object):
         # print("20180428 Project {} initialized".format(self.nickname))
         self.main_package = main_package
         self.inv_namespace = inv_namespace
-        self.config = {}
+        self.config = {
+            'root_dir': root_dir,
+            'build_dir_name': '.build', # e.g. ablog needs '_build'
+            'project_name': root_dir.name,
+            'locale_dir': None,
+            'help_texts_source': None,
+            'help_texts_module': None,
+            'tolerate_sphinx_warnings': False,
+            'cleanable_files': [],
+            'revision_control_system': None,
+            'apidoc_exclude_pathnames': [],
+            'editor_command': None,
+            'demo_projects': [],
+            'prep_command': "manage.py prep --noinput --traceback",
+            # 'coverage_command': '{} inv prep test clean --batch bd'.format(pp),
+            'coverage_command': '`which invoke` prep test clean --batch bd',
+            'languages': None,
+            'blog_root': root_dir.child('docs'),
+            'long_date_format': "%Y%m%d (%A, %d %B %Y)",
+            'sdist_dir': root_dir.child('dist'),
+            'pypi_dir': root_dir.child('.pypi_cache'),
+            'use_dirhtml': False,
+        }
+        if main_package:
+            self.config.update(main_package=main_package)
+        else:
+            self.config.update(doc_trees=['docs'])
+
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.root_dir)
