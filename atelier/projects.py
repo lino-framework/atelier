@@ -170,10 +170,6 @@ class Project(object):
     # srcref_url = None
     # intersphinx_urls = {}
     SETUP_INFO = None
-    # doc_trees = None
-    # doc_trees = []
-    # doc_trees = ['docs']
-    # ns = None
     config = None
     # inv_namespace = None
 
@@ -194,7 +190,7 @@ class Project(object):
         self.config = {
             'root_dir': root_dir,
             'build_dir_name': '.build', # e.g. ablog needs '_build'
-            'project_name': root_dir.name,
+            'project_name': str(root_dir.name),
             'locale_dir': None,
             'help_texts_source': None,
             'help_texts_module': None,
@@ -215,9 +211,9 @@ class Project(object):
             'use_dirhtml': False,
         }
         if main_package:
-            self.config.update(main_package=main_package)
+            self.config.update(main_package=main_package.__name__)
         else:
-            self.config.update(doc_trees=['docs'])
+            self.config.update(doc_trees=[])
 
 
     def __repr__(self):
@@ -248,6 +244,9 @@ class Project(object):
                 #     v = getattr(self.module, k, None)
                 #     if v is not None:
                 #         setattr(self, k, v)
+                
+        if self.main_package is not None:
+            self.config.update(doc_trees=['docs'])
         
     def get_status(self):
         # if self.config['revision_control_system'] != 'git':
@@ -267,11 +266,11 @@ class Project(object):
         Yield one DocTree instance for every item of this project's
         :envvar:`doc_trees`.
         """
+        # print("20180502 {} get_doc_tree() {}".format(self, self.config))
         self.load_info()
         # if not hasattr(ctx, 'doc_trees'):
         #     return
-        # msg = "20180428 get_doc_tree({})"
-        # print(msg.format(ctx))
+        # print("20180502 {} get_doc_tree() {}".format(self, self.config))
         cfg = self.config
         if self.main_package:
             if 'doc_trees' in self.config:

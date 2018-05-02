@@ -200,6 +200,7 @@ def write_readme(ctx):
 @task(write_readme, name='bd')
 def build_docs(ctx, *cmdline_args):
     """Build docs. Build all Sphinx HTML doctrees for this project. """
+    # print("Build docs for {}".format(atelier.current_project))
     for tree in atelier.current_project.get_doc_trees():
         tree.build_docs(ctx, *cmdline_args)
 
