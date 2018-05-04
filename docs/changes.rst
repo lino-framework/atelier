@@ -7,6 +7,13 @@ Changes in `atelier`
 Work in progress
 ================
 
+Version 1.1.7 (released 2018-05-04)
+===================================
+
+More internal optimizations.  Fixed a bug which caused problems in
+:cmd:`per_project` with reading the configuration.
+
+
 Version 1.1.6 (released 2018-05-02)
 ===================================
 

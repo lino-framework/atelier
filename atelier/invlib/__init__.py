@@ -18,8 +18,9 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+import six
 
-# from importlib import import_module
+from importlib import import_module
 from invoke import Collection
 from unipath import Path
 
@@ -47,10 +48,7 @@ def setup_from_tasks(
     # print("20180428 setup_from_tasks() : {}".format(root_dir))
 
     from atelier.projects import get_project_info_from_path
-    prj = get_project_info_from_path(root_dir, self)
-    # we cannot store current_project using configure() because it
-    # cannot be pickled. And we don't need to store it there, it is
-    # not a configuration value but just a global internal variable.
+    prj = get_project_info_from_path(root_dir)
     atelier.current_project = prj
     
     if kwargs:
@@ -62,6 +60,11 @@ def setup_from_tasks(
         prj.config.update(
             languages=[lng.name for lng in settings.SITE.languages])
 
-    self.configure(prj.config)
+    if isinstance(main_package, six.string_types):
+        main_package = import_module(main_package)
+    if main_package:
+        prj.set_main_package(main_package)
+    prj.set_namespace(self)
+
     return self
 

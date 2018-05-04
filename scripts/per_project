@@ -46,6 +46,7 @@ http://atelier.lino-framework.org/usage.html
             # config = self.inv_namespace.configuration()
             yield self.nickname
             # yield self.SETUP_INFO.get('version', '')
+            # yield self.main_package
             yield self.get_status()
             yield self.SETUP_INFO.get('url', None)
             yield str(doc_trees)

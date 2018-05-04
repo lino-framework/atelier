@@ -29,7 +29,10 @@ _PROJECTS_DICT = {}
 
 
 def load_inv_namespace(root_dir):
-    """Load the :xfile:`tasks.py` file of this project."""
+    """
+    Execute the :xfile:`tasks.py` file of this project and return its
+    `ns`.
+    """
     # self._tasks_loaded = True
     
     tasks_file = root_dir.child('tasks.py')
@@ -53,8 +56,7 @@ def load_inv_namespace(root_dir):
 
 
 
-def add_project(root_dir, nickname=None, inv_namespace=None,
-                main_package=None):
+def add_project(root_dir, nickname=None):
     """
     To be called from your :xfile:`config.py` file.
 
@@ -68,8 +70,7 @@ def add_project(root_dir, nickname=None, inv_namespace=None,
     """
     i = len(_PROJECT_INFOS)
     root_dir = Path(root_dir).resolve()
-    p = Project(i, root_dir, nickname=None, inv_namespace=inv_namespace,
-                main_package=main_package)
+    p = Project(i, root_dir, nickname=None)
     _PROJECT_INFOS.append(p)
     _PROJECTS_DICT[root_dir] = p
     return p
@@ -78,10 +79,12 @@ def add_project(root_dir, nickname=None, inv_namespace=None,
 def get_project_info_from_mod(modname):
     m = import_module(modname)
     root_dir = Path(m.__file__).parent.parent
-    prj = add_project(root_dir, main_package=m)
+    prj = add_project(root_dir)
+    prj.set_main_package(m)
+    # assert prj.main_package is not None
     return prj
     
-def get_project_info_from_path(root_dir, inv_namespace=None):
+def get_project_info_from_path(root_dir):
     "Find the project info for the given directory."
     prj = _PROJECTS_DICT.get(root_dir)
     if prj is None:
@@ -89,7 +92,7 @@ def get_project_info_from_path(root_dir, inv_namespace=None):
         p = Path().resolve()
         while p:
             if p.child('tasks.py').exists():
-                prj = add_project(p, inv_namespace=inv_namespace)
+                prj = add_project(p)
                 break
             p = p.parent
         # raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
@@ -171,11 +174,11 @@ class Project(object):
     # intersphinx_urls = {}
     SETUP_INFO = None
     config = None
-    # inv_namespace = None
+    inv_namespace = None
 
-    def __init__(self, i, root_dir, nickname=None, inv_namespace=None,
-                 main_package=None):
-
+    def __init__(self, i, root_dir, nickname=None):
+        # , inv_namespace=None, main_package=None):
+        
         self.index = i
         self.root_dir = root_dir
         #~ self.local_name = local_name
@@ -185,8 +188,8 @@ class Project(object):
         # self._loaded = False
         # self._tasks_loaded = False
         # print("20180428 Project {} initialized".format(self.nickname))
-        self.main_package = main_package
-        self.inv_namespace = inv_namespace
+        #self.main_package = main_package
+        #self.inv_namespace = inv_namespace
         self.config = {
             'root_dir': root_dir,
             'build_dir_name': '.build', # e.g. ablog needs '_build'
@@ -209,44 +212,72 @@ class Project(object):
             'sdist_dir': root_dir.child('dist'),
             'pypi_dir': root_dir.child('.pypi_cache'),
             'use_dirhtml': False,
+            'doc_trees': ['docs'],
         }
-        if main_package:
-            self.config.update(main_package=main_package.__name__)
-        else:
-            self.config.update(doc_trees=[])
-
+            
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.root_dir)
 
-    def load_info(self):
+    def set_main_package(self, m):
+        self.main_package = m
 
-        inv_namespace = self.inv_namespace or load_inv_namespace(
-            self.root_dir)
-            
-        if inv_namespace:
-            self.config = inv_namespace.configuration()
-            
-        if self.SETUP_INFO is None:
-            self.SETUP_INFO = get_setup_info(self.root_dir)
-            # name = self.SETUP_INFO.get('name', None)
-
+    def set_namespace(self, ns):
+        self.inv_namespace = ns
+        ns.configure(self.config)
         if self.main_package is None:
-            name = self.config.get('main_package', None)
+            # when no main_package is given, there must be a namespace
+            cfg = ns.configuration()
+            name = cfg.get('main_package', None)
             # if inv_name != name:
             #     raise Exception("20180428 {} != {}".format(inv_name, name))
             if name:
                 # self.doc_trees = None
                 # self.name = name
                 self.main_package = import_module(name)
+                # if self.main_package is None:
+                #     raise Exception("Failed to import {}".format(name))
 
-                # for k in ('srcref_url', 'doc_trees', 'intersphinx_urls'):
-                #     v = getattr(self.module, k, None)
-                #     if v is not None:
-                #         setattr(self, k, v)
-                
-        if self.main_package is not None:
-            self.config.update(doc_trees=['docs'])
+
+
+    def load_info(self):
+        """
+        The project can be:
+
+        - Loaded from a config file: we know only the root_dir
+
+        - instantiated by get_project_info_from_path() : we know also
+          the inv_namespace
+
+        - instantiated by get_project_info_from_mod() (by
+          sphinxconf.interproject) : we know also the main_package
+
+        A project can have no inv_namespace
+
+        """
+
+        # inv_namespace = self.inv_namespace or load_inv_namespace(
+        #     self.root_dir)
+            
+        if self.SETUP_INFO is not None:
+            # load_info() has been called before
+            return
+        
+        self.SETUP_INFO = get_setup_info(self.root_dir)
+
+        # if self.main_package is None:
+        #     self.config.setdefault('doc_trees', ['docs'])
+        # else:
+        #     self.config.update(main_package=self.main_package.__name__)
+            
+        if self.inv_namespace is None:
+            ns = load_inv_namespace(self.root_dir)
+            if ns is None:
+                self.set_namespace(ns)
+            
+        
+        # if self.main_package is None:
+        #     self.config.update(doc_trees=['docs'])
         
     def get_status(self):
         # if self.config['revision_control_system'] != 'git':
@@ -266,21 +297,23 @@ class Project(object):
         Yield one DocTree instance for every item of this project's
         :envvar:`doc_trees`.
         """
-        # print("20180502 {} get_doc_tree() {}".format(self, self.config))
+        # print("20180504 {} get_doc_tree() {}".format(self, self.config))
         self.load_info()
         # if not hasattr(ctx, 'doc_trees'):
         #     return
-        # print("20180502 {} get_doc_tree() {}".format(self, self.config))
-        cfg = self.config
+        # cfg = self.config
         if self.main_package:
-            if 'doc_trees' in self.config:
-                msg = "{} configures both doc_trees and main_package. "
-                msg += "If you have a main_package then you must set "
-                msg += "doc_trees there."
-                raise Exception(msg.format(self))
+            # if 'doc_trees' in self.config:
+            #     msg = "{} configures both doc_trees and main_package. "
+            #     msg += "If you have a main_package then you must set "
+            #     msg += "doc_trees there."
+            #     raise Exception(msg.format(self))
             doc_trees = getattr(self.main_package, 'doc_trees', [])
         else:
+            cfg = self.inv_namespace.configuration()
             doc_trees = cfg.get('doc_trees')
+        # print("20180504 {} get_doc_tree() {} {}".format(
+        #     self, self.main_package, doc_trees))
         for rel_doc_tree in doc_trees:
             if isinstance(rel_doc_tree, six.string_types):
                 yield SphinxTree(self, rel_doc_tree)

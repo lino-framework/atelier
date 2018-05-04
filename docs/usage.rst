@@ -7,8 +7,18 @@ Usage
 See also
 
 - :doc:`invlib`
-
 - :mod:`atelier.projects`
+
+
+When you run :cmd:`inv` (or :cmd:`invoke`) from a project directory or
+a subdirectory, then `invoke` finds the :xfile:`tasks.py` in the root
+directory of your project.  This "activates" atelier.
+
+When you have no :xfile:`config.py <~/.atelier/config.py>` file,
+Atelier will operate in single project mode: the :xfile:`tasks.py`
+causes on the fly creation of a single project descriptor.
+
+  
 
 .. _atelier.config:
 
