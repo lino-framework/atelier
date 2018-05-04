@@ -272,7 +272,7 @@ class Project(object):
             
         if self.inv_namespace is None:
             ns = load_inv_namespace(self.root_dir)
-            if ns is None:
+            if ns is not None:
                 self.set_namespace(ns)
             
         
