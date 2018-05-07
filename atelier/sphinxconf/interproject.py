@@ -114,7 +114,8 @@ def configure(globals_dict, prjspec=None):
     # atelier.current_project = this
     globals_dict.update(intersphinx_mapping=intersphinx_mapping)
 
-    # print(20180203, intersphinx_mapping)
+    logger.info("intersphinx_mapping set to {}".format(
+        intersphinx_mapping))
 
     # if False:  # no longer used
     #     globals_dict.update(extlinks=extlinks)

@@ -7,6 +7,14 @@ Changes in `atelier`
 Work in progress
 ================
 
+Trying to fix https://travis-ci.org/lino-framework/book/jobs/375579936
+The book does not seem to find the `objects.inv` for :ref:`atelier`.
+I added a logger info::
+
+    logger.info("intersphinx_mapping set to {}".format(
+        intersphinx_mapping))
+
+
 Version 1.1.7 (released 2018-05-04)
 ===================================
 
