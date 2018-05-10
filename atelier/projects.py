@@ -69,7 +69,7 @@ def add_project(root_dir, nickname=None):
     Returns a :class:`Project` instance describing the project.
     """
     i = len(_PROJECT_INFOS)
-    root_dir = Path(root_dir).resolve()
+    root_dir = Path(root_dir).absolute().resolve()
     p = Project(i, root_dir, nickname=None)
     _PROJECT_INFOS.append(p)
     _PROJECTS_DICT[root_dir] = p
@@ -78,22 +78,36 @@ def add_project(root_dir, nickname=None):
 
 def get_project_info_from_mod(modname):
     m = import_module(modname)
-    root_dir = Path(m.__file__).parent.parent
-    prj = add_project(root_dir)
+    fn = Path(m.__file__)
+    prj = get_project_info_from_path(fn)
+    if prj is None:
+        # it can be an installed package in site-packages without
+        # tasks.py file
+        root_dir = fn.parent.absolute().resolve()
+        prj = _PROJECTS_DICT.get(root_dir)
+        if prj is None:
+            prj = add_project(root_dir)
+    # root_dir = Path(m.__file__).parent.parent
+    # prj = add_project(root_dir)
     prj.set_main_package(m)
     # assert prj.main_package is not None
     return prj
     
 def get_project_info_from_path(root_dir):
     "Find the project info for the given directory."
+    root_dir = root_dir.absolute().resolve()
     prj = _PROJECTS_DICT.get(root_dir)
     if prj is None:
+        if root_dir.child('tasks.py').exists():
+            return add_project(root_dir)
         # if no config.py found, add current working directory.
         p = Path().resolve()
         while p:
             if p.child('tasks.py').exists():
                 prj = add_project(p)
                 break
+            if p == p.parent:
+                return  # reached the file system's root 
             p = p.parent
         # raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
     return prj
@@ -183,7 +197,7 @@ class Project(object):
         self.root_dir = root_dir
         #~ self.local_name = local_name
         #~ self.root_dir = Path(atelier.PROJECTS_HOME,local_name)
-        self.nickname = nickname or self.root_dir.name
+        self.nickname = nickname or str(self.root_dir.name)
         # self.name = self.nickname  # might change in load_info()
         # self._loaded = False
         # self._tasks_loaded = False
@@ -328,12 +342,13 @@ class Project(object):
                 raise Exception("Invalid item {} in doc_trees".format(
                     rel_doc_tree))
 
+def load_config():
+    for fn in config_files:
+        fn = os.path.expanduser(fn)
+        if os.path.exists(fn):
+            with open(fn) as f:
+                code = compile(f.read(), fn, 'exec')
+                exec(code)
 
-   
-for fn in config_files:
-    fn = os.path.expanduser(fn)
-    if os.path.exists(fn):
-        with open(fn) as f:
-            code = compile(f.read(), fn, 'exec')
-            exec(code)
 
+load_config()

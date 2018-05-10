@@ -44,11 +44,10 @@ def setup_from_tasks(
     tasks_file = Path(globals_dict['__file__'])
     if not tasks_file.exists():
         raise Exception("No such file: %s" % tasks_file)
-    root_dir = tasks_file.parent.absolute()
     # print("20180428 setup_from_tasks() : {}".format(root_dir))
 
     from atelier.projects import get_project_info_from_path
-    prj = get_project_info_from_path(root_dir)
+    prj = get_project_info_from_path(tasks_file.parent)
     atelier.current_project = prj
     
     if kwargs:
