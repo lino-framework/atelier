@@ -11,7 +11,6 @@
 TODO: rename :func:`configure` to intersphinx_mapping
 
 """
-from builtins import str
 import six
 
 from unipath import Path
@@ -93,7 +92,12 @@ def configure(globals_dict, prjspec=None):
             
             # The unique identifier can be used to prefix cross-reference targets
             # http://www.sphinx-doc.org/en/master/ext/intersphinx.html#confval-intersphinx_mapping
-            k = prj.nickname + doc_tree.rel_path.replace('_', '')
+            k = prj.nickname + doc_tree.rel_path
+            k = k.replace('_', '')
+            k = six.text_type(k)  # make sure it's not newstr from
+                                  # future because that can cause
+                                  # problems when intersphinx tries to
+                                  # sort them
             # if doc_tree == 'docs':
             #     k = prj.nickname
             # else:
@@ -118,8 +122,8 @@ def configure(globals_dict, prjspec=None):
     # atelier.current_project = this
     globals_dict.update(intersphinx_mapping=intersphinx_mapping)
 
-    logger.info("intersphinx_mapping set to {}".format(
-        intersphinx_mapping))
+    # logger.info("intersphinx_mapping set to {}".format(
+    #     intersphinx_mapping))
 
     # if False:  # no longer used
     #     globals_dict.update(extlinks=extlinks)
