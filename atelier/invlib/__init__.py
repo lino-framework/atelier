@@ -34,8 +34,6 @@ def setup_from_tasks(
     This is the function you must call from your :xfile:`tasks.py` file
     in order to activate the tasks defined by atelier.
     """
-    from atelier.invlib import tasks
-    self = Collection.from_module(tasks)
     if '__file__' not in globals_dict:
         raise Exception(
             "No '__file__' in %r. "
@@ -46,8 +44,9 @@ def setup_from_tasks(
         raise Exception("No such file: %s" % tasks_file)
     # print("20180428 setup_from_tasks() : {}".format(root_dir))
 
-    from atelier.projects import get_project_info_from_path
-    prj = get_project_info_from_path(tasks_file.parent)
+    from atelier.invlib import tasks
+    from atelier.projects import get_project_from_tasks
+    prj = get_project_from_tasks(tasks_file.parent)
     atelier.current_project = prj
     
     if kwargs:
@@ -63,6 +62,8 @@ def setup_from_tasks(
         main_package = import_module(main_package)
     if main_package:
         prj.set_main_package(main_package)
+        
+    self = Collection.from_module(tasks)
     prj.set_namespace(self)
 
     return self

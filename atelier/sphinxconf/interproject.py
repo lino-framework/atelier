@@ -75,9 +75,11 @@ def configure(globals_dict, prjspec=None):
         # print("20180428 {} {}".format(prj.name, config['doc_trees']))
         # ctx = Context(config)
         # for doc_tree in prj.config['doc_trees']:
+        count = 0
         for doc_tree in prj.get_doc_trees():
             if not doc_tree.has_intersphinx:
                 continue
+            count += 1
             p = None
             if USE_LOCAL_BUILDS:
                 src_path = doc_tree.src_path
@@ -102,11 +104,13 @@ def configure(globals_dict, prjspec=None):
                 intersphinx_mapping[k] = (url, p)
             elif p:
                 intersphinx_mapping[k] = p
-            else:
-                logger.info(
+            elif prjspec:
+                logger.warning(
                     "No intersphinx mapping for {} of {} ({})".format(
                         doc_tree.rel_path, prj.nickname, urls))
 
+        if count == 0 and prjspec:
+            logger.warning("No doctree for {}".format(prj))
         # if prj.srcref_url:
         #     k = '%s_srcref' % prj.nickname
         #     extlinks[str(k)] = (prj.srcref_url, '')

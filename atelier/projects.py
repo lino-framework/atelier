@@ -79,7 +79,7 @@ def add_project(root_dir, nickname=None):
 def get_project_info_from_mod(modname):
     m = import_module(modname)
     fn = Path(m.__file__)
-    prj = get_project_info_from_path(fn)
+    prj = get_project_from_tasks(fn.parent)
     if prj is None:
         # it can be an installed package in site-packages without
         # tasks.py file
@@ -93,7 +93,7 @@ def get_project_info_from_mod(modname):
     # assert prj.main_package is not None
     return prj
     
-def get_project_info_from_path(root_dir):
+def get_project_from_tasks(root_dir):
     "Find the project info for the given directory."
     root_dir = root_dir.absolute().resolve()
     prj = _PROJECTS_DICT.get(root_dir)
@@ -101,14 +101,14 @@ def get_project_info_from_path(root_dir):
         if root_dir.child('tasks.py').exists():
             return add_project(root_dir)
         # if no config.py found, add current working directory.
-        p = Path().resolve()
-        while p:
-            if p.child('tasks.py').exists():
-                prj = add_project(p)
-                break
-            if p == p.parent:
-                return  # reached the file system's root 
-            p = p.parent
+        # p = Path().resolve()
+        # while p:
+        #     if p.child('tasks.py').exists():
+        #         prj = add_project(p)
+        #         break
+        #     if p == p.parent:
+        #         return  # reached the file system's root 
+        #     p = p.parent
         # raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
     return prj
 
@@ -260,14 +260,13 @@ class Project(object):
 
         - Loaded from a config file: we know only the root_dir
 
-        - instantiated by get_project_info_from_path() : we know also
-          the inv_namespace
+        - instantiated by get_project_from_tasks() called in
+          setup_from_tasks(): we know also the inv_namespace
 
         - instantiated by get_project_info_from_mod() (by
           sphinxconf.interproject) : we know also the main_package
 
         A project can have no inv_namespace
-
         """
 
         # inv_namespace = self.inv_namespace or load_inv_namespace(
