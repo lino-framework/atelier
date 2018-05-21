@@ -70,6 +70,8 @@ def add_project(root_dir, nickname=None):
     """
     i = len(_PROJECT_INFOS)
     root_dir = Path(root_dir).absolute().resolve()
+    if not root_dir.exists():
+        raise Exception("Invalid root directory {}".format(root_dir))
     p = Project(i, root_dir, nickname=None)
     _PROJECT_INFOS.append(p)
     _PROJECTS_DICT[root_dir] = p
@@ -322,9 +324,11 @@ class Project(object):
             #     msg += "doc_trees there."
             #     raise Exception(msg.format(self))
             doc_trees = getattr(self.main_package, 'doc_trees', [])
-        else:
+        elif self.inv_namespace is not None:
             cfg = self.inv_namespace.configuration()
             doc_trees = cfg.get('doc_trees')
+        else:
+            return
         # print("20180504 {} get_doc_tree() {} {}".format(
         #     self, self.main_package, doc_trees))
         for rel_doc_tree in doc_trees:
