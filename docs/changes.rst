@@ -8,18 +8,18 @@ Work in progress
 ================
 
 
-:func:`atelier.projects.get_project_info_from_mod` didn't yet work in
+Version 1.1.8 (released 2018-05-21)
+===================================
+
+(2018-05-10) :func:`get_project_info_from_mod
+<atelier.projects.get_project_info_from_mod>` didn't yet work in
 environments without a local :xfile:`config.py` file.  Such projects
 have neither a :xfile:`tasks.py` file not a :xfile:`setup.py` file,
 but at least they have a :attr:`main_package
-<atelier.projects.Project.main_package>` (and that's what intersphinx
-needs).  This fixes :ticket:`2385` (intersphinx does not find the
-`objects.inv` for :ref:`atelier` on Travis).
-
-I added a logger info::
-
-    logger.info("intersphinx_mapping set to {}".format(
-        intersphinx_mapping))
+<atelier.projects.Project.main_package>` (and that's what `intersphinx
+<http://www.sphinx-doc.org/en/master/ext/intersphinx.html>`__ needs).
+This fixes :ticket:`2385` (intersphinx does not find the `objects.inv`
+for :ref:`atelier` on Travis).
 
 
 Version 1.1.7 (released 2018-05-04)
