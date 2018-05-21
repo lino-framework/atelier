@@ -7,6 +7,19 @@ Changes in `atelier`
 Work in progress
 ================
 
+(2018-05-21) Bugfix: When the :xfile:`~/.atelier/config.py` file
+contained an invalid project name (i.e. it calls
+:func:`atelier.projects.add_project` with a `root_dir` that doesn't
+exist), the project was being added to the list, but :cmd:`pp -l`
+failed::
+
+  AttributeError: 'NoneType' object has no attribute 'configuration'
+
+Now this configuration error will already raise an exception when
+reading the :xfile:`~/.atelier/config.py` file, making it easier to
+localize.
+
+
 
 Version 1.1.8 (released 2018-05-21)
 ===================================
