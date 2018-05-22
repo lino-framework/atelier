@@ -7,7 +7,7 @@ Changes in `atelier`
 Work in progress
 ================
 
-(2018-05-21) Bugfix: When the :xfile:`~/.atelier/config.py` file
+(20180521) Bugfix: When the :xfile:`~/.atelier/config.py` file
 contained an invalid project name (i.e. it calls
 :func:`atelier.projects.add_project` with a `root_dir` that doesn't
 exist), the project was being added to the list, but :cmd:`pp -l`
@@ -24,7 +24,7 @@ localize.
 Version 1.1.8 (released 2018-05-21)
 ===================================
 
-(2018-05-10) :func:`get_project_info_from_mod
+(20180510) :func:`get_project_info_from_mod
 <atelier.projects.get_project_info_from_mod>` didn't yet work in
 environments without a local :xfile:`config.py` file.  Such projects
 have neither a :xfile:`tasks.py` file not a :xfile:`setup.py` file,
