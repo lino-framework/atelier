@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2017 by Luc Saffre & Hamza Khchine.
+# Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 from __future__ import print_function
@@ -20,10 +20,10 @@ from atelier.projects import load_projects
 from unipath import Path
 
 try:
-    from invoke import ctask as task, tasks
+    from invoke import ctask as task #, tasks
     # before version 0.13 (see http://www.pyinvoke.org/changelog.html)
 except ImportError:
-    from invoke import task, tasks
+    from invoke import task #, tasks
 
 from invoke.exceptions import Exit
 from invoke import run
@@ -31,7 +31,7 @@ from invoke import run
 import atelier
 from atelier.utils import confirm, cd
 
-from .utils import get_doc_trees, must_confirm
+from .utils import must_confirm
 
 LASTREL_INFO = "Last PyPI release was %(filename)s \
 (%(upload_time)s,  %(downloads)d downloads)."
@@ -91,7 +91,7 @@ def sphinx_clean(ctx, batch=False):
     """Delete all generated Sphinx files.
 
     """
-    for b in get_doc_trees(ctx):
+    for b in atelier.current_project.get_doc_trees():
         rmtree_after_confirm(b.out_path, batch)
 
 
@@ -99,9 +99,9 @@ def py_clean(ctx, batch=False):
     """Delete dangling `.pyc` files.
 
     """
-    if atelier.current_project.module is not None:
+    if atelier.current_project.main_package is not None:
         try:
-            p = Path(atelier.current_project.module.__file__).parent
+            p = Path(atelier.current_project.main_package.__file__).parent
             cleanup_pyc(p, batch)
         except AttributeError:
             # happened 20170310 in namespace package:
@@ -160,9 +160,9 @@ def run_tests(ctx):
 @task(name='readme')
 def write_readme(ctx):
     """Generate or update `README.txt` or `README.rst` file from `SETUP_INFO`. """
-    if not ctx.main_package:
+    if not atelier.current_project.main_package:
         return
-    atelier.current_project.load_tasks()
+    atelier.current_project.load_info()
     info = atelier.current_project.SETUP_INFO
     if not info.get('long_description'):
         return
@@ -200,14 +200,15 @@ def write_readme(ctx):
 @task(write_readme, name='bd')
 def build_docs(ctx, *cmdline_args):
     """Build docs. Build all Sphinx HTML doctrees for this project. """
-    for tree in get_doc_trees(ctx):
-        tree.build_docs(*cmdline_args)
+    # print("Build docs for {}".format(atelier.current_project))
+    for tree in atelier.current_project.get_doc_trees():
+        tree.build_docs(ctx, *cmdline_args)
 
 
 @task(name='clean')
 def clean(ctx, batch=False):
     # def clean(ctx, *cmdline_args):
-    """Remove temporary and generated files."""
+    print("""Remove temporary and generated files.""")
     sphinx_clean(ctx, batch)
     py_clean(ctx, batch)
     # clean_demo_caches()
@@ -216,6 +217,7 @@ def clean(ctx, batch=False):
 @task(name='sdist')
 def setup_sdist(ctx):
     "Create a source distribution."
+    atelier.current_project.load_info()
     if not atelier.current_project.SETUP_INFO.get('version'):
         return
     show_pypi_status(ctx)
@@ -231,6 +233,7 @@ def setup_sdist(ctx):
 @task(name='release')
 def pypi_release(ctx):
     "Publish a new version to PyPI."
+    atelier.current_project.load_info()
     info = atelier.current_project.SETUP_INFO
     if not info.get('version'):
         return
@@ -417,8 +420,8 @@ def publish(ctx):
     if not ctx.docs_rsync_dest:
         raise MissingConfig("docs_rsync_dest")
 
-    for tree in get_doc_trees(ctx):
-        tree.publish_docs()
+    for tree in atelier.current_project.get_doc_trees():
+        tree.publish_docs(ctx)
 
 def show_revision_status(ctx):
     if ctx.revision_control_system == 'hg':
@@ -556,7 +559,7 @@ def update_catalog_code(ctx):
 
 def git_projects():
     for prj in load_projects():
-        prj.load_tasks()
+        prj.load_info()
         if prj.config['revision_control_system'] == 'git':
             yield prj
 
@@ -634,13 +637,15 @@ def commited_today(ctx, today=None):
 # from importlib import import_module
 
 def run_in_demo_projects(ctx, py_cmd, cov=False):
-    """Run the given Python command line `py_cmd` in each demo project.
+    """
+    Run the given Python command line `py_cmd` in each demo project.
 
     See also :attr:`ctx.demo_projects`.
-
     """
     for p in ctx.demo_projects:
-        with cd(p):
+        # join each demo project to root_dir to avoid failure when
+        # `inv prep` is invoked from a subdir of root.
+        with cd(os.path.join(ctx.root_dir, p)):
             if cov:
                 cmd = "coverage run --append " + py_cmd
                 datacovfile = ctx.root_dir.child('.coverage')

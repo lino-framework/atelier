@@ -1,15 +1,16 @@
-# Copyright 2013-2018 by Luc Saffre.
+# Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 # ~ This module has no docstring because it is to be execfile'd
 # ~ from `setup.py`, `atelier/__init__.py` and possibly some external
 # ~ tools, too.
 
-# Explicitly install `importlib` under Python 2.6. Thanks to
-# http://stackoverflow.com/questions/9418064
-install_requires = ['Sphinx<1.7.1', 'invoke', 'argh', 'six',
+install_requires = ['Sphinx', 'invoke', 'argh', 'six',
                     'future', 'Babel', 'unipath',
                     'python_dateutil', 'gitpython', 'pytest-cov']
+
+# Explicitly install `importlib` under Python 2.6. Thanks to
+# http://stackoverflow.com/questions/9418064
 try:
     import importlib
 except ImportError:
@@ -17,7 +18,7 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='1.0.13',
+    version='1.1.8',
     install_requires=install_requires,
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",

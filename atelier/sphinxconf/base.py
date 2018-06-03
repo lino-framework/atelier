@@ -129,11 +129,11 @@ def srcref(mod):
     >>> from atelier import sphinxconf
     >>> from atelier.sphinxconf import base
     >>> print(srcref(atelier))
-    https://github.com/lsaffre/atelier/blob/master/atelier/__init__.py
+    https://github.com/lino-framework/atelier/blob/master/atelier/__init__.py
     >>> print(srcref(sphinxconf))
-    https://github.com/lsaffre/atelier/blob/master/atelier/sphinxconf/__init__.py
+    https://github.com/lino-framework/atelier/blob/master/atelier/sphinxconf/__init__.py
     >>> print(srcref(base))
-    https://github.com/lsaffre/atelier/blob/master/atelier/sphinxconf/base.py
+    https://github.com/lino-framework/atelier/blob/master/atelier/sphinxconf/base.py
     """
     root_module_name = mod.__name__.split('.')[0]
     root_mod = __import__(root_module_name)

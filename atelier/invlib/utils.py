@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017 by Luc Saffre & Hamza Khchine.
+# Copyright 2017-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """Utilities for atelier.invlib
@@ -9,8 +9,6 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import six
-from importlib import import_module
 from invoke.exceptions import Exit
 
 from atelier.utils import confirm, cd
@@ -29,44 +27,50 @@ def must_exist(p):
 
 
 class DocTree(object):
-    """Base class for a doctree descriptor.  Atelier currently supports
+    """
+    Base class for a doctree descriptor.  Atelier currently supports
     `Sphinx <http://www.sphinx-doc.org/en/stable/>`__ and `Nikola
     <https://getnikola.com/>`__ docs.
-
     """
     src_path = None
     out_path = None
+    has_intersphinx = False
     
-    def __init__(self, ctx, rel_doc_tree):
-        if rel_doc_tree in ('', '.'):
-            src_path = ctx.root_dir
-        else:
-            src_path = ctx.root_dir.child(rel_doc_tree)
-        if not src_path.exists():
-            msg = "Directory %s does not exist." % src_path
-            raise Exception(msg)
-        self.src_path = src_path
-        self.ctx = ctx
+    def __init__(self, prj, rel_doc_tree):
+        self.rel_path = rel_doc_tree
+        self.prj = prj
         
-    def build_docs(self, *cmdline_args):
+        if rel_doc_tree in ('', '.'):
+            src_path = prj.root_dir
+        else:
+            src_path = prj.root_dir.child(rel_doc_tree)
+        # The src_path may not exist if this is on a Project which
+        # has been created from a normally installed main_package
+        # (because there is has no source code).
+        if src_path.exists():
+            self.src_path = src_path
+        
+    def build_docs(self, ctx, *cmdline_args):
         raise NotImplementedError()
 
-    def publish_docs(self):
+    def publish_docs(self, ctx):
         # build_dir = docs_dir.child(ctx.build_dir_name)
+        if self.src_path is None:
+            return
         build_dir = self.out_path
         if build_dir.exists():
             docs_dir = self.src_path
             # name = '%s_%s' % (ctx.project_name, docs_dir.name)
             # dest_url = ctx.docs_rsync_dest % name
-            if "%" in self.ctx.docs_rsync_dest:
-                name = '%s_%s' % (self.ctx.project_name, docs_dir.name)
-                dest_url = self.ctx.docs_rsync_dest % name
+            if "%" in ctx.docs_rsync_dest:
+                name = '%s_%s' % (ctx.project_name, docs_dir.name)
+                dest_url = ctx.docs_rsync_dest % name
             else:
-                dest_url = self.ctx.docs_rsync_dest.format(
-                    prj=self.ctx.project_name, docs=docs_dir.name)
-            self.publish_doc_tree(build_dir, dest_url)
+                dest_url = ctx.docs_rsync_dest.format(
+                    prj=ctx.project_name, docs=docs_dir.name)
+            self.publish_doc_tree(ctx, build_dir, dest_url)
 
-    def publish_doc_tree(self, build_dir, dest_url):
+    def publish_doc_tree(self, ctx, build_dir, dest_url):
         with cd(build_dir):
             args = ['rsync', '-e', 'ssh', '-r']
             args += ['--verbose']
@@ -78,10 +82,8 @@ class DocTree(object):
             args += [dest_url]  # dest
             cmd = ' '.join(args)
             # must_confirm("%s> %s" % (build_dir, cmd))
-            self.ctx.run(cmd, pty=True)
+            ctx.run(cmd, pty=True)
 
-
-            
 
 class SphinxTree(DocTree):
     """
@@ -96,22 +98,30 @@ class SphinxTree(DocTree):
     
     
     """
-    def __init__(self, ctx, src_path):
-        super(SphinxTree, self).__init__(ctx, src_path)
-        self.out_path = self.src_path.child(ctx.build_dir_name)
+    has_intersphinx = True
+    
+    def __init__(self, prj, src_path):
+        super(SphinxTree, self).__init__(prj, src_path)
+        if self.src_path is None:
+            return
+        cfg = prj.config
+        self.out_path = self.src_path.child(cfg['build_dir_name'])
         
-    def build_docs(self, *cmdline_args):
+    def build_docs(self, ctx, *cmdline_args):
+        if self.src_path is None:
+            return
         docs_dir = self.src_path
-        print("Invoking Sphinx in in directory %s..." % docs_dir)
+        print("Invoking Sphinx in directory %s..." % docs_dir)
         builder = 'html'
-        if self.ctx.use_dirhtml:
+        if ctx.use_dirhtml:
             builder = 'dirhtml'
-        self.sphinx_build(builder, docs_dir, cmdline_args)
-        self.sync_docs_data(docs_dir)
+        self.sphinx_build(ctx, builder, docs_dir, cmdline_args)
+        self.sync_docs_data(ctx, docs_dir)
         
-    def sphinx_build(self, builder, docs_dir,
+    def sphinx_build(self, ctx, builder, docs_dir,
                      cmdline_args=[], language=None, build_dir_cmd=None):
-        ctx = self.ctx
+        if self.out_path is None:
+            return
         # args = ['sphinx-build', builder]
         args = ['sphinx-build', '-b', builder]
         args += ['-T'] # show full traceback on exception
@@ -119,8 +129,6 @@ class SphinxTree(DocTree):
         # ~ args += ['-a'] # all files, not only outdated
         # ~ args += ['-P'] # no postmortem
         # ~ args += ['-Q'] # no output
-        # build_dir = docs_dir.child(ctx.build_dir_name)
-        # build_dir = Path(ctx.build_dir_name)
         build_dir = self.out_path
         if language is not None:
             args += ['-D', 'language=' + language]
@@ -144,9 +152,10 @@ class SphinxTree(DocTree):
             with cd(build_dir):
                 ctx.run(build_dir_cmd, pty=True)
 
-    def sync_docs_data(self, docs_dir):
-        ctx = self.ctx
+    def sync_docs_data(self, ctx, docs_dir):
         # build_dir = docs_dir.child(ctx.build_dir_name)
+        if self.src_path is None:
+            return
         build_dir = self.out_path
         for data in ('dl', 'data'):
             src = docs_dir.child(data).absolute()
@@ -176,32 +185,19 @@ class NikolaTree(DocTree):
     """
     def __init__(self, ctx, src_path):
         super(NikolaTree, self).__init__(ctx, src_path)
+        if self.src_path is None:
+            return
         self.out_path = self.src_path.child('output')
         
-    def build_docs(self, *cmdline_args):
+    def build_docs(self, ctx, *cmdline_args):
+        if self.src_path is None:
+            return
         docs_dir = self.src_path
         print("Invoking nikola build in in %s..." % docs_dir)
         args = ['nikola', 'build']
         args += cmdline_args
         cmd = ' '.join(args)
         with cd(docs_dir):
-            self.ctx.run(cmd, pty=True)
+            ctx.run(cmd, pty=True)
         
         
-def get_doc_trees(ctx):
-    """Yield one DocTree instance for every item of this project's
-    :envvar:`doc_trees`.
-
-    """
-    for rel_doc_tree in ctx.doc_trees:
-        if isinstance(rel_doc_tree, six.string_types):
-            yield SphinxTree(ctx, rel_doc_tree)
-        elif isinstance(rel_doc_tree, tuple):
-            # (BUILDER, PATH)
-            clparts = rel_doc_tree[0].split('.')
-            cl = import_module(clparts[0])
-            for k in clparts[1:]:
-                cl = getattr(cl, k)
-            yield cl(ctx, rel_doc_tree[1])
-
-

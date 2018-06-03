@@ -1,5 +1,5 @@
 #!python
-# Copyright 2013-2017 by Luc Saffre.
+# Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 from __future__ import print_function
@@ -40,12 +40,17 @@ http://atelier.lino-framework.org/usage.html
             'doctrees')
 
         def cells(self):
-            self.load_tasks()
+            # self.load_info()
+            doc_trees = ', '.join([
+                t.rel_path for t in self.get_doc_trees()])
+            # config = self.inv_namespace.configuration()
             yield self.nickname
             # yield self.SETUP_INFO.get('version', '')
+            # yield self.main_package
             yield self.get_status()
             yield self.SETUP_INFO.get('url', None)
-            yield ', '.join(self.doc_trees)
+            yield str(doc_trees)
+            # yield ', '.join(config['doc_trees'])
 
         print(rstgen.table(headers, [
             tuple(cells(p)) for p in load_projects()]))
@@ -64,7 +69,7 @@ http://atelier.lino-framework.org/usage.html
     skipping = start is not None or after is not None
     for prj in load_projects():
         if cmd[0] == 'git':
-            prj.load_tasks()
+            prj.load_info()
             if prj.config['revision_control_system'] != 'git':
                 continue
         if start and prj.nickname == start:
