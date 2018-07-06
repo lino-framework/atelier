@@ -65,6 +65,7 @@ def configure(globals_dict, prjspec=None):
             if this_conf_file.startswith(p.root_dir):
                 break
             prjlist.append(p)
+        # logger.warning("20180706 {}".format(prjlist))
         
     for prj in prjlist:
         # This will load the `tasks.py` of other
@@ -112,6 +113,10 @@ def configure(globals_dict, prjspec=None):
                 logger.warning(
                     "No intersphinx mapping for {} of {} ({})".format(
                         doc_tree.rel_path, prj.nickname, urls))
+            # else:
+            #     logger.info(
+            #         "20180706 No intersphinx mapping for {} of {} ({})".format(
+            #             doc_tree.rel_path, prj.nickname, urls))
 
         if count == 0 and prjspec:
             logger.warning("No doctree for {}".format(prj))
@@ -122,7 +127,7 @@ def configure(globals_dict, prjspec=None):
     # atelier.current_project = this
     globals_dict.update(intersphinx_mapping=intersphinx_mapping)
 
-    # logger.info("intersphinx_mapping set to {}".format(
+    # logger.info("20180706 intersphinx_mapping set to {}".format(
     #     intersphinx_mapping))
 
     # if False:  # no longer used
