@@ -209,7 +209,7 @@ htmlhelp_basename = 'atelier'
 extlinks = {
   #~ 'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'Issue '),
   # 'checkin': ('http://code.google.com/p/python-atelier/source/detail?r=%s', 'Checkin '),
-  # 'srcref': ('http://code.google.com/p/python-atelier/source/browse%s', ''),
+  'srcref': (atelier.srcref_url, ''),
   'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),
 }
 
