@@ -1,12 +1,37 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014-2017 by Luc Saffre.
+# Copyright 2014-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
-"""Defines the :rst:dir:`sigal_image` directive.
+"""
+Defines the :rst:dir:`sigal_image` directive.
 
 .. rst:directive:: sigal_image
 
-Example::
+.. _picsel: https://github.com/lsaffre/picsel
+.. _Shotwell: https://en.wikipedia.org/wiki/Shotwell_%28software%29
+.. _digiKam: https://www.digikam.org/
+.. _Sigal: http://sigal.saimon.org/en/latest/
+
+This creates a bridge between a photo collection managed with
+Shotwell_ or digiKam_ and a blog generated with Sphinx.  All photos
+remain in the single central file tree managed by Shotwell_ or
+digiKam_.  From within Shotwell_ or digiKam_ you use a tag "blog" to
+mark all photos that are to be available for your Sphinx blog.  Then
+you use picsel_ to extract those images to a separate directory.  This
+tree serves as input for Sigal_ which will generate a static html
+gallery.  An example of a Sigal gallery is `here
+<http://sigal.saffre-rumma.net/>`__.  The :rst:dir:`sigal_image`
+directive was the last missing part of this publishing bridge: it
+allows you to integrate your pictures into blog entries.
+
+Usage::
+
+  .. sigal_image:: partial/path/to/photo.jpg[|title_or_options]
+
+
+For example, if `sigal_base_url` in your :xfile:`conf.py` is set to
+``"http://sigal.saffre-rumma.net"``, the following directive in your
+rst source file::
 
   .. sigal_image:: 2014/04/10/img_6617.jpg
 
@@ -20,13 +45,11 @@ will insert the following rst code::
     </a>
 
 
-Supposing that `sigal_base_url` in your :xfile:`conf.py` is set to
-``"http://sigal.saffre-rumma.net"``.
-
-The file name can contain formatting instructions inspired by
+The file name can contain **formatting instructions** inspired by
 `Wikipedia pictures
 <https://en.wikipedia.org/wiki/Wikipedia:Picture_tutorial>`_ which
 uses a variable number of pipe characters. For example:
+
 
 >>> from __future__ import print_function
 >>> print(line2html("foo.jpg"))
@@ -42,36 +65,17 @@ uses a variable number of pipe characters. For example:
 <a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; float:left;; width:280px;" title="This is a nice picture"/></a>
 
 
-.. _shotwell2blog: https://github.com/lsaffre/shotwell2blog
-.. _Shotwell: https://en.wikipedia.org/wiki/Shotwell_%28software%29
-.. _Sigal: http://sigal.saimon.org/en/latest/
-
-This creates a bridge between my photo collection and my blog. I
-manage my personal photo collection with Shotwell_. All photos are in
-a single central file tree, organized into years, months and days as
-Shotwell does automatically.
-
-From within Shotwell I use a tag "blog" to mark all photos that are to
-be published.  Then I use the shotwell2blog_ script to extract those
-images to a separate tree. This tree serves as input for Sigal_ which
-will generate a static html gallery. My pricate Sigal gallery is `here
-<http://sigal.saffre-rumma.net/>`__.
-
-The :rst:dir:`sigal_image` directive was the last missing part of this
-publishing bridge: it allows me to integrate these pictures into blog
-entries.
-
-New since 20140729: Requires `lightbox
-<http://lokeshdhakar.com/projects/lightbox2/>`_.  And then write a
-`layout.html` template as follows::
+The generated HTML also includes attributes for `lightbox
+<http://lokeshdhakar.com/projects/lightbox2/>`_.  In order to activate
+this feature you must add the content of the lighbox :file:`dist`
+directory somewhere to your web server and then change your
+`layout.html` template to something like this::
 
     {%- block extrahead %}
       {{ super() }}
-    <script src="{{ pathto('')}}data/lightbox/js/jquery-1.11.0.min.js"></script>
-    <script src="{{ pathto('')}}data/lightbox/js/lightbox.min.js"></script>
-    <link href="{{ pathto('')}}data/lightbox/css/lightbox.css" rel="stylesheet" />
+    <script src="/data/lightbox/js/lightbox-plus-jquery.min.js"></script>
+    <link href="/data/lightbox/css/lightbox.css" rel="stylesheet" />
     {% endblock %}
-
 """
 
 from __future__ import print_function

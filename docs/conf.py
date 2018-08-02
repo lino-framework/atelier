@@ -20,13 +20,13 @@ extensions += ['sphinx.ext.autosummary']
 
 import atelier
 
-primary_domain = 'py'
+# primary_domain = 'py'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+# source_suffix = '.rst'
 
 # The encoding of source files.
 #source_encoding = 'utf-8'
@@ -36,7 +36,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u"atelier"
-copyright = '2002-2018 Luc Saffre'
+copyright = '2002-2018 Rumam & Ko Ltd'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -151,13 +151,13 @@ html_use_index = True
 #html_split_index = False
 
 # If true, the reST sources are included in the HTML build as _sources/<name>.
-html_copy_source = True
+html_copy_source = False
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
 #html_use_opensearch = ''
-html_use_opensearch = 'http://lino.saffre-rumma.net'
+html_use_opensearch = 'http://atelier.saffre-rumma.net'
 
 # If nonempty, this is the file name suffix for HTML files (e.g. ".xhtml").
 #html_file_suffix = ''
@@ -208,8 +208,8 @@ htmlhelp_basename = 'atelier'
 
 extlinks = {
   #~ 'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'Issue '),
-  'checkin': ('http://code.google.com/p/python-atelier/source/detail?r=%s', 'Checkin '),
-  'srcref': ('http://code.google.com/p/python-atelier/source/browse%s', ''),
+  # 'checkin': ('http://code.google.com/p/python-atelier/source/detail?r=%s', 'Checkin '),
+  'srcref': (atelier.srcref_url, ''),
   'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),
 }
 
