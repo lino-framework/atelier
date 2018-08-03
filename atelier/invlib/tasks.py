@@ -223,7 +223,8 @@ def setup_sdist(ctx):
     show_pypi_status(ctx, False)
     # dist_dir = Path(ctx.sdist_dir).child(
     #     atelier.current_project.SETUP_INFO['name'])
-    dist_dir = ctx.sdist_dir
+    dist_dir = ctx.sdist_dir.format(prj=ctx.project_name)
+    
     args = [sys.executable, "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", dist_dir]
