@@ -207,8 +207,8 @@ def build_docs(ctx, *cmdline_args):
 
 @task(name='clean')
 def clean(ctx, batch=False):
+    """Remove temporary and generated files."""
     # def clean(ctx, *cmdline_args):
-    print("""Remove temporary and generated files.""")
     sphinx_clean(ctx, batch)
     py_clean(ctx, batch)
     # clean_demo_caches()
@@ -220,10 +220,11 @@ def setup_sdist(ctx):
     atelier.current_project.load_info()
     if not atelier.current_project.SETUP_INFO.get('version'):
         return
-    show_pypi_status(ctx)
+    show_pypi_status(ctx, False)
     # dist_dir = Path(ctx.sdist_dir).child(
     #     atelier.current_project.SETUP_INFO['name'])
-    dist_dir = ctx.sdist_dir
+    dist_dir = ctx.sdist_dir.format(prj=ctx.project_name)
+    
     args = [sys.executable, "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", dist_dir]
@@ -242,7 +243,7 @@ def pypi_release(ctx):
     dist_dir = ctx.sdist_dir
 
     show_revision_status(ctx)
-    show_pypi_status(ctx)
+    show_pypi_status(ctx, True)
 
     must_confirm(RELEASE_CONFIRM % info)
 
@@ -437,7 +438,7 @@ def show_revision_status(ctx):
     print("-" * 80)
 
 
-def show_pypi_status(ctx):
+def show_pypi_status(ctx, severe=True):
     """Show project status on PyPI before doing a release.
     """
     info = atelier.current_project.SETUP_INFO
@@ -450,7 +451,7 @@ def show_pypi_status(ctx):
     client = ServerProxy('https://pypi.python.org/pypi')
     released_versions = client.package_releases(name)
     if len(released_versions) == 0:
-        print("This is your first PyPI release of %(name)s." % info)
+        print("No PyPI release of %(name)s has been done so far." % info)
     else:
         urls = client.release_urls(name, released_versions[-1])
         if len(urls) == 0:
@@ -462,7 +463,7 @@ def show_pypi_status(ctx):
             # dt = lastrel['upload_time']
             # lastrel['upload_time'] = dt.ISO()
             print(LASTREL_INFO % lastrel)
-        if version in released_versions:
+        if severe and version in released_versions:
             raise Exit(
                 "ABORT: %(name)s %(version)s has already been "
                 "released." % info)
