@@ -218,13 +218,13 @@ def clean(ctx, batch=False):
 def setup_sdist(ctx):
     "Create a source distribution."
     atelier.current_project.load_info()
-    if not atelier.current_project.SETUP_INFO.get('version'):
+    info = atelier.current_project.SETUP_INFO
+    if not info.get('version'):
+        return
+    if not info.get('name'):
         return
     show_pypi_status(ctx, False)
-    # dist_dir = Path(ctx.sdist_dir).child(
-    #     atelier.current_project.SETUP_INFO['name'])
-    dist_dir = ctx.sdist_dir.format(prj=ctx.project_name)
-    
+    dist_dir = ctx.sdist_dir.format(prj=info.get('name'))
     args = [sys.executable, "setup.py"]
     args += ["sdist", "--formats=gztar"]
     args += ["--dist-dir", dist_dir]

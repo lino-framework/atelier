@@ -7,6 +7,18 @@ Changes in `atelier`
 Work in progress
 ================
 
+(20180806) : The context variable ``{prj}`` must not be the 
+:attr:`project_name <atelier.projects.Project.project_name>`
+but ``SETUP_INFO['name']``.
+
+(20180803) : :envvar:`sdist_dir` now supports a string template with a
+single context variable: ``{prj}`` will be replaced by the
+:attr:`project_name <atelier.projects.Project.project_name>`
+
+:func:`atelier.invlib.tasks.show_pypi_status` has a new optional
+argument `severe`.  Default value is True (same behaviour as before),
+but the :cmd:`inv sdist` command now calls with `severe=False`.
+
 (20180521) Bugfix: When the :xfile:`~/.atelier/config.py` file
 contained an invalid project name (i.e. it calls
 :func:`atelier.projects.add_project` with a `root_dir` that doesn't
