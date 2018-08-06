@@ -7,6 +7,10 @@ Changes in `atelier`
 Work in progress
 ================
 
+(20180806) : The context variable ``{prj}`` must not be the 
+:attr:`project_name <atelier.projects.Project.project_name>`
+but ``SETUP_INFO['name']``.
+
 (20180803) : :envvar:`sdist_dir` now supports a string template with a
 single context variable: ``{prj}`` will be replaced by the
 :attr:`project_name <atelier.projects.Project.project_name>`
