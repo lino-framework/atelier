@@ -76,7 +76,7 @@ class DocTree(object):
             args += ['--verbose']
             args += ['--progress']  # show progress
             args += ['--delete']  # delete files in dest
-            # args += ['--times']  # preserve timestamps
+            args += ['--times']  # preserve timestamps
             
             # the problem with --times is that it fails when several
             # users can publish to the same server alternatively.

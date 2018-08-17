@@ -31,8 +31,8 @@ more information.
 
 .. xfile:: tasks.py
 
-In your :xfile:`tasks.py` file you must define a variable ``ns`` which
-you usually import from :mod:`atelier.invlib`.
+In your project's :xfile:`tasks.py` file you must define a variable
+``ns`` which you usually import from :mod:`atelier.invlib`.
 
 You can specify project-specific configuration settings directly in
 your :xfile:`tasks.py` file. Example content::
@@ -42,6 +42,12 @@ your :xfile:`tasks.py` file. Example content::
         tolerate_sphinx_warnings=True,
         revision_control_system='git')
 
+.. xfile:: .invoke.py
+
+You can specify user-wide invoke settings in a file named
+:xfile:`.invoke.py` which must be in your home directory.
+
+           
 
 Tasks
 =====
@@ -200,6 +206,12 @@ uses :mod:`atelier.invlib`.
     catalog files.
 
 .. envvar:: sdist_dir
+
+    The template for the local directory where :cmd:`inv sdist` should
+    store the packages.  Any string ``{prj}`` in this template will be
+    replaced by the projects Python name.  The resulting string is
+    passed as the `--dist-dir` option to the :cmd:`setup.py sdist`
+    command.
 
 .. envvar:: pypi_dir
 
