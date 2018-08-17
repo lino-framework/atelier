@@ -77,6 +77,13 @@ class DocTree(object):
             args += ['--progress']  # show progress
             args += ['--delete']  # delete files in dest
             args += ['--times']  # preserve timestamps
+            
+            # the problem with --times is that it fails when several
+            # users can publish to the same server alternatively.
+            # Only the owner of a file can change the mtime, other
+            # users (even if they have write permission through the
+            # group) cannot change the mtime.
+            
             args += ['--exclude', '.doctrees']
             args += ['./']  # source
             args += [dest_url]  # dest
