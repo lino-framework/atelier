@@ -16,6 +16,11 @@ configuration value instead of the deprecated `autodoc_default_flags
 <http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html?highlight=autodoc_default_flags#confval-autodoc_default_flags>`__
 (if Sphinx is 1.8 or newer).
 
+The :cmd:`inv clean` command now also removes :xfile:`.eggs`
+directories and :xfile:`__pycache__` directories. 
+
+The :class:`DjangoTemplateBridge` from :mod:`atelier.sphinxconf` was
+not used and has been removed.
 
 (20180806) : The context variable ``{prj}`` in :envvar:`sdist_dir`
 must not be the :attr:`project_name

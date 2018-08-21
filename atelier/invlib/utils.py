@@ -81,8 +81,8 @@ class DocTree(object):
             # the problem with --times is that it fails when several
             # users can publish to the same server alternatively.
             # Only the owner of a file can change the mtime, other
-            # users (even if they have write permission through the
-            # group) cannot change the mtime.
+            # users can't, even if they have write permission through
+            # the group.
             
             args += ['--exclude', '.doctrees']
             args += ['./']  # source

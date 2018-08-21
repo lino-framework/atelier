@@ -3,8 +3,8 @@
 # License: BSD, see LICENSE for more details.
 
 """
-Sphinx setup used to build most of the documentation trees
-mainained by myself.
+Sphinx extensions and a :func:`configure` function used to build
+the documentation trees maintained by us.
 
 
 .. toctree::
@@ -12,13 +12,13 @@ mainained by myself.
 .. autosummary::
    :toctree:
 
-   insert_input
+   base
+   dirtables
    refstothis
+   insert_input
    sigal_image
    complex_tables
    blog
-   base
-   dirtables
    interproject
 """
 
@@ -55,7 +55,6 @@ I solved this by a manual patch in line 308 of
 import logging
 logger = logging.getLogger(__name__)
 
-import os
 import sys
 
 from unipath import Path
@@ -159,31 +158,5 @@ def version2rst(self, m):
     else:
         print("The current stable release is :doc:`%s`." % v)
         #~ print("We're currently working on :doc:`coming`.")
-
-
-from sphinx.jinja2glue import BuiltinTemplateLoader
-
-
-class DjangoTemplateBridge(BuiltinTemplateLoader):
-
-    """The :meth:`configure` method installs this as `template_bridge
-    <http://sphinx-doc.org/config.html#confval-template_bridge>`_ for
-    Sphinx.  It causes a template variable ``settings`` to be added
-    the Sphinx template context. This cannot be done using
-    `html_context
-    <http://sphinx-doc.org/config.html#confval-html_context>`_ because
-    Django settings are not pickleable.
-
-    """
-
-    def render(self, template, context):
-        from django.conf import settings
-        context.update(settings=settings)
-        return super(DjangoTemplateBridge, self).render(template, context)
-
-    def render_string(self, source, context):
-        from django.conf import settings
-        context.update(settings=settings)
-        return super(DjangoTemplateBridge, self).render_string(source, context)
 
 
