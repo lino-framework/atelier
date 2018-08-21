@@ -114,6 +114,9 @@ def py_clean(ctx, batch=False):
     p = ctx.root_dir.child('tests')
     if p.exists():
         cleanup_pyc(p, batch)
+    p = ctx.root_dir.child('.eggs')
+    if p.exists():
+        rmtree_after_confirm(p, batch)
 
     files = []
     for pat in ctx.cleanable_files:

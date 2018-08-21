@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2017 by Luc Saffre.
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """Defines the :class:`InsertInputDirective` class and some
@@ -121,21 +121,26 @@ class InsertInputDirective(Directive):
             print(output)
             print('-' * 50)
 
-        content = statemachine.StringList(output.splitlines())
+        content = statemachine.StringList(
+            output.splitlines(), self.state.document.current_source)
+        # content = RSTStateMachine(output.splitlines())
 
         if self.raw_insert:
-
             self.state_machine.insert_input(content, output)
             return []
 
+        # print("20180821 {} {}".format(
+        #     self.name, self.state.document.current_source))
         if self.titles_allowed:
             node = nodes.section()
             # necessary so that the child nodes get the right source/line set
-            node.document = self.state.document
+            # self.state.parent.setup_child(node)
+            # node.document = self.state.document
             nested_parse_with_titles(self.state, content, node)
         else:
             node = nodes.paragraph()
-            node.document = self.state.document
+            # self.state.parent.setup_child(node)
+            # node.document = self.state.document
             self.state.nested_parse(content, self.content_offset, node)
 
         # following lines originally copied from

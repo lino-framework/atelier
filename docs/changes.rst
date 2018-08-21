@@ -7,9 +7,19 @@ Changes in `atelier`
 Work in progress
 ================
 
-(20180806) : The context variable ``{prj}`` must not be the 
-:attr:`project_name <atelier.projects.Project.project_name>`
-but ``SETUP_INFO['name']``.
+
+(20180821) Added support for Sphinx version is 1.8 or later.
+:func:`atelier.sphinxconf.configure` now checks the Sphinx version and
+sets the new `autodoc_default_options
+<http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_default_options>`__
+configuration value instead of the deprecated `autodoc_default_flags
+<http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html?highlight=autodoc_default_flags#confval-autodoc_default_flags>`__
+(if Sphinx is 1.8 or newer).
+
+
+(20180806) : The context variable ``{prj}`` in :envvar:`sdist_dir`
+must not be the :attr:`project_name
+<atelier.projects.Project.project_name>` but ``SETUP_INFO['name']``.
 
 (20180803) : :envvar:`sdist_dir` now supports a string template with a
 single context variable: ``{prj}`` will be replaced by the
