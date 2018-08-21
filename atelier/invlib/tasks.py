@@ -1,6 +1,12 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
+"""
+This is the module that defines the invoke namespace.
+
+It is imported by :func:`atelier.invlib.setup_from_tasks` which passes
+it to :func:`invoke.Collection.from_module`.
+"""
 
 from __future__ import print_function
 from __future__ import unicode_literals
