@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2016 by Luc Saffre.
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
-"""Sphinx setup used to build most of the documentation trees
-mainained by myself.
+"""
+Sphinx extensions and a :func:`configure` function used to build
+the documentation trees maintained by us.
 
 
 .. toctree::
@@ -11,17 +12,14 @@ mainained by myself.
 .. autosummary::
    :toctree:
 
-   insert_input
+   base
+   dirtables
    refstothis
+   insert_input
    sigal_image
    complex_tables
    blog
-   base
-   dirtables
    interproject
-
-
-
 """
 
 from __future__ import print_function
@@ -31,13 +29,13 @@ from __future__ import unicode_literals
 """Note: the `import unicode_literals` caused the following::
 
     Traceback (most recent call last):
-      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/cmdline.py", line 245, in main
+      File "/site-packages/sphinx/cmdline.py", line 245, in main
         warningiserror, tags, verbosity, parallel)
-      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/application.py", line 122, in __init__
+      File "/site-packages/sphinx/application.py", line 122, in __init__
         self.config.setup(self)
-      File "/home/luc/hgwork/atelier/atelier/sphinxconf/__init__.py", line 654, in setup
+      File "/atelier/atelier/sphinxconf/__init__.py", line 654, in setup
         indextemplate='pair: %s; management command')
-      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/application.py", line 503, in add_object_type
+      File "/site-packages/sphinx/application.py", line 503, in add_object_type
         'doc_field_types': doc_field_types})
     TypeError: type() argument 1 must be string, not unicode
     
@@ -57,13 +55,15 @@ I solved this by a manual patch in line 308 of
 import logging
 logger = logging.getLogger(__name__)
 
-import os
 import sys
 
 from unipath import Path
+from distutils.version import LooseVersion
+import sphinx
 
 def configure(globals_dict):
-    """Adds to your `conf.py` an arbitrary series of things that all my
+    """
+    Adds to your `conf.py` an arbitrary series of things that all my
     Sphinx docs configuration files have in common.
 
     To be called from inside the Sphinx `conf.py` as follows::
@@ -80,8 +80,6 @@ def configure(globals_dict):
     - source_suffix='.rst'
     - primary_domain='py'
     - pygments_style='sphinx'
-
-
     """
     filename = globals_dict['__file__']
     sys.path.append(Path(filename).parent.absolute())
@@ -105,7 +103,13 @@ def configure(globals_dict):
 
     # default config for autosummary:
     globals_dict.update(autosummary_generate=True)
-    globals_dict.update(autodoc_default_flags=['members'])
+    if LooseVersion(sphinx.__version__) < LooseVersion("1.8"):
+        globals_dict.update(autodoc_default_flags=[
+            'show-inheritance', 'members'])
+
+    else:
+        globals_dict.update(autodoc_default_options={
+            'members': None, 'show-inheritance': None})
 
     mydir = Path(__file__).parent.absolute()
     globals_dict.update(templates_path=['.templates', mydir])
@@ -120,9 +124,6 @@ def configure(globals_dict):
     globals_dict.update(pygments_style='sphinx')
 
     globals_dict.update(autodoc_member_order='bysource')
-    globals_dict.update(autodoc_default_flags=[
-        'show-inheritance', 'members'])
-
     globals_dict.update(
         autodoc_inherit_docstrings=False)
     
@@ -157,31 +158,5 @@ def version2rst(self, m):
     else:
         print("The current stable release is :doc:`%s`." % v)
         #~ print("We're currently working on :doc:`coming`.")
-
-
-from sphinx.jinja2glue import BuiltinTemplateLoader
-
-
-class DjangoTemplateBridge(BuiltinTemplateLoader):
-
-    """The :meth:`configure` method installs this as `template_bridge
-    <http://sphinx-doc.org/config.html#confval-template_bridge>`_ for
-    Sphinx.  It causes a template variable ``settings`` to be added
-    the Sphinx template context. This cannot be done using
-    `html_context
-    <http://sphinx-doc.org/config.html#confval-html_context>`_ because
-    Django settings are not pickleable.
-
-    """
-
-    def render(self, template, context):
-        from django.conf import settings
-        context.update(settings=settings)
-        return super(DjangoTemplateBridge, self).render(template, context)
-
-    def render_string(self, source, context):
-        from django.conf import settings
-        context.update(settings=settings)
-        return super(DjangoTemplateBridge, self).render_string(source, context)
 
 

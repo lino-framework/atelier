@@ -11,6 +11,10 @@ package, which installs a command ``inv`` into your Python
 environment.  This document describes the tasks and configuration
 settings for invoke_ provided by atelier.
 
+.. contents::
+  :local:
+
+
 
 How it works
 =============
@@ -23,11 +27,6 @@ following two lines::
 
   from atelier.invlib.ns import ns
   ns.setup_from_tasks(globals())
-
-You can define also user-specific or system-wide default configuration
-files.  See the `Invoke documentation
-<http://docs.pyinvoke.org/en/latest/concepts/configuration.html>`_ for
-more information.
 
 .. xfile:: tasks.py
 
@@ -47,6 +46,10 @@ your :xfile:`tasks.py` file. Example content::
 You can specify user-wide invoke settings in a file named
 :xfile:`.invoke.py` which must be in your home directory.
 
+You can also define system-wide default configuration files.  See the
+`Invoke documentation
+<http://docs.pyinvoke.org/en/latest/concepts/configuration.html>`_ for
+more information.
            
 
 Tasks

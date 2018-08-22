@@ -1,6 +1,12 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
+"""
+This is the module that defines the invoke namespace.
+
+It is imported by :func:`atelier.invlib.setup_from_tasks` which passes
+it to :func:`invoke.Collection.from_module`.
+"""
 
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -74,7 +80,7 @@ def rmtree_after_confirm(p, batch=False):
         p.rmtree()
 
 
-def cleanup_pyc(p, batch=False):
+def cleanup_pyc(p, batch=False):  # no longer used
     """Thanks to oddthinking on http://stackoverflow.com/questions/2528283
     """
     for root, dirs, files in os.walk(p):
@@ -96,24 +102,40 @@ def sphinx_clean(ctx, batch=False):
 
 
 def py_clean(ctx, batch=False):
-    """Delete dangling `.pyc` files.
-
     """
-    if atelier.current_project.main_package is not None:
-        try:
-            p = Path(atelier.current_project.main_package.__file__).parent
-            cleanup_pyc(p, batch)
-        except AttributeError:
-            # happened 20170310 in namespace package:
-            # $ pywhich commondata
-            # Traceback (most recent call last):
-            #   File "<string>", line 1, in <module>
-            # AttributeError: 'module' object has no attribute '__file__'
-            pass
+    Delete :xfile:`.pyc` files, :xfile:`.eggs` and :xfile:`__cache__`
+    directories under the project's root direcotory.
+    """
+    for root, dirs, files in os.walk(ctx.root_dir):
+        for fn in files:
+            if fn.endswith(".pyc"):
+                full_path = os.path.join(root, fn)
+                if batch or confirm("Remove file %s:" % full_path):
+                    os.remove(full_path)
+    # cleanup_pyc(ctx.root_dir, batch)
         
-    p = ctx.root_dir.child('tests')
+    # if atelier.current_project.main_package is not None:
+    #     try:
+    #         p = Path(atelier.current_project.main_package.__file__).parent
+    #         cleanup_pyc(atelier.current_project.root_dir, batch)
+    #     except AttributeError:
+    #         # happened 20170310 in namespace package:
+    #         # $ pywhich commondata
+    #         # Traceback (most recent call last):
+    #         #   File "<string>", line 1, in <module>
+    #         # AttributeError: 'module' object has no attribute '__file__'
+    #         pass
+
+    for root, dirs, files in os.walk(ctx.root_dir):
+        p = Path(root).child('__pycache__')
+        rmtree_after_confirm(p, batch)
+        
+    # p = ctx.root_dir.child('tests')
+    # if p.exists():
+    #     cleanup_pyc(p, batch)
+    p = ctx.root_dir.child('.eggs')
     if p.exists():
-        cleanup_pyc(p, batch)
+        rmtree_after_confirm(p, batch)
 
     files = []
     for pat in ctx.cleanable_files:
