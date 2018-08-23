@@ -254,28 +254,36 @@ def setup_sdist(ctx):
 
 
 @task(name='release')
-def pypi_release(ctx):
-    "Publish a new version to PyPI."
+def pypi_release(ctx, notag=False):
+    """
+    Publish a new version to PyPI.
+
+    :param bool notag: If it's True, the command will not create a new tag.
+    """
     atelier.current_project.load_info()
     info = atelier.current_project.SETUP_INFO
     if not info.get('version'):
         return
     version = info['version']
     # dist_dir = Path(ctx.sdist_dir).child(info['name'])
-    dist_dir = ctx.sdist_dir
+    dist_dir = ctx.sdist_dir.format(prj=info.get('name')) + '/*'
 
     show_revision_status(ctx)
     show_pypi_status(ctx, True)
 
     must_confirm(RELEASE_CONFIRM % info)
 
-    args = [sys.executable, "setup.py"]
-    args += ["sdist", "--formats=gztar"]
-    args += ["--dist-dir", dist_dir]
-    args += ["upload"]
+    # args = [sys.executable, "setup.py"]
+    # args += ["sdist", "--formats=gztar"]
+    # args += ["--dist-dir", dist_dir]
+    # args += ["upload"]
+    # sdist_cmd = ' '.join(args)
+    args = ["twine", "upload"]
+    # args +=["--repository-url",""]
+    args += [dist_dir]
     sdist_cmd = ' '.join(args)
-    
-    if ctx.revision_control_system == 'git':
+
+    if ctx.revision_control_system == 'git' and not notag:
         args = ["git", "tag"]
         args += ["-a", version]
         args += ["-m", "'Release %(name)s %(version)s.'" % info]
