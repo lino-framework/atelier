@@ -124,11 +124,15 @@ Commands for deployment
 
 .. command:: inv release
 
-    Upload the source distribution archive already created by the :cmd:`inv sdist`, it to PyPI.
-    The command has ``notag`` argument.In the case this argument is set to True, it will create a version tag if
-    :envvar:`revision_control_system` is ``'git'``.This command will fail if this project has previously been
-    released with the same version. Default value is False.
-    This requires that the package `twine
+    Upload the source distribution archive previously created by
+    :cmd:`inv sdist`, publishing it to PyPI.  This will fail if the
+    project has previously been released with the same version.
+
+    Create and push an annotated version tag "vX.Y.Z" if
+    :envvar:`revision_control_system` is ``'git'``.  This can be
+    skipped by specifying ``--notag``.
+
+    This command requires that `twine
     <https://pypi.python.org/pypi/twine>`_ is installed.
 
 

@@ -7,9 +7,9 @@ Changes in `atelier`
 Work in progress
 ================
 
-(20180901) : Add a new argument ``notag`` for the :cmd:`inv release` command.
-If ``notag`` is True, the command will not create a new tag otherwise a new tag
-will created with the version of package as value.False is the default value.
+(20180901) : The :cmd:`inv release` command now also pushes the
+version tag.  Tag creation can be skipped by specifying the new
+argument ``--notag``.
 
 (20180821) Added support for Sphinx version is 1.8 or later.
 :func:`atelier.sphinxconf.configure` now checks the Sphinx version and
