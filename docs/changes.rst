@@ -7,7 +7,7 @@ Changes in `atelier`
 Work in progress
 ================
 
-(20180901) : Add a new argument ``notag`` for The :cmd:`inv release` command.
+(20180901) : Add a new argument ``notag`` for the :cmd:`inv release` command.
 If ``notag`` is True, the command will not create a new tag otherwise a new tag
 will created with the version of package as value.False is the default value.
 
