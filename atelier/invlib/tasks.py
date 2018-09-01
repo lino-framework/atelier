@@ -26,10 +26,10 @@ from atelier.projects import load_projects
 from unipath import Path
 
 try:
-    from invoke import ctask as task #, tasks
+    from invoke import ctask as task  # , tasks
     # before version 0.13 (see http://www.pyinvoke.org/changelog.html)
 except ImportError:
-    from invoke import task #, tasks
+    from invoke import task  # , tasks
 
 from invoke.exceptions import Exit
 from invoke import run
@@ -76,7 +76,7 @@ def rmtree_after_confirm(p, batch=False):
     if not p.exists():
         return
     if batch or confirm(
-                    "OK to remove %s and everything under it?" % p.absolute()):
+            "OK to remove %s and everything under it?" % p.absolute()):
         p.rmtree()
 
 
@@ -113,7 +113,7 @@ def py_clean(ctx, batch=False):
                 if batch or confirm("Remove file %s:" % full_path):
                     os.remove(full_path)
     # cleanup_pyc(ctx.root_dir, batch)
-        
+
     # if atelier.current_project.main_package is not None:
     #     try:
     #         p = Path(atelier.current_project.main_package.__file__).parent
@@ -129,7 +129,7 @@ def py_clean(ctx, batch=False):
     for root, dirs, files in os.walk(ctx.root_dir):
         p = Path(root).child('__pycache__')
         rmtree_after_confirm(p, batch)
-        
+
     # p = ctx.root_dir.child('tests')
     # if p.exists():
     #     cleanup_pyc(p, batch)
@@ -284,9 +284,16 @@ def pypi_release(ctx, notag=False):
     sdist_cmd = ' '.join(args)
 
     if ctx.revision_control_system == 'git' and not notag:
+        tag_name = "v{}".format(version)
         args = ["git", "tag"]
-        args += ["-a", version]
+        args += ["-a", tag_name]
         args += ["-m", "'Release %(name)s %(version)s.'" % info]
+        res = ctx.run(' '.join(args), pty=True, warn=True)
+        if res.exited:
+            print("You might want to ignore this and "
+                  "manually run:\n{}".format(sdist_cmd))
+            return
+        args = ["git", "push", "origin", tag_name]
         res = ctx.run(' '.join(args), pty=True, warn=True)
         if res.exited:
             print("You might want to ignore this and "
@@ -313,21 +320,20 @@ def test_sdist(ctx):
         ctx.run("rm -Rf tmp/tmp", pty=True)
         ctx.run("virtualenv tmp/tmp", pty=True)
         activate = ". tmp/tmp/bin/activate"
-        
+
         def vrun(cmd):
             cmd = activate + ';' + cmd
             ctx.run(cmd, pty=True)
-            
+
         vrun("pip install --download {0} {1}".format(ctx.pypi_dir, info['name']))
         # DEPRECATION: pip install --download has been deprecated and will be removed in the future. Pip now has a download command that should be used instead.
 
+        # vrun("pip download {0}".format(info['name']))
 
-        # vrun("pip download {0}".format(info['name']))        
-        
         vrun("pip install --no-allow-external --no-index --no-cache-dir -f {} -f {} {}".format(
             ctx.sdist_dir, ctx.pypi_dir, info['name']))
         # vrun("pip install -f {0} {1}".format(ctx.sdist_dir, info['name'])
-             
+
         vrun("inv test")
 
 
@@ -453,6 +459,7 @@ def publish(ctx):
 
     for tree in atelier.current_project.get_doc_trees():
         tree.publish_docs(ctx)
+
 
 def show_revision_status(ctx):
     if ctx.revision_control_system == 'hg':
@@ -595,7 +602,6 @@ def git_projects():
             yield prj
 
 
-
 @task(name='ct')
 def commited_today(ctx, today=None):
     """Print all today's commits to stdout."""
@@ -612,12 +618,12 @@ def commited_today(ctx, today=None):
             before=tomorrow.strftime("%Y-%m-%d"))
     if False:
         list_options.update(max_count=5)
-        
+
     rows = []
 
     def load(prj):
 
-        #repo = Repo(cfg['root_dir'])
+        # repo = Repo(cfg['root_dir'])
         repo = Repo(prj.root_dir)
 
         it = list(repo.iter_commits(**list_options))
@@ -648,7 +654,7 @@ def commited_today(ctx, today=None):
             # ts = time.strftime("%H:%M", time.gmtime(c.committed_date))
             ts = time.strftime("%Y-%m-%d %H:%M", time.localtime(c.committed_date))
             rows.append([ts, desc, fmtcommit(c)])
-            
+
     for p in git_projects():
         load(p)
 
@@ -663,7 +669,7 @@ def commited_today(ctx, today=None):
 #     from git import Repo
 #     for p in git_projects():
 #         with cd(p.root_dir):
-            
+
 
 # from importlib import import_module
 
@@ -735,5 +741,3 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
             ctx.run('open {}/index.html'.format(pth), pty=True)
         print('{}/index.html has been generated.'.format(pth))
     ctx.run('coverage erase', pty=True)
-
-
