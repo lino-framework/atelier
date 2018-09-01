@@ -125,12 +125,18 @@ Commands for deployment
 .. command:: inv release
 
     Upload the source distribution archive previously created by
-    :cmd:`inv sdist`, publishing it to PyPI.  This will fail if the
-    project has previously been released with the same version.
+    :cmd:`inv sdist` to PyPI, i.e. publish an official version of your
+    package.
 
-    Create and push an annotated version tag "vX.Y.Z" if
-    :envvar:`revision_control_system` is ``'git'``.  This can be
-    skipped by specifying ``--notag``.
+    Before doing anything, it shows the status of your local
+    repository (which should be clean) and a summary of the project
+    status on PyPI.  It then asks a confirmation.  The release will
+    fail if the project has previously been published on PyPI with the
+    same version.
+
+    If :envvar:`revision_control_system` is ``'git'``, create and push
+    an annotated version tag "vX.Y.Z".  This step can be skipped by
+    specifying ``--notag``.
 
     This command requires that `twine
     <https://pypi.python.org/pypi/twine>`_ is installed.

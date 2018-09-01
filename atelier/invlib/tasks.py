@@ -253,12 +253,13 @@ def setup_sdist(ctx):
     ctx.run(' '.join(args), pty=True)
 
 
-@task(name='release')
+@task(name='release', help={
+    'notag': "Skip automatic creation of version tag "})
 def pypi_release(ctx, notag=False):
     """
     Publish a new version to PyPI.
+    See http://atelier.lino-framework.org/invlib.html for details.
 
-    :param bool notag: If it's True, the command will not create a new tag.
     """
     atelier.current_project.load_info()
     info = atelier.current_project.SETUP_INFO
