@@ -14,12 +14,11 @@ TODO: rename :func:`configure` to intersphinx_mapping
 import six
 
 from unipath import Path
-from importlib import import_module
-
+# from importlib import import_module
 from sphinx.util import logging
 logger = logging.getLogger(__name__)
 
-from invoke import Context
+# from invoke import Context
 
 # import atelier
 from atelier.projects import load_projects, get_project_info_from_mod
@@ -27,7 +26,7 @@ from atelier.projects import load_projects, get_project_info_from_mod
 
 USE_LOCAL_BUILDS = False
 # Whether to use objects.inv files from other local doctrees if they
-# exist.  E.g. on Travis no other projects are installed from source:
+# exist.  E.g. on Travis no other projects are installed from source.
 
 
 def configure(globals_dict, prjspec=None):
@@ -40,9 +39,10 @@ def configure(globals_dict, prjspec=None):
     to the atelier convention of having two attributes
     :envvar:`doc_trees` and :envvar:`intersphinx_urls`.  
 
-    If `prjspec` is not given, then all projects of the atelier (see
-    :ref:`atelier.config`) that come *before* the current project are
-    added.
+    If `prjspec` is not given, then all projects of the atelier that
+    come *before* the current project are added.  Projects are
+    iterated in the same order as they were defined in
+    :ref:`atelier.config`)
     """
     
     intersphinx_mapping = dict()
@@ -65,8 +65,8 @@ def configure(globals_dict, prjspec=None):
             if this_conf_file.startswith(p.root_dir):
                 break
             prjlist.append(p)
-        # logger.warning("20180706 {}".format(prjlist))
         
+    # logger.info("20180907 prjlist {}".format(prjlist))
     for prj in prjlist:
         # This will load the `tasks.py` of other
         # projects. Possible side effects.
@@ -78,17 +78,21 @@ def configure(globals_dict, prjspec=None):
         count = 0
         for doc_tree in prj.get_doc_trees():
             if not doc_tree.has_intersphinx:
+                logger.info("%s has no intersphinx", p)
                 continue
             count += 1
             p = None
             if USE_LOCAL_BUILDS:
                 src_path = doc_tree.src_path
-                if src_path and this_conf_file == src_path.child('conf.py'):
+                if src_path is None or this_conf_file == src_path.child('conf.py'):
                     break
                 # p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
                 p = src_path.child('.build', 'objects.inv')
-                if not p.exists():
+                if p.exists():
+                    logger.info("Found local {}".format(p))
+                else:
                     p = None
+                    logger.info("File %s does not exist", p)
                 
             
             # The unique identifier can be used to prefix cross-reference targets
