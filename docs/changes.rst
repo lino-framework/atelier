@@ -7,6 +7,9 @@ Changes in `atelier`
 Work in progress
 ================
 
+Version 1.1.9 (released 2018-09-19)
+===================================
+
 (20180901) : The :cmd:`inv release` command now also pushes the
 version tag.  Tag creation can be skipped by specifying the new
 argument ``--notag``.
