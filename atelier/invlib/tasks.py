@@ -624,6 +624,7 @@ def commited_today(ctx, today=None):
 
     def load(prj):
 
+        # prj.load_info()
         # repo = Repo(cfg['root_dir'])
         repo = Repo(prj.root_dir)
 
@@ -649,7 +650,7 @@ def commited_today(ctx, today=None):
 
         # url = prj.SETUP_INFO.get('url', "oops")
         # desc = "`%s <%s>`__" % (prj.name, url)
-        desc = "*{}*".format(prj.name)
+        desc = "*{}*".format(prj.nickname)
 
         for c in it:
             # ts = time.strftime("%H:%M", time.gmtime(c.committed_date))
