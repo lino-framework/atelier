@@ -267,7 +267,8 @@ def pypi_release(ctx, notag=False):
         return
     version = info['version']
     # dist_dir = Path(ctx.sdist_dir).child(info['name'])
-    dist_dir = ctx.sdist_dir.format(prj=info.get('name')) + '/*'
+    dist_dir = ctx.sdist_dir.format(prj=info.get('name'))
+    dist_dir += "/{name}-{version}.tar.gz".format(**info)
 
     show_revision_status(ctx)
     show_pypi_status(ctx, True)
