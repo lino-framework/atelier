@@ -144,6 +144,10 @@ class SphinxTree(DocTree):
             if language != ctx.languages[0]:
                 build_dir = build_dir.child(language)
                 # print 20130726, build_dir
+                
+        # seems that the default location for the .doctrees directory
+        # is no longer in .build but the source directory.
+        args += ['-d', build_dir.child('.doctrees')]
         if ctx.tolerate_sphinx_warnings:
             args += ['-w', 'warnings_%s.txt' % builder]
         else:

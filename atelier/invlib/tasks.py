@@ -98,6 +98,7 @@ def sphinx_clean(ctx, batch=False):
 
     """
     for b in atelier.current_project.get_doc_trees():
+        rmtree_after_confirm(b.src_path.child('.doctrees'), batch)
         rmtree_after_confirm(b.out_path, batch)
 
 
