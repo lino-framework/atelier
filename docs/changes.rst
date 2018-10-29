@@ -7,6 +7,14 @@ Changes in `atelier`
 Work in progress
 ================
 
+Version 1.1.10 (released 2018-10-29)
+====================================
+
+(20181029) The :cmd:`inv release` command now creates a *branch*
+instead of a *tag* (:ticket:`2599` ).
+
+
+
 Version 1.1.9 (released 2018-09-19)
 ===================================
 
