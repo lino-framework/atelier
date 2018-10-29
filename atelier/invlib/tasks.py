@@ -288,9 +288,10 @@ def pypi_release(ctx, notag=False):
 
     if ctx.revision_control_system == 'git' and not notag:
         tag_name = "v{}".format(version)
-        args = ["git", "tag"]
-        args += ["-a", tag_name]
-        args += ["-m", "'Release %(name)s %(version)s.'" % info]
+        args = ["git", "branch", tag_name]
+        # args = ["git", "tag"]
+        # args += ["-a", tag_name]
+        # args += ["-m", "'Release %(name)s %(version)s.'" % info]
         res = ctx.run(' '.join(args), pty=True, warn=True)
         if res.exited:
             print("You might want to ignore this and "
