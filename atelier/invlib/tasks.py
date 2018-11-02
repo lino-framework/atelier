@@ -221,11 +221,12 @@ def write_readme(ctx):
 
 
 @task(write_readme, name='bd')
-def build_docs(ctx, *cmdline_args):
+def build_docs(ctx, only=None):
     """Build docs. Build all Sphinx HTML doctrees for this project. """
     # print("Build docs for {}".format(atelier.current_project))
     for tree in atelier.current_project.get_doc_trees():
-        tree.build_docs(ctx, *cmdline_args)
+        if only is None or tree.rel_path == only:
+            tree.build_docs(ctx)
 
 
 @task(name='clean')
@@ -456,13 +457,14 @@ def edit_blog_entry(ctx, today=None):
 
 
 @task(name='pd')
-def publish(ctx):
+def publish(ctx, only=None):
     """Publish docs. Upload docs to public web server. """
     if not ctx.docs_rsync_dest:
         raise MissingConfig("docs_rsync_dest")
 
     for tree in atelier.current_project.get_doc_trees():
-        tree.publish_docs(ctx)
+        if only is None or tree.rel_path == only:
+            tree.publish_docs(ctx)
 
 
 def show_revision_status(ctx):

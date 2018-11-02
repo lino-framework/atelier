@@ -7,6 +7,10 @@ Changes in `atelier`
 Work in progress
 ================
 
+(20181102) added an option --only (or -o) to :cmd:`inv bd` and
+:cmd:`inv pd` because in book we have now already 4 doctrees and
+sometimes you might want to build only one of them.
+
 Version 1.1.10 (released 2018-10-29)
 ====================================
 
