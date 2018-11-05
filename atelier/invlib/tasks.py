@@ -678,7 +678,7 @@ def commited_today(ctx, today=None):
 #         with cd(p.root_dir):
 
 
-# from importlib import import_module
+from importlib import import_module
 
 def run_in_demo_projects(ctx, py_cmd, cov=False):
     """
@@ -686,10 +686,12 @@ def run_in_demo_projects(ctx, py_cmd, cov=False):
 
     See also :attr:`ctx.demo_projects`.
     """
-    for p in ctx.demo_projects:
+    for dpname in ctx.demo_projects:
+        dpmodule = import_module(dpname)
+        pth = Path(dpmodule.__file__).parent
         # join each demo project to root_dir to avoid failure when
         # `inv prep` is invoked from a subdir of root.
-        with cd(os.path.join(ctx.root_dir, p)):
+        with cd(pth):
             if cov:
                 cmd = "coverage run --append " + py_cmd
                 datacovfile = ctx.root_dir.child('.coverage')
