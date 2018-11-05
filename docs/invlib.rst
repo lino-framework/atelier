@@ -340,6 +340,9 @@ uses :mod:`atelier.invlib`.
 
     The list of *Django demo projects* included in this project.
 
+    Every item of this list is the full Python path of a package which
+    must have a :xfile:`manage.py` file.
+
     Django demo projects are used by the test suite and the Sphinx
     documentation.  Before running :cmd:`inv test` or :cmd:`inv bd`,
     they must have been initialized with :cmd:`inv prep`.
