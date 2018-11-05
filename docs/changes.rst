@@ -7,6 +7,13 @@ Changes in `atelier`
 Work in progress
 ================
 
+Version 1.1.11 (released 2018-11-05)
+====================================
+
+(20181105) changed the syntax of :envvar:`demo_projects`: instead of
+specifying paths (relative to the project's :attr:`root_dir`) we now
+specify them as Python modules.
+
 (20181102) added an option --only (or -o) to :cmd:`inv bd` and
 :cmd:`inv pd` because in book we have now already 4 doctrees and
 sometimes you might want to build only one of them.
