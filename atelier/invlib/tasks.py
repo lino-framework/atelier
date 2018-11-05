@@ -701,7 +701,7 @@ def run_in_demo_projects(ctx, py_cmd, cov=False):
             else:
                 cmd = sys.executable + ' ' + py_cmd
             print("-" * 80)
-            print("Run in demo project {0}\n$ {1} :".format(p, cmd))
+            print("Run in demo project {0}\n$ {1} :".format(dpname, cmd))
             ctx.run(cmd, pty=True)
 
 
