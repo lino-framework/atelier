@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2016-2017 by Luc Saffre.
+# Copyright 2016-2017 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """A Sphinx extension which adds the :rst:dir:`refstothis` directive.

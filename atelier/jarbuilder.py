@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2016 by Luc Saffre.
+# Copyright 2013-2016 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """This is an extension for :mod:`atelier.fablib` for managing Java

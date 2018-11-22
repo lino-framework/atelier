@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2016 by Luc Saffre.
+# Copyright 2011-2016 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 r"""A library of utilities to programmatically generate chunks of

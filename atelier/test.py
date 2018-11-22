@@ -1,4 +1,4 @@
-# Copyright 2013-2017 by Luc Saffre.
+# Copyright 2013-2017 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """

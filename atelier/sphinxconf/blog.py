@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2017 by Luc Saffre.
+# Copyright 2011-2017 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """This Sphinx extension defines the :rst:dir:`blogger_year` and

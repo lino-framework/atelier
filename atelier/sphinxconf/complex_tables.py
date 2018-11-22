@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2016 by Luc Saffre.
+# Copyright 2011-2016 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :rst:dir:`textimage` and :rst:dir:`complextable`
