@@ -107,7 +107,8 @@ def configure(globals_dict, prjspec=None):
             #     k = prj.nickname
             # else:
             #     k = prj.nickname + doc_tree.replace('_', '')
-            urls = getattr(prj.main_package, 'intersphinx_urls', {})
+            # urls = getattr(prj.main_package, 'intersphinx_urls', {})
+            urls = prj.get_xconfig('intersphinx_urls') or {}
             url = urls.get(doc_tree.rel_path)
             if url:
                 intersphinx_mapping[k] = (url, p)

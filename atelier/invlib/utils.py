@@ -46,7 +46,7 @@ class DocTree(object):
             src_path = prj.root_dir.child(rel_doc_tree)
         # The src_path may not exist if this is on a Project which
         # has been created from a normally installed main_package
-        # (because there is has no source code).
+        # (because there it has no source code).
         if src_path.exists():
             self.src_path = src_path
         

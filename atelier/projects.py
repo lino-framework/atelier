@@ -229,6 +229,7 @@ class Project(object):
             'pypi_dir': root_dir.child('.pypi_cache'),
             'use_dirhtml': False,
             'doc_trees': ['docs'],
+            'intersphinx_urls': {},
         }
             
 
@@ -306,6 +307,23 @@ class Project(object):
             s += "!"
         return s
         
+    def get_xconfig(self, name, default=None):
+        """Return the specified setting from either main module or tasks.py.
+
+        TODO: explain what this is good for.
+        """
+        self.load_info()
+        if self.inv_namespace is not None:
+            cfg = self.inv_namespace.configuration()
+            default = cfg.get(name, default)
+        if self.main_package:
+            # if name in cfg:
+            #     msg = "{} configures both {} and main_package. "
+            #     msg += "If you have a main_package then you must set "
+            #     msg += "doc_trees there."
+            #     raise Exception(msg.format(self, name))
+            return getattr(self.main_package, name, default)
+        return default
 
     def get_doc_trees(self):
         """
@@ -313,21 +331,11 @@ class Project(object):
         :envvar:`doc_trees`.
         """
         # print("20180504 {} get_doc_tree() {}".format(self, self.config))
-        self.load_info()
         # if not hasattr(ctx, 'doc_trees'):
         #     return
         # cfg = self.config
-        if self.main_package:
-            # if 'doc_trees' in self.config:
-            #     msg = "{} configures both doc_trees and main_package. "
-            #     msg += "If you have a main_package then you must set "
-            #     msg += "doc_trees there."
-            #     raise Exception(msg.format(self))
-            doc_trees = getattr(self.main_package, 'doc_trees', [])
-        elif self.inv_namespace is not None:
-            cfg = self.inv_namespace.configuration()
-            doc_trees = cfg.get('doc_trees')
-        else:
+        doc_trees = self.get_xconfig('doc_trees')
+        if doc_trees is None or len(doc_trees) == 0:
             return
         # print("20180504 {} get_doc_tree() {} {}".format(
         #     self, self.main_package, doc_trees))

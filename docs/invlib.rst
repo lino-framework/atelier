@@ -285,9 +285,9 @@ uses :mod:`atelier.invlib`.
     This is used when this project's documentation is added to a
     doctree using :mod:`atelier.sphinxconf.interproject`.
     
-    If the project has a main package which has an attribute
+    If the project has a main package which defines an attribute
     :envvar:`intersphinx_urls`,
-    then this value will be used.
+    then this will override any value define in :xfile:`tasks.py`.
 
 .. envvar:: doc_trees
 
@@ -295,9 +295,9 @@ uses :mod:`atelier.invlib`.
     containing Sphinx document trees.
     Default value is ``['docs']``
 
-    If the project has a main package which has an attribute
+    If the project has a main package which defines an attribute
     :envvar:`doc_trees`,
-    then this value will be used.
+    then this will override any value define in :xfile:`tasks.py`.
 
 .. envvar:: cleanable_files
 

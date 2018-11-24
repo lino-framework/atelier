@@ -7,6 +7,12 @@ Changes in `atelier`
 Work in progress
 ================
 
+Version 1.1.12 (released 2018-11-24)
+====================================
+
+(20181124) The :envvar:`intersphinx_urls` can now be specified in
+:xfile:`tasks.py` for projects without a :attr:`main_module`.
+
 Version 1.1.11 (released 2018-11-05)
 ====================================
 

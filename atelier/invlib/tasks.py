@@ -98,8 +98,9 @@ def sphinx_clean(ctx, batch=False):
 
     """
     for b in atelier.current_project.get_doc_trees():
-        rmtree_after_confirm(b.src_path.child('.doctrees'), batch)
-        rmtree_after_confirm(b.out_path, batch)
+        if b.src_path:
+            rmtree_after_confirm(b.src_path.child('.doctrees'), batch)
+            rmtree_after_confirm(b.out_path, batch)
 
 
 def py_clean(ctx, batch=False):
@@ -225,8 +226,9 @@ def build_docs(ctx, only=None):
     """Build docs. Build all Sphinx HTML doctrees for this project. """
     # print("Build docs for {}".format(atelier.current_project))
     for tree in atelier.current_project.get_doc_trees():
-        if only is None or tree.rel_path == only:
-            tree.build_docs(ctx)
+        if tree.src_path:
+           if only is None or tree.rel_path == only:
+                tree.build_docs(ctx)
 
 
 @task(name='clean')
@@ -463,8 +465,9 @@ def publish(ctx, only=None):
         raise MissingConfig("docs_rsync_dest")
 
     for tree in atelier.current_project.get_doc_trees():
-        if only is None or tree.rel_path == only:
-            tree.publish_docs(ctx)
+        if tree.src_path:
+            if only is None or tree.rel_path == only:
+                tree.publish_docs(ctx)
 
 
 def show_revision_status(ctx):
