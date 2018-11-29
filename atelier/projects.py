@@ -83,7 +83,7 @@ def get_project_info_from_mod(modname):
     fn = Path(m.__file__)
     prj = get_project_from_tasks(fn.parent)
     if prj is None:
-        # it can be an installed package in site-packages without
+        # it can be a package installed in site-packages without
         # tasks.py file
         root_dir = fn.parent.absolute().resolve()
         prj = _PROJECTS_DICT.get(root_dir)
