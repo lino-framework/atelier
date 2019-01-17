@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2017 by Rumma & Ko Ltd.
+# Copyright 2011-2019 Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """This Sphinx extension defines the :rst:dir:`blogger_year` and
@@ -178,17 +178,17 @@ class MainBlogIndexDirective(InsertInputDirective):
         text = ''
         years = get_blogger_years(env, blogname)
     
-        hidden = []
-        visible = []
+        # hidden = []
+        # visible = []
 
         # for y in years:
             # text += "\n    {0}/index".format(blogger_year.year)
             # visible.append(str(blogger_year.year) + "/index")
-        if len(years) > 1:
-            hidden = years[:-1]
-            visible = years[-1:]
-        else:
-            visible = years
+        # if len(years) > 1:
+        #     hidden = years[:-1]
+        #     visible = years[-1:]
+        # else:
+        #     visible = years
 
         text += navigator(years, None)
 
