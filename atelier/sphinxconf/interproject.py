@@ -61,7 +61,7 @@ def configure(globals_dict, prjspec=None):
             
     else:
         prjlist = []
-        for p in load_projects():
+        for p in reversed(list(load_projects())):
             if this_conf_file.startswith(p.root_dir):
                 break
             prjlist.append(p)

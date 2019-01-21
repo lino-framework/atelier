@@ -7,6 +7,14 @@ Changes in `atelier`
 Work in progress
 ================
 
+Added a ``--reverse`` option to :command:`pp`.
+Use this option for commands like :command:`inv bd` and :command:`inv pd`.
+
+For example imagine you have four projects a b c d (defined in that order in
+your config) where d contains the specs and API docs for b and c.
+
+
+
 Version 1.1.12 (released 2018-11-24)
 ====================================
 

@@ -1,5 +1,5 @@
 #!python
-# Copyright 2013-2018 Rumma & Ko Ltd
+# Copyright 2013-2019 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 from __future__ import print_function
@@ -25,12 +25,18 @@ from argh import dispatch_command, arg, CommandError
      help='Only until that project, skip those after.')
 @arg('-v', '--voice',
      help='Speak the result through speakers when terminated.')
-def main(voice=False, start=None, after=None, until=None, showlist=False, *cmd):
+@arg('-r', '--reverse',
+     help='Loop in reverse order.')
+def main(voice=False, start=None, after=None, until=None, showlist=False, reverse=False, *cmd):
     """Loop over all projects, executing the given shell command in the
 root directory of each project.  See
 http://atelier.lino-framework.org/usage.html
 
     """
+
+    projects = list(load_projects())
+    if reverse:
+        projects.reverse()
     if showlist:
         headers = (
             'Project',
@@ -53,7 +59,7 @@ http://atelier.lino-framework.org/usage.html
             # yield ', '.join(config['doc_trees'])
 
         print(rstgen.table(headers, [
-            tuple(cells(p)) for p in load_projects()]))
+            tuple(cells(p)) for p in projects]))
         if len(cmd) == 0:
             return
             
@@ -67,7 +73,7 @@ http://atelier.lino-framework.org/usage.html
             subprocess.call(cmd)
 
     skipping = start is not None or after is not None
-    for prj in load_projects():
+    for prj in projects:
         if cmd[0] == 'git':
             prj.load_info()
             if prj.config['revision_control_system'] != 'git':
