@@ -18,10 +18,10 @@ defined in your :xfile:`~/.atelier/config.py`.
 This is important if you maintain several projects whose docs use intersphinx
 to refer to each other. In such a context you will use the ``--reverse`` option
 for commands like :command:`inv bd` and :command:`inv pd`. You can then run a
-full pp tour on my machine::
+full pp tour as follows::
 
-    $ pp inv prep test
     $ pp -rv inv clean -b bd pd
+    $ pp inv prep test
 
 Rule of thumb : project a must come before project b if
 
