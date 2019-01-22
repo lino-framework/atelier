@@ -61,8 +61,10 @@ def configure(globals_dict, prjspec=None):
             
     else:
         prjlist = []
+        # for p in reversed(list(load_projects())):
         for p in reversed(list(load_projects())):
             if this_conf_file.startswith(p.root_dir):
+                # print("20190122 {} startswith  {}".format(this_conf_file, p.root_dir))
                 break
             prjlist.append(p)
         
