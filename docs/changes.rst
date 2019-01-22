@@ -7,12 +7,26 @@ Changes in `atelier`
 Work in progress
 ================
 
+2019-01-21
+==========
+
 Added a ``--reverse`` option to :command:`pp`.
-Use this option for commands like :command:`inv bd` and :command:`inv pd`.
 
-For example imagine you have four projects a b c d (defined in that order in
-your config) where d contains the specs and API docs for b and c.
+You can now run a command in all projects in the reversed order of what is
+defined in your :xfile:`~/.atelier/config.py`.
 
+This is important if you maintain several projects whose docs use intersphinx
+to refer to each other. In such a context you will use the ``--reverse`` option
+for commands like :command:`inv bd` and :command:`inv pd`. You can then run a
+full pp tour on my machine::
+
+    $ pp inv prep test
+    $ pp -rv inv clean -b bd pd
+
+Rule of thumb : project a must come before project b if
+
+- code in a requires code in b to be installed
+- docs in a require intersphinx references to docs of b
 
 
 Version 1.1.12 (released 2018-11-24)
