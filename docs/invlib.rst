@@ -134,9 +134,9 @@ Commands for deployment
     fail if the project has previously been published on PyPI with the
     same version.
 
-    If :envvar:`revision_control_system` is ``'git'``, create and push
-    an annotated version tag "vX.Y.Z".  This step can be skipped by
-    specifying ``--notag``.
+    If :envvar:`revision_control_system` is ``'git'``, create and push a
+    version branch "vX.Y.Z".  This step can be skipped by specifying
+    ``--nobranch``.
 
     This command requires that `twine
     <https://pypi.python.org/pypi/twine>`_ is installed.

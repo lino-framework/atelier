@@ -4,8 +4,11 @@
 Changes in `atelier`
 =======================
 
-Work in progress
-================
+
+2019-02-12
+==========
+
+The ``notag`` option of :cmd:`inv release` was renamed to ``nobranch``.
 
 2019-01-21
 ==========

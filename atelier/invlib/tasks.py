@@ -258,8 +258,8 @@ def setup_sdist(ctx):
 
 
 @task(name='release', help={
-    'notag': "Skip automatic creation of version tag "})
-def pypi_release(ctx, notag=False):
+    'nobranch': "Skip automatic creation of version branch."})
+def pypi_release(ctx, nobranch=False):
     """
     Publish a new version to PyPI.
     See http://atelier.lino-framework.org/invlib.html for details.
@@ -288,8 +288,9 @@ def pypi_release(ctx, notag=False):
     # args +=["--repository-url",""]
     args += [dist_dir]
     sdist_cmd = ' '.join(args)
-
-    if ctx.revision_control_system == 'git' and not notag:
+    if ctx.revision_control_system == 'git' and not nobranch:
+        msg = "You might want to ignore this and manually run:\n{}".format(
+            sdist_cmd)
         tag_name = "v{}".format(version)
         args = ["git", "branch", tag_name]
         # args = ["git", "tag"]
@@ -297,14 +298,12 @@ def pypi_release(ctx, notag=False):
         # args += ["-m", "'Release %(name)s %(version)s.'" % info]
         res = ctx.run(' '.join(args), pty=True, warn=True)
         if res.exited:
-            print("You might want to ignore this and "
-                  "manually run:\n{}".format(sdist_cmd))
+            print(msg)
             return
         args = ["git", "push", "origin", tag_name]
         res = ctx.run(' '.join(args), pty=True, warn=True)
         if res.exited:
-            print("You might want to ignore this and "
-                  "manually run:\n{}".format(sdist_cmd))
+            print(msg)
             return
 
     # pypi_register(ctx)
