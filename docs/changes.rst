@@ -11,6 +11,12 @@ Changes in `atelier`
 :mod:`atelier.sphinxconf.interproject` now inspects whether an environment variable
 :envvar:`ATELIER_USE_LOCAL_BUILDS` is set.
 
+Fixed a bug in :mod:`atelier.sphinxcontrib.interproject` which caused it to not
+set `intersphinx_mapping
+<https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#confval-intersphinx_mapping>`__
+correctly when local builds are being used.
+
+
 
 2019-02-12
 ==========

@@ -93,7 +93,9 @@ def configure(globals_dict, prjspec=None):
                 logger.info("%s has no intersphinx", p)
                 continue
             count += 1
-            p = None
+            urls = prj.get_xconfig('intersphinx_urls') or {}
+            url = urls.get(doc_tree.rel_path)
+            p = url
             if USE_LOCAL_BUILDS:
                 src_path = doc_tree.src_path
                 if src_path is None or this_conf_file == src_path.child('conf.py'):
@@ -103,7 +105,7 @@ def configure(globals_dict, prjspec=None):
                 if p.exists():
                     logger.info("Found local {}".format(p))
                 else:
-                    p = None
+                    p = url
                     logger.info("File %s does not exist", p)
                 
             
@@ -115,16 +117,12 @@ def configure(globals_dict, prjspec=None):
                                   # future because that can cause
                                   # problems when intersphinx tries to
                                   # sort them
-            # if doc_tree == 'docs':
-            #     k = prj.nickname
-            # else:
-            #     k = prj.nickname + doc_tree.replace('_', '')
-            # urls = getattr(prj.main_package, 'intersphinx_urls', {})
-            urls = prj.get_xconfig('intersphinx_urls') or {}
-            url = urls.get(doc_tree.rel_path)
-            if url:
-                intersphinx_mapping[k] = (url, p)
-            elif p:
+
+            if k in intersphinx_mapping:
+                raise Exception("Duplicate intersphinx key {} used for {} "
+                                "(you ask to redefine it to {})".format(
+                    k, intersphinx_mapping[k], p))
+            if p:
                 intersphinx_mapping[k] = p
             elif prjspec:
                 logger.warning(
