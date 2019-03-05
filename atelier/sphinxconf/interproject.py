@@ -8,15 +8,23 @@
    checking for an attribute `intersphinx_urls` in the global
    namespace of each project's main module.
 
+.. envvar:: ATELIER_USE_LOCAL_BUILDS
+
+    If this environment variable is set to some nonempty string, the
+    intersphinx mapping will use local copies of the intersphinx projects (if
+    they exist).  This can be useful if you want to build docs when you are
+    offline.
+
+
 TODO: rename :func:`configure` to intersphinx_mapping
 
 """
+import os
 import six
 
 from unipath import Path
 # from importlib import import_module
-from sphinx.util import logging
-logger = logging.getLogger(__name__)
+from sphinx.util import logging ; logger = logging.getLogger(__name__)
 
 # from invoke import Context
 
@@ -24,9 +32,11 @@ logger = logging.getLogger(__name__)
 from atelier.projects import load_projects, get_project_info_from_mod
 
 
-USE_LOCAL_BUILDS = False
-# Whether to use objects.inv files from other local doctrees if they
-# exist.  E.g. on Travis no other projects are installed from source.
+USE_LOCAL_BUILDS = os.environ.get("ATELIER_USE_LOCAL_BUILDS", False)
+
+# Whether to use objects.inv files from other local doctrees if they exist.
+# E.g. on Travis no other projects are installed from source, so there we
+# cannot use it.
 
 
 def configure(globals_dict, prjspec=None):

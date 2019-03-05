@@ -5,6 +5,13 @@ Changes in `atelier`
 =======================
 
 
+2019-03-05
+==========
+
+:mod:`atelier.sphinxconf.interproject` now inspects whether an environment variable
+:envvar:`ATELIER_USE_LOCAL_BUILDS` is set.
+
+
 2019-02-12
 ==========
 
