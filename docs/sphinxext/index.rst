@@ -4,6 +4,13 @@
 Sphinx extensions
 =================
 
+
+.. toctree::
+   :maxdepth: 2
+
+   interproject
+
+
 .. default-domain:: rst
 
 Multilingual doctrees

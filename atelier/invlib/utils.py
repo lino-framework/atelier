@@ -49,6 +49,9 @@ class DocTree(object):
         # (because there it has no source code).
         if src_path.exists():
             self.src_path = src_path
+
+    def __repr__(self):
+        return "{}({!r}, {!r})".format(self.__class__, self.prj, self.rel_path)
         
     def build_docs(self, ctx, *cmdline_args):
         raise NotImplementedError()

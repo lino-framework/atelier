@@ -79,9 +79,10 @@ def add_project(root_dir, nickname=None):
 
 
 def get_project_info_from_mod(modname):
+    """Find the project info for the given Python module."""
     m = import_module(modname)
     fn = Path(m.__file__)
-    prj = get_project_from_tasks(fn.parent)
+    prj = get_project_from_tasks(fn.parent.parent)
     if prj is None:
         # it can be a package installed in site-packages without
         # tasks.py file

@@ -5,17 +5,16 @@ Changes in `atelier`
 =======================
 
 
-2019-03-05
+2019-03-06
 ==========
 
-:mod:`atelier.sphinxconf.interproject` now inspects whether an environment variable
-:envvar:`ATELIER_USE_LOCAL_BUILDS` is set.
-
 Fixed a bug in :mod:`atelier.sphinxcontrib.interproject` which caused it to not
-set `intersphinx_mapping
+correctly set `intersphinx_mapping
 <https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#confval-intersphinx_mapping>`__
-correctly when local builds are being used.
-
+when local builds are being used. Intersphinx data in builds of other local
+projects is now being used by default if it exists.  To simulate the situation
+on Travis where they never exist, set an environment variable
+:envvar:`ATELIER_IGNORE_LOCAL_BUILDS` to the string "yes".
 
 
 2019-02-12
