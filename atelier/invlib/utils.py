@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017-2018 Rumma & Ko Ltd
+# Copyright 2017-2019 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """Utilities for atelier.invlib
@@ -35,7 +35,9 @@ class DocTree(object):
     src_path = None
     out_path = None
     has_intersphinx = False
-    
+    # html_baseurl = None
+    conf_globals = None
+
     def __init__(self, prj, rel_doc_tree):
         self.rel_path = rel_doc_tree
         self.prj = prj
@@ -53,6 +55,9 @@ class DocTree(object):
     def __repr__(self):
         return "{}({!r}, {!r})".format(self.__class__, self.prj, self.rel_path)
         
+    def __str__(self):
+        return self.rel_path
+
     def build_docs(self, ctx, *cmdline_args):
         raise NotImplementedError()
 
@@ -114,9 +119,10 @@ class SphinxTree(DocTree):
         super(SphinxTree, self).__init__(prj, src_path)
         if self.src_path is None:
             return
+
         cfg = prj.config
         self.out_path = self.src_path.child(cfg['build_dir_name'])
-        
+
     def build_docs(self, ctx, *cmdline_args):
         if self.src_path is None:
             return
@@ -127,7 +133,24 @@ class SphinxTree(DocTree):
             builder = 'dirhtml'
         self.sphinx_build(ctx, builder, docs_dir, cmdline_args)
         self.sync_docs_data(ctx, docs_dir)
-        
+
+    def load_conf(self):
+        if self.src_path is None:
+            return
+        if self.conf_globals is not None:
+            return
+        conf_py = self.src_path.child("conf.py")
+        self.conf_globals = {'__file__': conf_py}
+        code = compile(open(conf_py, "rb").read(), conf_py, 'exec')
+        exec(code, self.conf_globals)
+        # self.html_baseurl = conf_globals.get("html_baseurl", None)
+
+    def __str__(self):
+        if self.src_path is None:
+            return super(SphinxTree, self).__str__()
+        self.load_conf()
+        return u"{}->{}".format(self.rel_path, self.conf_globals.get('html_title'))
+
     def sphinx_build(self, ctx, builder, docs_dir,
                      cmdline_args=[], language=None, build_dir_cmd=None):
         if self.out_path is None:

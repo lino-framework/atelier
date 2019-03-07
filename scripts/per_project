@@ -47,15 +47,14 @@ http://atelier.lino-framework.org/usage.html
 
         def cells(self):
             # self.load_info()
-            doc_trees = ', '.join([
-                t.rel_path for t in self.get_doc_trees()])
+            doc_trees = u', '.join([u"{}".format(t) for t in self.get_doc_trees()])
             # config = self.inv_namespace.configuration()
             yield self.nickname
             # yield self.SETUP_INFO.get('version', '')
             # yield self.main_package
             yield self.get_status()
             yield self.SETUP_INFO.get('url', None)
-            yield str(doc_trees)
+            yield doc_trees
             # yield ', '.join(config['doc_trees'])
 
         print(rstgen.table(headers, [
