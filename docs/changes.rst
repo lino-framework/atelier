@@ -5,6 +5,14 @@ Changes in `atelier`
 =======================
 
 
+2019-03-07
+==========
+
+- :cmd:`per_project -l` now shows the title of each doctree
+
+- interproject no longer stops loading after current project when no explicit
+  project list is given.
+
 2019-03-06
 ==========
 
