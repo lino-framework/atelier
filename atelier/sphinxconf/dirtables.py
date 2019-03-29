@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2016 by Rumma & Ko Ltd.
+# Copyright 2016-2019 Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :rst:dir:`directory`, :rst:dir:`tickets_table` and
@@ -13,12 +13,13 @@ the calling file).
 
 .. rst:directive:: tickets_table
 
-This is used e.g. to build
-http://lino-framework.org/tickets
+This was used e.g. to build http://lino-framework.org/tickets until 20190329
+(where we threw it away as it failed in Sphinx 2)
 
 .. rst:directive:: entry_intro
 
-This doesn't yet work unfortunately.
+This doesn't yet work unfortunately. Was here until 20190329 (where we threw it
+away as it failed in Sphinx 2).
 
 """
 
@@ -28,8 +29,7 @@ from builtins import str
 from builtins import filter
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 from os.path import abspath, dirname, join
 
@@ -119,7 +119,10 @@ class DirectoryTable(InsertInputDirective):
         expr = self.options.get('filter')
         if expr:
             def func(e):
-                return eval(expr, dict(e=e))
+                try:
+                    return eval(expr, dict(e=e))
+                except Exception as exc:
+                    return "{} in {}".format(exc, expr)
             entries = list(filter(func, entries))
 
         orderby = self.options.get('orderby')
@@ -147,44 +150,44 @@ class DirectoryTable(InsertInputDirective):
         return cells
 
 
-class TicketsTable(DirectoryTable):
-
-    def get_headers(self):
-        return ['title' + ' '*50, 'state', 'module', 'since', 'for']
-
-    def format_entry(self, e):
-        cells = []
-        # cells.append(e.docname)
-        cells.append(":doc:`%s`" % e.docname)
-        # text = ''.join([unicode(c) for c in e.title.children])
-        # cells.append(":doc:`%s <%s>`" % (text, e.docname))
-        cells.append(str(e.meta.get('state', '')))
-        # cells.append(unicode(e.meta.get('reporter', '')))
-        ref = e.meta.get('module', '')
-        if ref:
-            cells.append(":mod:`%s`" % ref)
-        else:
-            cells.append("(N/A)")
-
-        cells.append(str(e.meta.get('since', '')))
-        cells.append(str(e.meta.get('for', '')))
-        return cells
-
-
-class EntryIntro(InsertInputDirective):
-    
-    def get_rst(self):
-        env = self.state.document.settings.env
-        docname = env.docname
-        meta = env.process_metadata(docname, self.state.document)
-        # e = Entry.create(env, env.docname)
-        context = dict(this=self,
-                       env=self.state.document.settings.env,
-                       dir=dir,
-                       document=self.state.document,
-                       meta=meta)
-        template = 'dirtables/entry.rst'
-        return render_entry(template, context)
+# class TicketsTable(DirectoryTable):
+#
+#     def get_headers(self):
+#         return ['title' + ' '*50, 'state', 'module', 'since', 'for']
+#
+#     def format_entry(self, e):
+#         cells = []
+#         # cells.append(e.docname)
+#         cells.append(":doc:`%s`" % e.docname)
+#         # text = ''.join([unicode(c) for c in e.title.children])
+#         # cells.append(":doc:`%s <%s>`" % (text, e.docname))
+#         cells.append(str(e.meta.get('state', '')))
+#         # cells.append(unicode(e.meta.get('reporter', '')))
+#         ref = e.meta.get('module', '')
+#         if ref:
+#             cells.append(":mod:`%s`" % ref)
+#         else:
+#             cells.append("(N/A)")
+#
+#         cells.append(str(e.meta.get('since', '')))
+#         cells.append(str(e.meta.get('for', '')))
+#         return cells
+#
+#
+# class EntryIntro(InsertInputDirective):
+#
+#     def get_rst(self):
+#         env = self.state.document.settings.env
+#         docname = env.docname
+#         meta = env.process_metadata(docname, self.state.document)
+#         # e = Entry.create(env, env.docname)
+#         context = dict(this=self,
+#                        env=self.state.document.settings.env,
+#                        dir=dir,
+#                        document=self.state.document,
+#                        meta=meta)
+#         template = 'dirtables/entry.rst'
+#         return render_entry(template, context)
 
 # from docutils import nodes
 # from sphinx.roles import XRefRole
@@ -201,8 +204,8 @@ class EntryIntro(InsertInputDirective):
 
 def setup(app):
     app.add_directive('directory', DirectoryTable)
-    app.add_directive('tickets_table', TicketsTable)
-    app.add_directive('entry_intro', EntryIntro)
+    # app.add_directive('tickets_table', TicketsTable)
+    # app.add_directive('entry_intro', EntryIntro)
     # app.add_role(str('rref'), ReferingRefRole(
     #     lowercase=True,
     #     innernodeclass=nodes.emphasis,
