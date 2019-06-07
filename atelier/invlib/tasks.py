@@ -349,6 +349,8 @@ def make_messages(ctx):
     extract_messages(ctx)
     init_catalog_code(ctx)
     update_catalog_code(ctx)
+    for tree in atelier.current_project.get_doc_trees():
+        tree.make_messages(ctx)
 
     # if False:
     #     pass

@@ -24,6 +24,11 @@ def must_exist(p):
         raise Exception("No such file: %s" % p.absolute())
 
 
+def run_cmd(ctx, chdir, args):
+    cmd = ' '.join(args)
+    print("Invoke {}".format(cmd))
+    with cd(chdir):
+        ctx.run(cmd, pty=True)
 
 
 class DocTree(object):
@@ -57,6 +62,9 @@ class DocTree(object):
         
     def __str__(self):
         return self.rel_path
+
+    def make_messages(self, ctx):
+        pass
 
     def build_docs(self, ctx, *cmdline_args):
         raise NotImplementedError()
@@ -123,6 +131,22 @@ class SphinxTree(DocTree):
         cfg = prj.config
         self.out_path = self.src_path.child(cfg['build_dir_name'])
 
+    def make_messages(self, ctx):
+        if self.src_path is None:
+            return
+        self.load_conf()
+        translated_languages = self.conf_globals.get('translated_languages', [])
+        if len(translated_languages):
+            # Extract translatable messages into pot files (sphinx-build -M gettext ./ .build/)
+            args = ['sphinx-build', '-M', 'gettext', '.', self.out_path]
+            run_cmd(ctx, self.src_path, args)
+
+            # Create or update the .pot files (sphinx-intl update -p .build/gettext -l de -l fr)
+            args = ['sphinx-intl', 'update', '-p', self.out_path.child("gettext")]
+            for lng in translated_languages:
+                args += ['-l', lng]
+            run_cmd(ctx, self.src_path, args)
+
     def build_docs(self, ctx, *cmdline_args):
         if self.src_path is None:
             return
@@ -132,6 +156,10 @@ class SphinxTree(DocTree):
         if ctx.use_dirhtml:
             builder = 'dirhtml'
         self.sphinx_build(ctx, builder, docs_dir, cmdline_args)
+        self.load_conf()
+        translated_languages = self.conf_globals.get('translated_languages', [])
+        for lng in translated_languages:
+            self.sphinx_build(ctx, builder, docs_dir, cmdline_args, lng)
         self.sync_docs_data(ctx, docs_dir)
 
     def load_conf(self):
@@ -167,10 +195,9 @@ class SphinxTree(DocTree):
             args += ['-D', 'language=' + language]
             # needed in select_lang.html template
             args += ['-A', 'language=' + language]
-            if language != ctx.languages[0]:
-                build_dir = build_dir.child(language)
-                # print 20130726, build_dir
-                
+            # if language != ctx.languages[0]:
+            build_dir = build_dir.child(language)
+
         # seems that the default location for the .doctrees directory
         # is no longer in .build but the source directory.
         args += ['-d', build_dir.child('.doctrees')]
@@ -181,10 +208,9 @@ class SphinxTree(DocTree):
             # args += ['-vvv']  # increase verbosity
         # args += ['-w'+Path(ctx.root_dir,'sphinx_doctest_warnings.txt')]
         args += ['.', build_dir]
-        cmd = ' '.join(args)
-        print("Invoke {}".format(cmd))
-        with cd(docs_dir):
-            ctx.run(cmd, pty=True)
+
+        run_cmd(ctx, docs_dir, args)
+
         if build_dir_cmd is not None:
             with cd(build_dir):
                 ctx.run(build_dir_cmd, pty=True)

@@ -5,6 +5,17 @@ Changes in `atelier`
 =======================
 
 
+2019-06-07
+==========
+
+Added support for multilinguale Sphinx sites. When the :xfile:`conf.py` file of
+a Sphinx doctree defines a variable :attr:`translated_languages` (which is
+expected to be a list of language codes), then :cmd:`inv mm` and :cmd:`inv bd`
+now act accordingly.  This works only if you previously did ``pip install
+sphinx-intl``. You should add yourself interlanguage links.  The simplest way
+is to write a template :xfile:`languages.html` and add it to your
+:attr:`html_sidebars`.
+
 2019-03-07
 ==========
 
