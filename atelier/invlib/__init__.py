@@ -47,7 +47,9 @@ def setup_from_tasks(
     from atelier.invlib import tasks
     from atelier.projects import get_project_from_tasks
     prj = get_project_from_tasks(tasks_file.parent)
-    atelier.current_project = prj
+
+    if atelier.current_project is None:
+        atelier.current_project = prj
     
     if kwargs:
         prj.config.update(kwargs)
