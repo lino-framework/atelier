@@ -258,8 +258,8 @@ def setup_sdist(ctx):
 
 
 @task(name='release', help={
-    'nobranch': "Skip automatic creation of version branch."})
-def pypi_release(ctx, nobranch=False):
+    'branch': "Create a version branch."})
+def pypi_release(ctx, branch=False):
     """
     Publish a new version to PyPI.
     See http://atelier.lino-framework.org/invlib.html for details.
@@ -288,7 +288,7 @@ def pypi_release(ctx, nobranch=False):
     # args +=["--repository-url",""]
     args += [dist_dir]
     sdist_cmd = ' '.join(args)
-    if ctx.revision_control_system == 'git' and not nobranch:
+    if ctx.revision_control_system == 'git' and branch:
         msg = "You might want to ignore this and manually run:\n{}".format(
             sdist_cmd)
         tag_name = "v{}".format(version)

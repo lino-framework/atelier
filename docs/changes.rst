@@ -5,6 +5,12 @@ Changes in `atelier`
 =======================
 
 
+2019-07-01
+==========
+
+The :cmd:`inv release` command no longer creates a version branch by default.
+If you want a branch, you must now say ``--branch``.
+
 2019-06-07
 ==========
 
