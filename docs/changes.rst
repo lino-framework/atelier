@@ -5,6 +5,14 @@ Changes in `atelier`
 =======================
 
 
+2019-07-20
+==========
+
+Added a new command :cmd:`inv configure`.
+
+Released version 1.1.13.
+
+
 2019-07-01
 ==========
 

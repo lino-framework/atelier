@@ -145,6 +145,11 @@ Commands for deployment
 Commands for testing
 --------------------
 
+.. command:: inv configure
+
+    Configure the Python environment.  Runs :manage:`configure` on every demo
+    project defined by :envvar:`demo_projects`.
+
 .. command:: inv prep
 
     Prepare a test run. This runs :manage:`prep` on every demo project

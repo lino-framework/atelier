@@ -709,6 +709,13 @@ def run_in_demo_projects(ctx, py_cmd, cov=False):
             ctx.run(cmd, pty=True)
 
 
+@task(name='configure')
+def configure(ctx):
+    """Run `manage.py configure` on every demo project."""
+    cmd = 'manage.py configure --noinput'
+    run_in_demo_projects(ctx, cmd)
+
+
 @task(name='prep')
 def prep(ctx, cov=False):
     """Run `manage.py prep` on every demo project."""
