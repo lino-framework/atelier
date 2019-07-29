@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2019 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """A minimalistic command-line project management.
 
@@ -34,7 +34,7 @@ def load_inv_namespace(root_dir):
     `ns`.
     """
     # self._tasks_loaded = True
-    
+
     tasks_file = root_dir.child('tasks.py')
     if not tasks_file.exists():
         return None
@@ -95,7 +95,7 @@ def get_project_info_from_mod(modname):
     prj.set_main_package(m)
     # assert prj.main_package is not None
     return prj
-    
+
 def get_project_from_tasks(root_dir):
     "Find the project info for the given directory."
     root_dir = root_dir.absolute().resolve()
@@ -110,7 +110,7 @@ def get_project_from_tasks(root_dir):
         #         prj = add_project(p)
         #         break
         #     if p == p.parent:
-        #         return  # reached the file system's root 
+        #         return  # reached the file system's root
         #     p = p.parent
         # raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
     return prj
@@ -195,7 +195,7 @@ class Project(object):
 
     def __init__(self, i, root_dir, nickname=None):
         # , inv_namespace=None, main_package=None):
-        
+
         self.index = i
         self.root_dir = root_dir
         #~ self.local_name = local_name
@@ -218,7 +218,7 @@ class Project(object):
             'cleanable_files': [],
             'revision_control_system': None,
             'apidoc_exclude_pathnames': [],
-            'editor_command': None,
+            'editor_command': os.environ.get('EDITOR'),
             'demo_projects': [],
             'prep_command': "manage.py prep --noinput --traceback",
             # 'coverage_command': '{} inv prep test clean --batch bd'.format(pp),
@@ -232,7 +232,7 @@ class Project(object):
             'doc_trees': ['docs'],
             'intersphinx_urls': {},
         }
-            
+
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.root_dir)
@@ -275,27 +275,27 @@ class Project(object):
 
         # inv_namespace = self.inv_namespace or load_inv_namespace(
         #     self.root_dir)
-            
+
         if self.SETUP_INFO is not None:
             # load_info() has been called before
             return
-        
+
         self.SETUP_INFO = get_setup_info(self.root_dir)
 
         # if self.main_package is None:
         #     self.config.setdefault('doc_trees', ['docs'])
         # else:
         #     self.config.update(main_package=self.main_package.__name__)
-            
+
         if self.inv_namespace is None:
             ns = load_inv_namespace(self.root_dir)
             if ns is not None:
                 self.set_namespace(ns)
-            
-        
+
+
         # if self.main_package is None:
         #     self.config.update(doc_trees=['docs'])
-        
+
     def get_status(self):
         # if self.config['revision_control_system'] != 'git':
         # config = self.inv_namespace.configuration()
@@ -307,7 +307,7 @@ class Project(object):
         if repo.is_dirty():
             s += "!"
         return s
-        
+
     def get_xconfig(self, name, default=None):
         """Return the specified setting from either main module or tasks.py.
 

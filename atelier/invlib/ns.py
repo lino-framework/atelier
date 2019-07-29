@@ -16,7 +16,7 @@ After::
 
 
 """)
-from atelier.invlib import MyCollection
-from . import tasks
-
-ns = MyCollection.from_module(tasks)
+# from atelier.invlib import MyCollection
+# from . import tasks
+#
+# ns = MyCollection.from_module(tasks)

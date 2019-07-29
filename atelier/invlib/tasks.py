@@ -419,7 +419,7 @@ def edit_blog_entry(ctx, today=None):
 
             Usage example::
 
-                $ fab blog:20150727
+                $ inv blog -t 20150727
 
     """
     if not ctx.editor_command:
@@ -456,7 +456,7 @@ def edit_blog_entry(ctx, today=None):
     args = [ctx.editor_command.format(entry.path)]
     args += [entry.path]
     # raise Exception("20160324 %s", args)
-    ctx.run(' '.join(args), pty=True)
+    ctx.run(' '.join(args), pty=False)
 
 
 @task(name='pd')

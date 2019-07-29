@@ -1,9 +1,14 @@
-.. _atelier.changes: 
+.. _atelier.changes:
 
 =======================
 Changes in `atelier`
 =======================
 
+2019-07-29
+==========
+
+The default value for the :envvar:`editor_command` setting is now taken from
+the :envvar:`EDITOR` environment variable.
 
 2019-07-20
 ==========
@@ -22,7 +27,7 @@ If you want a branch, you must now say ``--branch``.
 2019-06-07
 ==========
 
-Added support for multilinguale Sphinx sites. When the :xfile:`conf.py` file of
+Added support for multilingual Sphinx sites. When the :xfile:`conf.py` file of
 a Sphinx doctree defines a variable :attr:`translated_languages` (which is
 expected to be a list of language codes), then :cmd:`inv mm` and :cmd:`inv bd`
 now act accordingly.  This works only if you previously did ``pip install
@@ -118,7 +123,7 @@ configuration value instead of the deprecated `autodoc_default_flags
 (if Sphinx is 1.8 or newer).
 
 The :cmd:`inv clean` command now also removes :xfile:`.eggs`
-directories and :xfile:`__pycache__` directories. 
+directories and :xfile:`__pycache__` directories.
 
 The :class:`DjangoTemplateBridge` from :mod:`atelier.sphinxconf` was
 not used and has been removed.
@@ -266,7 +271,7 @@ Version 1.0.6 (released 2017-06-07)
 
 New functions :func:`atelier.utils.isiterable` and
 :func:`atelier.utils.is_string`.
-      
+
 
 Version 1.0.5 (released 2017-02-16)
 ===================================
@@ -487,8 +492,8 @@ Version 0.0.5 (released 20141207)
 Version 0.0.3
 ==============================
 
-- Fixed `AttributeError: work_root` occuring when there was 
-  no `work_root` in user's :xfile:`.fabricrc` file.  
+- Fixed `AttributeError: work_root` occuring when there was
+  no `work_root` in user's :xfile:`.fabricrc` file.
   The `work_root` env setting is no longer used.
 
 - (:blogref:`20140117`) atelier now supports namespace packages
@@ -497,33 +502,33 @@ Version 0.0.3
   (returned from `pkg_resources.get_distribution`) which afaics makes
   problems for namespace packages.
 
--   (:blogref:`20130623`) 
-    :meth:`atelier.test.TestCase.run_simple_doctests` 
+-   (:blogref:`20130623`)
+    :meth:`atelier.test.TestCase.run_simple_doctests`
     didn't yet support non-ascii characters.
 
-    Now it does. 
+    Now it does.
     Had to add a new module :mod:`atelier.doctest_utf8`
-    for this. 
-    Because we need to run each doctest in a separate subprocess 
+    for this.
+    Because we need to run each doctest in a separate subprocess
     and because the command-line interface
-    of `python -m doctest`  has no way to specify an encoding 
+    of `python -m doctest`  has no way to specify an encoding
     of the input file.
 
 
-- :func:`atelier.sphinxconf.configure` now 
-  automatically adds the intersphinx entries 
+- :func:`atelier.sphinxconf.configure` now
+  automatically adds the intersphinx entries
   for projects managed in this atelier.
 
 
-- The `PROJECTS` variable in `/etc/atelier/config.py` is now a list of 
-  importable Python module names, and their local path will be 
-  automatically extracted. 
+- The `PROJECTS` variable in `/etc/atelier/config.py` is now a list of
+  importable Python module names, and their local path will be
+  automatically extracted.
   No longer necessary to define a `PROJECTS_HOME`
 
 - `per_project` no longer inserts "fab" as first command.
 
 - Renamed `atelier.test.SubProcessTestCase` to `atelier.test.TestCase`.
-  Moved Django-specific methods away to a new module 
+  Moved Django-specific methods away to a new module
   :mod:`djangosite.utils.pythontest`.
 
 Version 0.0.2 (released :blogref:`20130505`)
@@ -536,9 +541,7 @@ Version 0.0.2 (released :blogref:`20130505`)
 Version 0.0.1 (released :blogref:`20130422`)
 ============================================
 
-- This project was split out of 
-  `djangosite <https://pypi.python.org/pypi/djangosite>`_ in 
+- This project was split out of
+  `djangosite <https://pypi.python.org/pypi/djangosite>`_ in
   April 2013.
   See :blogref:`20130410`.
-  
-
