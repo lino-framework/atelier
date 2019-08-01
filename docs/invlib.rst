@@ -37,7 +37,7 @@ You can specify project-specific configuration settings directly in
 your :xfile:`tasks.py` file. Example content::
 
     from atelier.tasks import ns
-    ns.setup_from_tasks(globals(), "mypackage", 
+    ns.setup_from_tasks(globals(), "mypackage",
         tolerate_sphinx_warnings=True,
         revision_control_system='git')
 
@@ -50,14 +50,14 @@ You can also define system-wide default configuration files.  See the
 `Invoke documentation
 <http://docs.pyinvoke.org/en/latest/concepts/configuration.html>`_ for
 more information.
-           
+
 
 Tasks
 =====
 
 Following are the tasks you get when you import :mod:`atelier.invlib`
 into your :xfile:`tasks.py` file.
-    
+
 
 Commands for documenting
 ------------------------
@@ -145,9 +145,9 @@ Commands for deployment
 Commands for testing
 --------------------
 
-.. command:: inv configure
+.. command:: inv install
 
-    Configure the Python environment.  Runs :manage:`configure` on every demo
+    Install Python requirements.  Runs :manage:`install` on every demo
     project defined by :envvar:`demo_projects`.
 
 .. command:: inv prep
@@ -158,7 +158,7 @@ Commands for testing
     It is not launched automatically by :cmd:`inv test` or :cmd:`inv
     bd` because it can take some time and is not always necessary.
 
-    
+
 
 .. command:: inv test
 
@@ -167,7 +167,7 @@ Commands for testing
     This is a shortcut for either ``python setup.py test`` or
     ``py.test`` (depending on whether your project has a
     :xfile:`pytest.ini` file or not.
-    
+
 
 .. command:: inv cov
 
@@ -178,17 +178,17 @@ Commands for testing
 
     Creates and activates a temporay virtualenv, installs your project
     and runs your test suite.
-        
+
     - creates and activates a temporay virtualenv,
     - calls ``pip install --no-index -f <env.sdist_dir> <prjname>``
     - runs ``python setup.py test``
     - removes temporary files.
-    
+
     Assumes that you previously did :cmd:`inv sdist` of all your
     projects related to this project.
 
 
-Miscellaneous commands 
+Miscellaneous commands
 ----------------------
 
 .. command:: inv clean
@@ -234,7 +234,7 @@ uses :mod:`atelier.invlib`.
 .. envvar:: coverage_command
 
     The command to run for measuring coverage by :cmd:`inv cov`.
-    
+
 .. envvar:: editor_command
 
     A string with the command name of your text editor. Example::
@@ -277,19 +277,19 @@ uses :mod:`atelier.invlib`.
 
 
 .. envvar:: srcref_url
-            
+
     The URL template to use for `srcref`.
-    
+
     If the project has a main package which has an attribute
     :envvar:`srcref_url`,
     then this value will be used.
-    
+
 .. envvar:: intersphinx_urls
-            
+
     A dict which maps doctree names to the URL where they are published.
     This is used when this project's documentation is added to a
     doctree using :mod:`atelier.sphinxconf.interproject`.
-    
+
     If the project has a main package which defines an attribute
     :envvar:`intersphinx_urls`,
     then this will override any value define in :xfile:`tasks.py`.

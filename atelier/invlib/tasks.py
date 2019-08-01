@@ -709,10 +709,10 @@ def run_in_demo_projects(ctx, py_cmd, cov=False):
             ctx.run(cmd, pty=True)
 
 
-@task(name='configure')
+@task(name='install')
 def configure(ctx):
-    """Run `manage.py configure` on every demo project."""
-    cmd = 'manage.py configure --noinput'
+    """Run `manage.py install` on every demo project."""
+    cmd = 'manage.py install --noinput'
     run_in_demo_projects(ctx, cmd)
 
 

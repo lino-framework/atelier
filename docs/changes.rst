@@ -4,6 +4,12 @@
 Changes in `atelier`
 =======================
 
+
+2019-08-01
+==========
+
+Renamed ```inv configure`` to :cmd:`inv install`
+
 2019-07-29
 ==========
 
@@ -13,7 +19,7 @@ the :envvar:`EDITOR` environment variable.
 2019-07-20
 ==========
 
-Added a new command :cmd:`inv configure`.
+Added a new command ``inv configure`` (which later became :cmd:`inv install`).
 
 Released version 1.1.13.
 
