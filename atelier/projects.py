@@ -311,7 +311,7 @@ class Project(object):
     def get_xconfig(self, name, default=None):
         """Return the specified setting from either main module or tasks.py.
 
-        TODO: explain what this is good for.
+        TODO: explain why we need this.
         """
         self.load_info()
         if self.inv_namespace is not None:

@@ -5,6 +5,14 @@ Changes in `atelier`
 =======================
 
 
+2019-08-02
+==========
+
+The :cmd:`pp -l` command no longer shows the doctrees. If you want to see them,
+change ``SHOW_DOCTREES`` in :mod:`atelier.projects` to `True`. Showing the
+doctrees causes the command to need about 7 seconds instead of one second (in my
+environment) because it also imports the :xfile:`conf.py` file of every doctree.
+
 2019-08-01
 ==========
 
