@@ -352,9 +352,13 @@ uses :mod:`atelier.invlib`.
     documentation.  Before running :cmd:`inv test` or :cmd:`inv bd`,
     they must have been initialized with :cmd:`inv prep`.
 
-
 .. envvar:: prep_command
 
-    The shell command to be run in every :envvar:`demo project
-    <demo_projects>` when :cmd:`inv prep` is invoked.  The default
-    value is ``manage.py prep --noinput --traceback``.
+    A shell command to be run in in the project's root directory when :cmd:`inv
+    prep` is invoked.  The default value is empty.
+
+.. envvar:: demo_prep_command
+
+    A shell command to be run in every :envvar:`demo project <demo_projects>`
+    when :cmd:`inv prep` is invoked.  The default value is ``manage.py prep
+    --noinput --traceback``.

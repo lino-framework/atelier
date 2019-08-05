@@ -728,7 +728,13 @@ def prep(ctx, cov=False):
         ctx.run('coverage erase', pty=True)
 
     cmd = ctx.prep_command
-    run_in_demo_projects(ctx, cmd, cov=cov)
+    if cmd:
+        print("-" * 80)
+        print("Run main prep command {0} :".format(cmd))
+        ctx.run(cmd, pty=True)
+    cmd = ctx.demo_prep_command
+    if cmd:
+        run_in_demo_projects(ctx, cmd, cov=cov)
 
 
 # @task(name='cov', pre=[tasks.call(prep, cov=True)])
