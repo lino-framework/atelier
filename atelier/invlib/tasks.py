@@ -718,7 +718,11 @@ def configure(ctx):
 
 @task(name='prep')
 def prep(ctx, cov=False):
-    """Run `manage.py prep` on every demo project."""
+    """
+    Run preparation tasks that need to run before testing, but only once for all
+    tests.
+
+    """
     if cov:
         covfile = ctx.root_dir.child('.coveragerc')
         if not covfile.exists():
