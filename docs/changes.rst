@@ -11,7 +11,8 @@ We have now two config settings for :cmd:`inv prep`: :envvar:`prep_command` and
 :envvar:`demo_prep_command`. :envvar:`demo_prep_command` is what
 :envvar:`prep_command` was until now (i.e. a command to run in every demo
 project). :envvar:`prep_command` (default empty) is now a command to run in the
-project's root directory.  Used by :ref:`getlino`. Both settings are meant to be
+project's root directory.  First use case is `getlino
+<http://getlino.lino-framework.org/>`__. Both settings are meant to be
 customized in the projects :xfile:`tasks.py` file.
 
 Released version 1.1.14.
