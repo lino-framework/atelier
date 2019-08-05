@@ -14,6 +14,9 @@ project). :envvar:`prep_command` (default empty) is now a command to run in the
 project's root directory.  Used by :ref:`getlino`. Both settings are meant to be
 customized in the projects :xfile:`tasks.py` file.
 
+Released version 1.1.14.
+
+
 2019-08-02
 ==========
 
