@@ -12,6 +12,9 @@ directory, it now creates a temporary directory and all processes run there.
 Until now they ran in the current working directory, which is pretty
 unpredictable.
 
+Released version 1.1.15.
+
+
 2019-08-05
 ==========
 
