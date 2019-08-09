@@ -4,6 +4,14 @@
 Changes in `atelier`
 =======================
 
+2019-08-09
+==========
+
+When you instantiate a :class:`atelier.sheller.Sheller` without specifying a
+directory, it now creates a temporary directory and all processes run there.
+Until now they ran in the current working directory, which is pretty
+unpredictable.
+
 2019-08-05
 ==========
 

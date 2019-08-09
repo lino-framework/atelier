@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 by Rumma & Ko Ltd.
+# Copyright 2016-2019 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :class:`Sheller` class.
@@ -8,11 +8,10 @@
 
    python -m doctest atelier/sheller.py
 
-I guess that others have invented similar things before, and I saw
-`doctest2
-<https://pythonhosted.org/doctest2/intro_for_existing.html>`__ but am
-afraid switching to it because it seems not maintained. My solution is
-admittedly less beautiful but much simpler.
+I guess that others have invented similar things before, and I saw `doctest2
+<https://pythonhosted.org/doctest2/intro_for_existing.html>`__ but am afraid
+switching to it because it seems not maintained. My solution is admittedly less
+beautiful but much simpler.
 
 """
 
@@ -34,6 +33,7 @@ import locale
 import types
 import datetime
 import subprocess
+from tempfile import TemporaryDirectory
 
 
 class Sheller(object):
@@ -56,8 +56,15 @@ sheller.py
 test.py
 utils.py
 
+When you don't specify a directory, Sheller creates a temporary directory and
+has all processes run there.
+
+
     """
     def __init__(self, cwd=None):
+        if cwd is None:
+            self.temp_dir = TemporaryDirectory()
+            cwd = self.temp_dir.name
         self.cwd = cwd
 
     def __call__(self, cmd, **kwargs):
@@ -65,12 +72,11 @@ utils.py
         output to stdout. This is designed for usage from within a doctest
         snippet.
 
-        If `cmd` is a multiline string, semicolons are automatically
-        inserted as line separators.
+        If `cmd` is a multiline string, semicolons are automatically inserted as
+        line separators.
 
-        One challenge is that we cannot simply use `subprocess.call`
-        because `sys.stdout` is handled differently when running inside
-        doctest.
+        One challenge is that we cannot simply use `subprocess.call` because
+        `sys.stdout` is handled differently when running inside doctest.
 
         """
         cmd = [ln for ln in cmd.splitlines() if ln.strip()]
@@ -91,4 +97,3 @@ utils.py
         #     print(output.strip())
         # else:
         #     print("(exit status {})".format(retcode))
-
