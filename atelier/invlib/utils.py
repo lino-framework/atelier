@@ -46,7 +46,7 @@ class DocTree(object):
     def __init__(self, prj, rel_doc_tree):
         self.rel_path = rel_doc_tree
         self.prj = prj
-        
+
         if rel_doc_tree in ('', '.'):
             src_path = prj.root_dir
         else:
@@ -59,7 +59,7 @@ class DocTree(object):
 
     def __repr__(self):
         return "{}({!r}, {!r})".format(self.__class__, self.prj, self.rel_path)
-        
+
     def __str__(self):
         return self.rel_path
 
@@ -93,13 +93,13 @@ class DocTree(object):
             args += ['--progress']  # show progress
             args += ['--delete']  # delete files in dest
             args += ['--times']  # preserve timestamps
-            
+
             # the problem with --times is that it fails when several
             # users can publish to the same server alternatively.
             # Only the owner of a file can change the mtime, other
             # users can't, even if they have write permission through
             # the group.
-            
+
             args += ['--exclude', '.doctrees']
             args += ['./']  # source
             args += [dest_url]  # dest
@@ -118,11 +118,11 @@ class SphinxTree(DocTree):
 
         http://www.sphinx-doc.org/en/stable/invocation.html#invocation-of-sphinx-build
 
-    
-    
+
+
     """
     has_intersphinx = True
-    
+
     def __init__(self, prj, src_path):
         super(SphinxTree, self).__init__(prj, src_path)
         if self.src_path is None:
@@ -138,7 +138,7 @@ class SphinxTree(DocTree):
         translated_languages = self.conf_globals.get('translated_languages', [])
         if len(translated_languages):
             # Extract translatable messages into pot files (sphinx-build -M gettext ./ .build/)
-            args = ['sphinx-build', '-M', 'gettext', '.', self.out_path]
+            args = ['sphinx-build', '-b', 'gettext', '.', self.out_path]
             run_cmd(ctx, self.src_path, args)
 
             # Create or update the .pot files (sphinx-intl update -p .build/gettext -l de -l fr)
@@ -239,7 +239,7 @@ class SphinxTree(DocTree):
 
 
 class NikolaTree(DocTree):
-    """Requires Nikola. 
+    """Requires Nikola.
 
     Note that Nikola requires::
 
@@ -251,7 +251,7 @@ class NikolaTree(DocTree):
         if self.src_path is None:
             return
         self.out_path = self.src_path.child('output')
-        
+
     def build_docs(self, ctx, *cmdline_args):
         if self.src_path is None:
             return
@@ -262,5 +262,3 @@ class NikolaTree(DocTree):
         cmd = ' '.join(args)
         with cd(docs_dir):
             ctx.run(cmd, pty=True)
-        
-        
