@@ -82,7 +82,7 @@ def get_project_info_from_mod(modname):
     """Find the project info for the given Python module."""
     m = import_module(modname)
     if m.__file__ is None:
-        raise Exception("Invalide module name {}".format(m))
+        raise Exception("Invalide module name {}".format(modname))
     fn = Path(m.__file__)
     prj = get_project_from_tasks(fn.parent.parent)
     if prj is None:

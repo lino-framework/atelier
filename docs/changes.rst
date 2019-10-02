@@ -4,6 +4,13 @@
 Changes in `atelier`
 =======================
 
+2019-10-2
+==========
+
+When building the doc, raise an clear exception if we can't import the required package.
+
+Released version 1.1.16.
+
 2019-08-09
 ==========
 
