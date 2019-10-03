@@ -11,7 +11,9 @@ Changes in `atelier`
 intersphinx_mapping for packages that had an :envvar:`intersphinx_urls` but were
 installed via PyPI.
 
-Released version 1.1.17.
+Add sphinx to the install_requires.
+
+Released version 1.1.17 and then 1.1.18
 
 
 2019-10-02
