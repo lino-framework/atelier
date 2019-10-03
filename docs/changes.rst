@@ -4,7 +4,17 @@
 Changes in `atelier`
 =======================
 
-2019-10-2
+2019-10-03
+==========
+
+:func:`atelier.sphinxconf.interproject.configure` didn't collect the
+intersphinx_mapping for packages that had an :envvar:`intersphinx_urls` but were
+installed via PyPI.
+
+Released version 1.1.17.
+
+
+2019-10-02
 ==========
 
 When building the doc, raise an clear exception if we can't import the required package.

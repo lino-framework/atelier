@@ -61,7 +61,7 @@ def add_project(root_dir, nickname=None):
     To be called from your :xfile:`config.py` file.
 
     `root_dir` is the name of a directory which is expected to contain
-    a :xfile:`fabfile.py`.
+    a :xfile:`tasks.py`.
 
     If no `nickname` is specified, the nickname will be the leaf name
     of that directory.
@@ -82,16 +82,16 @@ def get_project_info_from_mod(modname):
     """Find the project info for the given Python module."""
     m = import_module(modname)
     if m.__file__ is None:
-        raise Exception("Invalide module name {}".format(modname))
+        raise Exception("Invalid module name {} (is it installed?)".format(modname))
     fn = Path(m.__file__)
     prj = get_project_from_tasks(fn.parent.parent)
     if prj is None:
-        # it can be a package installed in site-packages without
-        # tasks.py file
+        # package installed in site-packages without tasks.py file
         root_dir = fn.parent.absolute().resolve()
         prj = _PROJECTS_DICT.get(root_dir)
         if prj is None:
             prj = add_project(root_dir)
+            # raise Exception("20191003 dynamically added from {}".format(root_dir))
     # root_dir = Path(m.__file__).parent.parent
     # prj = add_project(root_dir)
     prj.set_main_package(m)

@@ -1,13 +1,17 @@
-# Copyright 2013-2018 Rumma & Ko Ltd
+# Copyright 2013-2019 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 # ~ This module has no docstring because it is to be execfile'd
 # ~ from `setup.py`, `atelier/__init__.py` and possibly some external
 # ~ tools, too.
 
-install_requires = ['Sphinx', 'invoke', 'argh', 'six',
+install_requires = ['invoke', 'argh', 'six',
                     'future', 'Babel', 'unipath',
-                    'python_dateutil', 'gitpython', 'pytest-cov']
+                    'python_dateutil']
+
+# trying to fix #3246
+tests_require = ['Sphinx', 'gitpython', 'pytest-cov']
+
 
 # Explicitly install `importlib` under Python 2.6. Thanks to
 # http://stackoverflow.com/questions/9418064
@@ -18,8 +22,9 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='1.1.16',
+    version='1.1.17',
     install_requires=install_requires,
+    tests_require=tests_require,
     scripts=['scripts/per_project'],
     description="A collection of tools for software artists",
     license='BSD-2-Clause',
@@ -40,8 +45,8 @@ SETUP_INFO = dict(
 .. image:: https://img.shields.io/pypi/l/atelier.svg
    :target: https://pypi.python.org/pypi/atelier/
 
-`atelier` is a collection of tools for managing and maintaining
-Python software projects.
+`atelier` is a collection of tools for managing and maintaining Python software
+projects.
 
 It contains:
 

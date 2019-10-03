@@ -3,13 +3,7 @@
 # License: BSD, see LICENSE for more details.
 
 """
-Install doctrees of all (or some) atelier projects into `intersphinx_mapping`
-of your :xfile:`conf.py`
-
-See :doc:`/sphinxext/interproject`.
-
-
-TODO: rename :func:`configure` to intersphinx_mapping
+Defines the :func:`atelier.sphinxconf.interproject.configure` function.
 
 """
 import os
@@ -33,6 +27,14 @@ USE_LOCAL_BUILDS = os.environ.get("ATELIER_IGNORE_LOCAL_BUILDS", "") != "yes"
 
 
 def configure(globals_dict, prjspec=None):
+    """
+
+    Install doctrees of all (or some) atelier projects into the
+    :envvar:`intersphinx_mapping` of your :xfile:`conf.py`.
+
+    See :doc:`/sphinxext/interproject`.
+
+    """
 
     intersphinx_mapping = dict()
     # extlinks = dict()
@@ -42,12 +44,12 @@ def configure(globals_dict, prjspec=None):
     #     raise Exception("current_project in {} is None!".format(globals_dict['__file__']))
 
     this_conf_file = Path(globals_dict['__file__']).resolve()
-    
+
     if prjspec:
         if isinstance(prjspec, six.string_types):
             prjspec = prjspec.split()
         prjlist = [get_project_info_from_mod(n) for n in prjspec]
-            
+
     else:
         prjlist = []
         # for p in load_projects():
@@ -56,7 +58,7 @@ def configure(globals_dict, prjspec=None):
                 # print("20190122 {} startswith  {}".format(this_conf_file, p.root_dir))
                 continue
             prjlist.append(p)
-        
+
     # logger.info("20180907 prjlist {}".format(prjlist))
     for prj in prjlist:
         # This will load the `tasks.py` of other
@@ -81,19 +83,25 @@ def configure(globals_dict, prjspec=None):
                             doc_tree.rel_path, prj.nickname, urls))
                 continue
 
+            # if prj.nickname == "getlino":
+            #     raise Exception("20191003 {}".format(doc_tree.src_path))
+
             p = None
-            if USE_LOCAL_BUILDS:
-                src_path = doc_tree.src_path
-                # print("20190306a", doc_tree, src_path)
-                if src_path is None or this_conf_file == src_path.child('conf.py'):
+            src_path = doc_tree.src_path
+            if src_path is not None:
+                if this_conf_file == src_path.child('conf.py'):
+                    # don't add myself to intersphinx.
                     continue
-                # p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
-                p = src_path.child('.build', 'objects.inv')
-                if p.exists():
-                    logger.info("Found local {}".format(p))
-                else:
-                    logger.info("File %s does not exist", p)
-                    p = None
+
+                if USE_LOCAL_BUILDS:
+                        # print("20190306a", doc_tree, src_path)
+                    # p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
+                    p = src_path.child('.build', 'objects.inv')
+                    if p.exists():
+                        logger.info("Found local {}".format(p))
+                    else:
+                        logger.info("File %s does not exist", p)
+                        p = None
 
 
             # The unique identifier can be used to prefix cross-reference targets
