@@ -16,8 +16,8 @@ The ``atelier`` package
 .. image:: https://img.shields.io/pypi/l/atelier.svg
    :target: https://pypi.python.org/pypi/atelier/
 
-`atelier` is a collection of tools for managing and maintaining
-Python software projects.
+`atelier` is a collection of tools for managing and maintaining Python software
+projects.
 
 It contains:
 
