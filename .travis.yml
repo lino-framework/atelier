@@ -3,8 +3,9 @@ python:
   - "3.6"
   - "3.7"
 install:
-  - pip install .
+  - pip install -e .
 script:
+  - pip install Sphinx pytest-cov
   - inv cov
 after_script:
   - coveralls
