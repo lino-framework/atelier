@@ -17,6 +17,7 @@ from sphinx.util import logging ; logger = logging.getLogger(__name__)
 
 # import atelier
 from atelier.projects import load_projects, get_project_info_from_mod
+from atelier.projects import get_project_from_nickname
 
 
 USE_LOCAL_BUILDS = os.environ.get("ATELIER_IGNORE_LOCAL_BUILDS", "") != "yes"
@@ -26,7 +27,7 @@ USE_LOCAL_BUILDS = os.environ.get("ATELIER_IGNORE_LOCAL_BUILDS", "") != "yes"
 # cannot use it.
 
 
-def configure(globals_dict, prjspec=None):
+def configure(globals_dict, prjspec=None, **nicknames):
     """
 
     Install doctrees of all (or some) atelier projects into the
@@ -58,6 +59,13 @@ def configure(globals_dict, prjspec=None):
                 # print("20190122 {} startswith  {}".format(this_conf_file, p.root_dir))
                 continue
             prjlist.append(p)
+
+    for k, v in nicknames.items():
+        p = get_project_from_nickname(k)
+        if p:
+            prjlist.append(p)
+        else:
+            intersphinx_mapping[k] = v
 
     # logger.info("20180907 prjlist {}".format(prjlist))
     for prj in prjlist:

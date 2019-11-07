@@ -1,31 +1,18 @@
 # -*- coding: UTF-8 -*-
+# $ doctest atelier/sheller.py
 # Copyright 2016-2019 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
-"""Defines the :class:`Sheller` class.
+"""Defines the :class:`Sheller` class for testing bash commands in a doctest.
 
-.. to test just this module:
-
-   python -m doctest atelier/sheller.py
-
-I guess that others have invented similar things before, and I saw `doctest2
-<https://pythonhosted.org/doctest2/intro_for_existing.html>`__ but am afraid
-switching to it because it seems not maintained. My solution is admittedly less
-beautiful but much simpler.
+Others have invented similar things before.
+For example `doctest2 <https://pythonhosted.org/doctest2/intro_for_existing.html>`__
+by Devin Jeanpierre.
+Another alternative is `Clatter
+<https://clatter.readthedocs.io/en/latest/readme.html>`__
+by Michael Delgado.
 
 """
-
-from __future__ import print_function
-from builtins import str
-# from builtins import input
-from builtins import object
-# Python 2 and 3:
-from future.utils import python_2_unicode_compatible
-import six
-from six.moves import input
-
-# from __future__ import unicode_literals
-# causes problems on Windows where `subprocess.Popen` wants only plain strings
 
 import os
 import sys
@@ -36,7 +23,7 @@ import subprocess
 from tempfile import TemporaryDirectory
 
 
-class Sheller(object):
+class Sheller:
     """A sheller is a little helper object to be used in tested documents
 for running shell scripts and testing their output.
 

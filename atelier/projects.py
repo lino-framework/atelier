@@ -98,6 +98,12 @@ def get_project_info_from_mod(modname):
     # assert prj.main_package is not None
     return prj
 
+def get_project_from_nickname(name):
+    "Find the project info for the given nickname."
+    for p in _PROJECT_INFOS:
+        if p.nickname == name:
+            return p
+
 def get_project_from_tasks(root_dir):
     "Find the project info for the given directory."
     root_dir = root_dir.absolute().resolve()
@@ -258,8 +264,6 @@ class Project(object):
                 self.main_package = import_module(name)
                 # if self.main_package is None:
                 #     raise Exception("Failed to import {}".format(name))
-
-
 
     def load_info(self):
         """

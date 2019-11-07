@@ -2,7 +2,7 @@
 # License: BSD, see LICENSE for more details.
 
 """
-Defines an extended TestCase whith methods to launch a subprocess.
+Defines an extended TestCase with methods to launch a subprocess.
 
 """
 from __future__ import unicode_literals
@@ -34,7 +34,7 @@ def interpreter_args():
 
 class DocTestCase(unittest.FunctionTestCase, SubProcessParent):
     # internally used by make_docs_suite
-    
+
     def __init__(self, filename, addenv=None):
         self.addenv = addenv
         def func():
@@ -45,14 +45,14 @@ class DocTestCase(unittest.FunctionTestCase, SubProcessParent):
             self.run_subprocess(args)
         func.__name__ = filename
         super(DocTestCase, self).__init__(func)
-    
+
     def build_environment(self):
         env = super(DocTestCase, self).build_environment()
         env.pop('PYTHONPATH', None)  # fixes #1296
         if self.addenv is not None:
             env.update(self.addenv)
         return env
-    
+
 
 def make_docs_suite(docs_root, include="*.rst", exclude=None,
                     addenv=None):
@@ -146,7 +146,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
 
 # class BaseTestCase(TestCase):
 #     project_root = ROOTDIR
-    
+
 
 # class BasicTests(BaseTestCase):
 
@@ -174,5 +174,3 @@ class TestCase(unittest.TestCase, SubProcessParent):
 
 #     def test_sigal(self):
 #         self.run_simple_doctests('atelier/sphinxconf/sigal_image.py')
-
-
