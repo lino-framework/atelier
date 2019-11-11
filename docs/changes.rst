@@ -4,11 +4,17 @@
 Changes in `atelier`
 =======================
 
+2019-11-11
+==========
+
+Released version 1.1.19
+
 2019-11-07
 ==========
 
 :func:`atelier.sphinxconf.interproject.configure` now supports intersphinx links
 to pure documentation projects.
+
 
 2019-10-03
 ==========
