@@ -35,7 +35,7 @@ from __future__ import print_function
 
 import os
 import inspect
-import imp
+import importlib
 from unipath import Path
 
 from docutils import nodes, utils
@@ -124,7 +124,7 @@ def srcref(mod):
     package).
 
     Examples:
-    
+
     >>> import atelier
     >>> from atelier import sphinxconf
     >>> from atelier.sphinxconf import base
@@ -165,14 +165,14 @@ def import_from_dotted_path(dotted_names, path=None):
     Thanks to Chase Seibert,
     https://chase-seibert.github.io/blog/2014/04/23/python-imp-examples.html
     """
-    
+
     s = dotted_names.split('.', 1)
     if len(s) == 2:
         first, remaining = s
     else:
         first, remaining = dotted_names, None
-    fp, pathname, description = imp.find_module(first, path)
-    module = imp.load_module(first, fp, pathname, description)
+    fp, pathname, description = importlib.find_module(first, path)
+    module = importlib.load_module(first, fp, pathname, description)
     if not remaining:
         return (module, None)
     if hasattr(module, remaining):
@@ -238,7 +238,7 @@ def autodoc_add_srcref(app, what, name, obj, options, lines):
     """Add a reference to the module's source code.
     This is being added as listener to the
     `autodoc-process-docstring <http://sphinx-doc.org/ext/autodoc.html#event-autodoc-process-docstring>`_ signal.
-    
+
     """
     if what == 'module':
         s = srcref(obj)
@@ -380,7 +380,7 @@ def command_parse(env, sig, signode):
     signode += addnodes.literal_emphasis(sig, sig)
     # signode += addnodes.literal_strong(sig, sig)  # needs Sphinx >= 1.3
     return sig
-        
+
 
 def html_page_context(app, pagename, templatename, context, doctree):
     # experimental. no result yet.
@@ -399,7 +399,7 @@ def html_page_context(app, pagename, templatename, context, doctree):
     # else:
     #     context.update(
     #         source_code_link="no module in {0}".format(pagename))
-        
+
 
 def setup(app):
     def add(**kw):

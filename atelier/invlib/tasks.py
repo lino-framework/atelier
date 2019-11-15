@@ -172,13 +172,10 @@ class MissingConfig(Exception):
 def run_tests(ctx):
     """Run the test suite of this project."""
     # assert os.environ['COVERAGE_PROCESS_START']
-    if not ctx.root_dir.child('setup.py').exists():
-        return
-    # if ctx.root_dir.child('pytest.ini').exists():
-    #     ctx.run('py.test', pty=True)
-    # else:
-    #     ctx.run(sys.executable + ' setup.py -q test', pty=True)
-    ctx.run(sys.executable + ' setup.py -q test', pty=True)
+    if ctx.root_dir.child('tox.ini').exists():
+        ctx.run("tox", pty=True)
+    elif ctx.root_dir.child('setup.py').exists():
+        ctx.run(sys.executable + ' setup.py -q test', pty=True)
 
 
 @task(name='readme')

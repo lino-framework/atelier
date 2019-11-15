@@ -25,3 +25,4 @@ htmlcov
 .coverage.*
 htmlcov
 .doctrees
+.tox

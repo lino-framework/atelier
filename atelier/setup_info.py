@@ -10,7 +10,7 @@ install_requires = ['invoke', 'argh', 'six',
                     'python_dateutil', 'Sphinx']
 
 # trying to fix #3246
-tests_require = ['gitpython', 'pytest-cov']
+tests_require = ['tox', 'gitpython', 'pytest-cov']
 
 
 # Explicitly install `importlib` under Python 2.6. Thanks to
