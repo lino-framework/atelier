@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2018 by Rumma & Ko Ltd.
+# Copyright 2011-2019 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """
@@ -387,7 +387,6 @@ def html_page_context(app, pagename, templatename, context, doctree):
     # print(20151006, pagename, context.keys())
     if pagename.startswith('api/') and pagename != "api/index":
         modname = pagename[4:]
-        from importlib import import_module
         mod = import_module(modname)
         s = srcref(mod)
         if s:

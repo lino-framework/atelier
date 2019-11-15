@@ -4,6 +4,17 @@
 Changes in `atelier`
 =======================
 
+2019-11-15
+==========
+
+:cmd:`inv test` now simply calls tox if a file :xfile:`tox.ini` exists. To use
+the new way of testing, existing projects should:
+
+- add a :file:`tox.ini` file
+- rename :file:`__init__.py` to :file:`test_everything.py`
+- Add :file:`.tox` to the :xfile:`.gitignore` file.
+
+
 2019-11-11
 ==========
 
