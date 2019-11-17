@@ -4,52 +4,11 @@
 ``inv`` tasks defined by atelier
 ======================================
 
-.. _invoke: http://www.pyinvoke.org/
-
-Installing the :mod:`atelier` package also installs the invoke_
-package, which installs a command ``inv`` into your Python
-environment.  This document describes the tasks and configuration
-settings for invoke_ provided by atelier.
+This document describes the tasks and configuration settings for :cmd:`inv`
+provided by atelier.
 
 .. contents::
   :local:
-
-
-
-How it works
-=============
-
-The ``inv`` command is a kind of make tool which works by looking for
-a file named :xfile:`tasks.py`.  To activate the following subcommands
-("tasks") for your project, you must create a file named
-:file:`tasks.py` in your project's root directory with at least the
-following two lines::
-
-  from atelier.invlib.ns import ns
-  ns.setup_from_tasks(globals())
-
-.. xfile:: tasks.py
-
-In your project's :xfile:`tasks.py` file you must define a variable
-``ns`` which you usually import from :mod:`atelier.invlib`.
-
-You can specify project-specific configuration settings directly in
-your :xfile:`tasks.py` file. Example content::
-
-    from atelier.tasks import ns
-    ns.setup_from_tasks(globals(), "mypackage",
-        tolerate_sphinx_warnings=True,
-        revision_control_system='git')
-
-.. xfile:: .invoke.py
-
-You can specify user-wide invoke settings in a file named
-:xfile:`.invoke.py` which must be in your home directory.
-
-You can also define system-wide default configuration files.  See the
-`Invoke documentation
-<http://docs.pyinvoke.org/en/latest/concepts/configuration.html>`_ for
-more information.
 
 
 Tasks

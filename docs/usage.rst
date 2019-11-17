@@ -4,21 +4,61 @@
 Usage
 =====
 
-See also
+How it works
+=============
 
-- :doc:`invlib`
-- :mod:`atelier.projects`
+To install the :mod:`atelier` package you must say::
 
+  $ pip install atelier
 
-When you run :cmd:`inv` (or :cmd:`invoke`) from a project directory or
+.. _invoke: http://www.pyinvoke.org/
+
+Installing :mod:`atelier` also installs the invoke_ package, which installs a
+command :cmd:`inv` into your Python environment.
+
+To use atelier for your project, you must have a file named :file:`tasks.py` in
+your project's root directory with at least the following two lines::
+
+  from atelier.invlib.ns import ns
+  ns.setup_from_tasks(globals())
+
+.. command:: inv
+
+The :cmd:`inv` command is a kind of make tool which works by looking for a file
+named :xfile:`tasks.py`.
+
+.. xfile:: tasks.py
+
+In your project's :xfile:`tasks.py` file you must define a variable
+``ns`` which you usually import from :mod:`atelier.invlib`.
+
+You can specify project-specific configuration settings directly in
+your :xfile:`tasks.py` file. Example content::
+
+    from atelier.tasks import ns
+    ns.setup_from_tasks(globals(), "mypackage",
+        tolerate_sphinx_warnings=True,
+        revision_control_system='git')
+
+.. xfile:: .invoke.py
+
+You can specify user-wide invoke settings in a file named
+:xfile:`.invoke.py` which must be in your home directory.
+
+You can also define system-wide default configuration files.  See the
+`Invoke documentation
+<http://docs.pyinvoke.org/en/latest/concepts/configuration.html>`_ for
+more information.
+
+When you run :cmd:`inv` (or its alias :cmd:`invoke`) from a project directory or
 a subdirectory, then `invoke` finds the :xfile:`tasks.py` in the root
-directory of your project.  This "activates" atelier.
+directory of your project.
 
 When you have no :xfile:`config.py <~/.atelier/config.py>` file,
 Atelier will operate in single project mode: the :xfile:`tasks.py`
 causes on the fly creation of a single project descriptor.
 
-  
+
 
 .. _atelier.config:
 
@@ -55,26 +95,26 @@ If a project has a :file:`setup.py` file, then atelier uses it.
 
 .. envvar:: SETUP_INFO
 .. xfile:: setup.py
-           
+
 The :xfile:`setup.py` file of a Python project can be as simple as
 this:
 
 .. literalinclude:: p1/setup.py
-  
+
 But for atelier there are two additional required conventions:
 
 - The :xfile:`setup.py` file must define a name :envvar:`SETUP_INFO`
   which is a dict containing all those keyword arguments passed to the
   :func:`setup` function.
-  
+
 - The :xfile:`setup.py` file should actualy call the :func:`setup`
   function *only if* invoked from a command line, i.e. only `if
   __name__ == '__main__'`.
-  
+
 So the above minimal :xfile:`setup.py` file becomes:
 
 .. literalinclude:: p2/setup.py
-                    
+
 Atelier tries to verify these conditions and raises an exception if
 the :xfile:`setup.py` doesn't comply:
 
@@ -90,7 +130,7 @@ Atelier requires the setup() call to be in a "if __name__ == '__main__':" condit
 Traceback (most recent call last):
 ...
 Exception: Oops, docs/p3/setup.py doesn't define a name SETUP_INFO.
-   
+
 >>> d = get_setup_info(Path('docs/p2'))
 >>> d == {'version': '1.0.0', 'name': 'foo'}
 True
@@ -134,7 +174,7 @@ script:
     Special case: When CMD starts with the word ``git``, then skip all
     projects which don't have their :envvar:`revision_control_system`
     set to ``'git'``.
-      
+
     The projects are processed in the order defined in your
     :xfile:`~/.atelier/config.py` file.
 
@@ -158,7 +198,7 @@ script:
 
 
 .. command:: pp
-             
+
     We recommend to define an alias :cmd:`pp` for :cmd:`per_project`
     in your :xfile:`~/.bash_aliases`::
 
@@ -170,12 +210,12 @@ Any ``-`` after that is considered a part of the command.  So the
 following two lines are *not* equivalent::
 
   $ pp inv --help
-  $ pp --help inv 
+  $ pp --help inv
 
 Usage examples::
 
   $ pp -l
-  $ pp inv test 
+  $ pp inv test
   $ pp git st
 
 See the `Project management
@@ -183,3 +223,8 @@ See the `Project management
 project for more usage examples.
 
 
+
+See also
+
+- :doc:`invlib`
+- :mod:`atelier.projects`
