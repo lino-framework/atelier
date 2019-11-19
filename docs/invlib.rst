@@ -124,8 +124,8 @@ Commands for testing
     Run the test suite of this project.
 
     This is a shortcut for either ``python setup.py test`` or
-    ``py.test`` (depending on whether your project has a
-    :xfile:`pytest.ini` file or not.
+    ``py.test`` or `` tox`` (depending on whether your project has a
+    :xfile:`pytest.ini` or :xfile:`tox.ini` files or not and  ).
 
 
 .. command:: inv cov
