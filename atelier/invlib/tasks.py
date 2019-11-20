@@ -738,8 +738,8 @@ def prep(ctx, cov=False):
         run_in_demo_projects(ctx, cmd, cov=cov)
 
 
-# @task(name='cov', pre=[tasks.call(prep, cov=True)])
-@task(name='cov')
+@task(name='cov', pre=[run_tests])
+# @task(name='cov')
 def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     """Run all tests and create a coverage report.
 

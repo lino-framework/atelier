@@ -4,6 +4,18 @@
 Changes in `atelier`
 =======================
 
+2019-11-20
+==========
+
+Making the command :cmd:`inv cov` run :cmd:`inv test` before actually running the coverage.
+
+Released version 1.1.22
+
+2019-11-19
+==========
+Released version 1.1.20
+Released version 1.1.21
+
 2019-11-15
 ==========
 
