@@ -30,5 +30,5 @@ doc_trees = ['docs']
 current_project = None
 """
 The currently loaded project.  An instance of
-:class:`atelier.Project`.  This is set by :func:`setup_from_tasks`.
+:class:`atelier.Project`.  This is set by :func:`atelier.invlib.setup_from_tasks`.
 """

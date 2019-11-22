@@ -7,14 +7,18 @@ Changes in `atelier`
 2019-11-22
 ==========
 
-When a :xfile:`tox.ini` file exists, the :cmd:`inv test` command now sets an
-environment variable :envvar:`REQ_VERSION` to the value "local" when calling
-tox.
+(canceled on 20191122) When a :xfile:`tox.ini` file exists, the :cmd:`inv test`
+command now sets an environment variable :envvar:`REQ_VERSION` to the value
+"local" when calling tox.
+
+We realized that Atelier must not use tox. Atelier is meant to run within one
+virtual environment, tox is being used "outside" of atelier.
+New 
 
 2019-11-20
 ==========
 
-The command :cmd:`inv cov` now runs :cmd:`inv test` before actually running the
+(canceled on 20191122) The command :cmd:`inv cov` now runs :cmd:`inv test` before actually running the
 coverage.
 
 Released version 1.1.22
@@ -28,7 +32,7 @@ Released version 1.1.21
 2019-11-15
 ==========
 
-:cmd:`inv test` now simply calls tox if a file :xfile:`tox.ini` exists. To use
+(canceled on 20191122) :cmd:`inv test` now simply calls tox if a file :xfile:`tox.ini` exists. To use
 the new way of testing, existing projects should:
 
 - add a :file:`tox.ini` file

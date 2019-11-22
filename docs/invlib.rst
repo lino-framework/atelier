@@ -11,6 +11,11 @@ provided by atelier.
   :local:
 
 
+Note: code examples in this document use the atelier project
+
+>>> from atelier.projects import get_project_info_from_mod
+>>> prj = get_project_info_from_mod('atelier')
+
 Tasks
 =====
 
@@ -130,8 +135,9 @@ Commands for testing
 
 .. command:: inv cov
 
-    Run :envvar:`coverage_command` and create a `coverage
-    <https://pypi.python.org/pypi/coverage>`_ report.
+    Create a `coverage <https://pypi.python.org/pypi/coverage>`_ report.
+
+    You can configure the command to use by setting :envvar:`coverage_command`.
 
 .. command:: inv test_sdist
 
@@ -190,10 +196,6 @@ uses :mod:`atelier.invlib`.
 
 .. envvar:: pypi_dir
 
-.. envvar:: coverage_command
-
-    The command to run for measuring coverage by :cmd:`inv cov`.
-
 .. envvar:: editor_command
 
     A string with the command name of your text editor. Example::
@@ -208,7 +210,6 @@ uses :mod:`atelier.invlib`.
     launches the editor on the specified file in a new window and then
     returns control to the command line without waiting for that new
     window to terminate.
-
 
 
 .. envvar:: docs_rsync_dest
@@ -257,7 +258,11 @@ uses :mod:`atelier.invlib`.
 
     A list of directory names (relative to your project directory)
     containing Sphinx document trees.
+
     Default value is ``['docs']``
+
+    >>> prj.get_xconfig('doc_trees')
+    ['docs']
 
     If the project has a main package which defines an attribute
     :envvar:`doc_trees`,
@@ -267,7 +272,7 @@ uses :mod:`atelier.invlib`.
 
     A list of wildcards to be cleaned by :cmd:`inv clean`.
 
-  .. attribute:: use_dirhtml
+.. envvar:: use_dirhtml
 
     Whether `sphinx-build
     <http://sphinx-doc.org/invocation.html#invocation-of-sphinx-build>`__
@@ -280,14 +285,6 @@ uses :mod:`atelier.invlib`.
 .. envvar:: languages
 
     A list of language codes for which userdocs are being maintained.
-
-.. envvar:: apidoc_exclude_pathnames
-
-    No longer used because we now use autosummary instead of
-    sphinx-apidoc.
-
-    a list of filenames (or directory names) to be excluded when you
-    run :cmd:`fab api`.
 
 .. envvar:: revision_control_system
 
@@ -316,8 +313,37 @@ uses :mod:`atelier.invlib`.
     A shell command to be run in in the project's root directory when :cmd:`inv
     prep` is invoked.  The default value is empty.
 
+    Default value is empty.
+
+    >>> prj.get_xconfig('prep_command')
+    ''
+
 .. envvar:: demo_prep_command
 
     A shell command to be run in every :envvar:`demo project <demo_projects>`
     when :cmd:`inv prep` is invoked.  The default value is ``manage.py prep
     --noinput --traceback``.
+
+    Default value is empty.
+
+    >>> prj.get_xconfig('demo_prep_command')
+    'manage.py prep --noinput --traceback'
+
+.. envvar:: test_command
+
+    The command to be run by :cmd:`inv test`.
+
+    Default value is ``unit2 discover -s tests``.
+
+    >>> prj.get_xconfig('test_command')
+    'unit2 discover -s tests'
+
+.. envvar:: coverage_command
+
+    The command to be run under coverage by :cmd:`inv cov`.
+
+    Default value runs :cmd:`inv prep`, then :cmd:`inv test` then :cmd:`inv clean -b`
+    and finally :cmd:`inv bd`.
+
+    >>> prj.get_xconfig('coverage_command')
+    '`which invoke` prep test clean --batch bd'

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2018 Rumma & Ko Ltd
+# Copyright 2013-2019 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """
 This is the module that defines the invoke namespace.
@@ -172,10 +172,15 @@ class MissingConfig(Exception):
 def run_tests(ctx):
     """Run the test suite of this project."""
     # assert os.environ['COVERAGE_PROCESS_START']
-    if ctx.root_dir.child('tox.ini').exists():
-        ctx.run("REQ_VERSION=local tox", pty=True)
-    elif ctx.root_dir.child('setup.py').exists():
-        ctx.run(sys.executable + ' setup.py -q test', pty=True)
+    cmd = ctx.test_command
+    if cmd:
+        print("Run test command {0} :".format(cmd))
+        ctx.run(cmd, pty=True)
+
+    # if ctx.root_dir.child('tox.ini').exists():
+    #     ctx.run("REQ_VERSION=local tox", pty=True)
+    # elif ctx.root_dir.child('setup.py').exists():
+    #     ctx.run(sys.executable + ' setup.py -q test', pty=True)
 
 
 @task(name='readme')
@@ -720,13 +725,13 @@ def prep(ctx, cov=False):
     tests.
 
     """
-    if cov:
-        covfile = ctx.root_dir.child('.coveragerc')
-        if not covfile.exists():
-            raise Exception('No .coveragerc file in {0}'.format(
-                ctx.project_name))
-        # os.environ['COVERAGE_PROCESS_START'] = covfile
-        ctx.run('coverage erase', pty=True)
+    # if cov:
+    #     covfile = ctx.root_dir.child('.coveragerc')
+    #     if not covfile.exists():
+    #         raise Exception('No .coveragerc file in {0}'.format(
+    #             ctx.project_name))
+    #     # os.environ['COVERAGE_PROCESS_START'] = covfile
+    #     ctx.run('coverage erase', pty=True)
 
     cmd = ctx.prep_command
     if cmd:
@@ -738,8 +743,8 @@ def prep(ctx, cov=False):
         run_in_demo_projects(ctx, cmd, cov=cov)
 
 
-@task(name='cov', pre=[run_tests])
-# @task(name='cov')
+# @task(name='cov', pre=[run_tests])
+@task(name='cov')
 def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     """Run all tests and create a coverage report.
 
@@ -748,23 +753,48 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     (overwriting any files without confirmation).
 
     """
-    covfile = ctx.root_dir.child('.coveragerc')
-    if not covfile.exists():
-        print('No .coveragerc file in {0}'.format(ctx.project_name))
-        return
-    os.environ['COVERAGE_PROCESS_START'] = covfile
+    # covfile = ctx.root_dir.child('.coveragerc')
+    # if not covfile.exists():
+    #     print('No .coveragerc file in {0}'.format(ctx.project_name))
+    #     return
+    if not 'COVERAGE_PROCESS_START' in os.environ:
+        msg = "You must set COVERAGE_PROCESS_START before running `inv cov`!"
+        raise Exit(msg)
+
+    # test whether this Python installation is configured for coverage
+    from coverage import process_startup
+    if getattr(process_startup, "coverage", None) is None:
+        try:
+            import sitecustomize
+            fn = os.path.realpath(sitecustomize.__file__)
+            msg = "Please add the following to your {} file:".format(str(fn))
+        except ImportError:
+            msg = 'Please create a sitecustomize.py file with the following content:'
+
+        msg += """
+    try:
+        import coverage
+    except ImportError:
+        pass
+    else:
+        coverage.process_startup()"""
+
+        msg += "\nSee also https://coverage.readthedocs.io/en/coverage-4.3.4/subprocess.html"
+        raise Exit(msg)
+
     ctx.run('coverage erase', pty=True)
     print("Running {0} in {1} within coverage...".format(
         ctx.coverage_command, ctx.project_name))
     ctx.run('coverage run --parallel-mode {}'.format(
         ctx.coverage_command), pty=True)
-    ctx.run('coverage combine', pty=True)
-    ctx.run('coverage report', pty=True)
-    if html:
-        pth = ctx.root_dir.child(html_cov_dir)
-        print("Writing html report to {}".format(pth))
-        ctx.run('coverage html -d {}'.format(pth), pty=True)
-        if False:
-            ctx.run('open {}/index.html'.format(pth), pty=True)
-        print('{}/index.html has been generated.'.format(pth))
-    ctx.run('coverage erase', pty=True)
+    if False:
+        ctx.run('coverage combine', pty=True)
+        ctx.run('coverage report', pty=True)
+        if html:
+            pth = ctx.root_dir.child(html_cov_dir)
+            print("Writing html report to {}".format(pth))
+            ctx.run('coverage html -d {}'.format(pth), pty=True)
+            if False:
+                ctx.run('open {}/index.html'.format(pth), pty=True)
+            print('{}/index.html has been generated.'.format(pth))
+        ctx.run('coverage erase', pty=True)

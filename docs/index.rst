@@ -32,7 +32,9 @@ Sitemap
    changes
 
 
+
 .. toctree::
    :hidden:
 
    invlib
+   sheller
