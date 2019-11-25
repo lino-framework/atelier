@@ -4,6 +4,13 @@
 Changes in `atelier`
 =======================
 
+2019-11-25
+==========
+
+:mod:`atelier.invlib.tasks` now changes the current working directory to the
+project's :attr:`root_dir` before launching :envvar:`test_command`.
+
+
 2019-11-22
 ==========
 
@@ -13,7 +20,7 @@ command now sets an environment variable :envvar:`REQ_VERSION` to the value
 
 We realized that Atelier must not use tox. Atelier is meant to run within one
 virtual environment, tox is being used "outside" of atelier.
-New 
+New
 
 2019-11-20
 ==========

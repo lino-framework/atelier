@@ -175,7 +175,8 @@ def run_tests(ctx):
     cmd = ctx.test_command
     if cmd:
         print("Run test command {0} :".format(cmd))
-        ctx.run(cmd, pty=True)
+        with ctx.cd(ctx.root_dir):
+            ctx.run(cmd, pty=True)
 
     # if ctx.root_dir.child('tox.ini').exists():
     #     ctx.run("REQ_VERSION=local tox", pty=True)
@@ -686,7 +687,7 @@ def commited_today(ctx, today=None):
 
 from importlib import import_module
 
-def run_in_demo_projects(ctx, py_cmd, cov=False):
+def run_in_demo_projects(ctx, py_cmd, cov=False, bare=False):
     """
     Run the given Python command line `py_cmd` in each demo project.
 
@@ -706,8 +707,9 @@ def run_in_demo_projects(ctx, py_cmd, cov=False):
                 os.environ['COVERAGE_FILE'] = datacovfile
             else:
                 cmd = sys.executable + ' ' + py_cmd
-            print("-" * 80)
-            print("Run in demo project {0}\n$ {1} :".format(dpname, cmd))
+            if not bare:
+                print("-" * 80)
+                print("Run in demo project {0}\n$ {1} :".format(dpname, cmd))
             ctx.run(cmd, pty=True)
 
 
@@ -715,7 +717,7 @@ def run_in_demo_projects(ctx, py_cmd, cov=False):
 def configure(ctx):
     """Run `manage.py install` on every demo project."""
     cmd = 'manage.py install --noinput'
-    run_in_demo_projects(ctx, cmd)
+    run_in_demo_projects(ctx, cmd, bare=True)
 
 
 @task(name='prep')

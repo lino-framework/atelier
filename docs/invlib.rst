@@ -335,6 +335,8 @@ uses :mod:`atelier.invlib`.
 
     Default value is ``unit2 discover -s tests``.
 
+    The command will always be invoked from the projects root dir. 
+
     >>> prj.get_xconfig('test_command')
     'unit2 discover -s tests'
 
