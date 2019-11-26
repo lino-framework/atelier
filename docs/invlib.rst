@@ -333,12 +333,14 @@ uses :mod:`atelier.invlib`.
 
     The command to be run by :cmd:`inv test`.
 
-    Default value is ``unit2 discover -s tests``.
-
-    The command will always be invoked from the projects root dir. 
+    Default value is ``python -m unittest discover -s tests``.
 
     >>> prj.get_xconfig('test_command')
-    'unit2 discover -s tests'
+    'python -m unittest discover -s tests'
+
+    The command will always be invoked from the projects root dir.
+
+
 
 .. envvar:: coverage_command
 
