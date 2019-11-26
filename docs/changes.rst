@@ -4,6 +4,11 @@
 Changes in `atelier`
 =======================
 
+2019-11-26
+==========
+
+Changed default of :envvar:`test_command` to "python -m unittest discover -s tests".
+
 2019-11-25
 ==========
 

@@ -228,7 +228,7 @@ class Project(object):
             'apidoc_exclude_pathnames': [],
             'editor_command': os.environ.get('EDITOR'),
             'prep_command': "",
-            'test_command': "unit2 discover -s tests",
+            'test_command': "python -m unittest discover -s tests",
             'demo_projects': [],
             'demo_prep_command': "manage.py prep --noinput --traceback",
             # 'coverage_command': '{} inv prep test clean --batch bd'.format(pp),
