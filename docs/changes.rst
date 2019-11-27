@@ -4,6 +4,13 @@
 Changes in `atelier`
 =======================
 
+2019-11-27
+==========
+
+Remove tox from install_requires in favor of standart tesing using unittest.
+
+Released version 1.1.23
+
 2019-11-26
 ==========
 

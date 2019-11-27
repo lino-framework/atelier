@@ -7,7 +7,7 @@
 
 install_requires = ['invoke', 'argh', 'six',
                     'future', 'Babel', 'unipath',
-                    'python_dateutil', 'Sphinx', 'tox']
+                    'python_dateutil', 'Sphinx']
 
 # trying to fix #3246
 tests_require = ['gitpython', 'pytest-cov']
