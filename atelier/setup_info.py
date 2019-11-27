@@ -22,7 +22,7 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='1.1.22',
+    version='1.1.23',
     install_requires=install_requires,
     tests_require=tests_require,
     scripts=['scripts/per_project'],
