@@ -7,7 +7,7 @@
 
 install_requires = ['invoke', 'argh', 'six',
                     'future', 'Babel', 'unipath',
-                    'python_dateutil', 'Sphinx', 'tox']
+                    'python_dateutil', 'Sphinx']
 
 # trying to fix #3246
 tests_require = ['gitpython', 'pytest-cov']
@@ -22,7 +22,7 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='1.1.22',
+    version='1.1.23',
     install_requires=install_requires,
     tests_require=tests_require,
     scripts=['scripts/per_project'],
