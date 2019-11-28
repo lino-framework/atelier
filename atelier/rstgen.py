@@ -18,7 +18,6 @@ from __future__ import unicode_literals, print_function
 import six
 
 # from builtins import bytes
-# from future.utils import python_2_unicode_compatible
 # from future import standard_library
 # standard_library.install_aliases()
 
@@ -57,30 +56,30 @@ class Column(object):
 def header(level, text):
     """
     Render the text as a header with the specified level.
-    
+
     It uses and supposes the following system of header levels::
 
        =======
        Level 1
        =======
-       
+
        -------
        Level 2
        -------
-       
+
        ~~~~~~~
        Level 3
        ~~~~~~~
-       
+
        Level 4
        =======
 
        Level 5
        -------
-       
+
        Level 6
        ~~~~~~~
-    
+
     """
     result = io.StringIO()
 
@@ -130,7 +129,7 @@ def _write_header(writeln, level, s):
 
 class Table(object):
     """Used to render a table.
-    
+
     """
     simple = True
 
@@ -249,8 +248,8 @@ Here is the data we are going to render into different tables:
 The simplest case of :func:`table`:
 
 .. complextable::
-  :header: 
-  
+  :header:
+
   Code <NEXTCELL> Result <NEXTROW>
 
   >>> from atelier.rstgen import table
@@ -263,11 +262,11 @@ The simplest case of :func:`table`:
    St. Vincent and the Grenadines   Chateaubelair   Nicole
   ================================ =============== ========
   <BLANKLINE>
-  
+
   <NEXTCELL>
-  
-  `\ ` 
-  
+
+  `\ `
+
   ================================ =============== ========
    Country                          City            Name
   -------------------------------- --------------- --------
@@ -279,8 +278,8 @@ The simplest case of :func:`table`:
 A table without headers:
 
 .. complextable::
-  :header: 
-  
+  :header:
+
   Code <NEXTCELL> Result <NEXTROW>
 
   >>> print(table(headers, rows, show_headers=False))
@@ -292,20 +291,20 @@ A table without headers:
   <BLANKLINE>
 
   <NEXTCELL>
-  
-  `\ ` 
-  
+
+  `\ `
+
   ================================ =============== ========
    Belgium                          Eupen           Gerd
    Estonia                          Vigala          Luc
    St. Vincent and the Grenadines   Chateaubelair   Nicole
   ================================ =============== ========
-  
+
 You might prefer to use directly the :class:`Table` class:
 
 .. complextable::
-  :header: 
-  
+  :header:
+
   Code <NEXTCELL> Result <NEXTROW>
 
   >>> from atelier.rstgen import Table
@@ -321,9 +320,9 @@ You might prefer to use directly the :class:`Table` class:
   <BLANKLINE>
 
   <NEXTCELL>
-  
-  `\ ` 
-  
+
+  `\ `
+
   ================================ =============== ========
    Country                          City            Name
   -------------------------------- --------------- --------
@@ -336,8 +335,8 @@ If there is at least one cell that contains a newline character,
 the result will be a complex table:
 
 .. complextable::
-  :header: 
-  
+  :header:
+
   Code <NEXTCELL> Result <NEXTROW>
 
   >>> rows[2] = ['''St. Vincent
@@ -356,8 +355,8 @@ the result will be a complex table:
   <BLANKLINE>
 
   <NEXTCELL>
-  
-  `\ ` 
+
+  `\ `
 
   +--------------------+---------------+--------+
   | Country            | City          | Name   |
@@ -369,10 +368,10 @@ the result will be a complex table:
   | St. Vincent        | Chateaubelair | Nicole |
   | and the Grenadines |               |        |
   +--------------------+---------------+--------+
-  
+
 
 .. rubric:: Empty tables
-  
+
 A special case is a table with no rows.  For ``table(headers, [])``
 the following output would be logical::
 
@@ -409,10 +408,10 @@ def ul(items, bullet="-"):
     r""" Render the given `items` as a `bullet list
     <http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#bullet-lists>`_.
     `items` must be an iterable whose elements are strings.
-    
+
     If at least one item contains more than one paragraph,
     then all items are separated by an additional blank line.
-    
+
     >>> print(ul(["Foo", "Bar", "Baz"]))
     - Foo
     - Bar
@@ -463,7 +462,7 @@ def ol(items, bullet="#."):
     r"""Convert the given `items` into an ordered list.
 
 `items` must be an iterable whose elements are strings.
-    
+
     >>> print(ol(["Foo", "Bar", "Baz"]))
     #. Foo
     #. Bar
@@ -499,7 +498,7 @@ def boldheader(title):
     return "\n\n**%s**\n\n" % str(title).strip()
 
 
-# @python_2_unicode_compatible
+#
 def toctree(*children, **options):
     r"""Return a `toctree` directive with specified `options` and
 `children`.

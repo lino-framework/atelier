@@ -16,7 +16,6 @@ from six.moves import input
 from builtins import str
 from builtins import object
 from future.types import newstr
-from future.utils import python_2_unicode_compatible
 import re
 
 # from __future__ import unicode_literals
@@ -35,14 +34,14 @@ from unipath import Path
 from pprint import pprint
 
 
-@python_2_unicode_compatible
+
 class AttrDict(dict):
 
     """
     Dictionary-like helper object.
-    
+
     Usage example:
-    
+
     >>> from atelier.utils import AttrDict
     >>> a = AttrDict()
     >>> a.define('foo', 1)
@@ -57,7 +56,7 @@ class AttrDict(dict):
     2
     >>> print(a.bar)
     {'baz': 2}
-    
+
     """
     def __getattr__(self, name):
         try:
@@ -134,19 +133,19 @@ def i2d(i):
 def i2t(s):
     """
     Convert `int` to `time`. Examples:
-    
+
     >>> i2t(815)
     datetime.time(8, 15)
-    
+
     >>> i2t(1230)
     datetime.time(12, 30)
-    
+
     >>> i2t(12)
     datetime.time(12, 0)
-    
+
     >>> i2t(1)
     datetime.time(1, 0)
-    
+
     """
     s = str(s)
     if len(s) == 4:
@@ -195,7 +194,7 @@ def is_string(s):
     if six.PY2:
         return isinstance(s, six.string_types) or isinstance(s, newstr)
     return isinstance(s, six.string_types)
-   
+
 def isidentifier(s):
     """
     Check whether the given string can be used as a Python identifier.
@@ -262,7 +261,7 @@ def confirm(prompt=None, default="y"):
 def indentation(s):
     r"""
     Examples:
-    
+
     >>> from atelier.utils import indentation
     >>> indentation("")
     0
@@ -270,7 +269,7 @@ def indentation(s):
     0
     >>> indentation(" foo")
     1
-    
+
     """
     return len(s) - len(s.lstrip())
 
@@ -279,9 +278,9 @@ def unindent(s):
     r"""
     Reduces indentation of a docstring to the minimum.
     Empty lines don't count.
-    
+
     Examples:
-    
+
     >>> from atelier.utils import unindent
     >>> unindent('')
     ''
@@ -536,5 +535,3 @@ def cd(path):
     os.chdir(path)
     yield
     os.chdir(old_dir)
-
-
