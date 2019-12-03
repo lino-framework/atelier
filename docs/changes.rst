@@ -1,8 +1,15 @@
 .. _atelier.changes:
 
-=======================
-Changes in `atelier`
-=======================
+=========================
+Changes in :mod:`atelier`
+=========================
+
+2019-12-03
+==========
+
+:func:`atelier.sphinxconf.configure` now installs `sphinx_rtd_style
+<https://sphinx-rtd-theme.readthedocs.io/en/stable/>`__ as theme.
+
 
 2019-11-27
 ==========

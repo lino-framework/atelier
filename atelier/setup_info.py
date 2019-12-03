@@ -9,6 +9,8 @@ install_requires = ['invoke', 'argh', 'six',
                     'future', 'Babel', 'unipath',
                     'python_dateutil', 'Sphinx']
 
+install_requires.append('sphinx_rtd_theme')
+
 # trying to fix #3246
 tests_require = ['gitpython', 'pytest-cov']
 

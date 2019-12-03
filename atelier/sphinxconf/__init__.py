@@ -38,10 +38,10 @@ from __future__ import unicode_literals
       File "/site-packages/sphinx/application.py", line 503, in add_object_type
         'doc_field_types': doc_field_types})
     TypeError: type() argument 1 must be string, not unicode
-    
-I solved this by a manual patch in line 308 of 
+
+I solved this by a manual patch in line 308 of
 :file:`sphinx/application.py`::
-    
+
     def import_object(self, objname, source=None):
         objname = str(objname)  # LS 20140108 accept unicode strings
         # needed when calling from Python 2.7 with
@@ -126,11 +126,17 @@ def configure(globals_dict):
     globals_dict.update(autodoc_member_order='bysource')
     globals_dict.update(
         autodoc_inherit_docstrings=False)
-    
 
 
-    if False:
-        globals_dict.update(html_theme="bizstyle")
+
+    if True:
+        # globals_dict.update(html_theme="bizstyle")
+        globals_dict.update(html_theme="sphinx_rtd_theme")
+        globals_dict.update(html_theme_options={
+            "prev_next_buttons_location": "both",
+            "style_nav_header_background": "#dddddd",
+            "style_external_links": True,
+        })
     else:
         # use default html_theme ("alabaster")
         my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
@@ -158,5 +164,3 @@ def version2rst(self, m):
     else:
         print("The current stable release is :doc:`%s`." % v)
         #~ print("We're currently working on :doc:`coming`.")
-
-

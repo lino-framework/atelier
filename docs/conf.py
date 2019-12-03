@@ -35,8 +35,8 @@ templates_path = ['.templates']
 master_doc = 'index'
 
 # General information about the project.
-project = u"atelier"
-copyright = '2002-2018 Rumam & Ko Ltd'
+project = "atelier"
+copyright = '2002-2019 Rumam & Ko Ltd'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -203,7 +203,7 @@ htmlhelp_basename = 'atelier'
 #~ show_source = True
 
 #~ srcref_base_uri="http://code.google.com/lino"
-#~ srcref_base_uri="http://code.google.com/p/lino/source/browse/#hg" 
+#~ srcref_base_uri="http://code.google.com/p/lino/source/browse/#hg"
 
 
 extlinks = {
@@ -231,11 +231,11 @@ autosummary_generate = True
 # my_font_family = "Swiss, Helvetica, Nimbus"
 # my_font_family = "Verdana, 'DejaVu Sans'"
 # http://sphinx.pocoo.org/theming.html
-my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
-html_theme_options = {
-    "font_family": my_font_family,
-    "head_font_family": my_font_family,
-}
+# my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
+# html_theme_options = {
+#     "font_family": my_font_family,
+#     "head_font_family": my_font_family,
+# }
     # font_family: "'goudy old style', 'minion pro', 'bell mt', Georgia, 'Hiragino Mincho Pro', serif")
 
 # html_theme = "default"
