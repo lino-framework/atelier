@@ -135,7 +135,8 @@ def configure(globals_dict):
         globals_dict.update(html_theme_options={
             "prev_next_buttons_location": "both",
             "style_nav_header_background": "#dddddd",
-            "style_external_links": True,
+            "style_external_links": False,  # disadvantage: line spacing increases for lines with a link
+            "includehidden": False,
         })
     else:
         # use default html_theme ("alabaster")
