@@ -8,15 +8,11 @@ It is imported by :func:`atelier.invlib.setup_from_tasks` which passes
 it to :func:`invoke.Collection.from_module`.
 """
 
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import os
 import sys
 import glob
 import time
 import datetime
-import six
 from datetime import timedelta
 
 from atelier.utils import i2d
@@ -213,8 +209,6 @@ def write_readme(ctx):
 
 {long_description}
 """.format(title=title, **info)
-    if six.PY2:
-        txt = txt.encode('utf-8')
     if readme.exists() and readme.read_file() == txt:
         return
     must_confirm("Overwrite %s" % readme.absolute())
@@ -449,10 +443,8 @@ def edit_blog_entry(ctx, today=None):
                 return
             yd.mkdir()
             txt = ".. blogger_year::\n"
-            yd.child('index.rst').write_file(txt.encode('utf-8'))
+            yd.child('index.rst').write_file(txt)
 
-        if six.PY2:
-            content = content.encode('utf-8')
         entry.path.write_file(content)
         # touch it for Sphinx:
         entry.path.parent.child('index.rst').set_times()
