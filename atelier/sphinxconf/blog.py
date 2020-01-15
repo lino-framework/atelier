@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2019 Rumma & Ko Ltd.
+# Copyright 2011-2020 Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """This Sphinx extension defines the :rst:dir:`blogger_year` and
@@ -12,26 +12,21 @@ Usage: add the following to your `conf.py`::
 And usually this file structure:
 
 - docs/blog/index.rst --> contains a main_blogindex directive (hidden toctree)
-    
+
 Individual blog entries, including yearly directories and
 `index.rst` files, are automatically created by :cmd:`inv blog`,
 leading to a file structure like this:
-    
+
 - docs/blog/2013/index.rst --> contains a :rst:dir:`blogger_year` directive
 - docs/blog/2013/0107.rst --> a blog entry
 - docs/blog/2010/0107.rst
-   
+
 Thanks to
 
 - `Creating reStructuredText Directives
   <http://docutils.sourceforge.net/docs/howto/rst-directives.html>`_
 
 """
-# from past.builtins import cmp
-from builtins import str
-# from builtins import map
-# from builtins import range
-# from builtins import object
 
 import os
 import calendar
@@ -63,7 +58,7 @@ templates['calendar.rst'] = """
 
 .. |br| raw:: html
 
-   <br />   
+   <br />
 
 .. |sp| raw:: html
 
@@ -177,7 +172,7 @@ class MainBlogIndexDirective(InsertInputDirective):
             raise Exception("Allowed only inside index.rst file")
         text = ''
         years = get_blogger_years(env, blogname)
-    
+
         # hidden = []
         # visible = []
 
@@ -206,7 +201,9 @@ class MainBlogIndexDirective(InsertInputDirective):
         #     children = map(docname, visible)
         #     text += toctree(*children, maxdepth=2)
         # text += "\n"
-        #~ print text
+        # print("-"*80)
+        # print(text)
+        # print("-"*80)
         return text
 
 
@@ -233,10 +230,11 @@ class YearBlogIndexDirective(InsertInputDirective):
 
         text = ''
         cal = calendar.Calendar()
+        num_entries = 0
         for month in range(1, 13):
 
             text += """
-            
+
 .. |M%02d| replace::  **%s**""" % (month, monthname(month, self.language))
 
             weeknum = None
@@ -252,6 +250,7 @@ class YearBlogIndexDirective(InsertInputDirective):
                     # if blogger_year.year == iso_year and day in blogger_year.days:
                     if day in blogger_year.dates:
                         text += " :doc:`%s <%s>` " % (label, docname)
+                        num_entries += 1
                     elif day > today:
                         text += ' |sp| '
                     else:
@@ -259,25 +258,26 @@ class YearBlogIndexDirective(InsertInputDirective):
                 else:
                     text += ' |sp| '
 
-        text += """
-        
+        if num_entries > 12:
+            text += """
+
 ===== ===== =====
 |M01| |M02| |M03|
 |M04| |M05| |M06|
 |M07| |M08| |M09|
 |M10| |M11| |M12|
 ===== ===== =====
-        
-        """
-
-        text += """
 
 .. rubric:: {0}
 
+""".format("All entries:")
+
+        text += """
+
 .. toctree::
     :maxdepth: 2
-    
-""".format("All entries:")
+
+"""
 
         for day in blogger_year.days:
             for docname in day.docnames:
@@ -285,11 +285,15 @@ class YearBlogIndexDirective(InsertInputDirective):
     #         text += """
     # %02d%02d""" % (day.month, day.day)
 
-        return tpl.render(
+        retval = tpl.render(
             calendar=text,
             intro=intro,
             year=blogger_year.year)
             # days=blogger_year.days)
+        # print("="*80)
+        # print(retval)
+        # print("="*80)
+        return retval
 
 class BloggerDay(object):
     def __init__(self, docname, *args, **kwargs):

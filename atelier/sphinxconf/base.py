@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2019 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """
@@ -23,15 +23,6 @@ Thanks to
   <http://docutils.sourceforge.net/docs/howto/rst-directives.html>`_
 
 """
-
-from __future__ import print_function
-# from builtins import str
-# from __future__ import unicode_literals
-# removed 20140604 because it causes:
-# File "/home/luc/repositories/sphinx/sphinx/application.py", line 548, in add_object_type
-#     'doc_field_types': doc_field_types})
-# TypeError: type() argument 1 must be string, not unicode
-
 
 import os
 import inspect

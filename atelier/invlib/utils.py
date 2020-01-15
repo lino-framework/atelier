@@ -1,13 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017-2019 Rumma & Ko Ltd
+# Copyright 2017-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """Utilities for atelier.invlib
 
 """
-
-from __future__ import print_function
-from __future__ import unicode_literals
 
 from invoke.exceptions import Exit
 

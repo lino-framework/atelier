@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """
@@ -22,38 +22,7 @@ the documentation trees maintained by us.
    interproject
 """
 
-from __future__ import print_function
-from __future__ import unicode_literals
-#from builtins import str
-
-"""Note: the `import unicode_literals` caused the following::
-
-    Traceback (most recent call last):
-      File "/site-packages/sphinx/cmdline.py", line 245, in main
-        warningiserror, tags, verbosity, parallel)
-      File "/site-packages/sphinx/application.py", line 122, in __init__
-        self.config.setup(self)
-      File "/atelier/atelier/sphinxconf/__init__.py", line 654, in setup
-        indextemplate='pair: %s; management command')
-      File "/site-packages/sphinx/application.py", line 503, in add_object_type
-        'doc_field_types': doc_field_types})
-    TypeError: type() argument 1 must be string, not unicode
-
-I solved this by a manual patch in line 308 of
-:file:`sphinx/application.py`::
-
-    def import_object(self, objname, source=None):
-        objname = str(objname)  # LS 20140108 accept unicode strings
-        # needed when calling from Python 2.7 with
-        # `from __future__ import unicode_literals`
-        try:
-            module, name = objname.rsplit('.', 1)
-        except ValueError, err:
-
-"""
-
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import sys
 
@@ -140,6 +109,7 @@ def configure(globals_dict):
         })
     else:
         # use default html_theme ("alabaster")
+        globals_dict.update(html_theme="alabaster")
         my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
         globals_dict.update(html_theme_options={
             "font_family": my_font_family,
