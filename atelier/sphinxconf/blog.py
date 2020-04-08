@@ -13,13 +13,20 @@ And usually this file structure:
 
 - docs/blog/index.rst --> contains a main_blogindex directive (hidden toctree)
 
-Individual blog entries, including yearly directories and
-`index.rst` files, are automatically created by :cmd:`inv blog`,
+Individual blog entries are automatically created by :cmd:`inv blog`,
 leading to a file structure like this:
 
 - docs/blog/2013/index.rst --> contains a :rst:dir:`blogger_year` directive
 - docs/blog/2013/0107.rst --> a blog entry
-- docs/blog/2010/0107.rst
+- docs/blog/2013/0108.rst --> another blog entry
+- docs/blog/2013/0108b.rst --> a second blog entry on January 8
+
+The  :cmd:`inv blog` command automatically creates yearly directories and
+`index.rst` files when needed.
+
+If you want a second separate blog entry on a same day, you must manually create
+a file.
+
 
 Thanks to
 
@@ -108,18 +115,17 @@ class BloggerYear(object):
             #~ year = int(year)
             #~ assert year in self.years
             d = None
-            for fn in sorted(filenames):
-                if fn.endswith('.rst'):
-                    docname = fn[:-4]
-                    if docname == "index":
-                        continue
-                    if len(fn) == 8:
-                        d = docname_to_day(self.year, docname)
-                        self.days.append(d)
-                        self.dates.add(d.date)
-                        #~ self.years.add(s)
-                    elif d is not None:
-                        d.docnames.append(docname)
+            docnames = sorted([fn[:-4] for fn in filenames if fn.endswith('.rst')])
+            for docname in sorted(docnames):
+                if docname == "index":
+                    continue
+                if len(docname) == 4:
+                    d = docname_to_day(self.year, docname)
+                    self.days.append(d)
+                    self.dates.add(d.date)
+                    #~ self.years.add(s)
+                elif d is not None:
+                    d.docnames.append(docname)
 
         #~ self.years = sorted(self.years)
         if not hasattr(env, 'blog_instances'):
@@ -303,7 +309,7 @@ class BloggerDay(object):
 def docname_to_day(year, s):
     #~ print fn
     month = int(s[:2])
-    day = int(s[2:])
+    day = int(s[2:4])
     return BloggerDay(s, year, month, day)
 
 

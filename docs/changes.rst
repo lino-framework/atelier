@@ -4,6 +4,14 @@
 Changes in :mod:`atelier`
 =========================
 
+2020-04-08
+==========
+
+Fixed a bug that caused :mod:`atelier.sphinxconf.blog` to fail collecting
+multiple blog entries of a same day in some cases.  You can now have two files
+:file:`0408.rst` and :file:`0408b.rst` and atelier will collect them correctly.
+The calendar link will point to the first one.
+
 2019-12-03
 ==========
 
