@@ -1,20 +1,17 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# python setup.py test -s tests.BasicTests.test_utils
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """
 Defines a series of utility classes and functions.
 
-$ python setup.py test -s tests.BasicTests.test_utils
-
 """
 
-from __future__ import print_function
-
-import six
+# import six
 from six.moves import input
-from builtins import str
-from builtins import object
+# from builtins import str
+# from builtins import object
 from future.types import newstr
 import re
 
@@ -191,16 +188,16 @@ def isiterable(x):
 def is_string(s):
     """Return True if the specified value is a string.
     """
-    if six.PY2:
-        return isinstance(s, six.string_types) or isinstance(s, newstr)
-    return isinstance(s, six.string_types)
+    # if six.PY2:
+    #     return isinstance(s, six.string_types) or isinstance(s, newstr)
+    return isinstance(s, str)
 
 def isidentifier(s):
     """
     Check whether the given string can be used as a Python identifier.
     """
-    if six.PY2:
-        return re.match("[_A-Za-z][_a-zA-Z0-9]*$", s)
+    # if six.PY2:
+    #     return re.match("[_A-Za-z][_a-zA-Z0-9]*$", s)
     return s.isidentifier()
 
 
@@ -212,7 +209,7 @@ def ispure(s):
     """
     if s is None:
         return True
-    if isinstance(s, (six.text_type, newstr)):
+    if isinstance(s, (str, newstr)):
         return True
     if type(s) == bytes:
         try:
@@ -242,9 +239,9 @@ def confirm(prompt=None, default="y"):
     """
     Ask for user confirmation from the console.
     """
-    if six.PY2:
-        prompt = prompt.encode(
-            sys.stdin.encoding or locale.getpreferredencoding(True))
+    # if six.PY2:
+    #     prompt = prompt.encode(
+    #         sys.stdin.encoding or locale.getpreferredencoding(True))
     # print(20160324, type(prompt))
     prompt += " [Y,n]?"
     while True:
@@ -384,12 +381,12 @@ class SubProcessParent(object):
         # rv = subprocess.call(args,**kw)
         if rv != 0:
             cmd = ' '.join(args)
-            if six.PY2:
-                # if the output contains non-asci chars, then we must
-                # decode here in order to wrap it into our msg. Later
-                # we must re-encode it because exceptions, in Python
-                # 2, don't want unicode strings.
-                out = out.decode("utf-8")
+            # if six.PY2:
+            #     # if the output contains non-asci chars, then we must
+            #     # decode here in order to wrap it into our msg. Later
+            #     # we must re-encode it because exceptions, in Python
+            #     # 2, don't want unicode strings.
+            #     out = out.decode("utf-8")
             msg = "%s (%s) returned %d:\n-----\n%s\n-----" % (
                 cmd, kw, rv, out)
             # try:
@@ -401,8 +398,8 @@ class SubProcessParent(object):
             #         cmd, kw, rv, out)
 
             # print msg
-            if six.PY2:
-                msg = msg.encode('utf-8')
+            # if six.PY2:
+            #     msg = msg.encode('utf-8')
             self.fail(msg)
 
 
@@ -506,17 +503,17 @@ def rmu(x):
         return tuple([rmu(i) for i in x])
     if isinstance(x, dict):
         return {rmu(k):rmu(v) for k,v in x.items()}
-    if isinstance(x, six.string_types):
+    if isinstance(x, str):
         return str(x)
     return x
 
 def sixprint(*args):
     """Like print, but simulating PY3 output under PY2."""
     for x in args:
-        if six.PY2 and isinstance(x, set):
-            print("{%s}" % ', '.join([str(rmu(i)) for i in x]))
-        else:
-            pprint(rmu(x))
+        # if six.PY2 and isinstance(x, set):
+        #     print("{%s}" % ', '.join([str(rmu(i)) for i in x]))
+        # else:
+        pprint(rmu(x))
 
 # def get_visual_editor():
 #     """Returns the name of the visual editor, usually stored in the

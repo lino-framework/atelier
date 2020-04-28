@@ -1,13 +1,11 @@
-# Copyright 2013-2017 by Rumma & Ko Ltd.
+# Copyright 2013-2020 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """
 Defines an extended TestCase with methods to launch a subprocess.
 
 """
-from __future__ import unicode_literals
 
-import six
 import os
 from os.path import join
 import unittest
@@ -91,13 +89,18 @@ def make_docs_suite(docs_root, include="*.rst", exclude=None,
 
 
 class TestCase(unittest.TestCase, SubProcessParent):
-    "Deserves a docstring"
+    "A unittest testcase with some additional utility methods."
+
     project_root = NotImplementedError
     # maxDiff = None
 
     def run_packages_test(self, declared_packages):
         """
-        Checks whether the `packages` parameter to setup seems correct.
+        Checks whether the `packages` parameter to setup seems correct, i.e.
+        whether all packages in the repository are being published in a source
+        distribution.  This is kind of basic hygiene because you usually forget
+        to update this parameter when you add or remove a package.
+
         """
         found_packages = find_packages()
         # if tests exists, remove it:
