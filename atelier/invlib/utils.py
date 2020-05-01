@@ -202,6 +202,7 @@ class SphinxTree(DocTree):
             args += ['-w', 'warnings_%s.txt' % builder]
         else:
             args += ['-W']  # consider warnings as errors
+            args += ['--keep-going']  # but keep going until the end to show them all
             # args += ['-vvv']  # increase verbosity
         # args += ['-w'+Path(ctx.root_dir,'sphinx_doctest_warnings.txt')]
         args += ['.', build_dir]
