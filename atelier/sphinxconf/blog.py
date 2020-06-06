@@ -140,6 +140,8 @@ def docname(y):
 
 
 def navigator(years, current):
+    if len(years) < 2:
+        return ""
     chunks = []
     for y in years:
         if y == current:
@@ -264,7 +266,7 @@ class YearBlogIndexDirective(InsertInputDirective):
                 else:
                     text += ' |sp| '
 
-        if num_entries > 12:
+        if num_entries > 8:
             text += """
 
 ===== ===== =====
@@ -277,11 +279,18 @@ class YearBlogIndexDirective(InsertInputDirective):
 .. rubric:: {0}
 
 """.format("All entries:")
+        else:
+            text += "\n\n"
+
+        for day in reversed(blogger_year.days):
+            date_text = format_date(day.date, format="long", locale=self.language).strip()
+            text += ("\n\n**{}** --- ".format(date_text))
+            text += ", ".join([":doc:`{}`".format(docname) for docname in day.docnames])
 
         text += """
 
 .. toctree::
-    :maxdepth: 2
+    :hidden:
 
 """
 

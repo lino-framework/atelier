@@ -4,6 +4,13 @@
 Changes in :mod:`atelier`
 =========================
 
+2020-06-07
+==========
+
+Optimized the yearly blog index (:rst:dir:`blogger_year` directive) : add the
+date before the "All entries" list. Have them sorted newest first. No navigator
+when there is only one year.
+
 2020-04-08
 ==========
 
