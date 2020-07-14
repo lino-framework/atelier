@@ -208,9 +208,8 @@ def process_signature(app, what, name, obj, options, signature,
     # currently this gives
     # Exception occurred:
     #   File ".../atelier/setup.py", line 3, in <module>
-    #     exec(compile(open(fn, "rb").read(), fn, 'exec'))
+    #     exec(compile(fd.read(), fn, 'exec'))
     # IOError: [Errno 2] No such file or directory: 'atelier/setup_info.py'
-
     # if signature or return_annotation:
     #     raise Exception(
     #         "20170118 {!r} {!r} {!r} {!r} {!r} {!r}".format(
