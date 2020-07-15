@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2019 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """
@@ -7,7 +7,6 @@ Defines the :func:`atelier.sphinxconf.interproject.configure` function.
 
 """
 import os
-import six
 
 from unipath import Path
 # from importlib import import_module
@@ -47,7 +46,7 @@ def configure(globals_dict, prjspec=None, **nicknames):
     this_conf_file = Path(globals_dict['__file__']).resolve()
 
     if prjspec:
-        if isinstance(prjspec, six.string_types):
+        if isinstance(prjspec, str):
             prjspec = prjspec.split()
         prjlist = [get_project_info_from_mod(n) for n in prjspec]
 
@@ -116,10 +115,7 @@ def configure(globals_dict, prjspec=None, **nicknames):
             # http://www.sphinx-doc.org/en/master/ext/intersphinx.html#confval-intersphinx_mapping
             k = prj.nickname + doc_tree.rel_path
             k = k.replace('_', '')
-            k = six.text_type(k)  # make sure it's not newstr from
-                                  # future because that can cause
-                                  # problems when intersphinx tries to
-                                  # sort them
+            k = str(k)
 
             if k in intersphinx_mapping:
                 raise Exception("Duplicate intersphinx key {} used for {} "
