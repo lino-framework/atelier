@@ -68,9 +68,7 @@ The central project homepage is http://atelier.lino-framework.org
 """,
     classifiers="""\
 Programming Language :: Python
-Programming Language :: Python :: 2.7
-Programming Language :: Python :: 3.4
-Programming Language :: Python :: 3.5
+Programming Language :: Python :: 3.7
 Framework :: Sphinx :: Extension
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers
