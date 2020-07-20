@@ -12,7 +12,6 @@ Defines a series of utility classes and functions.
 from six.moves import input
 # from builtins import str
 # from builtins import object
-from future.types import newstr
 import re
 
 # from __future__ import unicode_literals
@@ -20,219 +19,14 @@ import re
 
 import os
 import sys
-import locale
+# import locale
 import datetime
 import subprocess
 # import collections
 from dateutil import parser as dateparser
-from dateutil.relativedelta import relativedelta
 from contextlib import contextmanager
 from unipath import Path
 from pprint import pprint
-
-
-
-class AttrDict(dict):
-
-    """
-    Dictionary-like helper object.
-
-    Usage example:
-
-    >>> from atelier.utils import AttrDict
-    >>> a = AttrDict()
-    >>> a.define('foo', 1)
-    >>> a.define('bar', 'baz', 2)
-    >>> a == {"bar": {"baz": 2}, "foo": 1}
-    True
-    >>> print(a.foo)
-    1
-    >>> print(a.bar.baz)
-    2
-    >>> print(a.resolve('bar.baz'))
-    2
-    >>> print(a.bar)
-    {'baz': 2}
-
-    """
-    def __getattr__(self, name):
-        try:
-            return self[name]
-        except KeyError:
-            raise AttributeError(
-                "AttrDict instance has no key '%s' (keys are %s)" % (
-                    name, ', '.join(list(self.keys()))))
-
-    def define2(self, name, value):
-        return self.define(*name.split('.') + [value])
-
-    def define(self, *args):
-        "args must be a series of names followed by the value"
-        assert len(args) >= 2
-        d = s = self
-        for n in args[:-2]:
-            d = s.get(n, None)
-            if d is None:
-                d = AttrDict()
-                s[n] = d
-            s = d
-        oldvalue = d.get(args[-2], None)
-        d[args[-2]] = args[-1]
-        return oldvalue
-
-    def resolve(self, name, default=None):
-        """
-        return an attribute with dotted name
-        """
-        o = self
-        for part in name.split('.'):
-            o = getattr(o, part, default)
-            # o = o.__getattr__(part)
-        return o
-
-
-def iif(condition, true_value, false_value=None):
-    """
-    "Inline If" : an ``if`` statement as a function.
-
-    Examples:
-
-    >>> from atelier.utils import iif
-    >>> print("Hello, %s world!" % iif(1+1==2, "real", "imaginary"))
-    Hello, real world!
-    >>> iif(True, "true")
-    'true'
-    >>> iif(False, "true")
-
-    """
-    if condition:
-        return true_value
-    return false_value
-
-
-def i2d(i):
-    """
-    Convert `int` to `date`. Examples:
-
-    >>> i2d(20121224)
-    datetime.date(2012, 12, 24)
-
-    """
-    s = str(i)
-    if len(s) != 8:
-        raise Exception("Invalid date specification {0}.".format(i))
-    d = dateparser.parse(s)
-    d = datetime.date(d.year, d.month, d.day)
-    # print(i, "->", v)
-    return d
-
-
-def i2t(s):
-    """
-    Convert `int` to `time`. Examples:
-
-    >>> i2t(815)
-    datetime.time(8, 15)
-
-    >>> i2t(1230)
-    datetime.time(12, 30)
-
-    >>> i2t(12)
-    datetime.time(12, 0)
-
-    >>> i2t(1)
-    datetime.time(1, 0)
-
-    """
-    s = str(s)
-    if len(s) == 4:
-        return datetime.time(int(s[:2]), int(s[2:]))
-    if len(s) == 3:
-        return datetime.time(int(s[:1]), int(s[1:]))
-    if len(s) <= 2:
-        return datetime.time(int(s), 0)
-    raise ValueError(s)
-
-
-def last_day_of_month(d):
-    """Return the last day of the month of the given date.
-
-    >>> from atelier.utils import i2d
-    >>> last_day_of_month(i2d(20160212))
-    datetime.date(2016, 2, 29)
-    >>> last_day_of_month(i2d(20161201))
-    datetime.date(2016, 12, 31)
-    >>> last_day_of_month(i2d(20160123))
-    datetime.date(2016, 1, 31)
-    >>> last_day_of_month(i2d(20161123))
-    datetime.date(2016, 11, 30)
-
-    Thanks to `stackoverflow.com
-    <http://stackoverflow.com/questions/42950/get-last-day-of-the-month-in-python>`_.
-
-    """
-    return d + relativedelta(day=31)
-    # d = datetime.date(d.year, d.month + 1, 1)
-    # return relativedelta(d, days=-1)
-
-
-def isiterable(x):
-    "Returns `True` if the specified object is iterable."
-    try:
-        iter(x)
-    except TypeError:
-        return False
-    return True
-
-
-def is_string(s):
-    """Return True if the specified value is a string.
-    """
-    # if six.PY2:
-    #     return isinstance(s, six.string_types) or isinstance(s, newstr)
-    return isinstance(s, str)
-
-def isidentifier(s):
-    """
-    Check whether the given string can be used as a Python identifier.
-    """
-    # if six.PY2:
-    #     return re.match("[_A-Za-z][_a-zA-Z0-9]*$", s)
-    return s.isidentifier()
-
-
-def ispure(s):
-    """Returns `True` if the specified string `s` is either None, or
-    contains only ASCII characters, or is a validly encoded unicode
-    string.
-
-    """
-    if s is None:
-        return True
-    if isinstance(s, (str, newstr)):
-        return True
-    if type(s) == bytes:
-        try:
-            s.decode('ascii')
-        except UnicodeDecodeError:
-            return False
-        return True
-    return False
-
-
-def assert_pure(s):
-    """
-    raise an Exception if the given string is not :func:`ispure`.
-    """
-    #~ assert ispure(s), "%r: not pure" % s
-    if s is None:
-        return
-    if isinstance(s, str):
-        return True
-    try:
-        s.decode('ascii')
-    except UnicodeDecodeError as e:
-        raise Exception("%r is not pure : %s" % (s, e))
 
 
 def confirm(prompt=None, default="y"):
@@ -253,6 +47,22 @@ def confirm(prompt=None, default="y"):
         if ln.lower() == 'n':
             return False
         print("Please answer Y or N")
+
+def i2d(i):
+    """
+    Convert `int` to `date`. Examples:
+
+    >>> i2d(20121224)
+    datetime.date(2012, 12, 24)
+
+    """
+    s = str(i)
+    if len(s) != 8:
+        raise Exception("Invalid date specification {0}.".format(i))
+    d = dateparser.parse(s)
+    d = datetime.date(d.year, d.month, d.day)
+    # print(i, "->", v)
+    return d
 
 
 def indentation(s):
@@ -402,28 +212,6 @@ class SubProcessParent(object):
             #     msg = msg.encode('utf-8')
             self.fail(msg)
 
-
-def date_offset(ref, days=0, **offset):
-    """
-    Compute a date using a "reference date" and an offset.
-
-    >>> r = i2d(20140222)
-
-    In 10 days:
-    >>> date_offset(r, 10)
-    datetime.date(2014, 3, 4)
-
-    Four hundred days ago:
-    >>> date_offset(r, -400)
-    datetime.date(2013, 1, 18)
-
-
-    """
-    if days:
-        offset.update(days=days)
-    if offset:
-        return ref + datetime.timedelta(**offset)
-    return ref
 
 
 def dict_py2(old_dict):
