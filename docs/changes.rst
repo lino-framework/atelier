@@ -4,6 +4,13 @@
 Changes in :mod:`atelier`
 =========================
 
+2020-07-20
+==========
+
+Misc changes.
+
+Release Atelier 1.1.24 to PyPI.
+
 2020-06-07
 ==========
 
