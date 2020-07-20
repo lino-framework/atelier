@@ -28,7 +28,8 @@ import sys
 
 from unipath import Path
 # from distutils.version import LooseVersion
-from setuptools import version
+# from setuptools import version
+from pkg_resources import parse_version
 import sphinx
 
 def configure(globals_dict):
@@ -73,7 +74,7 @@ def configure(globals_dict):
 
     # default config for autosummary:
     globals_dict.update(autosummary_generate=True)
-    if version.parse(sphinx.__version__) < version.parse("1.8"):
+    if parse_version(sphinx.__version__) < parse_version("1.8"):
     # if LooseVersion(sphinx.__version__) < LooseVersion("1.8"):
         globals_dict.update(autodoc_default_flags=[
             'show-inheritance', 'members'])

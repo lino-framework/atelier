@@ -9,7 +9,7 @@ Changes in :mod:`atelier`
 
 Misc changes.
 
-Release Atelier 1.1.24 to PyPI.
+Released Atelier 1.1.24 to PyPI (and bugfix release 1.1.25 a bit later).
 
 2020-06-07
 ==========
