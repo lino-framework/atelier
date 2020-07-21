@@ -19,6 +19,8 @@ This is the :mod:`atelier` package.
 
 """
 
+import setuptools  # try to avoid "Distutils was imported before Setuptools"
+
 from .setup_info import SETUP_INFO
 
 __version__ = SETUP_INFO['version']
