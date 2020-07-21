@@ -11,7 +11,6 @@ This is the :mod:`atelier` package.
    invlib.tasks
    jarbuilder
    projects
-   rstgen
    test
    utils
    sphinxconf

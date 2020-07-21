@@ -35,7 +35,7 @@ from sphinx import addnodes
 
 from sphinx.util import docname_join
 
-from atelier import rstgen
+import rstgen
 
 from .insert_input import InsertInputDirective
 

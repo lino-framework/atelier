@@ -23,8 +23,6 @@ It contains:
 
 - some general Python utilities
   (`atelier.utils <http://atelier.lino-framework.org/api/atelier.utils.html>`_)
-- a library for generating reStructuredText from Python
-  (`atelier.rstgen <http://atelier.lino-framework.org/api/atelier.rstgen.html>`_)
 - some Sphinx extensions
   (`atelier.sphinxconf <http://atelier.lino-framework.org/api/atelier.sphinxconf.html>`_)
 - a library of invoke commands

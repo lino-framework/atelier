@@ -39,7 +39,7 @@ from docutils.parsers.rst import directives
 from sphinx.util import docname_join
 from sphinx.util.matching import patfilter
 
-from atelier import rstgen
+import rstgen
 
 from .insert_input import InsertInputDirective
 

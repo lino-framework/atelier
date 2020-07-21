@@ -17,7 +17,7 @@ from datetime import timedelta
 
 from atelier.utils import i2d
 from babel.dates import format_date
-from atelier import rstgen
+import rstgen
 from atelier.projects import load_projects
 from unipath import Path
 

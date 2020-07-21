@@ -2,12 +2,11 @@
 # Copyright 2013-2019 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
-from __future__ import print_function
 import os
 import subprocess
 import argparse
 
-from atelier import rstgen
+import rstgen
 from atelier.projects import load_projects
 from argh import dispatch_command, arg, CommandError
 

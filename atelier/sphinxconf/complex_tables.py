@@ -14,7 +14,7 @@ from builtins import str
 
 from docutils.parsers.rst import directives
 
-from atelier import rstgen
+import rstgen
 
 from .insert_input import InsertInputDirective
 

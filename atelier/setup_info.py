@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Rumma & Ko Ltd
+# Copyright 2013-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 # ~ This module has no docstring because it is to be execfile'd
@@ -7,7 +7,7 @@
 
 install_requires = ['invoke', 'argh', 'six',
                     'future', 'Babel', 'unipath',
-                    'python_dateutil', 'Sphinx']
+                    'python_dateutil', 'Sphinx', 'rstgen']
 
 install_requires.append('sphinx_rtd_theme')
 
@@ -24,7 +24,7 @@ except ImportError:
 
 SETUP_INFO = dict(
     name='atelier',
-    version='1.1.25',
+    version='1.1.26',
     install_requires=install_requires,
     tests_require=tests_require,
     scripts=['scripts/per_project'],
@@ -54,8 +54,6 @@ It contains:
 
 - some general Python utilities
   (`atelier.utils <http://atelier.lino-framework.org/api/atelier.utils.html>`_)
-- a library for generating reStructuredText from Python
-  (`atelier.rstgen <http://atelier.lino-framework.org/api/atelier.rstgen.html>`_)
 - some Sphinx extensions
   (`atelier.sphinxconf <http://atelier.lino-framework.org/api/atelier.sphinxconf.html>`_)
 - a library of invoke commands

@@ -44,7 +44,7 @@ import jinja2
 from babel.dates import format_date
 
 from .insert_input import InsertInputDirective
-from atelier.rstgen import toctree
+from rstgen import toctree
 
 
 def monthname(n, language):

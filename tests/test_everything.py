@@ -19,9 +19,6 @@ class BasicTests(TestCase):
     def test_sheller(self):
         self.run_simple_doctests('atelier/sheller.py')
 
-    def test_rstgen(self):
-        self.run_simple_doctests('atelier/rstgen.py')
-
 
 class PackagesTests(TestCase):
     def test_packages(self):
