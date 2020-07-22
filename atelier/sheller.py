@@ -37,7 +37,6 @@ doctest_utf8.py
 __init__.py
 jarbuilder.py
 projects.py
-rstgen.py
 setup_info.py
 sheller.py
 test.py
