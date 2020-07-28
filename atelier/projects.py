@@ -1,16 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2019 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """A minimalistic command-line project management.
 
 See :doc:`/usage`.
 
 """
-from __future__ import unicode_literals
-from builtins import str
-
 import os
-import six
 
 # import pkg_resources
 from unipath import Path
@@ -193,6 +189,11 @@ class Project(object):
         An integer representing the sequence number of this project in
         the global projects list.
 
+    .. attribute:: config
+
+        A dict containing the configuration options of this project.
+        See :ref:`atelier.prjconf`.
+
     """
     main_package = None
     # srcref_url = None
@@ -349,7 +350,7 @@ class Project(object):
         # print("20180504 {} get_doc_tree() {} {}".format(
         #     self, self.main_package, doc_trees))
         for rel_doc_tree in doc_trees:
-            if isinstance(rel_doc_tree, six.string_types):
+            if isinstance(rel_doc_tree, str):
                 yield SphinxTree(self, rel_doc_tree)
             elif isinstance(rel_doc_tree, tuple):
                 # (BUILDER, PATH)

@@ -13,46 +13,48 @@ To install the :mod:`atelier` package you must say::
 
 .. _invoke: http://www.pyinvoke.org/
 
-Installing :mod:`atelier` also installs the invoke_ package, which installs a
-command :cmd:`inv` into your Python environment.
-
-To use atelier for your project, you must have a file named :file:`tasks.py` in
-your project's root directory with at least the following two lines::
-
-  from atelier.invlib.ns import ns
-  ns.setup_from_tasks(globals())
+Installing :mod:`atelier` also installs the invoke_ package, which installs the
+command :cmd:`inv` into your PATH. When you run :cmd:`inv` (or its alias
+:cmd:`invoke`) from a project directory or a subdirectory, then invoke_ reads
+the :xfile:`tasks.py` in the root directory of your project.
 
 .. command:: inv
 
-The :cmd:`inv` command is a kind of make tool which works by looking for a file
-named :xfile:`tasks.py`.
+The :cmd:`inv` command is a kind of make tool that is configured using
+:xfile:`tasks.py` file.
 
 .. xfile:: tasks.py
 
-In your project's :xfile:`tasks.py` file you must define a variable
-``ns`` which you usually import from :mod:`atelier.invlib`.
+A configuration file for the invoke_ package. It must define a variable named
+``ns``, which must be an instance of an invoke namespace.
 
-You can specify project-specific configuration settings directly in
-your :xfile:`tasks.py` file. Example content::
+To activate atelier for your project, you  create a :xfile:`tasks.py` file in
+your project's root directory, and define the variable ``ns`` by calling
+:func:`atelier.invlib.setup_from_tasks`.
 
-    from atelier.tasks import ns
-    ns.setup_from_tasks(globals(), "mypackage",
+Your :file:`tasks.py` should have at least the following two lines::
+
+  from atelier.invlib import setup_from_tasks
+  ns = setup_from_tasks(globals())
+
+You can specify :ref:`project configuration settings <atelier.prjconf>` directly
+in your project's :xfile:`tasks.py` file. Example content::
+
+    from atelier.invlib import setup_from_tasks
+    ns = setup_from_tasks(globals(), "mypackage",
         tolerate_sphinx_warnings=True,
         revision_control_system='git')
 
 .. xfile:: .invoke.py
 
-You can specify user-wide invoke settings in a file named
-:xfile:`.invoke.py` which must be in your home directory.
+You can specify *user-wide* :ref:`project configuration settings
+<atelier.prjconf>` in a file named :xfile:`.invoke.py`, which must be in your
+home directory.
 
-You can also define system-wide default configuration files.  See the
-`Invoke documentation
-<http://docs.pyinvoke.org/en/latest/concepts/configuration.html>`_ for
-more information.
+You can also define *system-wide* default configuration files.  See the `Invoke
+documentation <http://docs.pyinvoke.org/en/latest/concepts/configuration.html>`_
+for more information.
 
-When you run :cmd:`inv` (or its alias :cmd:`invoke`) from a project directory or
-a subdirectory, then `invoke` finds the :xfile:`tasks.py` in the root
-directory of your project.
 
 When you have no :xfile:`config.py <~/.atelier/config.py>` file,
 Atelier will operate in single project mode: the :xfile:`tasks.py`
@@ -103,11 +105,11 @@ this:
 
 But for atelier there are two additional required conventions:
 
-- The :xfile:`setup.py` file must define a name :envvar:`SETUP_INFO`
-  which is a dict containing all those keyword arguments passed to the
-  :func:`setup` function.
+- The :xfile:`setup.py` file must define a name :envvar:`SETUP_INFO`, which must
+  be a dict containing the keyword arguments to be passed to the :func:`setup`
+  function.
 
-- The :xfile:`setup.py` file should actualy call the :func:`setup`
+- The :xfile:`setup.py` file should actually call the :func:`setup`
   function *only if* invoked from a command line, i.e. only `if
   __name__ == '__main__'`.
 
@@ -137,7 +139,38 @@ True
 >>> d == dict(name="foo", version="1.0.0")
 True
 
+.. _atelier.prjconf:
 
+Project configuration settings
+==============================
+
+TODO: document them all.
+
+::
+    'root_dir': root_dir,
+    'build_dir_name': '.build', # e.g. ablog needs '_build'
+    'project_name': str(root_dir.name),
+    'locale_dir': None,
+    'help_texts_source': None,
+    'help_texts_module': None,
+    'tolerate_sphinx_warnings': False,
+    'cleanable_files': [],
+    'revision_control_system': None,
+    'apidoc_exclude_pathnames': [],
+    'editor_command': os.environ.get('EDITOR'),
+    'prep_command': "",
+    'test_command': "python -m unittest discover -s tests",
+    'demo_projects': [],
+    'demo_prep_command': "manage.py prep --noinput --traceback",
+    'coverage_command': '`which invoke` prep test clean --batch bd',
+    'languages': None,
+    'blog_root': root_dir.child('docs'),
+    'long_date_format': "%Y%m%d (%A, %d %B %Y)",
+    'sdist_dir': root_dir.child('dist'),
+    'pypi_dir': root_dir.child('.pypi_cache'),
+    'use_dirhtml': False,
+    'doc_trees': ['docs'],
+    'intersphinx_urls': {},
 
 
 Defining shell aliases

@@ -5,4 +5,3 @@ ns = setup_from_tasks(
     revision_control_system='git',
     # tolerate_sphinx_warnings=True,
     cleanable_files=['docs/api/atelier.*'])
-

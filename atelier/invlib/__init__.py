@@ -14,7 +14,6 @@ A library of `invoke
 """
 
 import os
-import six
 
 from importlib import import_module
 from invoke import Collection
@@ -29,6 +28,21 @@ def setup_from_tasks(
     """
     This is the function you must call from your :xfile:`tasks.py` file
     in order to activate the tasks defined by atelier.
+
+    Arguments:
+
+    - `globals_dict` must be the `globals()` of the calling script.
+
+    - Optional `main_package` is the name of the main Python package provided by
+      this project.
+
+    - Optional `settings_module_name` will be stored in the
+      :envvar:`DJANGO_SETTINGS_MODULE`, and certain project configuration
+      options will get their default value from that module.
+
+    - All remaining keyword arguments are project configuration parameters and
+      stored to the :ref:`project configuration options <atelier.prjconf>`.
+
     """
     if '__file__' not in globals_dict:
         raise Exception(
@@ -56,7 +70,7 @@ def setup_from_tasks(
         prj.config.update(
             languages=[lng.name for lng in settings.SITE.languages])
 
-    if isinstance(main_package, six.string_types):
+    if isinstance(main_package, str):
         main_package = import_module(main_package)
     if main_package:
         prj.set_main_package(main_package)
