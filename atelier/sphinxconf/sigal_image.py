@@ -40,7 +40,7 @@ will insert the following rst code::
     .. raw:: html
 
       <a href="http://sigal.saffre-rumma.net/2014/04/10/img_6617.jpg">
-      <img 
+      <img
       src="http://sigal.saffre-rumma.net/2014/04/10/thumbnails/img_6617.jpg"/>
     </a>
 
@@ -78,18 +78,7 @@ directory somewhere to your web server and then change your
     {% endblock %}
 """
 
-from __future__ import print_function
-from __future__ import unicode_literals
-from builtins import str
-from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
-
 import os
-
-# from docutils.parsers.rst import directives
-
 from atelier.sphinxconf.insert_input import InsertInputDirective
 
 TEMPLATE1 = """
@@ -245,4 +234,3 @@ def setup(app):
     #     lowercase=True,
     #     innernodeclass=nodes.emphasis,
     #     warn_dangling=True))
-
