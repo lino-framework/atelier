@@ -1,3 +1,4 @@
+.. doctest docs/usage.rst
 .. _atelier.usage:
 
 =====
