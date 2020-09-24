@@ -312,7 +312,10 @@ class Project(object):
             return ''
         from git import Repo
         repo = Repo(self.root_dir)
-        s = str(repo.active_branch)
+        try:
+            s = str(repo.active_branch)
+        except TypeError:
+            s = "?"
         if repo.is_dirty():
             s += "!"
         return s

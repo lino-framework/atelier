@@ -4,6 +4,11 @@
 Changes in :mod:`atelier`
 =========================
 
+2020-09-24
+==========
+
+Fix :cmd:`pp -l` fails when a repo has HEAD detached.
+
 2020-07-20
 ==========
 
