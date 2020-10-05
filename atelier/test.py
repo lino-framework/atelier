@@ -20,7 +20,8 @@ import subprocess
 from atelier.utils import SubProcessParent
 
 # ROOTDIR = Path(__file__).parent.parent
-DOCTEST_CMD = "atelier.doctest_utf8"
+# DOCTEST_CMD = "atelier.doctest_utf8"
+DOCTEST_CMD = "doctest"
 
 
 def interpreter_args():
@@ -123,7 +124,7 @@ class TestCase(unittest.TestCase, SubProcessParent):
                     args = interpreter_args()
                     args += ["-m"]
                     # args += ["doctest"]
-                    args += ["atelier.doctest_utf8"]
+                    args += [DOCTEST_CMD]
                     args += [fn]
                     self.run_subprocess(args, **kw)
                 if not ok:
