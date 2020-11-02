@@ -84,6 +84,7 @@ class DocTree(object):
             self.publish_doc_tree(ctx, build_dir, dest_url)
 
     def publish_doc_tree(self, ctx, build_dir, dest_url):
+        print("Publish to ", dest_url)
         with cd(build_dir):
             args = ['rsync', '-e', 'ssh', '-r']
             args += ['--verbose']
