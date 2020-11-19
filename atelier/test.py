@@ -80,6 +80,7 @@ def make_docs_suite(docs_root, include="*.rst", exclude=None,
             fn = join(root, file)
             if fnmatch(fn, include):
                 if exclude and fnmatch(fn, exclude):
+                    print("Not testing file {}".format(fn))
                     continue
                 suite.addTest(DocTestCase(fn, addenv))
                 count += 1
