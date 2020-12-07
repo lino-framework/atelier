@@ -4,6 +4,14 @@
 Changes in :mod:`atelier`
 =========================
 
+2020-12-07
+==========
+
+:xmd:`inv release` failed because PyPI has a new limit of 1 second between each
+api call.  Fixed this using the
+:class:`RateLimitedServerProxy`
+posted by evgeni on https://github.com/pypa/warehouse/issues/8753
+
 2020-09-24
 ==========
 

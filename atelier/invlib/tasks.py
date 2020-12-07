@@ -490,7 +490,12 @@ def show_pypi_status(ctx, severe=True):
     assert name and version
 
     from xmlrpc.client import ServerProxy
-    client = ServerProxy('https://pypi.python.org/pypi')
+    # thanks to https://github.com/pypa/warehouse/issues/8753
+    class RateLimitedServerProxy(ServerProxy):
+        def __getattr__(self, name):
+            time.sleep(1)
+            return super(RateLimitedServerProxy, self).__getattr__(name)
+    client = RateLimitedServerProxy('https://pypi.python.org/pypi')
     released_versions = client.package_releases(name)
     if len(released_versions) == 0:
         print("No PyPI release of %(name)s has been done so far." % info)
