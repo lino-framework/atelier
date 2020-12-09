@@ -38,26 +38,13 @@ arbitrary content can be posted, since that content is actually being
 executed with the permissions of the process that runs the Sphinx
 builder.
 
-Note that when the Sphinx builder is running under Python 2.7, the
-following future imports have been done::
-
-  from __future__ import print_function
-  from __future__ import unicode_literals
-
 """
 
-from __future__ import print_function
-from __future__ import unicode_literals
 import six
-from builtins import str
-from future.utils import PY3
 
 import sys
-if PY3:
-    # from io import BytesIO as StringIO  # see blog 20160125, 20160218
-    from io import StringIO
-else:
-    from StringIO import StringIO
+# from io import BytesIO as StringIO  # see blog 20160125, 20160218
+from io import StringIO
 
 import traceback
 
@@ -185,8 +172,8 @@ class Py2rstDirective(InsertInputDirective):
 
         # raise Exception("20130331 %r" % self.content)
         code = '\n'.join(self.content)
-        # if PY3:
-        #     code = code.decode('utf-8')
+        if False:
+            code = code.decode('utf-8')
         return self.output_from_exec(code)
 
     def output_from_exec(self, code):
@@ -194,22 +181,22 @@ class Py2rstDirective(InsertInputDirective):
         buffer = StringIO()
         sys.stdout = buffer
         context = self.get_context()
+        # locals_context = {}
 
-        # if PY3:
-        #     code = code.encode()
-            
-        code = six.text_type(code)
+        if False:
+            code = code.encode()
+
+        code = str(code)
         # raise Exception("20170925 Gonna exec {!r}".format(code))
         # print("20170925 Gonna exec {!r}".format(code))
 
-        if PY3:
-            code = compile(code, '<string>', 'exec')
-            
+        code = compile(code, '<string>', 'exec')
+
         if True:  # 'debug' in self.options:
-            six.exec_(code, context)
+            exec(code, context)
         else:
             try:
-                six.exec_(code, context)
+                exec(code, context)
             except Exception as err:
                 # f = inspect.trace()[1]
                 # traceback.print_stack()
@@ -231,17 +218,17 @@ class Py2rstDirective(InsertInputDirective):
             .. py2rst::
 
                 self.shell_block(["echo", "Hello", "world!"])
-            
+
         Then it will be rendered as:
 
         .. py2rst::
 
             self.shell_block(["echo", "Hello", "world!"])
-        
+
         This uses the `subprocess.check_output
         <https://docs.python.org/2/library/subprocess.html#subprocess.check_output>`_
         method and the security warnings apply.
-        
+
         If the command returns with a non-zero exit code, the
         exception is catched and converted into a warning.
 
@@ -251,8 +238,7 @@ class Py2rstDirective(InsertInputDirective):
         import subprocess
         print("    $ " + ' '.join(cmd))
         for ln in subprocess.check_output(cmd).splitlines():
-            if PY3:
-                ln = ln.decode()
+            ln = ln.decode()
             print("    " + ln)
 
 
@@ -284,4 +270,3 @@ class Py2rstDirective(InsertInputDirective):
 def setup(app):
     # also used by `vor/conf.py`
     app.add_directive(str('py2rst'), Py2rstDirective)
-
