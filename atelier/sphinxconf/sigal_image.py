@@ -51,7 +51,6 @@ The file name can contain **formatting instructions** inspired by
 uses a variable number of pipe characters. For example:
 
 
->>> from __future__ import print_function
 >>> print(line2html("foo.jpg"))
 <a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="foo.jpg"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; width:280px;" title="foo.jpg"/></a>
 
@@ -63,7 +62,6 @@ uses a variable number of pipe characters. For example:
 
 >>> print(line2html("foo.jpg|thumb|left|This is a nice picture"))
 <a href="http://example.com//foo.jpg"  data-lightbox="image-1" data-title="This is a nice picture"/><img src="http://example.com//thumbnails/foo.jpg" style="padding:4px; float:left;; width:280px;" title="This is a nice picture"/></a>
-
 
 The generated HTML also includes attributes for `lightbox
 <http://lokeshdhakar.com/projects/lightbox2/>`_.  In order to activate
