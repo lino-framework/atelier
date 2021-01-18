@@ -15,9 +15,9 @@ To install the :mod:`atelier` package you must say::
 .. _invoke: http://www.pyinvoke.org/
 
 Installing :mod:`atelier` also installs the invoke_ package, which installs the
-command :cmd:`inv` into your PATH. When you run :cmd:`inv` (or its alias
-:cmd:`invoke`) from a project directory or a subdirectory, then invoke_ reads
-the :xfile:`tasks.py` in the root directory of your project.
+command :cmd:`inv` into your :envvar:`PATH`. When you run :cmd:`inv` (or its
+alias :cmd:`invoke`) from a project directory or a subdirectory, then invoke_
+reads the :xfile:`tasks.py` in the root directory of your project.
 
 .. command:: inv
 
@@ -148,6 +148,7 @@ Project configuration settings
 TODO: document them all.
 
 ::
+
     'root_dir': root_dir,
     'build_dir_name': '.build', # e.g. ablog needs '_build'
     'project_name': str(root_dir.name),
@@ -177,10 +178,9 @@ TODO: document them all.
 Defining shell aliases
 ======================
 
-Under Linux you can easily define abbreviations for certain commands
-which you use oftem. These are called **shell aliases**.  There are
-several ways for defining them, we recommend to write them into your
-:xfile:`~/.bash_aliases`.
+Under Linux you can easily define abbreviations for certain commands which you
+use often. These are called **shell aliases**.  There are several ways for
+defining them, we recommend to write them into your :xfile:`~/.bash_aliases`.
 
 .. xfile:: ~/.bash_aliases
 
@@ -188,8 +188,8 @@ several ways for defining them, we recommend to write them into your
     `Configuring your login sessions with dot files
     <http://mywiki.wooledge.org/DotFiles>`_.
 
-After editing your :xfile:`~/.bash_aliases` you must open a new
-terminal in order to see the changes.
+After editing your :xfile:`~/.bash_aliases` you must open a new terminal in
+order to see the changes.
 
 
 The :cmd:`per_project` command
@@ -217,6 +217,10 @@ script:
     - ``--list`` or ``-l`` : print a list of all projects to stdout. Does
       not run any command.
 
+    - ``--dirty`` or ``-d`` : print or process only projects that have a dirty
+      git status. i.e. only those which have :envvar:`revision_control_system`
+      set to ``'git'`` and which have local modifications.
+
     - ``--start PRJNAME`` : start at project PRJNAME. This is useful
       e.g. when you have been running the test suite on all your projects
       and one project failed. After repairing that failure you want to
@@ -238,10 +242,10 @@ script:
 
         alias pp='per_project'
 
-Note that the first argument which is not an option (i.e. not starting
-with a ``-``) marks the beginning of the shell command to be executed.
-Any ``-`` after that is considered a part of the command.  So the
-following two lines are *not* equivalent::
+Note that the first argument that is not an option (i.e. not starting with a
+``-``) marks the beginning of the shell command to be executed. Any ``-`` after
+that is considered a part of the command.  So the following two lines are *not*
+equivalent::
 
   $ pp inv --help
   $ pp --help inv
@@ -249,13 +253,13 @@ following two lines are *not* equivalent::
 Usage examples::
 
   $ pp -l
-  $ pp inv test
+  $ pp -ld
+  $ pp inv prep test
   $ pp git st
 
 See the `Project management
 <http://www.lino-framework.org/dev/projects.html>`__ page of the Lino
 project for more usage examples.
-
 
 
 See also

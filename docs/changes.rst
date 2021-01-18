@@ -4,6 +4,15 @@
 Changes in :mod:`atelier`
 =========================
 
+2021-01-18
+==========
+
+New command-line option `--dirty` for :cmd:`per_project` to show only projects
+with a dirty git status.
+
+The :cmd:`inv clean` command no longer asks for every individual `.pyc` file,
+just "OK to remove X __pycache__ directories?"
+
 2020-12-07
 ==========
 

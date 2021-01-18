@@ -160,9 +160,8 @@ Miscellaneous commands
 
     Remove temporary and generated files:
 
-    - Sphinx `.build` files
-    - Dangling `.pyc` files which don't have a corresponding `.py` file.
-    - `cache` directories of demo projects
+    - Sphinx :file:`.build` files
+    - All :file:`__pycache__` directories.
     - additional files specified in :envvar:`cleanable_files`
 
     Unless option ``--batch`` is specified, ask for an interactive
@@ -178,12 +177,12 @@ Miscellaneous commands
 Configuration settings
 ======================
 
-This lists the settings available in your :xfile:`tasks.py` when it
-uses :mod:`atelier.invlib`.
+The following settings are available in your :xfile:`tasks.py` when it uses
+:mod:`atelier.invlib`.
 
 .. envvar:: locale_dir
 
-    The name of the directory where `inv mm` et al should write their
+    The name of the directory where :cmd:`inv mm` et al should write their
     catalog files.
 
 .. envvar:: sdist_dir
@@ -216,7 +215,7 @@ uses :mod:`atelier.invlib`.
 
     A Python template string which defines the rsync destination for
     publishing your projects documentation.
-    Used by :cmd:`fab pub`.
+    Used by :cmd:`inv pd`.
 
     Example::
 
@@ -238,11 +237,10 @@ uses :mod:`atelier.invlib`.
 
 .. envvar:: srcref_url
 
-    The URL template to use for `srcref`.
+    The URL template to use for :rst:role:`srcref` roles.
 
     If the project has a main package which has an attribute
-    :envvar:`srcref_url`,
-    then this value will be used.
+    :envvar:`srcref_url`, then this value will be used.
 
 .. envvar:: intersphinx_urls
 

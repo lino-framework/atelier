@@ -1,5 +1,5 @@
 #!python
-# Copyright 2013-2019 Rumma & Ko Ltd
+# Copyright 2013-2021 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 import os
@@ -18,6 +18,8 @@ SHOW_DOCTREES = False  # True takes about 6 seconds on my computer
      help="The command to run on every project.")
 @arg('-l', '--list', default=False, dest='showlist',
      help='Show list of projects.')
+@arg('-d', '--dirty', default=False, dest='dirty',
+     help='Process only projects with a dirty git status.')
 @arg('-s', '--start',
      help='Start from that project, skip those before.')
 @arg('-a', '--after',
@@ -28,7 +30,8 @@ SHOW_DOCTREES = False  # True takes about 6 seconds on my computer
      help='Speak the result through speakers when terminated.')
 @arg('-r', '--reverse',
      help='Loop in reverse order.')
-def main(voice=False, start=None, after=None, until=None, showlist=False, reverse=False, *cmd):
+def main(voice=False, start=None, after=None, until=None,
+    showlist=False, dirty=False, reverse=False, *cmd):
     """Loop over all projects, executing the given shell command in the
 root directory of each project.  See
 http://atelier.lino-framework.org/usage.html
@@ -36,6 +39,8 @@ http://atelier.lino-framework.org/usage.html
     """
 
     projects = list(load_projects())
+    if dirty:
+        projects = filter(lambda p: p.get_status().endswith("!"), projects)
     if reverse:
         projects.reverse()
     if showlist:

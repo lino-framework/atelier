@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2020 Rumma & Ko Ltd
+# Copyright 2013-2021 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """
 This is the module that defines the invoke namespace.
@@ -104,12 +104,24 @@ def py_clean(ctx, batch=False):
     Delete :xfile:`.pyc` files, :xfile:`.eggs` and :xfile:`__cache__`
     directories under the project's root direcotory.
     """
+    paths = []
+    for root, dirs, files in os.walk(ctx.root_dir):
+        p = Path(root).child('__pycache__')
+        if p.exists():
+            paths.append(p)
+    if len(paths):
+        if batch or confirm(
+            "Remove {0} __pycache__ directories".format(len(paths))):
+            for p in paths:
+                rmtree_after_confirm(p, True)
+
     for root, dirs, files in os.walk(ctx.root_dir):
         for fn in files:
             if fn.endswith(".pyc"):
                 full_path = os.path.join(root, fn)
                 if batch or confirm("Remove file %s:" % full_path):
                     os.remove(full_path)
+
     # cleanup_pyc(ctx.root_dir, batch)
 
     # if atelier.current_project.main_package is not None:
@@ -124,13 +136,6 @@ def py_clean(ctx, batch=False):
     #         # AttributeError: 'module' object has no attribute '__file__'
     #         pass
 
-    for root, dirs, files in os.walk(ctx.root_dir):
-        p = Path(root).child('__pycache__')
-        rmtree_after_confirm(p, batch)
-
-    # p = ctx.root_dir.child('tests')
-    # if p.exists():
-    #     cleanup_pyc(p, batch)
     p = ctx.root_dir.child('.eggs')
     if p.exists():
         rmtree_after_confirm(p, batch)

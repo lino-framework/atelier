@@ -201,6 +201,7 @@ class Project(object):
     SETUP_INFO = None
     config = None
     inv_namespace = None
+    _git_status = None
 
     def __init__(self, i, root_dir, nickname=None):
         # , inv_namespace=None, main_package=None):
@@ -308,8 +309,11 @@ class Project(object):
     def get_status(self):
         # if self.config['revision_control_system'] != 'git':
         # config = self.inv_namespace.configuration()
+        self.load_info()
         if self.config['revision_control_system'] != 'git':
             return ''
+        if self._git_status is not None:
+            return self._git_status
         from git import Repo
         repo = Repo(self.root_dir)
         try:
@@ -318,6 +322,7 @@ class Project(object):
             s = "?"
         if repo.is_dirty():
             s += "!"
+        self._git_status = s
         return s
 
     def get_xconfig(self, name, default=None):
