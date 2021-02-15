@@ -1,4 +1,4 @@
-# Copyright 2013-2020 by Rumma & Ko Ltd.
+# Copyright 2013-2021 Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -16,11 +16,8 @@ from setuptools import find_packages
 # from unipath import Path
 import subprocess
 
-# from atelier import SETUP_INFO
 from atelier.utils import SubProcessParent
 
-# ROOTDIR = Path(__file__).parent.parent
-# DOCTEST_CMD = "atelier.doctest_utf8"
 DOCTEST_CMD = "doctest"
 
 
@@ -88,8 +85,6 @@ def make_docs_suite(docs_root, include="*.rst", exclude=None,
     return suite
 
 
-
-
 class TestCase(unittest.TestCase, SubProcessParent):
     "A unittest testcase with some additional utility methods."
 
@@ -142,40 +137,3 @@ class TestCase(unittest.TestCase, SubProcessParent):
         #~ args += ["--buffer"]
         args += [filename]
         self.run_subprocess(args, **kw)
-
-    # ~ def run_simple_doctests(self,filename,**kw): # env.simple_doctests
-        #~ doctest.testfile(os.path.abspath(filename),
-            #~ encoding='utf-8',
-            #~ module_relative=False)
-
-
-# class BaseTestCase(TestCase):
-#     project_root = ROOTDIR
-
-
-# class BasicTests(BaseTestCase):
-
-#     def test_01(self):
-#         self.assertEqual(1+1, 2)
-
-#     def test_utils(self):
-#         self.run_simple_doctests('atelier/utils.py')
-
-#     def test_rstgen(self):
-#         self.run_simple_doctests('atelier/rstgen.py')
-
-
-# class PackagesTests(BaseTestCase):
-#     def test_packages(self):
-#         self.run_packages_test(SETUP_INFO['packages'])
-
-
-# class SphinxTests(BaseTestCase):
-#     def test_sphinxconf(self):
-#         self.run_simple_doctests('atelier/sphinxconf/__init__.py')
-
-#     def test_base(self):
-#         self.run_simple_doctests('atelier/sphinxconf/base.py')
-
-#     def test_sigal(self):
-#         self.run_simple_doctests('atelier/sphinxconf/sigal_image.py')
