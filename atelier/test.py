@@ -2,7 +2,10 @@
 # License: BSD, see LICENSE for more details.
 
 """
-Defines an extended TestCase with methods to launch a subprocess.
+Defines tools for testing.
+
+- The :func:`make_docs_suite` function to automatically run :cmd:`doctest` on each document of a doctree.
+- an extended TestCase with methods to launch a subprocess.
 
 """
 
