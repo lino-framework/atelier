@@ -252,3 +252,10 @@ gettext_compact = True
 extlinks.update(ticket=('http://bugs.saffre-rumma.net/tickets/Ticket/%s', '#'))
 
 suppress_warnings = ['image.nonlocal_uri']
+
+
+from atelier.sphinxconf import interproject
+interproject.configure(
+    globals(),
+    django=('https://docs.djangoproject.com/en/3.1/', 'https://docs.djangoproject.com/en/dev/_objects/'),
+    sphinx=('https://www.sphinx-doc.org/en/master/', None))

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2021 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """Defines the :class:`InsertInputDirective` class and some
@@ -39,8 +39,6 @@ executed with the permissions of the process that runs the Sphinx
 builder.
 
 """
-
-import six
 
 import sys
 # from io import BytesIO as StringIO  # see blog 20160125, 20160218
@@ -242,31 +240,5 @@ class Py2rstDirective(InsertInputDirective):
             print("    " + ln)
 
 
-#~ class DjangoTableDirective(InsertInputDirective):
-    #~ def get_rst(self):
-        #~ assert len(self.content) == 1
-        #~ code = '\n'.join(self.content)
-        #~ from django.conf import settings
-        #~ print .jobs.Candidatures.request(limit=5).to_rst()
-        #~ code = """
-        #~ """
-        #~ old = sys.stdout
-        #~ buffer = StringIO()
-        #~ sys.stdout = buffer
-        #~ context = dict()
-        #~ context.update(settings.SITE.modules)
-        #~ context = dict(settings=settings)
-        #~ exec(code,context)
-        #~ sys.stdout = old
-        #~ return buffer.getvalue()
-
-
-# class BlogNoteDirective(Py2rstDirective):
-
-#     def get_rst(self):
-#         return '\n'.join(self.content)
-
-
 def setup(app):
-    # also used by `vor/conf.py`
-    app.add_directive(str('py2rst'), Py2rstDirective)
+    app.add_directive('py2rst', Py2rstDirective)

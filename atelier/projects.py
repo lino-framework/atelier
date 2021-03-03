@@ -230,6 +230,7 @@ class Project(object):
             'apidoc_exclude_pathnames': [],
             'editor_command': os.environ.get('EDITOR'),
             'prep_command': "",
+            'build_docs_command': "",
             'test_command': "python -m unittest discover -s tests",
             'demo_projects': [],
             'demo_prep_command': "manage.py prep --noinput --traceback",

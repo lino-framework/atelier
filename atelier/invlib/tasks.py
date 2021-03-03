@@ -227,10 +227,17 @@ def write_readme(ctx):
 def build_docs(ctx, only=None):
     """Build docs. Build all Sphinx HTML doctrees for this project. """
     # print("Build docs for {}".format(atelier.current_project))
-    for tree in atelier.current_project.get_doc_trees():
-        if tree.src_path:
-           if only is None or tree.rel_path == only:
-                tree.build_docs(ctx)
+
+    cmd = ctx.build_docs_command
+    if cmd:
+        print("-" * 80)
+        print("Run build_docs_command {0} :".format(cmd))
+        ctx.run(cmd, pty=True)
+    else:
+        for tree in atelier.current_project.get_doc_trees():
+            if tree.src_path:
+               if only is None or tree.rel_path == only:
+                    tree.build_docs(ctx)
 
 
 @task(name='clean')

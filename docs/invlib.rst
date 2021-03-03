@@ -338,7 +338,14 @@ The following settings are available in your :xfile:`tasks.py` when it uses
 
     The command will always be invoked from the projects root dir.
 
+.. envvar:: build_docs_command
 
+  The command to run by :cmd:`inv bd`.
+
+  Default value is an empty string.
+
+  If this is empty, the default behaviour is to run sphinx-build in each
+  :envvar:`doc_trees`.
 
 .. envvar:: coverage_command
 
