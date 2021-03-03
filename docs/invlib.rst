@@ -55,8 +55,9 @@ Commands for internationalization
 
     ("make messages")
 
-    Extracts messages from both code and userdocs, then initializes and
-    updates all catalogs. Needs :envvar:`locale_dir`
+    Extracts translatable messages from both code and userdocs, then initializes
+    and updates all catalogs. Needs :envvar:`locale_dir` and :envvar:`languages`
+    to be set.
 
 Commands for deployment
 -----------------------
@@ -282,7 +283,8 @@ The following settings are available in your :xfile:`tasks.py` when it uses
 
 .. envvar:: languages
 
-    A list of language codes for which userdocs are being maintained.
+    A list of language codes for which gettext translations and userdocs are
+    being maintained.  Used by:cmd:`inv mm`.
 
 .. envvar:: revision_control_system
 
