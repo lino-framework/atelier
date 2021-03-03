@@ -14,7 +14,7 @@ Defines a series of utility classes and functions.
 # from builtins import object
 import re
 
-from unipath import Path
+from pathlib import Path
 from pprint import pprint
 
 from rstgen.utils import *

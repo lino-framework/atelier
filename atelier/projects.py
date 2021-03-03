@@ -9,7 +9,7 @@ See :doc:`/usage`.
 import os
 
 # import pkg_resources
-from unipath import Path
+from pathlib import Path
 try:
     from importlib import import_module
 except ImportError:
@@ -31,7 +31,7 @@ def load_inv_namespace(root_dir):
     """
     # self._tasks_loaded = True
 
-    tasks_file = root_dir.child('tasks.py')
+    tasks_file = root_dir / 'tasks.py'
     if not tasks_file.exists():
         return None
         # raise Exception("No tasks.py file in {}".format(root_dir))
@@ -42,12 +42,12 @@ def load_inv_namespace(root_dir):
     # http://stackoverflow.com/questions/19009932/import-arbitrary-python-source-file-python-3-3
     # fqname = 'atelier.prj_%s' % self.index
     cwd = Path().resolve()
-    root_dir.chdir()
+    os.chdir(root_dir)
     m = dict()
     m["__file__"] = str(tasks_file)
     with open(tasks_file) as f:
         exec(f.read(), m)
-    cwd.chdir()
+    os.chdir(cwd)
     return m['ns']
 
 
@@ -105,12 +105,12 @@ def get_project_from_tasks(root_dir):
     root_dir = root_dir.absolute().resolve()
     prj = _PROJECTS_DICT.get(root_dir)
     if prj is None:
-        if root_dir.child('tasks.py').exists():
+        if (root_dir / 'tasks.py').exists():
             return add_project(root_dir)
         # if no config.py found, add current working directory.
         # p = Path().resolve()
         # while p:
-        #     if p.child('tasks.py').exists():
+        #     if (p / 'tasks.py').exists():
         #         prj = add_project(p)
         #         break
         #     if p == p.parent:
@@ -130,7 +130,7 @@ def get_setup_info(root_dir):
     Return `SETUP_INFO` defined in the :xfile:`setup.py` file of the
     specified `root_dir`.
     """
-    setup_file = root_dir.child('setup.py')
+    setup_file = root_dir / 'setup.py'
     if not setup_file.exists():
         # print("20180118 no setup.py file in {}".format(root_dir.absolute()))
         return {}
@@ -145,19 +145,19 @@ def get_setup_info(root_dir):
     g['__name__'] = 'not_main'
     # g['__file__'] = setup_file
     cwd = Path().resolve()
-    root_dir.chdir()
+    os.chdir(root_dir)
     with open("setup.py") as f:
         code = compile(f.read(), "setup.py", 'exec')
         try:
             exec(code, g)
         except SystemExit:
-            cwd.chdir()
+            os.chdir(cwd)
             raise Exception(
                 "Oops, {} called sys.exit().\n"
                 "Atelier requires the setup() call to be in a "
                 "\"if __name__ == '__main__':\" condition.".format(
                     setup_file))
-    cwd.chdir()
+    os.chdir(cwd)
     info = g.get('SETUP_INFO')
     if info is None:
         raise Exception(
@@ -169,11 +169,11 @@ def get_setup_info(root_dir):
     # # Note that main_package may be "sphinxcontrib.dailyblog"
     # args = env.main_package.split('.')
     # args.append('project_info.py')
-    # file =env.ROOTDIR.child(*args)
+    # file =env.ROOTDIR / ('/'.join(args))
     # with open(file) as f:
     #    code = compile(f.read(), file, 'exec')
     #    exec(code, globals())
-    # #execfile(env.ROOTDIR.child(*args), globals())
+    # #execfile(env.ROOTDIR / ('/'.join(args)), globals())
     # env.SETUP_INFO = SETUP_INFO
 
 
@@ -237,10 +237,10 @@ class Project(object):
             # 'coverage_command': '{} inv prep test clean --batch bd'.format(pp),
             'coverage_command': '`which invoke` prep test clean --batch bd',
             'languages': None,
-            'blog_root': root_dir.child('docs'),
+            'blog_root': root_dir / 'docs',
             'long_date_format': "%Y%m%d (%A, %d %B %Y)",
-            'sdist_dir': root_dir.child('dist'),
-            'pypi_dir': root_dir.child('.pypi_cache'),
+            'sdist_dir': root_dir / 'dist',
+            'pypi_dir': root_dir / '.pypi_cache',
             'use_dirhtml': False,
             'doc_trees': ['docs'],
             'intersphinx_urls': {},

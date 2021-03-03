@@ -406,7 +406,7 @@ Version 1.0.13 (released 2017-12-17)
 Better support for Python 2-3 compatible doctests:
 
 - Added a new function :func:`atelier.utils.sixprint`.
-- :func:`atelier.utils.rmu` now honors Mike Orr's :class:`unipath.Path`
+- :func:`atelier.utils.rmu` now honors Mike Orr's :class:`pathlib.Path`
   objects which happen to print differently under Python 3.
 
 

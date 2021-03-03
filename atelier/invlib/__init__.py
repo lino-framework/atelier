@@ -17,7 +17,7 @@ import os
 
 from importlib import import_module
 from invoke import Collection
-from unipath import Path
+from pathlib import Path
 
 import atelier
 

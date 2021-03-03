@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017-2020 Rumma & Ko Ltd
+# Copyright 2017-2021 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """Utilities for atelier.invlib
@@ -22,7 +22,7 @@ def must_exist(p):
 
 
 def run_cmd(ctx, chdir, args):
-    cmd = ' '.join(args)
+    cmd = ' '.join(map(str, args))
     print("Invoke {}".format(cmd))
     with cd(chdir):
         ctx.run(cmd, pty=True)
@@ -47,7 +47,7 @@ class DocTree(object):
         if rel_doc_tree in ('', '.'):
             src_path = prj.root_dir
         else:
-            src_path = prj.root_dir.child(rel_doc_tree)
+            src_path = prj.root_dir / rel_doc_tree
         # The src_path may not exist if this is on a Project which
         # has been created from a normally installed main_package
         # (because there it has no source code).
@@ -67,7 +67,7 @@ class DocTree(object):
         raise NotImplementedError()
 
     def publish_docs(self, ctx):
-        # build_dir = docs_dir.child(ctx.build_dir_name)
+        # build_dir = docs_dir / ctx.build_dir_name
         if self.src_path is None:
             return
         build_dir = self.out_path
@@ -127,7 +127,7 @@ class SphinxTree(DocTree):
             return
 
         cfg = prj.config
-        self.out_path = self.src_path.child(cfg['build_dir_name'])
+        self.out_path = self.src_path / cfg['build_dir_name']
 
     def make_messages(self, ctx):
         if self.src_path is None:
@@ -140,7 +140,7 @@ class SphinxTree(DocTree):
             run_cmd(ctx, self.src_path, args)
 
             # Create or update the .pot files (sphinx-intl update -p .build/gettext -l de -l fr)
-            args = ['sphinx-intl', 'update', '-p', self.out_path.child("gettext")]
+            args = ['sphinx-intl', 'update', '-p', self.out_path / "gettext"]
             for lng in translated_languages:
                 args += ['-l', lng]
             run_cmd(ctx, self.src_path, args)
@@ -165,7 +165,7 @@ class SphinxTree(DocTree):
             return
         if self.conf_globals is not None:
             return
-        conf_py = self.src_path.child("conf.py")
+        conf_py = self.src_path / "conf.py"
         self.conf_globals = {'__file__': conf_py}
         code = compile(open(conf_py, "rb").read(), conf_py, 'exec')
         exec(code, self.conf_globals)
@@ -194,11 +194,11 @@ class SphinxTree(DocTree):
             # needed in select_lang.html template
             args += ['-A', 'language=' + language]
             # if language != ctx.languages[0]:
-            build_dir = build_dir.child(language)
+            build_dir = build_dir / language
 
         # seems that the default location for the .doctrees directory
         # is no longer in .build but the source directory.
-        args += ['-d', build_dir.child('.doctrees')]
+        args += ['-d', str(build_dir / '.doctrees')]
         if ctx.tolerate_sphinx_warnings:
             args += ['-w', 'warnings_%s.txt' % builder]
         else:
@@ -206,7 +206,7 @@ class SphinxTree(DocTree):
             args += ['--keep-going']  # but keep going until the end to show them all
             # args += ['-vvv']  # increase verbosity
         # args += ['-w'+Path(ctx.root_dir,'sphinx_doctest_warnings.txt')]
-        args += ['.', build_dir]
+        args += ['.', str(build_dir)]
 
         run_cmd(ctx, docs_dir, args)
 
@@ -215,23 +215,23 @@ class SphinxTree(DocTree):
                 ctx.run(build_dir_cmd, pty=True)
 
     def sync_docs_data(self, ctx, docs_dir):
-        # build_dir = docs_dir.child(ctx.build_dir_name)
+        # build_dir = docs_dir / ctx.build_dir_name
         if self.src_path is None:
             return
         build_dir = self.out_path
         for data in ('dl', 'data'):
-            src = docs_dir.child(data).absolute()
-            if src.isdir():
-                target = build_dir.child('dl')
-                target.mkdir()
+            src = (docs_dir / data).absolute()
+            if src.is_dir():
+                target = build_dir / 'dl'
+                target.mkdir(exist_ok=True)
                 cmd = 'cp -ur %s %s' % (src, target.parent)
                 ctx.run(cmd, pty=True)
         if False:
             # according to http://mathiasbynens.be/notes/rel-shortcut-icon
             for n in ['favicon.ico']:
-                src = docs_dir.child(n).absolute()
+                src = (docs_dir / n).absolute()
                 if src.exists():
-                    target = build_dir.child(n)
+                    target = build_dir / n
                     cmd = 'cp %s %s' % (src, target.parent)
                     ctx.run(cmd, pty=True)
 
@@ -249,7 +249,7 @@ class NikolaTree(DocTree):
         super(NikolaTree, self).__init__(ctx, src_path)
         if self.src_path is None:
             return
-        self.out_path = self.src_path.child('output')
+        self.out_path = self.src_path / 'output'
 
     def build_docs(self, ctx, *cmdline_args):
         if self.src_path is None:

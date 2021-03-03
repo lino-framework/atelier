@@ -49,7 +49,7 @@ months.` when I run :command:`fab jars` to sign a jar file.
 """
 from builtins import object
 
-from unipath import Path
+from pathlib import Path
 
 
 class JarBuilder(object):
@@ -82,13 +82,13 @@ file.
             ctx.run("jarsigner -verify %s" % jarfile, pty=True)
 
         outdir = Path(outdir)
-        jarfile = outdir.child(self.jarfile)
+        jarfile = outdir / self.jarfile
         if jarfile.needs_update(self.jarcontent):
             jarcontent = [x.replace("$", r"\$") for x in self.jarcontent]
             ctx.run("jar cvfm %s %s" % (jarfile, ' '.join(jarcontent)), pty=True)
         run_signer(jarfile)
         for libfile in self.libjars:
-            jarfile = outdir.child(libfile.name)
+            jarfile = outdir / libfile.name
             if not jarfile.exists() or libfile.needs_update([jarfile]):
                 libfile.copy(jarfile)
             run_signer(jarfile)

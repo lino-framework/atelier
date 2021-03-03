@@ -8,7 +8,7 @@ Defines the :func:`atelier.sphinxconf.interproject.configure` function.
 """
 import os
 
-from unipath import Path
+from pathlib import Path
 # from importlib import import_module
 from sphinx.util import logging ; logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ def configure(globals_dict, prjspec=None, **nicknames):
         prjlist = []
         # for p in load_projects():
         for p in reversed(list(load_projects())):
-            if this_conf_file.startswith(p.root_dir):
+            if str(this_conf_file).startswith(str(p.root_dir)):
                 # print("20190122 {} startswith  {}".format(this_conf_file, p.root_dir))
                 continue
             prjlist.append(p)
@@ -96,14 +96,14 @@ def configure(globals_dict, prjspec=None, **nicknames):
             p = None
             src_path = doc_tree.src_path
             if src_path is not None:
-                if this_conf_file == src_path.child('conf.py'):
+                if this_conf_file == src_path / 'conf.py':
                     # don't add myself to intersphinx.
                     continue
 
                 if USE_LOCAL_BUILDS:
                         # print("20190306a", doc_tree, src_path)
-                    # p = prj.root_dir.child(doc_tree, '.build', 'objects.inv')
-                    p = src_path.child('.build', 'objects.inv')
+                    # p = prj.root_dir / (doc_tree + '/.build/objects.inv')
+                    p = src_path / '.build/objects.inv'
                     if p.exists():
                         logger.info("Found local {}".format(p))
                     else:
@@ -121,6 +121,8 @@ def configure(globals_dict, prjspec=None, **nicknames):
                 raise Exception("Duplicate intersphinx key {} used for {} "
                                 "(you ask to redefine it to {})".format(
                     k, intersphinx_mapping[k], p))
+            if p is not None:
+                p = str(p)
             intersphinx_mapping[k] = (url, p)
 
         if count == 0 and prjspec:

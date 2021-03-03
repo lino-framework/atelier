@@ -32,15 +32,15 @@ Usage example:
 >>> import os
 >>> from atelier.sheller import Sheller
 >>> shell = Sheller(os.path.dirname(__file__))
->>> shell('ls *.py')
-doctest_utf8.py
-__init__.py
-jarbuilder.py
+>>> shell('ls -S *.py')
 projects.py
-setup_info.py
-sheller.py
 test.py
 utils.py
+setup_info.py
+jarbuilder.py
+sheller.py
+doctest_utf8.py
+__init__.py
 
 When you don't specify a directory, Sheller creates a temporary directory and
 has all processes run there.

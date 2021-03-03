@@ -14,12 +14,13 @@ import glob
 import time
 import datetime
 from datetime import timedelta
+import shutil
 
 from atelier.utils import i2d
 from babel.dates import format_date
 import rstgen
 from atelier.projects import load_projects
-from unipath import Path
+from pathlib import Path
 
 try:
     from invoke import ctask as task  # , tasks
@@ -73,7 +74,7 @@ def rmtree_after_confirm(p, batch=False):
         return
     if batch or confirm(
             "OK to remove %s and everything under it?" % p.absolute()):
-        p.rmtree()
+        shutil.rmtree(p)
 
 
 def cleanup_pyc(p, batch=False):  # no longer used
@@ -95,7 +96,7 @@ def sphinx_clean(ctx, batch=False):
     """
     for b in atelier.current_project.get_doc_trees():
         if b.src_path:
-            rmtree_after_confirm(b.src_path.child('.doctrees'), batch)
+            rmtree_after_confirm(b.src_path / '.doctrees', batch)
             rmtree_after_confirm(b.out_path, batch)
 
 
@@ -106,7 +107,7 @@ def py_clean(ctx, batch=False):
     """
     paths = []
     for root, dirs, files in os.walk(ctx.root_dir):
-        p = Path(root).child('__pycache__')
+        p = Path(root) / '__pycache__'
         if p.exists():
             paths.append(p)
     if len(paths):
@@ -136,7 +137,7 @@ def py_clean(ctx, batch=False):
     #         # AttributeError: 'module' object has no attribute '__file__'
     #         pass
 
-    p = ctx.root_dir.child('.eggs')
+    p = ctx.root_dir / '.eggs'
     if p.exists():
         rmtree_after_confirm(p, batch)
 
@@ -153,7 +154,7 @@ def py_clean(ctx, batch=False):
 
 class RstFile(object):
     def __init__(self, local_root, url_root, parts):
-        self.path = local_root.child(*parts) + '.rst'
+        self.path = local_root / ('/'.join(parts) + '.rst')
         self.url = url_root + "/" + "/".join(parts) + '.html'
         # if parts[0] == 'docs':
         #     self.url = url_root + "/" + "/".join(parts[1:]) + '.html'
@@ -179,9 +180,9 @@ def run_tests(ctx):
         with ctx.cd(ctx.root_dir):
             ctx.run(cmd, pty=True)
 
-    # if ctx.root_dir.child('tox.ini').exists():
+    # if (ctx.root_dir / 'tox.ini').exists():
     #     ctx.run("REQ_VERSION=local tox", pty=True)
-    # elif ctx.root_dir.child('setup.py').exists():
+    # elif (ctx.root_dir / 'setup.py').exists():
     #     ctx.run(sys.executable + ' setup.py -q test', pty=True)
 
 
@@ -198,9 +199,9 @@ def write_readme(ctx):
     #     # when there are no docs, then the README file is manually maintained
     #     return
     if ctx.revision_control_system == 'git':
-        readme = ctx.root_dir.child('README.rst')
+        readme = ctx.root_dir / 'README.rst'
     else:
-        readme = ctx.root_dir.child('README.txt')
+        readme = ctx.root_dir / 'README.txt'
 
     # for k in ('name', 'description', 'long_description', 'url'):
     #     if k not in env.current_project.SETUP_INFO:
@@ -214,11 +215,11 @@ def write_readme(ctx):
 
 {long_description}
 """.format(title=title, **info)
-    if readme.exists() and readme.read_file() == txt:
+    if readme.exists() and readme.read_text() == txt:
         return
     must_confirm("Overwrite %s" % readme.absolute())
-    readme.write_file(txt)
-    docs_index = ctx.root_dir.child('docs', 'index.rst')
+    readme.write_text(txt)
+    docs_index = ctx.root_dir / 'docs/index.rst'
     if docs_index.exists():
         docs_index.set_times()
 
@@ -279,7 +280,7 @@ def pypi_release(ctx, branch=False):
     if not info.get('version'):
         return
     version = info['version']
-    # dist_dir = Path(ctx.sdist_dir).child(info['name'])
+    # dist_dir = Path(ctx.sdist_dir) / info['name']
     dist_dir = ctx.sdist_dir.format(prj=info.get('name'))
     dist_dir += "/{name}-{version}.tar.gz".format(**info)
 
@@ -455,13 +456,13 @@ def edit_blog_entry(ctx, today=None):
                 return
             yd.mkdir()
             txt = ".. blogger_year::\n"
-            yd.child('index.rst').write_file(txt)
+            (yd / 'index.rst').write_text(txt)
 
-        entry.path.write_file(content)
+        entry.path.write_text(content)
         # touch it for Sphinx:
-        entry.path.parent.child('index.rst').set_times()
+        # (entry.path.parent / 'index.rst').set_times()
     args = [ctx.editor_command.format(entry.path)]
-    args += [entry.path]
+    args += [str(entry.path)]
     # raise Exception("20160324 %s", args)
     ctx.run(' '.join(args), pty=False)
 
@@ -564,7 +565,7 @@ def extract_messages(ctx):
         return
     args = [sys.executable, "setup.py"]
     args += ["extract_messages"]
-    args += ["-o", ld.child("django.pot")]
+    args += ["-o", str(ld / "django.pot")]
     cmd = ' '.join(args)
     # ~ must_confirm(cmd)
     ctx.run(cmd, pty=True)
@@ -578,17 +579,17 @@ def init_catalog_code(ctx):
         return
     for loc in ctx.languages:
         if loc != 'en':
-            f = ld.child(loc, 'LC_MESSAGES', 'django.po')
+            f = ld / (loc + '/LC_MESSAGES/django.po')
             if f.exists():
-                print("Skip %s because file exists." % f)
+                print("Skip {} because file exists.".format(f))
             else:
                 args = [sys.executable, "setup.py"]
                 args += ["init_catalog"]
                 args += ["--domain django"]
                 args += ["-l", to_locale(loc)]
-                args += ["-d", ld]
+                args += ["-d", str(ld)]
                 # ~ args += [ "-o" , f ]
-                args += ["-i", ld.child('django.pot')]
+                args += ["-i", str(ld / 'django.pot')]
                 cmd = ' '.join(args)
                 must_confirm(cmd)
                 ctx.run(cmd, pty=True)
@@ -605,8 +606,8 @@ def update_catalog_code(ctx):
             args = [sys.executable, "setup.py"]
             args += ["update_catalog"]
             args += ["--domain django"]
-            args += ["-o", ld.child(loc, 'LC_MESSAGES', 'django.po')]
-            args += ["-i", ld.child("django.pot")]
+            args += ["-o", str(ld / to_locale(loc) / 'LC_MESSAGES' / 'django.po')]
+            args += ["-i", str(ld / "django.pot")]
             args += ["-l", to_locale(loc)]
             cmd = ' '.join(args)
             # ~ must_confirm(cmd)
@@ -710,7 +711,7 @@ def run_in_demo_projects(ctx, py_cmd, cov=False, bare=False):
         with cd(pth):
             if cov:
                 cmd = "coverage run --append " + py_cmd
-                datacovfile = ctx.root_dir.child('.coverage')
+                datacovfile = ctx.root_dir / '.coverage'
                 if not datacovfile.exists():
                     print('No .coverage file in {0}'.format(ctx.project_name))
                 os.environ['COVERAGE_FILE'] = datacovfile
@@ -737,7 +738,7 @@ def prep(ctx, cov=False):
 
     """
     # if cov:
-    #     covfile = ctx.root_dir.child('.coveragerc')
+    #     covfile = ctx.root_dir / '.coveragerc'
     #     if not covfile.exists():
     #         raise Exception('No .coveragerc file in {0}'.format(
     #             ctx.project_name))
@@ -764,7 +765,7 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     (overwriting any files without confirmation).
 
     """
-    # covfile = ctx.root_dir.child('.coveragerc')
+    # covfile = ctx.root_dir / '.coveragerc'
     # if not covfile.exists():
     #     print('No .coveragerc file in {0}'.format(ctx.project_name))
     #     return
@@ -802,7 +803,7 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
         ctx.run('coverage combine', pty=True)
         ctx.run('coverage report', pty=True)
         if html:
-            pth = ctx.root_dir.child(html_cov_dir)
+            pth = ctx.root_dir / html_cov_dir
             print("Writing html report to {}".format(pth))
             ctx.run('coverage html -d {}'.format(pth), pty=True)
             if False:

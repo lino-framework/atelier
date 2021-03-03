@@ -1,4 +1,4 @@
-# Copyright 2013-2020 Rumma & Ko Ltd
+# Copyright 2013-2021 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 # ~ This module has no docstring because it is to be execfile'd
@@ -6,7 +6,7 @@
 # ~ tools, too.
 
 install_requires = ['invoke', 'argh', 'six',
-                    'future', 'Babel', 'unipath',
+                    'future', 'Babel',
                     'python_dateutil', 'Sphinx', 'rstgen']
 
 install_requires.append('sphinx_rtd_theme')
@@ -33,7 +33,7 @@ SETUP_INFO = dict(
     test_suite='tests',
     author='Luc Saffre',
     author_email='luc@lino-framework.org',
-    url="http://atelier.lino-framework.org",
+    url="https://atelier.lino-framework.org",
     long_description="""\
 
 .. image:: https://readthedocs.org/projects/atelier/badge/?version=latest

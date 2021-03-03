@@ -122,7 +122,7 @@ Atelier tries to verify these conditions and raises an exception if
 the :xfile:`setup.py` doesn't comply:
 
 >>> from atelier.projects import get_setup_info
->>> from unipath import Path
+>>> from pathlib import Path
 >>> get_setup_info(Path('docs/p1'))
 Traceback (most recent call last):
 ...
@@ -166,10 +166,10 @@ TODO: document them all.
     'demo_prep_command': "manage.py prep --noinput --traceback",
     'coverage_command': '`which invoke` prep test clean --batch bd',
     'languages': None,
-    'blog_root': root_dir.child('docs'),
+    'blog_root': root_dir / 'docs',
     'long_date_format': "%Y%m%d (%A, %d %B %Y)",
-    'sdist_dir': root_dir.child('dist'),
-    'pypi_dir': root_dir.child('.pypi_cache'),
+    'sdist_dir': root_dir / 'dist',
+    'pypi_dir': root_dir / '.pypi_cache',
     'use_dirhtml': False,
     'doc_trees': ['docs'],
     'intersphinx_urls': {},

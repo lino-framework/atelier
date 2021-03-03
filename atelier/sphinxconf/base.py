@@ -27,7 +27,7 @@ Thanks to
 import os
 import inspect
 import importlib
-from unipath import Path
+from pathlib import Path
 
 from docutils import nodes, utils
 from docutils.parsers.rst import directives

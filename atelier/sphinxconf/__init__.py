@@ -26,7 +26,7 @@ import logging ; logger = logging.getLogger(__name__)
 
 import sys
 
-from unipath import Path
+from pathlib import Path
 # from distutils.version import LooseVersion
 # from setuptools import version
 from pkg_resources import parse_version
@@ -84,7 +84,7 @@ def configure(globals_dict):
             'members': None, 'show-inheritance': None})
 
     mydir = Path(__file__).parent.absolute()
-    globals_dict.update(templates_path=['.templates', mydir])
+    globals_dict.update(templates_path=['.templates', str(mydir)])
 
     # globals_dict.update(html_static_path=['.static'])
 
