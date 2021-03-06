@@ -4,11 +4,20 @@
 Changes in :mod:`atelier`
 =========================
 
+2021-03-06
+==========
+
+:func:`atelier.test.make_docs_suite` now supports multiple exclude patterns.
+
 2021-03-03
 ==========
 
 New configuration setting :envvar:`build_docs_command`.
 New directive :rst:dir:`cards`.
+Change unipath to pathlib.  Remove unipath dependency.
+Improve support for long language codes.
+
+Release version 1.1.28 to PyPI.
 
 
 2021-01-18

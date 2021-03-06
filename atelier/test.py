@@ -10,7 +10,7 @@ Defines tools for testing.
 """
 
 import os
-from os.path import join
+from os.path import join, pathsep
 import unittest
 import glob
 from fnmatch import fnmatch
@@ -63,8 +63,10 @@ def make_docs_suite(docs_root, include="*.rst", exclude=None,
     `include` is a filename pattern of the files to include. Default
     is `'*.rst'`.
 
-    `exclude` is an optional filename pattern of the files to
-    exclude. Default is None.
+    `exclude` is an optional filename pattern of the files to exclude. It can be
+    a `str` with a single pattern or multiple patterns separated by `:`, or an
+    iterator that yields patterns. If a filename matches any of the patterns, it
+    will be skipped. Default value is None.
 
     `addenv` is an optional dictionary with additional environment
     variables to be set in the subprocess. Default is None.
@@ -74,13 +76,27 @@ def make_docs_suite(docs_root, include="*.rst", exclude=None,
     """
     suite = unittest.TestSuite()
     count = 0
+    if exclude is None:
+        exclude_patterns = []
+    elif isinstance(exclude, str):
+        exclude_patterns = exclude.split(pathsep)
+    else:
+        exclude_patterns = exclude
+
+    def match_exclude(fn):
+        for pat in exclude_patterns:
+            if fnmatch(fn, pat):
+                return True
+        return False
+
+
     for root, dirs, files in os.walk(docs_root):
         dirs.sort()
         for file in sorted(files):
             fn = join(root, file)
             if fnmatch(fn, include):
-                if exclude and fnmatch(fn, exclude):
-                    print("Not testing file {}".format(fn))
+                if match_exclude(fn):
+                    print("Skip doctest for {}".format(fn))
                     continue
                 suite.addTest(DocTestCase(fn, addenv))
                 count += 1
