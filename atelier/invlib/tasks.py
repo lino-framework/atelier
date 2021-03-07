@@ -219,9 +219,10 @@ def write_readme(ctx):
         return
     must_confirm("Overwrite %s" % readme.absolute())
     readme.write_text(txt)
-    docs_index = ctx.root_dir / 'docs/index.rst'
+    docs_index = ctx.root_dir / 'docs' / 'index.rst'
     if docs_index.exists():
-        docs_index.set_times()
+        mtime = time.time()
+        os.utime(docs_index, (mtime, mtime))
 
 
 @task(write_readme, name='bd')

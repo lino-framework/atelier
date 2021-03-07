@@ -4,6 +4,12 @@
 Changes in :mod:`atelier`
 =========================
 
+2021-03-07
+==========
+
+Fixed `AttributeError: 'PosixPath' object has no attribute 'set_times'`
+
+
 2021-03-06
 ==========
 
