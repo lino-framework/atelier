@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2020 Rumma & Ko Ltd.
+# Copyright 2011-2021 Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """This Sphinx extension defines the :rst:dir:`blogger_year` and
@@ -81,6 +81,12 @@ JINJA_ENV = jinja2.Environment(
     loader=jinja2.DictLoader(templates))
 
 
+class BloggerDay(object):
+    def __init__(self, docname, *args, **kwargs):
+        self.docnames = [docname]
+        self.date = datetime.date(*args, **kwargs)
+
+
 class BloggerYear(object):
 
     """A :class:`BloggerYear` instance is created for each `blogger_year`
@@ -120,7 +126,7 @@ class BloggerYear(object):
                 if docname == "index":
                     continue
                 if len(docname) == 4:
-                    d = docname_to_day(self.year, docname)
+                    d = self.docname_to_day(docname)
                     self.days.append(d)
                     self.dates.add(d.date)
                     #~ self.years.add(s)
@@ -133,13 +139,20 @@ class BloggerYear(object):
         years = env.blog_instances.setdefault(blogname, dict())
         years[self.year] = self
 
+    def docname_to_day(self, s):
+        month = int(s[:2])
+        day = int(s[2:4])
+        return BloggerDay(s, self.year, month, day)
 
-def docname(y):
+
+def year2docname(y):
     assert isinstance(y, BloggerYear)
     return "/" + y.blogname + "/" + str(y.year) + "/index"
 
 
 def navigator(years, current):
+    """`years` is an iterable of :class:`BloggerYear` instances.
+    """
     if len(years) < 2:
         return ""
     chunks = []
@@ -148,9 +161,27 @@ def navigator(years, current):
             chunks.append(str(y.year))
         else:
             chunks.append(
-                ":doc:`{0} <{1}>`".format(y.year, docname(y)))
+                ":doc:`{0} <{1}>`".format(y.year, year2docname(y)))
     old = ' '.join(chunks)
     return "\n\n{0}\n\n".format(old)
+
+
+def get_all_entries(env):
+
+    blog_instances = getattr(env, 'blog_instances', dict())
+    entries = []
+    for blogname, blog in blog_instances.items():
+        for year in blog.values():
+            for day in year.days:
+                for docname in day.docnames:
+                    entries.append((day.date, blogname, year.year, docname))
+
+    #     years.sort(key=lambda f: f.year)
+    #
+    # years = get_blogger_years(env, blogname)
+    # years = reversed(years, key=lambda f: f.year)
+    entries.sort(key=lambda e: e[0])
+    return reversed(entries)
 
 
 def get_blogger_years(env, blogname):
@@ -159,7 +190,6 @@ def get_blogger_years(env, blogname):
     if blog is None:
         return []
     years = list(blog.values())
-
     years.sort(key=lambda f: f.year)
     return years
 
@@ -168,8 +198,8 @@ class MainBlogIndexDirective(InsertInputDirective):
     """
     Directive to insert a blog master archive page toctree
     """
-    #~ required_arguments = 1
-    #~ allow_titles = True
+    # required_arguments = 1
+    # allow_titles = True
     raw_insert = True
 
     def get_rst(self):
@@ -180,40 +210,14 @@ class MainBlogIndexDirective(InsertInputDirective):
             raise Exception("Allowed only inside index.rst file")
         text = ''
         years = get_blogger_years(env, blogname)
-
-        # hidden = []
-        # visible = []
-
-        # for y in years:
-            # text += "\n    {0}/index".format(blogger_year.year)
-            # visible.append(str(blogger_year.year) + "/index")
-        # if len(years) > 1:
-        #     hidden = years[:-1]
-        #     visible = years[-1:]
-        # else:
-        #     visible = years
-
         text += navigator(years, None)
-
         text += '\n'.join(self.content)
         if len(years) == 0:
             text += "\n\nNo blogger years found.\n"
         else:
-            children = list(map(docname, years))
+            children = list(map(year2docname, years))
             text += toctree(*children, hidden=True)
-
-        # if len(hidden):
-        #     children = map(docname, hidden)
-        #     text += toctree(*children, hidden=True)
-        # if len(visible):
-        #     children = map(docname, visible)
-        #     text += toctree(*children, maxdepth=2)
-        # text += "\n"
-        # print("-"*80)
-        # print(text)
-        # print("-"*80)
         return text
-
 
 class YearBlogIndexDirective(InsertInputDirective):
 
@@ -310,34 +314,32 @@ class YearBlogIndexDirective(InsertInputDirective):
         # print("="*80)
         return retval
 
-class BloggerDay(object):
-    def __init__(self, docname, *args, **kwargs):
-        self.docnames = [docname]
-        self.date = datetime.date(*args, **kwargs)
 
-def docname_to_day(year, s):
-    #~ print fn
-    month = int(s[:2])
-    day = int(s[2:4])
-    return BloggerDay(s, year, month, day)
+class LatestEntriesDirective(InsertInputDirective):
+    """
+    Directive to insert a list of the latest blog entries.
+    """
+    # required_arguments = 1
+    # allow_titles = True
+    raw_insert = True
+    has_content = False
 
-
-#~ class ChangedDirective(InsertInputDirective):
-
-    #~ def get_rst(self):
-        #~ env = self.state.document.settings.env
-        #~ blogname, year, monthday = env.docname.rsplit('/',3)
-        # ~ # raise Exception("Allowed only in blog entries")
-
-        #~ year = int(year)
-        #~ day = docname_to_day(year,monthname)
-
-        #~ if not hasattr(env,'changed_items'):
-            #~ env.changed_items = dict()
-        #~ env.changed_items
-        #~ for item in self.content:
-            #~ entries = env.changed_items.setdefault(item,dict())
-            #~ entries.setdefault(env.docname)
+    def get_rst(self):
+        #~ print 'MainBlogIndexDirective.get_rst()'
+        env = self.state.document.settings.env
+        # blogname, index = env.docname.rsplit('/', 2)
+        # if index != 'index':
+        #     raise Exception("Allowed only inside index.rst file")
+        text = ''
+        # text += '\n'.join(self.content)
+        max_count = 10
+        for i, e in enumerate(get_all_entries(env)):
+            text += '- {0} :doc:`{1}/{2}/{3}`\n'.format(*e)
+            if i == max_count:
+                break
+        if len(text) == 0:
+            text += "\n\nNo blog entries found.\n"
+        return text
 
 
 def setup(app):
@@ -347,3 +349,4 @@ def setup(app):
     # app.add_config_value('blog_instances', dict(), '')
     app.add_directive('blogger_year', YearBlogIndexDirective)
     app.add_directive('blogger_index', MainBlogIndexDirective)
+    app.add_directive('blogger_latest', LatestEntriesDirective)

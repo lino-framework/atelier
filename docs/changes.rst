@@ -4,10 +4,16 @@
 Changes in :mod:`atelier`
 =========================
 
+2021-03-11
+==========
+
+Added a new directive :rst:dir:`blogger_latest` in
+:mod:`atelier.sphinxconf.blog`.
+
 2021-03-07
 ==========
 
-Fixed `AttributeError: 'PosixPath' object has no attribute 'set_times'`
+Fixed `AttributeError: 'PosixPath' object has no attribute 'set_times'`.
 
 
 2021-03-06
